@@ -23,6 +23,8 @@ import java.io.File;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.junit.Ignore;
 
+import com.technophobia.substeps.runner.SubstepsRunnerMojo;
+
 /**
  * @author ian
  * 

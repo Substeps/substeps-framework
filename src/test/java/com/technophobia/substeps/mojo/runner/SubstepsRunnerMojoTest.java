@@ -30,6 +30,7 @@ import org.junit.Test;
 
 import com.technophobia.substeps.execution.ExecutionNode;
 import com.technophobia.substeps.runner.ExecutionConfig;
+import com.technophobia.substeps.runner.SubstepsRunnerMojo;
 
 /**
  * 

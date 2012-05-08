@@ -16,7 +16,7 @@
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with Substeps.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.technophobia.substeps.mojo.runner;
+package com.technophobia.substeps.runner;
 
 import java.io.File;
 import java.util.ArrayList;
