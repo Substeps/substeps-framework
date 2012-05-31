@@ -40,10 +40,6 @@ import org.slf4j.LoggerFactory;
 import com.technophobia.substeps.execution.ExecutionNode;
 import com.technophobia.substeps.report.ExecutionReportBuilder;
 import com.technophobia.substeps.report.ReportData;
-import com.technophobia.substeps.runner.ExecutionConfig;
-import com.technophobia.substeps.runner.ExecutionNodeRunner;
-import com.technophobia.substeps.runner.INotifier;
-import com.technophobia.substeps.runner.TagManager;
 
 /**
  * Mojo to run a number SubStep features, each contained within any number of
@@ -94,7 +90,12 @@ public class SubstepsRunnerMojo extends AbstractMojo {
     /**
      * @parameter
      */
-    private final List<ExecutionConfig> executionConfigs = null;
+    private List<ExecutionConfig> executionConfigs;
+    
+    /**
+     * @parameter
+     */
+    private ExecutionReportBuilder executionReportBuilder;
 
     private List<ExecutionNode> failedNodes = null;
     private List<ExecutionNode> nonFatalFailedNodes = null;
@@ -115,15 +116,17 @@ public class SubstepsRunnerMojo extends AbstractMojo {
                 rootNode.setLine(executionConfig.getDescription());
             }
 
-            data.addDataFromRootNode(rootNode);
+            data.addRootExecutionNode(rootNode);
 
             // notifier.setNonFatalTagManager(null);
 
             checkRootNodeForFailure(rootNode, executionConfig);
         }
 
-        final ExecutionReportBuilder reportBuilder = new ExecutionReportBuilder();
-        reportBuilder.buildReport(data, outputDir);
+//        final ExecutionReportBuilder reportBuilder = executionReportBuilderFactory.getReportBuilder();
+        
+//        final ExecutionReportBuilder reportBuilder = new ExecutionReportBuilder();
+        executionReportBuilder.buildReport(data);
 
         determineBuildFailure();
 
