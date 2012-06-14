@@ -120,7 +120,7 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
             // notifier.setNonFatalTagManager(null);
 
-            checkRootNodeForFailure(rootNode, executionConfig);
+            checkRootNodeForFailure(rootNode, executionConfig);    
         }
 
 //        final ExecutionReportBuilder reportBuilder = executionReportBuilderFactory.getReportBuilder();
