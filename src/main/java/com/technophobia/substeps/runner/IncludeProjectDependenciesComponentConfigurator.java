@@ -60,13 +60,11 @@ public class IncludeProjectDependenciesComponentConfigurator extends AbstractCom
 
     private void addProjectDependenciesToClassRealm(final ExpressionEvaluator expressionEvaluator,
             final ClassRealm containerRealm) throws ComponentConfigurationException {
-        List<String> runtimeClasspathElements = null;
 
         List<String> testClasspathElements = null;
+
         try {
             // noinspection unchecked
-            runtimeClasspathElements = (List<String>) expressionEvaluator
-                    .evaluate("${project.runtimeClasspathElements}");
 
             testClasspathElements = (List<String>) expressionEvaluator
                     .evaluate("${project.testClasspathElements}");
@@ -76,21 +74,15 @@ public class IncludeProjectDependenciesComponentConfigurator extends AbstractCom
                     "There was a problem evaluating: ${project.runtimeClasspathElements}", e);
         }
 
-        if (runtimeClasspathElements != null) {
-            // Add the project dependencies to the ClassRealm
-            final URL[] urls = buildURLs(runtimeClasspathElements);
-            for (final URL url : urls) {
-                containerRealm.addConstituent(url);
-            }
-        }
-
         if (testClasspathElements != null) {
             // Add the project test dependencies to the ClassRealm
             final URL[] testUrls = buildURLs(testClasspathElements);
             for (final URL url : testUrls) {
                 containerRealm.addConstituent(url);
+
             }
         }
+
     }
 
 
