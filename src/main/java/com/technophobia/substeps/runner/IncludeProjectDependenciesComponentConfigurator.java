@@ -19,6 +19,8 @@ import org.codehaus.plexus.component.configurator.converters.special.ClassRealmC
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A custom ComponentConfigurator which adds the project's runtime classpath
@@ -36,8 +38,9 @@ import org.codehaus.plexus.configuration.PlexusConfiguration;
  */
 public class IncludeProjectDependenciesComponentConfigurator extends AbstractComponentConfigurator {
 
-    // private static final Logger LOGGER = LoggerFactory
-    // .getLogger(IncludeProjectDependenciesComponentConfigurator.class);
+    private static final Logger logger = LoggerFactory
+            .getLogger(IncludeProjectDependenciesComponentConfigurator.class);
+
 
     @Override
     public void configureComponent(final Object component, final PlexusConfiguration configuration,
@@ -100,10 +103,10 @@ public class IncludeProjectDependenciesComponentConfigurator extends AbstractCom
                 final URL url = new File(element).toURI().toURL();
                 urls.add(url);
 
-                System.out.println("Added to project class loader: " + url);
-                // if (LOGGER.isDebugEnabled()) {
-                // LOGGER.debug("Added to project class loader: " + url);
-                // }
+                // System.out.println("Added to project class loader: " + url);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Added to project class loader: " + url);
+                }
             } catch (final MalformedURLException e) {
                 throw new ComponentConfigurationException("Unable to access project dependency: "
                         + element, e);
