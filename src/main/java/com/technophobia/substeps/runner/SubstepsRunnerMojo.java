@@ -305,7 +305,7 @@ public class SubstepsRunnerMojo extends AbstractMojo {
          */
         public void notifyTestFailed(final Description arg0, final Throwable arg1) {
 
-            System.out.println("notifyTestFailed desc");
+            // System.out.println("notifyTestFailed desc");
 
         }
 
