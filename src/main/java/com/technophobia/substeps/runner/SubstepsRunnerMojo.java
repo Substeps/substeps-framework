@@ -34,8 +34,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.technophobia.substeps.execution.ExecutionNode;
 import com.technophobia.substeps.report.ExecutionReportBuilder;
@@ -60,7 +58,8 @@ public class SubstepsRunnerMojo extends AbstractMojo {
         System.out.println(msg);
     }
 
-    private final Logger log = LoggerFactory.getLogger(SubstepsRunnerMojo.class);
+    // private final Logger log =
+    // LoggerFactory.getLogger(SubstepsRunnerMojo.class);
 
     /**
      * Location of the file.
@@ -91,7 +90,7 @@ public class SubstepsRunnerMojo extends AbstractMojo {
      * @parameter
      */
     private List<ExecutionConfig> executionConfigs;
-    
+
     /**
      * @parameter
      */
@@ -120,12 +119,14 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
             // notifier.setNonFatalTagManager(null);
 
-            checkRootNodeForFailure(rootNode, executionConfig);    
+            checkRootNodeForFailure(rootNode, executionConfig);
         }
 
-//        final ExecutionReportBuilder reportBuilder = executionReportBuilderFactory.getReportBuilder();
-        
-//        final ExecutionReportBuilder reportBuilder = new ExecutionReportBuilder();
+        // final ExecutionReportBuilder reportBuilder =
+        // executionReportBuilderFactory.getReportBuilder();
+
+        // final ExecutionReportBuilder reportBuilder = new
+        // ExecutionReportBuilder();
         executionReportBuilder.buildReport(data);
 
         determineBuildFailure();

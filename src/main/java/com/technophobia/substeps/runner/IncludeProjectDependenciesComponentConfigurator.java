@@ -8,7 +8,6 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.codehaus.classworlds.ClassRealm;
@@ -20,8 +19,6 @@ import org.codehaus.plexus.component.configurator.converters.special.ClassRealmC
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A custom ComponentConfigurator which adds the project's runtime classpath
@@ -39,9 +36,8 @@ import org.slf4j.LoggerFactory;
  */
 public class IncludeProjectDependenciesComponentConfigurator extends AbstractComponentConfigurator {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(IncludeProjectDependenciesComponentConfigurator.class);
-
+    // private static final Logger LOGGER = LoggerFactory
+    // .getLogger(IncludeProjectDependenciesComponentConfigurator.class);
 
     @Override
     public void configureComponent(final Object component, final PlexusConfiguration configuration,
@@ -61,9 +57,9 @@ public class IncludeProjectDependenciesComponentConfigurator extends AbstractCom
 
     private void addProjectDependenciesToClassRealm(final ExpressionEvaluator expressionEvaluator,
             final ClassRealm containerRealm) throws ComponentConfigurationException {
-        List<String> runtimeClasspathElements;
+        List<String> runtimeClasspathElements = null;
 
-        List<String> testClasspathElements;
+        List<String> testClasspathElements = null;
         try {
             // noinspection unchecked
             runtimeClasspathElements = (List<String>) expressionEvaluator
@@ -77,14 +73,20 @@ public class IncludeProjectDependenciesComponentConfigurator extends AbstractCom
                     "There was a problem evaluating: ${project.runtimeClasspathElements}", e);
         }
 
-        runtimeClasspathElements.addAll(testClasspathElements);
+        if (runtimeClasspathElements != null) {
+            // Add the project dependencies to the ClassRealm
+            final URL[] urls = buildURLs(runtimeClasspathElements);
+            for (final URL url : urls) {
+                containerRealm.addConstituent(url);
+            }
+        }
 
-        Collections.reverse(runtimeClasspathElements);
-
-        // Add the project dependencies to the ClassRealm
-        final URL[] urls = buildURLs(runtimeClasspathElements);
-        for (final URL url : urls) {
-            containerRealm.addConstituent(url);
+        if (testClasspathElements != null) {
+            // Add the project test dependencies to the ClassRealm
+            final URL[] testUrls = buildURLs(testClasspathElements);
+            for (final URL url : testUrls) {
+                containerRealm.addConstituent(url);
+            }
         }
     }
 
@@ -97,9 +99,11 @@ public class IncludeProjectDependenciesComponentConfigurator extends AbstractCom
             try {
                 final URL url = new File(element).toURI().toURL();
                 urls.add(url);
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Added to project class loader: " + url);
-                }
+
+                System.out.println("Added to project class loader: " + url);
+                // if (LOGGER.isDebugEnabled()) {
+                // LOGGER.debug("Added to project class loader: " + url);
+                // }
             } catch (final MalformedURLException e) {
                 throw new ComponentConfigurationException("Unable to access project dependency: "
                         + element, e);
