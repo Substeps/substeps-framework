@@ -1,0 +1,211 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.technophobia.substeps</groupId>
+	<artifactId>substeps-glossary</artifactId>
+	<packaging>maven-plugin</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<name>SubSteps Maven Runner</name>
+
+   <organization>
+        <name>Technophobia Ltd</name>
+        <url>www.technophobia.com/</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>LGPL 3.0 license</name>
+            <url>http://www.opensource.org/licenses/lgpl-3.0.html</url>
+            <distribution>manual</distribution>
+      </license>
+    </licenses>
+    
+    <developers>
+   
+        <developer>
+          <id>ianmoore</id>
+          <name>Ian Moore</name>
+          <organization>Technophobia</organization>
+          <roles>
+            <role>architect</role>
+            <role>developer</role>
+          </roles>
+        </developer>
+
+  
+    </developers>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<hamcrest.version>1.3.RC2</hamcrest.version>
+		<guava.version>10.0</guava.version>
+		<mockito.version>1.9.0-rc1</mockito.version>
+		<substeps.version>0.0.1</substeps.version>
+		<maven.version>2.2.1</maven.version>
+
+		<substeps.version>0.0.2-SNAPSHOT</substeps.version>
+
+		<nexus.snapshot.artifacts>internalsnapshots</nexus.snapshot.artifacts>
+		<nexus.release.artifacts>internalreleases</nexus.release.artifacts>
+	</properties>
+
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>${nexus.snapshot.artifacts}</id>
+			<name>${nexus.snapshot.artifacts}</name>
+			<url>http://devtools.technophobia.int/nexus/content/repositories/${nexus.snapshot.artifacts}/</url>
+			<uniqueVersion>false</uniqueVersion>
+		</snapshotRepository>
+		<repository>
+			<id>${nexus.release.artifacts}</id>
+			<name>${nexus.release.artifacts}</name>
+			<url>http://devtools.technophobia.int/nexus/content/repositories/${nexus.release.artifacts}/</url>
+		</repository>
+	</distributionManagement>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+					<inherit>true</inherit>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.plexus</groupId>
+				<artifactId>plexus-component-metadata</artifactId>
+				<version>1.5.5</version>
+
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate-metadata</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.technophobia.substeps</groupId>
+			<artifactId>substeps-core</artifactId>
+			<version>${substeps.version}</version>
+		</dependency>
+
+
+		<dependency>
+		    <groupId>sun.jdk</groupId>
+		    <artifactId>tools</artifactId>
+		    <version>1.6.31</version>
+		    <scope>system</scope>
+		    <systemPath>${java.home}/../lib/tools.jar</systemPath>
+		  </dependency>
+
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-artifact</artifactId>
+			<version>${maven.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-plugin-api</artifactId>
+			<version>${maven.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-project</artifactId>
+			<version>${maven.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-model</artifactId>
+			<version>${maven.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-core</artifactId>
+			<version>2.0.9</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.maven.shared</groupId>
+			<artifactId>maven-plugin-testing-harness</artifactId>
+			<version>1.0-beta-1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-core</artifactId>
+			<version>${hamcrest.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<version>${hamcrest.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>${mockito.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.technophobia.substeps</groupId>
+			<artifactId>substeps-core</artifactId>
+			<version>${substeps.version}</version>
+		</dependency>
+
+		<dependency>
+		    <groupId>com.thoughtworks.xstream</groupId>
+		    <artifactId>xstream</artifactId>
+		    <version>1.4.2</version>
+		</dependency>
+
+	</dependencies>
+
+    <scm>
+        <connection>${scm}</connection>
+    </scm>
+
+
+</project>
