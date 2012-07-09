@@ -10,3 +10,4 @@ velocity.log*
 classes/
 *.class
 *jacoco.exec
+*~

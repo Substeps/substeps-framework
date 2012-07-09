@@ -16,11 +16,10 @@
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with Substeps.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.technophobia.substeps.runner;
+package com.technophobia.substeps.glossary;
 
 import java.util.List;
 
-import com.technophobia.substeps.glossary.ClassStepTags;
 
 
 
