@@ -11,3 +11,4 @@ classes/
 *.class
 *jacoco.exec
 *~
+_build/
