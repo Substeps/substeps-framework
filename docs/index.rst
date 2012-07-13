@@ -18,7 +18,8 @@ Overview
    :maxdepth: 2
    :glob:
    
-   using*   
+   using*
+   release*   
 
 .. Note::
    `*` Some features are currently in development and may not be available at the time of reading!

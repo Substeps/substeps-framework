@@ -1,0 +1,9 @@
+Substeps Runner - Release Notes
+===============================
+
+- A list of changes per release 
+ 
+0.0.5
+-----
+- Changes as a result of core changes to Notifications.
+- BUG: failures in @BeforeAllFeatures not failing the maven build
