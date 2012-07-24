@@ -53,22 +53,22 @@ public class HTMLSubstepsPublisher implements GlossaryPublisher {
      * com.technophobia.substeps.runner.GlossaryPublisher#publish(java.util.
      * List)
      */
-    public void publish(final List<ClassStepTags> classStepTags) {
-        final Map<String, List<StepTags>> sectionSorted = new TreeMap<String, List<StepTags>>();
+    public void publish(final List<StepImplementationsDescriptor> stepimplementationDescriptors) {
+        final Map<String, List<StepDescriptor>> sectionSorted = new TreeMap<String, List<StepDescriptor>>();
 
-        for (final ClassStepTags cst : classStepTags) {
+        for (final StepImplementationsDescriptor descriptor : stepimplementationDescriptors) {
 
-            for (final StepTags stepTag : cst.getExpressions()) {
+            for (final StepDescriptor stepTag : descriptor.getExpressions()) {
 
                 String section = stepTag.getSection();
                 if (section == null || section.isEmpty()) {
                     section = "Miscellaneous";
                 }
 
-                List<StepTags> subList = sectionSorted.get(section);
+                List<StepDescriptor> subList = sectionSorted.get(section);
 
                 if (subList == null) {
-                    subList = new ArrayList<StepTags>();
+                    subList = new ArrayList<StepDescriptor>();
                     sectionSorted.put(section, subList);
                 }
                 subList.add(stepTag);
@@ -96,7 +96,7 @@ public class HTMLSubstepsPublisher implements GlossaryPublisher {
     /**
      * @param sectionSorted
      */
-    private String buildHtml(final Map<String, List<StepTags>> sectionSorted) {
+    private String buildHtml(final Map<String, List<StepDescriptor>> sectionSorted) {
         final StringBuilder buf = new StringBuilder();
 
         buf.append("<html><head></head><body> <table border=\"1\">\n<tr><th>Keyword</th> <th>Example</th> <th>Description</th></tr>\n");
@@ -105,9 +105,9 @@ public class HTMLSubstepsPublisher implements GlossaryPublisher {
         // "'''Example'''", "'''Description'''"))
         // .append("\n");
 
-        final Set<Entry<String, List<StepTags>>> entrySet = sectionSorted.entrySet();
+        final Set<Entry<String, List<StepDescriptor>>> entrySet = sectionSorted.entrySet();
 
-        for (final Entry<String, List<StepTags>> e : entrySet) {
+        for (final Entry<String, List<StepDescriptor>> e : entrySet) {
             buf.append(String.format(TABLE_ROW_SECTION_FORMAT, e.getKey())).append("\n");
 
             buildStepTagRows(buf, e.getValue());
@@ -118,15 +118,15 @@ public class HTMLSubstepsPublisher implements GlossaryPublisher {
     }
 
 
-    private void buildStepTagRows(final StringBuilder buf, final List<StepTags> infos) {
+    private void buildStepTagRows(final StringBuilder buf, final List<StepDescriptor> infos) {
 
-        Collections.sort(infos, new Comparator<StepTags>() {
-            public int compare(final StepTags s1, final StepTags s2) {
+        Collections.sort(infos, new Comparator<StepDescriptor>() {
+            public int compare(final StepDescriptor s1, final StepDescriptor s2) {
                 return s1.getExpression().compareTo(s2.getExpression());
             }
         });
 
-        for (final StepTags info : infos) {
+        for (final StepDescriptor info : infos) {
 
             System.out.println("info non escaped: " + info.getExpression() + "\n\tescaped:\n"
                     + StringEscapeUtils.escapeHtml(info.getExpression()));

@@ -20,19 +20,15 @@ package com.technophobia.substeps.glossary;
 
 import java.util.List;
 
-
-
-
 /**
  * @author ian
- *
+ * 
  */
-public interface GlossaryPublisher
-{
+public interface GlossaryPublisher {
 
-	/**
-	 * @param classStepTags
-	 */
-	void publish(List<ClassStepTags> classStepTags);
+    /**
+     * @param classStepTags
+     */
+    void publish(List<StepImplementationsDescriptor> classStepTags);
 
 }

@@ -20,18 +20,13 @@ package com.technophobia.substeps.glossary;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 
 import org.apache.maven.artifact.Artifact;
@@ -44,10 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
-import com.sun.tools.javac.util.Context;
 import com.sun.tools.javadoc.Main;
-import com.sun.tools.javadoc.Messager;
-import com.thoughtworks.xstream.XStream;
 
 /**
  * 
@@ -58,14 +50,6 @@ import com.thoughtworks.xstream.XStream;
  * @configurator include-project-dependencies
  */
 public class SubstepsGlossaryMojo extends AbstractMojo {
-
-    public static void printRed(final String msg) {
-
-        // TODO
-        System.out.println(msg);
-    }
-
-    private static final String XML_FILE_NAME = "substeps-metainfo.xml";
 
     private final Logger log = LoggerFactory.getLogger(SubstepsGlossaryMojo.class);
 
@@ -101,76 +85,12 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
      */
     private final GlossaryPublisher glossaryPublisher = null;
 
-    protected class LogWriter extends Writer {
-
-        Level level;
+    private final XMLSubstepsGlossarySerializer serializer = new XMLSubstepsGlossarySerializer();
 
 
-        public LogWriter(final Level level) {
-            this.level = level;
-        }
+    private List<StepImplementationsDescriptor> runJavaDoclet(final String classToDocument) {
 
-
-        @Override
-        public void write(final char[] chars, final int offset, final int length)
-                throws IOException {
-            final String s = new String(Arrays.copyOf(chars, length));
-            if (!s.equals("\n")) {
-                System.out.println(level.toString() + " - " + s);
-                // logger.log(level, s);
-            }
-        }
-
-
-        @Override
-        public void flush() throws IOException {
-        }
-
-
-        @Override
-        public void close() throws IOException {
-        }
-    }
-
-    public class PublicMessager extends Messager {
-
-        public PublicMessager(final Context context, final String s) {
-            super(context, s);
-        }
-
-
-        public PublicMessager(final Context context, final String s, final PrintWriter printWriter,
-                final PrintWriter printWriter1, final PrintWriter printWriter2) {
-            super(context, s, printWriter, printWriter1, printWriter2);
-        }
-    }
-
-
-    // TODO - this is copied from ExecutionConfig..
-
-    private List<Class<?>> getClassesFromConfig(final String[] config) {
-        List<Class<?>> stepImplementationClassList = null;
-        for (final String className : config) {
-            if (stepImplementationClassList == null) {
-                stepImplementationClassList = new ArrayList<Class<?>>();
-            }
-            Class<?> implClass;
-            try {
-                implClass = Class.forName(className);
-                stepImplementationClassList.add(implClass);
-
-            } catch (final ClassNotFoundException e) {
-                // TODO - fail
-                e.printStackTrace();
-            }
-        }
-        return stepImplementationClassList;
-    }
-
-
-    private List<ClassStepTags> runJavaDoclet(final String classToDocument) {
-
-        final List<ClassStepTags> classStepTagList = new ArrayList<ClassStepTags>();
+        final List<StepImplementationsDescriptor> classStepTagList = new ArrayList<StepImplementationsDescriptor>();
 
         project.getBasedir();
 
@@ -243,7 +163,7 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
 
         final HashSet<String> loadedClasses = new HashSet<String>();
 
-        final List<ClassStepTags> classStepTags = new ArrayList<ClassStepTags>();
+        final List<StepImplementationsDescriptor> classStepTags = new ArrayList<StepImplementationsDescriptor>();
 
         for (final String classToDocument : stepImplementationClassNames) {
 
@@ -291,10 +211,12 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
      * @param classStepTags
      * 
      */
-    private void saveXMLFile(final List<ClassStepTags> classStepTags) {
+    private void saveXMLFile(final List<StepImplementationsDescriptor> classStepTags) {
         // got them all now serialize
-        final XStream xstream = new XStream();
-        final File output = new File(outputDirectory, XML_FILE_NAME);
+
+        final String xml = serializer.toXML(classStepTags);
+
+        final File output = new File(outputDirectory, XMLSubstepsGlossarySerializer.XML_FILE_NAME);
 
         if (!outputDirectory.exists()) {
             if (!outputDirectory.mkdirs()) {
@@ -304,7 +226,7 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
         }
 
         try {
-            Files.write(xstream.toXML(classStepTags), output, Charset.forName("UTF-8"));
+            Files.write(xml, output, Charset.forName("UTF-8"));
         } catch (final IOException e) {
             e.printStackTrace();
         }
@@ -318,29 +240,22 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
      * @param loadedClasses
      */
     private void loadStepTagsFromJar(final JarFile jarFileForClass,
-            final List<ClassStepTags> classStepTags, final Set<String> loadedClasses) {
-        final ZipEntry entry = jarFileForClass.getEntry(XML_FILE_NAME);
+            final List<StepImplementationsDescriptor> classStepTags, final Set<String> loadedClasses) {
+        final ZipEntry entry = jarFileForClass
+                .getEntry(XMLSubstepsGlossarySerializer.XML_FILE_NAME);
 
         if (entry != null) {
 
-            try {
-                final InputStream is = jarFileForClass.getInputStream(entry);
+            final List<StepImplementationsDescriptor> classStepTagList = serializer
+                    .loadStepImplementationsDescriptorFromJar(jarFileForClass);
 
-                final XStream xstream = new XStream();
-                final List<ClassStepTags> classStepTagList = (List<ClassStepTags>) xstream
-                        .fromXML(is);
+            classStepTags.addAll(classStepTagList);
 
-                classStepTags.addAll(classStepTagList);
-
-                for (final ClassStepTags cst : classStepTagList) {
-                    loadedClasses.add(cst.getClassName());
-                }
-            } catch (final IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            for (final StepImplementationsDescriptor descriptor : classStepTagList) {
+                loadedClasses.add(descriptor.getClassName());
             }
         } else {
-            log.error("couldn't locate file in jar: " + XML_FILE_NAME);
+            log.error("couldn't locate file in jar: " + XMLSubstepsGlossarySerializer.XML_FILE_NAME);
         }
     }
 

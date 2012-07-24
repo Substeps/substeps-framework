@@ -38,15 +38,15 @@ import com.technophobia.substeps.model.SubSteps.Step;
  */
 public class CustomDoclet extends Doclet {
 
-    private static List<ClassStepTags> classStepTagsList;
+    private static List<StepImplementationsDescriptor> classStepTagsList;
 
 
-    public static void setExpressionList(final List<ClassStepTags> expressionList) {
+    public static void setExpressionList(final List<StepImplementationsDescriptor> expressionList) {
         classStepTagsList = expressionList;
     }
 
 
-    public static List<ClassStepTags> getExpressions() {
+    public static List<StepImplementationsDescriptor> getExpressions() {
         return classStepTagsList;
     }
 
@@ -57,7 +57,8 @@ public class CustomDoclet extends Doclet {
 
         for (final ClassDoc cd : classes) {
 
-            final ClassStepTags classStepTags = new ClassStepTags(cd.qualifiedName());
+            final StepImplementationsDescriptor classStepTags = new StepImplementationsDescriptor(
+                    cd.qualifiedName());
 
             classStepTagsList.add(classStepTags);
 
@@ -84,7 +85,7 @@ public class CustomDoclet extends Doclet {
                     if (annotation != null)
 
                     {
-                        final StepTags expression = new StepTags();
+                        final StepDescriptor expression = new StepDescriptor();
 
                         classStepTags.addStepTags(expression);
 
