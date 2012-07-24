@@ -1,28 +1,13 @@
 /*
- *	Copyright Technophobia Ltd 2012
- *
- *   This file is part of Substeps.
- *
- *    Substeps is free software: you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published by
- *    the Free Software Foundation, either version 3 of the License, or
- *    (at your option) any later version.
- *
- *    Substeps is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
- *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Substeps.  If not, see <http://www.gnu.org/licenses/>.
+ * NB. Although this file is part of the Technophobia SubSteps glossary builder, this implementation was taken from
+ * http://maven.40175.n5.nabble.com/Adding-project-dependencies-and-generated-classes-to-classpath-of-my-plugin-td110119.html
  */
-package com.technophobia.substeps.runner;
+package com.technophobia.substeps.glossary;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.codehaus.classworlds.ClassRealm;
@@ -53,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public class IncludeProjectDependenciesComponentConfigurator extends AbstractComponentConfigurator {
 
-    private static final Logger LOGGER = LoggerFactory
+    private static final Logger logger = LoggerFactory
             .getLogger(IncludeProjectDependenciesComponentConfigurator.class);
 
 
@@ -75,13 +60,11 @@ public class IncludeProjectDependenciesComponentConfigurator extends AbstractCom
 
     private void addProjectDependenciesToClassRealm(final ExpressionEvaluator expressionEvaluator,
             final ClassRealm containerRealm) throws ComponentConfigurationException {
-        List<String> runtimeClasspathElements;
 
-        List<String> testClasspathElements;
+        List<String> testClasspathElements = null;
+
         try {
             // noinspection unchecked
-            runtimeClasspathElements = (List<String>) expressionEvaluator
-                    .evaluate("${project.runtimeClasspathElements}");
 
             testClasspathElements = (List<String>) expressionEvaluator
                     .evaluate("${project.testClasspathElements}");
@@ -91,15 +74,15 @@ public class IncludeProjectDependenciesComponentConfigurator extends AbstractCom
                     "There was a problem evaluating: ${project.runtimeClasspathElements}", e);
         }
 
-        runtimeClasspathElements.addAll(testClasspathElements);
+        if (testClasspathElements != null) {
+            // Add the project test dependencies to the ClassRealm
+            final URL[] testUrls = buildURLs(testClasspathElements);
+            for (final URL url : testUrls) {
+                containerRealm.addConstituent(url);
 
-        Collections.reverse(runtimeClasspathElements);
-
-        // Add the project dependencies to the ClassRealm
-        final URL[] urls = buildURLs(runtimeClasspathElements);
-        for (final URL url : urls) {
-            containerRealm.addConstituent(url);
+            }
         }
+
     }
 
 
@@ -111,8 +94,10 @@ public class IncludeProjectDependenciesComponentConfigurator extends AbstractCom
             try {
                 final URL url = new File(element).toURI().toURL();
                 urls.add(url);
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Added to project class loader: " + url);
+
+                // System.out.println("Added to project class loader: " + url);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Added to project class loader: " + url);
                 }
             } catch (final MalformedURLException e) {
                 throw new ComponentConfigurationException("Unable to access project dependency: "

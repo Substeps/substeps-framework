@@ -32,119 +32,115 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
-
 import com.google.common.io.Files;
-import com.technophobia.substeps.runner.GlossaryPublisher;
-
 
 /**
  * @author ian
- *
+ * 
  */
-public class HTMLSubstepsPublisher implements GlossaryPublisher
-{
-	
+public class HTMLSubstepsPublisher implements GlossaryPublisher {
+
     /**
      * @parameter default-value = stepimplementations.html
      */
     private File outputFile;
 
 
-	/* (non-Javadoc)
-	 * @see com.technophobia.substeps.runner.GlossaryPublisher#publish(java.util.List)
-	 */
-	public void publish(final List<ClassStepTags> classStepTags)
-	{
-		final Map<String, List<StepTags>> sectionSorted = new TreeMap<String, List<StepTags>>();
-		
-		for (final ClassStepTags cst : classStepTags){
-			
-			for (final StepTags stepTag : cst.getExpressions()){
-				
-				String section = stepTag.getSection();
-				if (section == null){
-					section = "Miscellaneous";
-				}
-				
-				List<StepTags> subList = sectionSorted.get(section);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.technophobia.substeps.runner.GlossaryPublisher#publish(java.util.
+     * List)
+     */
+    public void publish(final List<StepImplementationsDescriptor> stepimplementationDescriptors) {
+        final Map<String, List<StepDescriptor>> sectionSorted = new TreeMap<String, List<StepDescriptor>>();
 
-				if (subList == null)
-				{
-					subList = new ArrayList<StepTags>();
-					sectionSorted.put(section, subList);
-				}
-				subList.add(stepTag);
-			}
-		}
-		
-		final String html = buildHtml(sectionSorted); 
+        for (final StepImplementationsDescriptor descriptor : stepimplementationDescriptors) {
 
-		outputFile.delete();
-		
-		// write out
-		try
-		{
-			if (outputFile.createNewFile()){
-				Files.write(html, outputFile, Charset.defaultCharset());
-			}
-			else {
-				// TODO
-			}
-		}
-		catch (final IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+            for (final StepDescriptor stepTag : descriptor.getExpressions()) {
+
+                String section = stepTag.getSection();
+                if (section == null || section.isEmpty()) {
+                    section = "Miscellaneous";
+                }
+
+                List<StepDescriptor> subList = sectionSorted.get(section);
+
+                if (subList == null) {
+                    subList = new ArrayList<StepDescriptor>();
+                    sectionSorted.put(section, subList);
+                }
+                subList.add(stepTag);
+            }
+        }
+
+        final String html = buildHtml(sectionSorted);
+
+        outputFile.delete();
+
+        // write out
+        try {
+            if (outputFile.createNewFile()) {
+                Files.write(html, outputFile, Charset.defaultCharset());
+            } else {
+                // TODO
+            }
+        } catch (final IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
 
-	/**
-	 * @param sectionSorted
-	 */
-	private String buildHtml(final Map<String, List<StepTags>> sectionSorted)
-	{
-		final StringBuilder buf = new StringBuilder();
-		
-		buf.append("<html><head></head><body> <table border=\"1\">\n<tr><th>Keyword</th> <th>Example</th> <th>Description</th></tr>\n");
-		
-//		buf.append(String.format(TRAC_TABLE_FORMAT, "'''Keyword'''", "'''Example'''", "'''Description'''"))
-//				.append("\n");
+    /**
+     * @param sectionSorted
+     */
+    private String buildHtml(final Map<String, List<StepDescriptor>> sectionSorted) {
+        final StringBuilder buf = new StringBuilder();
 
-		final Set<Entry<String, List<StepTags>>> entrySet = sectionSorted.entrySet();
+        buf.append("<html><head></head><body> <table border=\"1\">\n<tr><th>Keyword</th> <th>Example</th> <th>Description</th></tr>\n");
 
-		for (final Entry<String, List<StepTags>> e : entrySet)
-		{
-			buf.append(String.format(TABLE_ROW_SECTION_FORMAT, e.getKey() )).append("\n");
+        // buf.append(String.format(TRAC_TABLE_FORMAT, "'''Keyword'''",
+        // "'''Example'''", "'''Description'''"))
+        // .append("\n");
 
-			buildStepTagRows(buf, e.getValue());
-		}
-		
-		buf.append("</table></body></html>");
-		return buf.toString();
-	}
-	
-	
-	private void buildStepTagRows(final StringBuilder buf, final List<StepTags> infos)
-	{
+        final Set<Entry<String, List<StepDescriptor>>> entrySet = sectionSorted.entrySet();
 
-		Collections.sort(infos, new Comparator<StepTags>()
-		{
-			public int compare(final StepTags s1, final StepTags s2)
-			{
-				return s1.getExpression().compareTo(s2.getExpression());
-			}
-		});
+        for (final Entry<String, List<StepDescriptor>> e : entrySet) {
+            buf.append(String.format(TABLE_ROW_SECTION_FORMAT, e.getKey())).append("\n");
 
-		for (final StepTags info : infos)
-		{
-			buf.append(String.format(TABLE_ROW_FORMAT, 
-					StringEscapeUtils.escapeHtml(info.getExpression()), info.getExample(), info.getDescription() )).append("\n");
+            buildStepTagRows(buf, e.getValue());
+        }
 
-		}
-	}
-	private static final String TABLE_ROW_SECTION_FORMAT = "<tr><td colspan=\"3\"><strong>%s</strong></td></tr>";
-	
-	private static final String TABLE_ROW_FORMAT = "<tr><td>%s</td><td>%s</td><td>%s</td></tr>";
+        buf.append("</table></body></html>");
+        return buf.toString();
+    }
+
+
+    private void buildStepTagRows(final StringBuilder buf, final List<StepDescriptor> infos) {
+
+        Collections.sort(infos, new Comparator<StepDescriptor>() {
+            public int compare(final StepDescriptor s1, final StepDescriptor s2) {
+                return s1.getExpression().compareTo(s2.getExpression());
+            }
+        });
+
+        for (final StepDescriptor info : infos) {
+
+            System.out.println("info non escaped: " + info.getExpression() + "\n\tescaped:\n"
+                    + StringEscapeUtils.escapeHtml(info.getExpression()));
+
+            buf.append(
+                    String.format(TABLE_ROW_FORMAT,
+                            StringEscapeUtils.escapeHtml(info.getExpression()), info.getExample(),
+                            StringEscapeUtils.escapeHtml(info.getDescription()))).append("\n");
+
+        }
+    }
+
+    private static final String TABLE_ROW_SECTION_FORMAT = "<tr><td colspan=\"3\"><strong>%s</strong></td></tr>";
+
+    private static final String TABLE_ROW_FORMAT = "<tr><td>%s</td><td>%s</td><td>%s</td></tr>";
 
 }

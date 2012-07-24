@@ -33,152 +33,133 @@ import com.technophobia.substeps.runner.FeatureFileComparator;
 import com.technophobia.substeps.runner.FeatureFileParser;
 import com.technophobia.substeps.runner.syntax.FileUtils;
 
-
 /**
  * @author ian
- *
+ * 
  */
-public class SubstepsToHTML
-{
-	/**
-	 * @param args
-	 */
-	public static void main(final String[] args)
-	{
-		// TODO
-		// args featureFile=xxxxx substeps=xxxxx
-		
-		final String featureFile = "/home/ian/TPWork/CapitaBSA_Portal/fp17-contracts-acceptance-tests/src/test/resources/new_bdd_features/TM29/bugfixes.feature";
-		final String substepsFile = "";
-		
-		final SubstepsToHTML converter = new SubstepsToHTML();
-		
-		final String html = 
-		converter.toHTML(featureFile);
-		
-		System.out.println(html);
-	}
+public class SubstepsToHTML {
+    /**
+     * @param args
+     */
+    public static void main(final String[] args) {
+        // TODO
+        // args featureFile=xxxxx substeps=xxxxx
 
-	
-	
-	/**
-	 * @param featureFile
-	 * @return
-	 */
-	private String toHTML(final String featureFile)
-	{
-		final List<FeatureFile> features = loadFeatures(featureFile);
-		
-		final StringBuilder buf = new StringBuilder();
-		
-		if (features != null){
-			
-			for (final FeatureFile ff : features){
-				
-				buf.append("File: " + ff.getSourceFile().getName())
-				.append("\n\n");
-				toHTML(ff, buf);
-				
-			}
-			
-		}
-		return buf.toString();
-	}
+        final String featureFile = "/path to feature";
+        final String substepsFile = "";
+
+        final SubstepsToHTML converter = new SubstepsToHTML();
+
+        final String html = converter.toHTML(featureFile);
+
+        System.out.println(html);
+    }
 
 
+    /**
+     * @param featureFile
+     * @return
+     */
+    private String toHTML(final String featureFile) {
+        final List<FeatureFile> features = loadFeatures(featureFile);
 
-	/**
-	 * @param ff
-	 * @param buf 
-	 * @return
-	 */
-	private String toHTML(final FeatureFile ff, final StringBuilder buf)
-	{
-		appendTags(ff.getTags(), buf);
+        final StringBuilder buf = new StringBuilder();
 
-		appendKeyword("Red", "Feature", ff.getName(), buf);
-		
-		if (ff.getDescription() != null){
-			buf.append(ff.getDescription());
-		}
-		
-		for (final Scenario scenario : ff.getScenarios()){
-			
-			toHTML(scenario, buf);
-		}
-		
-		return ff.getRawText();
-	}
+        if (features != null) {
 
-	
+            for (final FeatureFile ff : features) {
+
+                buf.append("File: " + ff.getSourceFile().getName()).append("\n\n");
+                toHTML(ff, buf);
+
+            }
+
+        }
+        return buf.toString();
+    }
 
 
-	/**
-	 * @param scenario
-	 * @param buf
-	 */
-	private void toHTML(final Scenario scenario, final StringBuilder buf)
-	{
-		appendTags(scenario.getTags(), buf);
-		
-		
-		
-		if (scenario.isOutline()){
+    /**
+     * @param ff
+     * @param buf
+     * @return
+     */
+    private String toHTML(final FeatureFile ff, final StringBuilder buf) {
+        appendTags(ff.getTags(), buf);
 
-			appendKeyword("Blue", "Scenario Outline", scenario.getDescription(), buf);
-		}
-		else {
-			appendKeyword("Blue", "Scenario", scenario.getDescription(), buf);
-		}
-				
-		buf.append("<div style=\"position:relative;left:5em\">");
-		for (final Step step : scenario.getSteps()){
-			
-			buf.append(StringEscapeUtils.escapeHtml(step.getLine()))
-			.append("<br/>")
-			.append("\n");
-		}
-		buf.append("</div>");
-		buf.append("<br/><br/>\n");
-		// TODO
-		//scenario.getExampleParameters();
-	}
-	
-	private void appendTags(final Set<String> tags, final StringBuilder buf){
-		
-		if (tags != null){
-			
-			appendKeyword("Green", "Tags", null, buf);
-			
-			for (final String tag : tags){
-				buf.append(tag)
-				.append("<br/>\n");
-			}
-			
-			buf.append("<br/>\n");
-		}
-	}	
+        appendKeyword("Red", "Feature", ff.getName(), buf);
 
-	
-	private void appendKeyword(final String colour, final String keyword, final String description, final StringBuilder buf){
-		buf.append("<span style=\"color:")
-		.append(colour)
-		.append(";\">")
-		.append(keyword)
-		.append(":</span> ");
-		
-		if (description != null){
-			buf.append(description);
-//			.append("<br/>");			
-		}
-		buf.append("<br/>\n");
-	}
-	
+        if (ff.getDescription() != null) {
+            buf.append(ff.getDescription());
+        }
 
-	private List<FeatureFile> loadFeatures(final String featureFile ){
-	
-		List<FeatureFile> featureFileList = null;
-		
+        for (final Scenario scenario : ff.getScenarios()) {
+
+            toHTML(scenario, buf);
+        }
+
+        return ff.getRawText();
+    }
+
+
+    /**
+     * @param scenario
+     * @param buf
+     */
+    private void toHTML(final Scenario scenario, final StringBuilder buf) {
+        appendTags(scenario.getTags(), buf);
+
+        if (scenario.isOutline()) {
+
+            appendKeyword("Blue", "Scenario Outline", scenario.getDescription(), buf);
+        } else {
+            appendKeyword("Blue", "Scenario", scenario.getDescription(), buf);
+        }
+
+        buf.append("<div style=\"position:relative;left:5em\">");
+        for (final Step step : scenario.getSteps()) {
+
+            buf.append(StringEscapeUtils.escapeHtml(step.getLine())).append("<br/>").append("\n");
+        }
+        buf.append("</div>");
+        buf.append("<br/><br/>\n");
+        // TODO
+        // scenario.getExampleParameters();
+    }
+
+
+    private void appendTags(final Set<String> tags, final StringBuilder buf) {
+
+        if (tags != null) {
+
+            appendKeyword("Green", "Tags", null, buf);
+
+            for (final String tag : tags) {
+                buf.append(tag).append("<br/>\n");
+            }
+
+            buf.append("<br/>\n");
+        }
+    }
+
+
+    private void appendKeyword(final String colour, final String keyword, final String description,
+            final StringBuilder buf) {
+        buf.append("<span style=\"color:").append(colour).append(";\">").append(keyword)
+                .append(":</span> ");
+
+        if (description != null) {
+            buf.append(description);
+            // .append("<br/>");
+        }
+        buf.append("<br/>\n");
+    }
+
+
+    private List<FeatureFile> loadFeatures(final String featureFile) {
+
+        List<FeatureFile> featureFileList = null;
+
         final List<File> featureFiles = FileUtils.getFiles(new File(featureFile), ".feature");
 
         final FeatureFileParser fp2 = new FeatureFileParser();
@@ -193,7 +174,7 @@ public class SubstepsToHTML
         }
 
         Collections.sort(featureFileList, new FeatureFileComparator());
-        
+
         return featureFileList;
-	}
+    }
 }

@@ -18,44 +18,17 @@
  */
 package com.technophobia.substeps.glossary;
 
-import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * @author ian
- *
+ * 
  */
-public class ClassStepTags
-{
+public interface GlossaryPublisher {
 
-	private final List<StepTags> expressions;
-	private final String className;
-	
-	public ClassStepTags(final String className){
-		this.className = className;
-		this.expressions = new ArrayList<StepTags>();	
-	}
-	
-	public void addStepTags (final StepTags stepTag){
-		this.expressions.add(stepTag);
-	}
+    /**
+     * @param classStepTags
+     */
+    void publish(List<StepImplementationsDescriptor> classStepTags);
 
-	/**
-	 * @return the expressions
-	 */
-	public List<StepTags> getExpressions()
-	{
-		return expressions;
-	}
-
-	/**
-	 * @return the className
-	 */
-	public String getClassName()
-	{
-		return className;
-	}
-	
-	
 }

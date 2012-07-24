@@ -29,8 +29,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.technophobia.substeps.execution.ExecutionNode;
+import com.technophobia.substeps.glossary.SubstepsGlossaryMojo;
 import com.technophobia.substeps.runner.ExecutionConfig;
-import com.technophobia.substeps.runner.SubstepsGlossaryMojo;
 
 /**
  * 

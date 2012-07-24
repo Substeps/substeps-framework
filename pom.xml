@@ -1,11 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.technophobia.substeps</groupId>
-	<artifactId>substeps-glossary</artifactId>
+	<artifactId>substeps-glossary-builder</artifactId>
 	<packaging>maven-plugin</packaging>
+
+    <!-- for OSS hosting -->
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+
 	<version>0.0.1-SNAPSHOT</version>
 
-	<name>SubSteps Maven Runner</name>
+	<name>SubSteps Glossary Builder</name>
 
    <organization>
         <name>Technophobia Ltd</name>
@@ -40,13 +48,25 @@
 		<hamcrest.version>1.3.RC2</hamcrest.version>
 		<guava.version>10.0</guava.version>
 		<mockito.version>1.9.0-rc1</mockito.version>
-		<substeps.version>0.0.1</substeps.version>
 		<maven.version>2.2.1</maven.version>
 
-		<substeps.version>0.0.2-SNAPSHOT</substeps.version>
-
+		<substeps.version>0.0.6-SNAPSHOT</substeps.version>
+        
+        <xstream.version>1.4.2</xstream.version>
+        <!--  
+        
+        THESE PROPERTIES NEED TO BE DEFINED IN AN ACTIVE PROFILE IN SETTINGS.XML 
+        
+        <substeps-glossary.scm>scm:git:git://github.com/${your username}/substeps-glossary.git<substeps-glossary.scm>
+        <substeps-glossary.scm.url> <substeps-glossary.scm.url>
+        
 		<nexus.snapshot.artifacts>internalsnapshots</nexus.snapshot.artifacts>
 		<nexus.release.artifacts>internalreleases</nexus.release.artifacts>
+        
+          <nexus.snapshot.url>http://someserver.com/${nexus.snapshot.artifacts}/</nexus.snapshot.url>
+        <nexus.releases.url>http://someserver.com/${nexus.release.artifacts}/</nexus.releases.url>
+        
+        -->
 	</properties>
 
 
@@ -82,6 +102,29 @@
 		</plugins>
 	</build>
 
+   <profiles>
+        
+        <!-- A profile used by default for internal dev, using the repos set up in proeprties defined above, rather than the OSS nexus repos -->    
+        <profile>
+            <id>internalDev</id>
+             
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>${nexus.snapshot.artifacts}</id>
+                    <name>${nexus.snapshot.artifacts}</name>
+                    <url>${nexus.snapshot.url}</url>
+                    <uniqueVersion>false</uniqueVersion>
+                </snapshotRepository>
+                <repository>
+                    <id>${nexus.release.artifacts}</id>
+                    <name>${nexus.release.artifacts}</name>
+                    <url>${nexus.releases.url}</url>
+                </repository>
+            </distributionManagement>
+            
+        </profile>
+    </profiles>
+
 	<dependencies>
 
 		<dependency>
@@ -103,30 +146,35 @@
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-artifact</artifactId>
 			<version>${maven.version}</version>
+             <scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-plugin-api</artifactId>
 			<version>${maven.version}</version>
+             <scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-project</artifactId>
 			<version>${maven.version}</version>
+             <scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-model</artifactId>
 			<version>${maven.version}</version>
+             <scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-core</artifactId>
-			<version>2.0.9</version>
+			<version>${maven.version}</version>
+             <scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -161,7 +209,7 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.10</version>
-
+            <scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -170,28 +218,21 @@
 			<version>${guava.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>${mockito.version}</version>
-		</dependency>
 
-		<dependency>
-			<groupId>com.technophobia.substeps</groupId>
-			<artifactId>substeps-core</artifactId>
-			<version>${substeps.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>${xstream.version}</version>
+        </dependency>
 
-		<dependency>
-		    <groupId>com.thoughtworks.xstream</groupId>
-		    <artifactId>xstream</artifactId>
-		    <version>1.4.2</version>
-		</dependency>
 
 	</dependencies>
 
     <scm>
-        <connection>${scm}</connection>
+        
+        <connection>${substeps-glossary.scm}</connection>
+        <developerConnection>${substeps-glossary.scm}</developerConnection>
+        <url>${substeps-glossary.scm.url}</url>
     </scm>
 
 
