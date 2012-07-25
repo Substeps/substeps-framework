@@ -7,3 +7,4 @@ Substeps Runner - Release Notes
 -----
 - Changes as a result of core changes to Notifications.
 - BUG: failures in @BeforeAllFeatures not failing the maven build
+- Doc changes clarified use of tags
