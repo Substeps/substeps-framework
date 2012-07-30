@@ -92,7 +92,7 @@ public class SubstepsRunnerMojo extends AbstractMojo {
     /**
      * @parameter
      */
-    private ExecutionReportBuilder executionReportBuilder;
+    private final ExecutionReportBuilder executionReportBuilder = null;
 
     private List<ExecutionNode> failedNodes = null;
     private List<ExecutionNode> nonFatalFailedNodes = null;
@@ -118,7 +118,9 @@ public class SubstepsRunnerMojo extends AbstractMojo {
             checkRootNodeForFailure(rootNode, executionConfig);
         }
 
-        executionReportBuilder.buildReport(data);
+        if (executionReportBuilder != null) {
+            executionReportBuilder.buildReport(data);
+        }
 
         determineBuildFailure();
 
