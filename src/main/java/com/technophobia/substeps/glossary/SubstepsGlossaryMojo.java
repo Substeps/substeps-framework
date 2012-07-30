@@ -34,7 +34,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.classworlds.ClassRealm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,12 +72,6 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
      * @required
      */
     private String[] stepImplementationClassNames;
-
-    /**
-     * @parameter default-value="${plugin.classRealm}"
-     * @required
-     */
-    private ClassRealm containerRealm;
 
     /**
      * @parameter
