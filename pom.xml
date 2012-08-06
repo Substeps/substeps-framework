@@ -147,13 +147,30 @@
 			<version>${maven.version}</version>
             <scope>provided</scope>
 		</dependency>
-		<dependency>
+<!--  		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-core</artifactId>
-			<version>${maven.version}</version> <!--  was 2.0.9 -->
+			<version>${maven.version}</version> 
             <scope>provided</scope>
-		</dependency>
+            
+            <exclusions>
+            	<exclusion>
+	            	<artifactId>org.slf4j</artifactId>
+	            	<groupId>slf4j-jdk14</groupId>
+	            </exclusion>
 
+            	<exclusion>
+	            	<artifactId>org.slf4j</artifactId>
+	            	<groupId>slf4j-nop</groupId>
+	            </exclusion>
+	            
+	            
+            </exclusions>
+            
+            
+            
+		</dependency>
+-->
 		<dependency>
 			<groupId>org.apache.maven.shared</groupId>
 			<artifactId>maven-plugin-testing-harness</artifactId>
@@ -161,12 +178,21 @@
 			<scope>test</scope>
 		</dependency>
 
-		 <dependency>
+
+         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.4</version>
+            <scope>test</scope>
+        </dependency>
+
+
+<!-- 		 <dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.6.4</version>
 		</dependency> 
-
+ -->
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-core</artifactId>

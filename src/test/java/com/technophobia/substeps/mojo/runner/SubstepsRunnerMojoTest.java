@@ -29,7 +29,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.technophobia.substeps.execution.ExecutionNode;
+import com.technophobia.substeps.runner.BuildFailureManager;
 import com.technophobia.substeps.runner.ExecutionConfig;
+import com.technophobia.substeps.runner.Runner;
 import com.technophobia.substeps.runner.SubstepsRunnerMojo;
 
 /**
@@ -41,6 +43,27 @@ import com.technophobia.substeps.runner.SubstepsRunnerMojo;
  */
 public class SubstepsRunnerMojoTest {
 
+	//@Test
+	public void testNonCriticalFailures() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException{
+	
+		
+		
+        final SubstepsRunnerMojo mojo = new SubstepsRunnerMojo();
+
+        final Method executeInternalMethod = mojo.getClass().getMethod("executeInternal",
+        		Runner.class, BuildFailureManager.class, List.class);
+        
+        Assert.assertNotNull(executeInternalMethod);
+        executeInternalMethod.setAccessible(true);
+
+        final Runner runner = null;
+        final BuildFailureManager bfm = null;
+        final List<ExecutionConfig> cfgList = null;
+        
+        executeInternalMethod.invoke(runner, bfm, cfgList);
+
+	}
+	
     @Ignore("incomplete test")
     @Test
     public void testCriticalNonCriticalFailures() throws SecurityException, NoSuchMethodException,
