@@ -100,6 +100,7 @@ public class BuildFailureManager
             }
         }
 
+        // TODO this was put in to fail the build if the before features setup fails. - breaks non-criticality though
         if (rootNode.hasError()) {
             if (failedNodes == null) {
                 failedNodes = new ArrayList<ExecutionNode>();
