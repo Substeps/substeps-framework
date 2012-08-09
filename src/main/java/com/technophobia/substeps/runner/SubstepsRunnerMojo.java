@@ -20,11 +20,8 @@ package com.technophobia.substeps.runner;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -50,14 +47,7 @@ import com.technophobia.substeps.report.ReportData;
  */
 public class SubstepsRunnerMojo extends AbstractMojo {
 
-    public static void printRed(final String msg) {
 
-        // TODO
-        System.out.println(msg);
-    }
-
-    // private final Logger log =
-    // LoggerFactory.getLogger(SubstepsRunnerMojo.class);
 
     /**
      * Location of the file.
@@ -94,19 +84,27 @@ public class SubstepsRunnerMojo extends AbstractMojo {
      */
     private final ExecutionReportBuilder executionReportBuilder = null;
 
-    private List<ExecutionNode> failedNodes = null;
-    private List<ExecutionNode> nonFatalFailedNodes = null;
-
-
     public void execute() throws MojoExecutionException, MojoFailureException {
+
+        final BuildFailureManager buildFailureManager = new BuildFailureManager();
+
+        executeInternal(buildFailureManager, executionConfigs);
+    }
+    
+    private void executeInternal(final BuildFailureManager buildFailureManager, 
+    		final List<ExecutionConfig> executionConfigList) throws MojoFailureException {
 
         final ReportData data = new ReportData();
 
-        Assert.assertNotNull("executionConfigs cannot be null", executionConfigs);
-        Assert.assertFalse("executionConfigs can't be empty", executionConfigs.isEmpty());
+        Assert.assertNotNull("executionConfigs cannot be null", executionConfigList);
+        Assert.assertFalse("executionConfigs can't be empty", executionConfigList.isEmpty());
 
-        for (final ExecutionConfig executionConfig : executionConfigs) {
-            final ExecutionNode rootNode = runExecutionConfig(executionConfig);
+        
+        for (final ExecutionConfig executionConfig : executionConfigList) {
+
+            final List<SubstepExecutionFailure> failures = new ArrayList<SubstepExecutionFailure>();
+        	
+        	final ExecutionNode rootNode = runExecutionConfig(executionConfig, failures);
 
             if (executionConfig.getDescription() != null) {
 
@@ -115,187 +113,39 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
             data.addRootExecutionNode(rootNode);
 
-            checkRootNodeForFailure(rootNode, executionConfig);
+            buildFailureManager.sortFailures(failures);
         }
 
         if (executionReportBuilder != null) {
             executionReportBuilder.buildReport(data);
         }
 
-        determineBuildFailure();
+        
+        if(buildFailureManager.testSuiteFailed()){
+        	
+            throw new MojoFailureException("Substep Execution failed:\n" + buildFailureManager.getBuildFailureInfo());
 
-    }
-
-
-    /**
-     * @throws MojoFailureException
-     * 
-     */
-    private void determineBuildFailure() throws MojoFailureException {
-
-        if (failedNodes != null && !failedNodes.isEmpty()) {
-
-            // fail
-            throw new MojoFailureException("SubStep Execution failed:\n" + getFailureString());
         }
-
-        if (nonFatalFailedNodes != null && !nonFatalFailedNodes.isEmpty()) {
-
-            System.out.println("NON CRITICAL FAILURES:\n\n" + buildInfoString(nonFatalFailedNodes));
+        else if (!buildFailureManager.testSuiteCompletelyPassed()){
+        	// print out the failure string (but won't include any failures)
+        	getLog().info(buildFailureManager.getBuildFailureInfo());
         }
-
+        // else - we're all good
+        
     }
-
-
-    /**
-     * @return
-     */
-    public String getNonFatalInfo() {
-        return buildInfoString(nonFatalFailedNodes);
-    }
-
-
-    private String buildInfoString(final List<ExecutionNode> nodes) {
-        final StringBuilder buf = new StringBuilder();
-
-        final Set<ExecutionNode> dealtWith = new HashSet<ExecutionNode>();
-
-        if (nodes != null) {
-            for (final ExecutionNode node : nodes) {
-                if (!dealtWith.contains(node)) {
-                    final List<ExecutionNode> hierarchy = new ArrayList<ExecutionNode>();
-
-                    hierarchy.add(node);
-
-                    // go up the tree as far as we can go
-                    ExecutionNode parent = node.getParent();
-                    while (parent != null && nodes.contains(parent)) {
-                        hierarchy.add(parent);
-                        parent = parent.getParent();
-                    }
-
-                    Collections.reverse(hierarchy);
-
-                    for (final ExecutionNode node2 : hierarchy) {
-                        buf.append(node2.getDebugStringForThisNode());
-                        dealtWith.add(node2);
-                    }
-                }
-            }
-        }
-        return buf.toString();
-    }
-
-
-    /**
-     * @return
-     */
-    public String getFailureString() {
-        return "NON CRITICAL FAILURES:\n\n" + buildInfoString(nonFatalFailedNodes)
-                + "\n\nCRITICAL FAILURES:\n\n" + buildInfoString(failedNodes);
-    }
-
-
-    /**
-     * @param rootNode
-     * @param executionConfig
-     */
-    private void checkRootNodeForFailure(final ExecutionNode rootNode,
-            final ExecutionConfig executionConfig) {
-
-        TagManager nonFatalTagManager = null;
-        if (executionConfig.getNonFatalTags() != null) {
-            nonFatalTagManager = new TagManager(executionConfig.getNonFatalTags());
-        }
-
-        // any of these failures should be tagged correctly so we can assess for
-        // criticality
-        final List<ExecutionNode> failures = rootNode.getFailedChildNodes();
-
-        if (failures != null) {
-
-            for (final ExecutionNode fail : failures) {
-
-                boolean handled = false;
-                if (nonFatalTagManager != null) {
-
-                    printRed("non fatal tag mgr");
-
-                    final Set<String> tags = fail.getTagsFromHierarchy();
-
-                    final StringBuilder buf = new StringBuilder();
-
-                    if (tags != null) {
-                        for (final String s : tags) {
-                            buf.append(s).append(" ");
-                        }
-                    }
-                    printRed("node has tags: " + buf.toString());
-
-                    final Set<String> acceptedTags = nonFatalTagManager.getAcceptedTags();
-
-                    final StringBuilder buf2 = new StringBuilder();
-                    for (final String s : acceptedTags) {
-                        buf2.append(s).append(" ");
-                    }
-
-                    printRed("acceptedTags: " + buf2.toString());
-
-                    if (nonFatalTagManager.acceptTaggedScenario(tags)) {
-                        // this node is allowed to fail, add to the list of
-                        // warnings
-
-                        if (nonFatalFailedNodes == null) {
-                            nonFatalFailedNodes = new ArrayList<ExecutionNode>();
-                        }
-                        nonFatalFailedNodes.add(fail);
-                        handled = true;
-                        printRed("failure permissable");
-                    }
-                }
-
-                if (!handled) {
-
-                    printRed("** failure not permissable");
-
-                    if (failedNodes == null) {
-                        failedNodes = new ArrayList<ExecutionNode>();
-                    }
-
-                    failedNodes.add(fail);
-                }
-
-            }
-        }
-
-        if (rootNode.hasError()) {
-            if (failedNodes == null) {
-                failedNodes = new ArrayList<ExecutionNode>();
-            }
-
-            failedNodes.add(rootNode);
-        }
-
-    }
-
-
-    /**
-     * @param notifier
-     * @return
-     */
-    private ExecutionNode runExecutionConfig(final ExecutionConfig theConfig) {
-
-        final ExecutionNodeRunner runner = new ExecutionNodeRunner();
-
-        // TODO - If we want to have some fedback of nodes starting / passing /
-        // failing etc then we could add
-        // and INotifier to runner to receive call backs
-
-        final ExecutionNode rootNode = runner.prepareExecutionConfig(theConfig);
-
-        runner.run();
-
-        return rootNode;
+    
+    private ExecutionNode runExecutionConfig(final ExecutionConfig theConfig, 
+			final List<SubstepExecutionFailure> failures ) {
+	
+	    final ExecutionNodeRunner runner = new ExecutionNodeRunner();
+	
+	    final ExecutionNode rootNode = runner.prepareExecutionConfig(theConfig);
+	
+	    final List<SubstepExecutionFailure> localFailures = runner.run();
+	    
+	    failures.addAll(localFailures);
+	    
+	    return rootNode;
     }
 
 }

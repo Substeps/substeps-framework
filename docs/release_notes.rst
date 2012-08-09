@@ -5,7 +5,7 @@ Substeps Runner - Release Notes
 
 0.0.6
 -----
-
+- BUG: Non Fatal failures were still causing the build to fail
 
 
  
