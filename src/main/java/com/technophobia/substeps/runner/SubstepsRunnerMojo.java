@@ -32,10 +32,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.junit.runner.Description;
-import org.junit.runner.notification.RunNotifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.technophobia.substeps.execution.ExecutionNode;
 import com.technophobia.substeps.report.ExecutionReportBuilder;
@@ -60,7 +56,8 @@ public class SubstepsRunnerMojo extends AbstractMojo {
         System.out.println(msg);
     }
 
-    private final Logger log = LoggerFactory.getLogger(SubstepsRunnerMojo.class);
+    // private final Logger log =
+    // LoggerFactory.getLogger(SubstepsRunnerMojo.class);
 
     /**
      * Location of the file.
@@ -91,25 +88,25 @@ public class SubstepsRunnerMojo extends AbstractMojo {
      * @parameter
      */
     private List<ExecutionConfig> executionConfigs;
-    
+
     /**
      * @parameter
      */
-    private ExecutionReportBuilder executionReportBuilder;
+    private final ExecutionReportBuilder executionReportBuilder = null;
 
     private List<ExecutionNode> failedNodes = null;
     private List<ExecutionNode> nonFatalFailedNodes = null;
 
 
     public void execute() throws MojoExecutionException, MojoFailureException {
-        final MojoNotifier notifier = new MojoNotifier();
+
         final ReportData data = new ReportData();
 
         Assert.assertNotNull("executionConfigs cannot be null", executionConfigs);
         Assert.assertFalse("executionConfigs can't be empty", executionConfigs.isEmpty());
 
         for (final ExecutionConfig executionConfig : executionConfigs) {
-            final ExecutionNode rootNode = runExecutionConfig(notifier, executionConfig);
+            final ExecutionNode rootNode = runExecutionConfig(executionConfig);
 
             if (executionConfig.getDescription() != null) {
 
@@ -118,15 +115,12 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
             data.addRootExecutionNode(rootNode);
 
-            // notifier.setNonFatalTagManager(null);
-
-            checkRootNodeForFailure(rootNode, executionConfig);    
+            checkRootNodeForFailure(rootNode, executionConfig);
         }
 
-//        final ExecutionReportBuilder reportBuilder = executionReportBuilderFactory.getReportBuilder();
-        
-//        final ExecutionReportBuilder reportBuilder = new ExecutionReportBuilder();
-        executionReportBuilder.buildReport(data);
+        if (executionReportBuilder != null) {
+            executionReportBuilder.buildReport(data);
+        }
 
         determineBuildFailure();
 
@@ -274,6 +268,14 @@ public class SubstepsRunnerMojo extends AbstractMojo {
             }
         }
 
+        if (rootNode.hasError()) {
+            if (failedNodes == null) {
+                failedNodes = new ArrayList<ExecutionNode>();
+            }
+
+            failedNodes.add(rootNode);
+        }
+
     }
 
 
@@ -281,99 +283,19 @@ public class SubstepsRunnerMojo extends AbstractMojo {
      * @param notifier
      * @return
      */
-    private ExecutionNode runExecutionConfig(final INotifier notifier,
-            final ExecutionConfig theConfig) {
+    private ExecutionNode runExecutionConfig(final ExecutionConfig theConfig) {
 
         final ExecutionNodeRunner runner = new ExecutionNodeRunner();
 
-        final ExecutionNode rootNode = runner.prepareExecutionConfig(theConfig, notifier);
+        // TODO - If we want to have some fedback of nodes starting / passing /
+        // failing etc then we could add
+        // and INotifier to runner to receive call backs
+
+        final ExecutionNode rootNode = runner.prepareExecutionConfig(theConfig);
 
         runner.run();
 
         return rootNode;
-    }
-
-    private static class MojoNotifier implements INotifier {
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see
-         * uk.co.itmoore.bddrunner.runner.INotifier#notifyTestFailed(org.junit
-         * .runner.Description, java.lang.Throwable)
-         */
-        public void notifyTestFailed(final Description arg0, final Throwable arg1) {
-
-            System.out.println("notifyTestFailed desc");
-
-        }
-
-
-        public void notifyTestFinished(final Description arg0) {
-            // System.out.println("notifyTestFinished desc");
-        }
-
-
-        public void notifyTestIgnored(final Description arg0) {
-            // System.out.println("notifyTestIgnored desc");
-        }
-
-
-        public void notifyTestStarted(final Description arg0) {
-            // System.out.println("notifyTestStarted desc");
-        }
-
-
-        public void notifyTestFinished(final ExecutionNode node) {
-            // System.out.println("notifyTestFinished ");
-        }
-
-
-        public void notifyTestFailed(final ExecutionNode node, final Throwable throwable) {
-            // printRed("notifyTestFailed : " +
-            // node.getDebugStringForThisNode());
-
-        }
-
-
-        public void notifyTestStarted(final ExecutionNode arg0) {
-
-        }
-
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see uk.co.itmoore.bddrunner.runner.INotifier#pleaseStop()
-         */
-        public void pleaseStop() {
-
-        }
-
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see
-         * uk.co.itmoore.bddrunner.runner.INotifier#setJunitRunNotifier(org.
-         * junit.runner.notification.RunNotifier)
-         */
-        public void setJunitRunNotifier(final RunNotifier arg0) {
-
-        }
-
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see
-         * uk.co.itmoore.bddrunner.runner.INotifier#addListener(uk.co.itmoore
-         * .bddrunner.runner.INotifier)
-         */
-        public void addListener(final INotifier arg0) {
-
-        }
-
     }
 
 }

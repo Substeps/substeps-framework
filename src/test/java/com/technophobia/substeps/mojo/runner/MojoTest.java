@@ -51,6 +51,8 @@ public class MojoTest extends AbstractMojoTestCase {
 
         final SubstepsRunnerMojo mojo = (SubstepsRunnerMojo) lookupMojo("integration-test", testPom);
 
+        // TODO
+
         assertNotNull(mojo);
     }
 }
