@@ -19,6 +19,7 @@
 package com.technophobia.substeps.runner;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -83,18 +84,14 @@ public class SubstepsRunnerMojo extends AbstractMojo {
      */
     private final ExecutionReportBuilder executionReportBuilder = null;
 
-
-
     public void execute() throws MojoExecutionException, MojoFailureException {
 
-        final Runner runner = new Runner();
         final BuildFailureManager buildFailureManager = new BuildFailureManager();
 
-        executeInternal(runner, buildFailureManager, executionConfigs);
+        executeInternal(buildFailureManager, executionConfigs);
     }
     
-    // internal execute method to make easier to test
-    private void executeInternal(final Runner runner, final BuildFailureManager buildFailureManager, 
+    private void executeInternal(final BuildFailureManager buildFailureManager, 
     		final List<ExecutionConfig> executionConfigList) throws MojoFailureException {
 
         final ReportData data = new ReportData();
@@ -102,8 +99,12 @@ public class SubstepsRunnerMojo extends AbstractMojo {
         Assert.assertNotNull("executionConfigs cannot be null", executionConfigList);
         Assert.assertFalse("executionConfigs can't be empty", executionConfigList.isEmpty());
 
+        
         for (final ExecutionConfig executionConfig : executionConfigList) {
-            final ExecutionNode rootNode = runner.runExecutionConfig(executionConfig);
+
+            final List<SubstepExecutionFailure> failures = new ArrayList<SubstepExecutionFailure>();
+        	
+        	final ExecutionNode rootNode = runExecutionConfig(executionConfig, failures);
 
             if (executionConfig.getDescription() != null) {
 
@@ -112,14 +113,39 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
             data.addRootExecutionNode(rootNode);
 
-            buildFailureManager.checkRootNodeForFailure(rootNode, executionConfig.getNonFatalTags());
+            buildFailureManager.sortFailures(failures);
         }
 
         if (executionReportBuilder != null) {
             executionReportBuilder.buildReport(data);
         }
 
-        buildFailureManager.determineBuildFailure();
+        
+        if(buildFailureManager.testSuiteFailed()){
+        	
+            throw new MojoFailureException("Substep Execution failed:\n" + buildFailureManager.getBuildFailureInfo());
 
+        }
+        else if (!buildFailureManager.testSuiteCompletelyPassed()){
+        	// print out the failure string (but won't include any failures)
+        	getLog().info(buildFailureManager.getBuildFailureInfo());
+        }
+        // else - we're all good
+        
     }
+    
+    private ExecutionNode runExecutionConfig(final ExecutionConfig theConfig, 
+			final List<SubstepExecutionFailure> failures ) {
+	
+	    final ExecutionNodeRunner runner = new ExecutionNodeRunner();
+	
+	    final ExecutionNode rootNode = runner.prepareExecutionConfig(theConfig);
+	
+	    final List<SubstepExecutionFailure> localFailures = runner.run();
+	    
+	    failures.addAll(localFailures);
+	    
+	    return rootNode;
+    }
+
 }
