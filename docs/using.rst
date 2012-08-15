@@ -69,8 +69,8 @@ Below is a table of the execution configuration parameters and their meaning.
 | stepImplementationClassNames | List of classes containing step implementations                                                                                                                                                        | |
 |                              | eg <param>com.technophobia.substeps.StepImplmentations<param>                                                                                                                                          | |
 +------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-+
-| initialisationClass          | Ordered list of classes containing setup and tear down methods                                                                                                                                         | |
-|                              | eg <param>com.technophobia.substeps.MySetup<param>                                                                                                                                                     | |
+| initialisationClass          | <**optional**> Ordered list of classes containing setup and tear down methods                                                                                                                          | |
+|                              | eg <param>com.technophobia.substeps.MySetup<param>.   By default the initialisation classes associated with the step implementations will be used.                                                     | |
 +------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-+
 | tags                         | <**optional**> If the feature or scenario has these tags, then it will be                                                                                                                              | |
 |                              | included, otherwise it won't. multiple tags are space seperated.  Tags can be excluded by prefixing with --                                                                                            | |
@@ -104,14 +104,14 @@ Example Pom fragment
          <param>com.technophobia.webdriver.substeps.impl.BaseWebdriverSubStepImplementations</param>
          <param>com.technophobia.webdriver.substeps.example.ExampleCustomWebdriverStepImplementations</param>
      </stepImplementationClassNames>
-   
+
+     <!-- optional attributes -->
+      
      <initialisationClass>
          <param>com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown</param>
          <param>com.technophobia.webdriver.substeps.example.ExampleSetupAndTearDown</param>
      </initialisationClass>
       
-      <!-- optional attributes -->
-   
      <tags>@all</tags>  
      
      <nonFatalTags>@new_phase</nonFatalTags>
