@@ -92,6 +92,7 @@ Below is a table of the execution configuration parameters and their meaning.
 Example Pom fragment
 
 .. code-block:: xml
+
    <executionConfig>
    
      <description>Self Test Features</description> 
@@ -127,7 +128,6 @@ Example Pom fragment
          <param>And</param>
      </nonStrictKeywordPrecedence>
 
-
    </executionConfig>
          
 
@@ -140,6 +140,7 @@ Reporting
 - Typically we use a 'post-build' task to move the HTML report elsewhere and create a permanent link. (In Jenkins this can be achieved with the HTMLPublisher plugin).    
 
 .. code-block:: xml
+
       <configuration>
          ...
          <executionReportBuilder implementation="com.technophobia.substeps.report.DefaultExecutionReportBuilder">
