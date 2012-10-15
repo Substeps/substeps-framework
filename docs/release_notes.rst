@@ -3,11 +3,13 @@ Substeps Runner - Release Notes
 
 - A list of changes per release 
 
+1.0.0
+-----
+- changes to support new reporting changes and the 1.0.0 release of substeps-core
+
 0.0.6
 -----
 - BUG: Non Fatal failures were still causing the build to fail
-
-
  
 0.0.5
 -----
