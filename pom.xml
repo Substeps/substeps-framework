@@ -74,7 +74,7 @@
 		<hamcrest.version>1.3.RC2</hamcrest.version>
 		<guava.version>10.0</guava.version>
 		<mockito.version>1.9.0-rc1</mockito.version>
-		<substeps.version>1.0.0</substeps.version>
+		<substeps.version>1.0.1</substeps.version>
 		<maven.version>2.2.1</maven.version>
 
 
