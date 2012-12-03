@@ -1,0 +1,84 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.technophobia.substeps</groupId>
+	<artifactId>substeps-junit-runner</artifactId>
+
+	<packaging>jar</packaging>
+
+	<parent>
+		<groupId>com.technophobia.substeps</groupId>
+		<artifactId>substeps-runner-parent</artifactId>
+		<version>1.0.2-SNAPSHOT</version>
+	</parent>
+
+	<name>SubSteps JUnit Runner</name>
+
+	<description>A junit runner for substeps</description>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+
+				<executions>
+					<execution>
+						<phase>test-compile</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+
+						<configuration>
+
+							<includeArtifactIds>substeps-core</includeArtifactIds>
+							<includeTypes>test-jar</includeTypes>
+							<outputDirectory>${project.build.directory}/core-tests</outputDirectory>
+						</configuration>
+
+					</execution>
+				</executions>
+
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.technophobia.substeps</groupId>
+			<artifactId>substeps-runner-common</artifactId>
+		</dependency>
+
+		<!-- Although this has a dependency on core it is important that the scope 
+			is TEST -->
+		<dependency>
+			<groupId>com.technophobia.substeps</groupId>
+			<artifactId>substeps-core</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.technophobia.substeps</groupId>
+			<artifactId>substeps-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
+
+	</dependencies>
+
+</project>
