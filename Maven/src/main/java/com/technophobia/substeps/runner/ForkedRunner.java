@@ -2,7 +2,7 @@ package com.technophobia.substeps.runner;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -183,13 +183,15 @@ public class ForkedRunner implements MojoRunner {
 
         final String classpath = createClasspathString();
 
-        final List<String> command = new ArrayList<String>();
+        final List<String> command = Lists.newArrayList();
         command.add("java");
         command.add("-Dfile.encoding=UTF-8");
         command.add("-Dcom.sun.management.jmxremote.port=" + this.jmxPort);
         command.add("-Dcom.sun.management.jmxremote.authenticate=false");
         command.add("-Dcom.sun.management.jmxremote.ssl=false");
         command.add("-Djava.rmi.server.hostname=localhost");
+
+        addCurrentVmArgs(command);
 
         if (this.vmArgs != null && !this.vmArgs.isEmpty()) {
             final String[] args = this.vmArgs.split(" ");
@@ -203,6 +205,16 @@ public class ForkedRunner implements MojoRunner {
         command.add(classpath);
         command.add("com.technophobia.substeps.jmx.SubstepsJMXServer");
         return command;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void addCurrentVmArgs(List<String> command) {
+
+        for (String key : (List<String>) Collections.list(System.getProperties().propertyNames())) {
+
+            command.add("-D" + key + "=" + System.getProperty(key));
+        }
+
     }
 
     private String createClasspathString() throws MojoExecutionException {
