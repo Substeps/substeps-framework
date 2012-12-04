@@ -70,10 +70,15 @@ public class SubstepsJMXClient implements SubstepsRunner {
             this.mbean = MBeanServerInvocationHandler.newProxyInstance(mbsc, objectName, SubstepsServerMBean.class,
                     false);
 
-        } catch (final IOException | MalformedObjectNameException | NullPointerException e) {
+        } catch (final IOException e) {
 
-            // Eclipse grumbles about cntor not being closed, but it will be by
-            // the finally block below..
+            throw new MojoExecutionException("Failed to connect to substeps server", e);
+
+        } catch (NullPointerException e) {
+
+            throw new MojoExecutionException("Failed to connect to substeps server", e);
+        } catch (MalformedObjectNameException e) {
+
             throw new MojoExecutionException("Failed to connect to substeps server", e);
         }
     }

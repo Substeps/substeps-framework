@@ -255,12 +255,23 @@ public class ForkedRunner implements MojoRunner {
                         addArtifactPath(stepImplementationArtifactJars, transitiveDependency);
                     }
 
-                } catch (ArtifactResolutionException | ArtifactNotFoundException | InvalidDependencyVersionException
-                        | ProjectBuildingException e) {
+                } catch (ArtifactResolutionException e) {
 
                     throw new MojoExecutionException("Unable to resolve artifact for substep implementation '"
                             + stepImplementationArtifactString + "'", e);
 
+                } catch (ProjectBuildingException e) {
+
+                    throw new MojoExecutionException("Unable to resolve artifact for substep implementation '"
+                            + stepImplementationArtifactString + "'", e);
+                } catch (InvalidDependencyVersionException e) {
+
+                    throw new MojoExecutionException("Unable to resolve artifact for substep implementation '"
+                            + stepImplementationArtifactString + "'", e);
+                } catch (ArtifactNotFoundException e) {
+
+                    throw new MojoExecutionException("Unable to resolve artifact for substep implementation '"
+                            + stepImplementationArtifactString + "'", e);
                 }
 
             }

@@ -125,8 +125,11 @@ public class CoreVersionChecker {
 
             return mavenProjectBuilder.buildFromRepository(corePomArtifact, remoteRepositories, localRepository);
 
-        } catch (ArtifactResolutionException | ArtifactNotFoundException e) {
+        } catch (ArtifactResolutionException e) {
 
+            throw new MojoExecutionException(EXCEPTION_PREFIX
+                    + "unable to find pom for version of core in dependencies", e);
+        } catch (ArtifactNotFoundException e) {
             throw new MojoExecutionException(EXCEPTION_PREFIX
                     + "unable to find pom for version of core in dependencies", e);
         } catch (ProjectBuildingException pbe) {

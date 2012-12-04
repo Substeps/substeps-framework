@@ -12,7 +12,14 @@ public final class ExecutionNodeRunnerFactory {
 
         try {
             return (SubstepsRunner) Class.forName(EXECUTION_NODE_RUNNER_CLASSNAME).newInstance();
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+        } catch (InstantiationException e) {
+
+            throw new UnableToLoadExecutionNodeRunnerExeception(e);
+        } catch (ClassNotFoundException e) {
+
+            throw new UnableToLoadExecutionNodeRunnerExeception(e);
+        } catch (IllegalAccessException e) {
+
             throw new UnableToLoadExecutionNodeRunnerExeception(e);
         }
     }
