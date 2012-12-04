@@ -36,8 +36,14 @@ public abstract class ExecutionReportBuilder {
         try {
 
             return (ExecutionReportBuilder) Class.forName(executionReportBuilderClassName).newInstance();
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+        } catch (InstantiationException e) {
 
+            throw new UnableToLoadExectuionReportBuilder(executionReportBuilderClassName, e);
+        } catch (ClassNotFoundException e) {
+            
+            throw new UnableToLoadExectuionReportBuilder(executionReportBuilderClassName, e);
+        } catch (IllegalAccessException e) {
+            
             throw new UnableToLoadExectuionReportBuilder(executionReportBuilderClassName, e);
         }
     }
