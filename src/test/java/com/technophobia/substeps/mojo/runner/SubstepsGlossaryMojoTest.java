@@ -30,7 +30,7 @@ import org.junit.Test;
 
 import com.technophobia.substeps.execution.ExecutionNode;
 import com.technophobia.substeps.glossary.SubstepsGlossaryMojo;
-import com.technophobia.substeps.runner.ExecutionConfig;
+import com.technophobia.substeps.runner.SubstepsExecutionConfig;
 
 /**
  * 
@@ -44,13 +44,12 @@ public class SubstepsGlossaryMojoTest {
     @Ignore("incomplete test")
     @Test
     public void testCriticalNonCriticalFailures() throws SecurityException, NoSuchMethodException,
-            IllegalArgumentException, IllegalAccessException, InvocationTargetException,
-            NoSuchFieldException {
+            IllegalArgumentException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
 
         final SubstepsGlossaryMojo mojo = new SubstepsGlossaryMojo();
 
-        final Method method = mojo.getClass().getMethod("checkRootNodeForFailure",
-                ExecutionNode.class, ExecutionConfig.class);
+        final Method method = mojo.getClass().getMethod("checkRootNodeForFailure", ExecutionNode.class,
+                SubstepsExecutionConfig.class);
 
         final Field failedNodesField = mojo.getClass().getField("failedNodes");
         final Field nonFatalFailedNodesField = mojo.getClass().getField("nonFatalFailedNodes");
@@ -61,15 +60,14 @@ public class SubstepsGlossaryMojoTest {
         Assert.assertNotNull(method);
         method.setAccessible(true);
 
-        final ExecutionConfig execConfig = new ExecutionConfig();
+        final SubstepsExecutionConfig execConfig = new SubstepsExecutionConfig();
 
         final ExecutionNode rootNode = new ExecutionNode();
 
         method.invoke(mojo, rootNode, execConfig);
 
         final List<ExecutionNode> failedNodes = (List<ExecutionNode>) failedNodesField.get(mojo);
-        final List<ExecutionNode> nonFatalFailedNodes = (List<ExecutionNode>) nonFatalFailedNodesField
-                .get(mojo);
+        final List<ExecutionNode> nonFatalFailedNodes = (List<ExecutionNode>) nonFatalFailedNodesField.get(mojo);
 
     }
 
