@@ -680,7 +680,6 @@ public class ExecutionNode implements Serializable {
 
         final List<ExecutionNode> failed = filterNodes(children, new Predicate<ExecutionNode>() {
 
-            @Override
             public boolean apply(final ExecutionNode input) {
 
                 return input.hasFailed();
@@ -743,5 +742,19 @@ public class ExecutionNode implements Serializable {
         }
 
         return rtn;
+    }
+
+    /**
+     * Performs a depth first visit of this node hierarchy
+     */
+    public void accept(ExecutionNodeVisitor nodeVisitor) {
+
+        nodeVisitor.visit(this);
+        if (this.hasChildren()) {
+
+            for (ExecutionNode child : this.children) {
+                child.accept(nodeVisitor);
+            }
+        }
     }
 }

@@ -39,6 +39,8 @@ public class SubstepExecutionFailure implements Serializable {
     private boolean setupOrTearDown = false;
     private boolean nonCritical = false;
 
+    private byte[] screenshot;
+
     public SubstepExecutionFailure(final Throwable cause) {
 
         this.cause = cause;
@@ -53,11 +55,19 @@ public class SubstepExecutionFailure implements Serializable {
         this.execcutionNode = node;
     }
 
+    /**
+     * @param targetException
+     * @param node
+     */
+    public SubstepExecutionFailure(final Throwable targetException, final ExecutionNode node, final byte[] screenshot) {
+        this(targetException, node);
+        this.setScreenshot(screenshot);
+    }
+
     public SubstepExecutionFailure(final Throwable targetException, final ExecutionNode node,
             final boolean setupOrTearDown) {
 
-        this.cause = targetException;
-        this.execcutionNode = node;
+        this(targetException, node);
         this.setupOrTearDown = setupOrTearDown;
     }
 
@@ -111,5 +121,13 @@ public class SubstepExecutionFailure implements Serializable {
      */
     public boolean isNonCritical() {
         return this.nonCritical;
+    }
+
+    public byte[] getScreenshot() {
+        return screenshot;
+    }
+
+    public void setScreenshot(byte[] screenshot) {
+        this.screenshot = screenshot;
     }
 }

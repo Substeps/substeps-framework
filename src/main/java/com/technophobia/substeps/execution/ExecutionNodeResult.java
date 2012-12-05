@@ -36,6 +36,8 @@ public class ExecutionNodeResult implements Serializable {
     private Long startedAt;
     private Long completedAt;
 
+    private byte[] screenshot;
+
     public ExecutionNodeResult(final long id) {
         this.executionNodeId = id;
     }
@@ -140,5 +142,15 @@ public class ExecutionNodeResult implements Serializable {
 
     private void recordComplete() {
         completedAt = System.currentTimeMillis();
+    }
+
+    public byte[] getScreenshot() {
+
+        return this.screenshot;
+    }
+
+    public void setScreenshot(byte[] screenshot) {
+
+        this.screenshot = screenshot;
     }
 }
