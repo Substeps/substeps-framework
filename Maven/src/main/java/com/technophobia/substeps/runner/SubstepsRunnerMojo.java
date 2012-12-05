@@ -132,7 +132,6 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
     private MojoRunner runner;
 
-    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         assertCompatibleCoreVersion();

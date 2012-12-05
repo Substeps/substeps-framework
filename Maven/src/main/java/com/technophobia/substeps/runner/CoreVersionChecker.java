@@ -42,7 +42,6 @@ public class CoreVersionChecker {
 
     private Predicate<Dependency> IS_SUBSTEPS_CORE = new Predicate<Dependency>() {
 
-        @Override
         public boolean apply(Dependency dependency) {
 
             return SUBSTEPS_GROUP_ID.equals(dependency.getGroupId())
@@ -53,7 +52,6 @@ public class CoreVersionChecker {
 
     private Predicate<Dependency> IS_SUBSTEPS_API = new Predicate<Dependency>() {
 
-        @Override
         public boolean apply(Dependency dependency) {
 
             return SUBSTEPS_GROUP_ID.equals(dependency.getGroupId())
@@ -64,7 +62,6 @@ public class CoreVersionChecker {
 
     private Predicate<Artifact> ARTIFACT_IS_SUBSTEPS_API = new Predicate<Artifact>() {
 
-        @Override
         public boolean apply(Artifact artifact) {
 
             return SUBSTEPS_GROUP_ID.equals(artifact.getGroupId()) && API_ARTIFACT_ID.equals(artifact.getArtifactId());

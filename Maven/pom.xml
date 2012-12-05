@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.technophobia.substeps</groupId>
-	<artifactId>maven-substeps-plugin</artifactId>
+	<artifactId>substeps-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
 
 
