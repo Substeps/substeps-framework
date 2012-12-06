@@ -11,7 +11,7 @@
         <version>7</version>
     </parent>
 
-	<version>1.0.2</version>
+	<version>1.0.3-SNAPSHOT</version>
 
 	<name>SubSteps Glossary Builder</name>
 
