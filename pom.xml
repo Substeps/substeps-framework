@@ -40,7 +40,15 @@
           </roles>
         </developer>
 
-  
+        <developer>
+          <id>rickybarefield</id>
+          <name>Ricky Barefield</name>
+          <organization>Technophobia</organization>
+          <roles> 
+            <role>developer</role>
+          </roles>
+        </developer>
+
     </developers>
 
 	<properties>
@@ -50,7 +58,7 @@
 		<mockito.version>1.9.0-rc1</mockito.version>
 		<maven.version>2.2.1</maven.version>
 
-		<substeps.version>1.0.1</substeps.version>
+		<substeps.version>1.0.2</substeps.version>
         
         <xstream.version>1.4.2</xstream.version>
         <!--  
