@@ -18,6 +18,7 @@
       <maven.version>2.2.1</maven.version>
     </properties>
 
+    <description>A maven plugin for substeps BDD framework</description> 
 
 
 	<dependencies>
@@ -90,5 +91,41 @@
                         </plugin>
           </plugins>
         </build>
-   
+
+
+  <reporting>
+
+    <plugins>
+    
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>2.6</version>
+
+       <reportSets>
+	<reportSet>
+	  <reports>
+	    <report>report</report>
+	  </reports>
+	</reportSet>
+      </reportSets> 
+
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.6</version>
+
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>index</report>
+              <report>project-team</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+
+      </plugin>
+    </plugins>
+  </reporting>   
 </project>

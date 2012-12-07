@@ -49,38 +49,58 @@ import com.technophobia.substeps.report.ExecutionReportBuilder;
 public class SubstepsRunnerMojo extends AbstractMojo {
 
     /**
+     * 
+     * See <a href="./executionConfig.html">ExecutionConfig</a>
+     * 
+     * @parameter
+     */
+    private List<ExecutionConfig> executionConfigs;
+
+    /**
+     * The execution report builder you wish to use
+     * 
+     * @parameter
+     */
+    private final ExecutionReportBuilder executionReportBuilder = null;
+
+    /**
+     * When running in forked mode, a port is required to communicated between maven and substeps
+     * 
+     * @parameter default-value="9999"
+     * @required
+     */
+    private int jmxPort;
+
+
+    /**
+     * A space delimited string of vm arguments to pass to the forked jvm
+     *
+     * @parameter
+     */
+    private final String vmArgs = null;
+
+    /**
+     * if true a jvm will be spawned to run substeps otherwise substeps will execute within the same jvm as maven
+     * 
+     * @parameter default-value=true;
+     * @required
+     */
+    private boolean runTestsInForkedVM;
+
+    /**
+     * List of classes containing step implementations e.g. <param>com.technophobia.substeps.StepImplmentations<param>
+     * 
+     * @parameter
+     */
+    private List<String> stepImplementationArtifacts;
+
+    /**
      * @parameter default-value="${project}"
      * @required
      * @readonly
      */
     private MavenProject project;
 
-    /**
-     * @parameter
-     */
-    private List<ExecutionConfig> executionConfigs;
-
-    /**
-     * @parameter
-     */
-    private final ExecutionReportBuilder executionReportBuilder = null;
-
-    /**
-     * @parameter default-value="9999"
-     * @required
-     */
-    private int jmxPort;
-
-    /**
-     * @parameter
-     */
-    private final String vmArgs = null;
-
-    /**
-     * @parameter default-value=true;
-     * @required
-     */
-    private boolean runTestsInForkedVM;
 
     private final BuildFailureManager buildFailureManager = new BuildFailureManager();
 
@@ -101,27 +121,19 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
     /**
      * @parameter default-value="${localRepository}"
+     * @readonly
      */
     private org.apache.maven.artifact.repository.ArtifactRepository localRepository;
 
     /**
      * @parameter default-value="${project.remoteArtifactRepositories}"
+     * @readonly
      */
     private List remoteRepositories;
 
     /**
-     * @parameter
-     */
-    private List<String> stepImplementationArtifacts;
-
-    /**
-     * @parameter default-value="1.0.2-SNAPSHOT" //TODO RB 20121129 Can this go
-     *            in the pom of the plugin???
-     */
-    private String coreVersion;
-
-    /**
      * @parameter expression="${plugin.artifacts}"
+     * @readonly
      */
     private List<Artifact> pluginDependencies;
 

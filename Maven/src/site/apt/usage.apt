@@ -1,0 +1,108 @@
+
+
+Usage
+
+
+  The simplest way to configure your project to use substeps is shown below.
+
+  By depending on the substeps BOM all the correct versions of substeps artifacts will be added as dependencies, including this plugin. There is no need to specify an explicit version for this plugin.
+
+  In addition, you'll need to add a test dependency on any other substep implementations you're going to use, for example as shown below the webdriver steps.
+
+
++-------
+
+
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+  ...
+  <dependencies>
+    ...
+    <dependency>
+      <groupId>com.technophobia.substeps</groupId>
+      <artifactId>substeps-bom</artifactId>
+      <version>1.0.2-SNAPSHOT</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.technophobia.substeps</groupId>
+      <artifactId>webdriver-substeps</artifactId>
+      <version>1.0.2-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    ...
+  </dependencies>
+  ...
+
+  <build>
+  ...
+    <plugins>
+    ...
+      <plugin>
+        <groupId>com.technophobia.substeps</groupId>
+	<artifactId>substeps-maven-plugin</artifactId>
+	<executions>
+          <execution>
+            <id>SubSteps Test</id>
+
+            <goals>
+              <goal>run-features</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+
+          <executionConfigs>
+
+            <!-- One or more 'execution configurations', use multiple configs for different test initialisation, phases of project, etc -->
+            <executionConfig>
+
+              <description>My acceptance tests</description> <!-- This appears at the root of the results report -->
+
+              <tags>@all</tags>  <!-- optional - If the feature or scenario has this tag, then it will be included, otherwise it won't, tags are space separated -->
+
+              <fastFailParseErrors>false</fastFailParseErrors> <!-- optional - if true any parse errors will fail the build immediately, rather than attempting to execute as much as possible and fail those tests that can't be parsed -->
+              <featureFile>${project.build.directory}/test-classes/features</featureFile> <!-- path to the feature file, or directory containing the feature files -->
+              <subStepsFileName>${iproject.build.directory}/test-classes/substeps</subStepsFileName> <!-- path to directory of substep files, or a single substep file -->
+
+
+              <!-- List of classes containing step implementations -->
+              <stepImplementationClassNames>
+                <param>com.technophobia.webdriver.substeps.impl.BaseWebdriverSubStepImplementations</param>
+                <param>your.domain.ExampleCustomWebdriverStepImplementations</param>
+              </stepImplementationClassNames>
+
+            </executionConfig>
+
+          </executionConfigs>
+
+          <!-- Default HTML report builder -->
+          <executionReportBuilder implementation="com.technophobia.substeps.report.DefaultExecutionReportBuilder">
+          <!-- The directory in which the test execution report will be written to -->       
+        
+        </plugin>
+...
+</build>
+
+...
+</project>
+
++-------
+
+Reporting
+
+
+  The Susbteps runner plugin can create an HTML test execution report with the following configuration at plugin level as shown above.
+
+  {{{./linkToExampleReport}Here's an example}}
+
+  Results from multiple execution configurations are combined.
+  
+  Alter the outputDirectory to write the html report elsewhere.
+
+  Typically we use a ‘post-build’ task to move the HTML report elsewhere and create a permanent link. (In Jenkins this can be achieved with the HTMLPublisher plugin).
