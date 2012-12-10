@@ -76,15 +76,16 @@
 	</dependencies>
 
 	<build>
-		<pluginManagement>
+		<!--pluginManagement>
+
 			<plugins>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>3.2</version>
+					<version>2.1</version>
 				</plugin>
 			</plugins>
-		</pluginManagement>
+		</pluginManagement-->
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.plexus</groupId>
@@ -130,7 +131,7 @@
 					<reportSet>
 						<reports>
 							<report>index</report>
-							<report>project-team</report>
+						       
 						</reports>
 					</reportSet>
 				</reportSets>
