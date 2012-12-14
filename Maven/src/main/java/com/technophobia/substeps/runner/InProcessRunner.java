@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.maven.plugin.logging.Log;
 
-import com.technophobia.substeps.execution.ExecutionNode;
+import com.technophobia.substeps.execution.node.RootNode;
 
 public class InProcessRunner implements MojoRunner {
 
@@ -26,7 +26,7 @@ public class InProcessRunner implements MojoRunner {
         executionNodeRunner.prepareExecutionConfig(theConfig);
     }
 
-    public ExecutionNode getRootNode() {
+    public RootNode getRootNode() {
         return executionNodeRunner.getRootNode();
     }
 

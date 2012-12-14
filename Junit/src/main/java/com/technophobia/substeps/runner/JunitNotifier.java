@@ -26,7 +26,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.technophobia.substeps.execution.ExecutionNode;
+import com.technophobia.substeps.execution.node.ExecutionNode;
 
 /**
  * A wrapper around the Junit notifier and any other registered test listeners

@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.technophobia.substeps.execution.ExecutionNode;
+import com.technophobia.substeps.execution.node.ExecutionNode;
 
 /**
  * @author ian
@@ -53,23 +53,25 @@ public class BuildFailureManager {
             for (final SubstepExecutionFailure fail : failures) {
                 final ExecutionNode node = fail.getExeccutionNode();
                 if (!dealtWith.contains(node)) {
-                    final List<ExecutionNode> hierarchy = new ArrayList<ExecutionNode>();
-
-                    hierarchy.add(node);
-
-                    // go up the tree as far as we can go
-                    ExecutionNode parent = node.getParent();
-                    while (parent != null) {
-                        hierarchy.add(parent);
-                        parent = parent.getParent();
-                    }
-
-                    Collections.reverse(hierarchy);
-
-                    for (final ExecutionNode node2 : hierarchy) {
-                        buf.append(node2.getDebugStringForThisNode());
-                        dealtWith.add(node2);
-                    }
+//                    final List<ExecutionNode> hierarchy = new ArrayList<ExecutionNode>();
+//
+//                    hierarchy.add(node);
+//
+//                    // go up the tree as far as we can go
+//                    ExecutionNode parent = node.getParent();
+//                    while (parent != null) {
+//                        hierarchy.add(parent);
+//                        parent = parent.getParent();
+//                    }
+//
+//                    Collections.reverse(hierarchy);
+//
+//                    for (final ExecutionNode node2 : hierarchy) {
+//                        buf.append(node2.getDebugStringForThisNode());
+//                        dealtWith.add(node2);
+//                    }
+                    
+                    buf.append("TODO RB 20121213"); //TODO RB 20121213
                 }
                 buf.append("\n");
             }

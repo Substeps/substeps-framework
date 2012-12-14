@@ -26,7 +26,7 @@ import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.technophobia.substeps.execution.ExecutionNode;
+import com.technophobia.substeps.execution.node.RootNode;
 
 public class ForkedRunner implements MojoRunner {
 
@@ -307,7 +307,7 @@ public class ForkedRunner implements MojoRunner {
         return this.substepsJmxClient.run();
     }
 
-    public ExecutionNode getRootNode() {
+    public RootNode getRootNode() {
 
         return this.substepsJmxClient.getRootNode();
     }

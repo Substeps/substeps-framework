@@ -31,7 +31,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 
-import com.technophobia.substeps.execution.ExecutionNode;
+import com.technophobia.substeps.execution.node.ExecutionNode;
+import com.technophobia.substeps.execution.node.RootNode;
 import com.technophobia.substeps.report.ExecutionReportBuilder;
 
 /**
@@ -203,7 +204,7 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
         final List<SubstepExecutionFailure> failures = runner.run();
 
-        ExecutionNode rootNode = runner.getRootNode();
+        RootNode rootNode = runner.getRootNode();
 
         if (theConfig.getDescription() != null) {
 
@@ -215,7 +216,7 @@ public class SubstepsRunnerMojo extends AbstractMojo {
         this.buildFailureManager.sortFailures(failures);
     }
 
-    private void addToReport(ExecutionNode rootNode) {
+    private void addToReport(RootNode rootNode) {
 
         if (executionReportBuilder != null) {
             executionReportBuilder.addRootExecutionNode(rootNode);

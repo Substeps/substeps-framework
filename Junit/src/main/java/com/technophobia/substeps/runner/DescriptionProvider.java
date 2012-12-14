@@ -22,7 +22,7 @@ import java.util.Map;
 
 import org.junit.runner.Description;
 
-import com.technophobia.substeps.execution.ExecutionNode;
+import com.technophobia.substeps.execution.node.ExecutionNode;
 
 /**
  * @author ian

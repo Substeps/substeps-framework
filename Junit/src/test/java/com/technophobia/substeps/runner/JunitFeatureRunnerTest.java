@@ -38,7 +38,7 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
-import com.technophobia.substeps.execution.ExecutionNode;
+import com.technophobia.substeps.execution.node.ExecutionNode;
 import com.technophobia.substeps.model.StepImplementation;
 import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
 import com.technophobia.substeps.stepimplementations.MockStepImplementations;
