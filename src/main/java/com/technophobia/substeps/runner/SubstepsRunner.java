@@ -2,7 +2,7 @@ package com.technophobia.substeps.runner;
 
 import java.util.List;
 
-import com.technophobia.substeps.execution.ExecutionNode;
+import com.technophobia.substeps.execution.node.RootNode;
 
 /*
  *	Copyright Technophobia Ltd 2012
@@ -32,7 +32,7 @@ public interface SubstepsRunner {
 
     List<SubstepExecutionFailure> run();
 
-    ExecutionNode getRootNode();
+    RootNode getRootNode();
 
     void addNotifier(INotifier notifier);
 }

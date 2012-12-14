@@ -21,7 +21,7 @@ package com.technophobia.substeps.runner;
 
 import java.io.Serializable;
 
-import com.technophobia.substeps.execution.ExecutionNode;
+import com.technophobia.substeps.execution.node.ExecutionNode;
 
 /**
  * represents the failure of an execution - could be a step method, or a setup

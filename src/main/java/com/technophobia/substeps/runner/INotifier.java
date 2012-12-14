@@ -18,7 +18,7 @@
  */
 package com.technophobia.substeps.runner;
 
-import com.technophobia.substeps.execution.ExecutionNode;
+import com.technophobia.substeps.execution.node.ExecutionNode;
 
 /**
  * 
