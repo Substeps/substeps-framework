@@ -1,37 +1,46 @@
+/*
+ *	Copyright Technophobia Ltd 2012
+ *
+ *   This file is part of Substeps.
+ *
+ *    Substeps is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Lesser General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    Substeps is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public License
+ *    along with Substeps.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.technophobia.substeps.execution.node;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 import com.technophobia.substeps.execution.ExecutionNodeVisitor;
-import com.technophobia.substeps.model.Scope;
-import com.technophobia.substeps.runner.ProvidesScreenshot;
-import com.technophobia.substeps.runner.SubstepExecutionFailure;
 
+public class StepImplementationNode extends ExecutionNode implements StepNode {
 
-public class StepImplementationNode extends StepNode {
+    private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(StepImplementationNode.class);
-    
     private final transient Class<?> targetClass;
     private final transient Method targetMethod;
-    
-    //FIXME RB I'd prefer this to be final, it's like this because of the builder.
+
+    // FIXME RB I'd prefer this to be final, it's like this because of the
+    // builder.
     private transient Object[] methodArgs;
 
-    
-    public StepImplementationNode(Class<?> targetClass, Method targetMethod) {
+    public StepImplementationNode(Class<?> targetClass, Method targetMethod, int depth) {
 
         this.targetClass = targetClass;
         this.targetMethod = targetMethod;
+        this.setDepth(depth);
     }
-
 
     public void appendMethodInfo(final StringBuilder buf) {
         appendMethodInfo(null, buf);
@@ -81,15 +90,13 @@ public class StepImplementationNode extends StepNode {
         this.methodArgs = methodArgs;
     }
 
-
     public Class<?> getTargetClass() {
 
         return targetClass;
     }
 
-
     public Method getTargetMethod() {
-        
+
         return targetMethod;
     }
 
@@ -105,11 +112,10 @@ public class StepImplementationNode extends StepNode {
         return Collections.singletonList(executionNodeVisitor.visit(this));
     }
 
-
     @Override
     public String getDescription() {
 
         return getLine();
     }
-    
+
 }

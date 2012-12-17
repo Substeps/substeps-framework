@@ -18,8 +18,36 @@
  */
 package com.technophobia.substeps.execution.node;
 
+import java.util.List;
 
-public abstract class ScenarioNode<CHILD_TYPE extends IExecutionNode> extends NodeWithChildren<CHILD_TYPE> {
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+
+public abstract class NodeWithChildren<CHILD_TYPE extends IExecutionNode> extends ExecutionNode {
 
     private static final long serialVersionUID = 1L;
+
+    public abstract List<CHILD_TYPE> getChildren();
+
+    public boolean hasChildren() {
+        return this.getChildren() != null && !this.getChildren().isEmpty();
+    }
+
+    @Override
+    public String toDebugString() {
+
+        List<String> debugLines = Lists.newArrayList(super.toDebugString());
+        if (getChildren() != null) {
+
+            for (CHILD_TYPE child : getChildren()) {
+
+                if (child != null) {
+
+                    debugLines.add(child.toDebugString());
+                }
+            }
+        }
+        return Joiner.on("\n").join(debugLines);
+    }
+
 }

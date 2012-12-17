@@ -21,7 +21,7 @@ package com.technophobia.substeps.runner;
 
 import java.io.Serializable;
 
-import com.technophobia.substeps.execution.node.ExecutionNode;
+import com.technophobia.substeps.execution.node.IExecutionNode;
 
 /**
  * represents the failure of an execution - could be a step method, or a setup
@@ -35,7 +35,7 @@ public class SubstepExecutionFailure implements Serializable {
     private static final long serialVersionUID = 4981517213059529046L;
 
     private final Throwable cause;
-    private ExecutionNode execcutionNode;
+    private IExecutionNode execcutionNode;
     private boolean setupOrTearDown = false;
     private boolean nonCritical = false;
 
@@ -50,7 +50,7 @@ public class SubstepExecutionFailure implements Serializable {
      * @param targetException
      * @param node
      */
-    public SubstepExecutionFailure(final Throwable targetException, final ExecutionNode node) {
+    public SubstepExecutionFailure(final Throwable targetException, final IExecutionNode node) {
         this.cause = targetException;
         this.execcutionNode = node;
     }
@@ -59,12 +59,12 @@ public class SubstepExecutionFailure implements Serializable {
      * @param targetException
      * @param node
      */
-    public SubstepExecutionFailure(final Throwable targetException, final ExecutionNode node, final byte[] screenshot) {
+    public SubstepExecutionFailure(final Throwable targetException, final IExecutionNode node, final byte[] screenshot) {
         this(targetException, node);
         this.setScreenshot(screenshot);
     }
 
-    public SubstepExecutionFailure(final Throwable targetException, final ExecutionNode node,
+    public SubstepExecutionFailure(final Throwable targetException, final IExecutionNode node,
             final boolean setupOrTearDown) {
 
         this(targetException, node);
@@ -74,7 +74,7 @@ public class SubstepExecutionFailure implements Serializable {
     /**
      * @return the execcutionNode
      */
-    public ExecutionNode getExeccutionNode() {
+    public IExecutionNode getExeccutionNode() {
         return this.execcutionNode;
     }
 
@@ -82,7 +82,7 @@ public class SubstepExecutionFailure implements Serializable {
      * @param execcutionNode
      *            the execcutionNode to set
      */
-    public void setExeccutionNode(final ExecutionNode execcutionNode) {
+    public void setExeccutionNode(final IExecutionNode execcutionNode) {
         this.execcutionNode = execcutionNode;
     }
 

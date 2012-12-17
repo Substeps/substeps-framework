@@ -1,24 +1,43 @@
+/*
+ *	Copyright Technophobia Ltd 2012
+ *
+ *   This file is part of Substeps.
+ *
+ *    Substeps is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Lesser General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    Substeps is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public License
+ *    along with Substeps.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.technophobia.substeps.execution.node;
 
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.technophobia.substeps.execution.ExecutionNodeVisitor;
-import com.technophobia.substeps.model.Scope;
 
+public class BasicScenarioNode extends ScenarioNode<SubstepNode> {
 
-public class BasicScenarioNode extends ScenarioNode {
+    private static final long serialVersionUID = 1L;
 
     private final SubstepNode background;
     private final SubstepNode step;
     private final String scenarioName;
-    
-    public BasicScenarioNode(String scenarioName, SubstepNode background, SubstepNode step) {
+
+    public BasicScenarioNode(String scenarioName, SubstepNode background, SubstepNode step, int depth) {
 
         this.scenarioName = scenarioName;
         this.background = background;
         this.step = step;
+        this.setDepth(depth);
     }
 
     public SubstepNode getStep() {
@@ -44,17 +63,24 @@ public class BasicScenarioNode extends ScenarioNode {
 
         toReturn.add(executionNodeVisitor.visit(this));
 
-        if(this.background != null) {
-            
+        if (this.background != null) {
+
             toReturn.addAll(this.background.accept(executionNodeVisitor));
         }
 
-        if(this.step != null) {
-            
+        if (this.step != null) {
+
             toReturn.addAll(this.step.accept(executionNodeVisitor));
+        } else {
+            // TODO RB20121214 Add failure
         }
-        
+
         return toReturn;
+    }
+
+    @Override
+    public List<SubstepNode> getChildren() {
+        return Collections.singletonList(step);
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.technophobia.substeps.report;
 
 import java.io.File;
 
-import com.technophobia.substeps.execution.node.ExecutionNode;
+import com.technophobia.substeps.execution.node.IExecutionNode;
 import com.technophobia.substeps.execution.node.RootNode;
 
 /*
@@ -58,7 +58,7 @@ public abstract class ExecutionReportBuilder {
 
     public abstract void buildReport();
 
-    public static void buildDescriptionString(final String prefix, final ExecutionNode node, final StringBuilder buf) {
+    public static void buildDescriptionString(final String prefix, final IExecutionNode node, final StringBuilder buf) {
 
         if (prefix != null) {
             buf.append(prefix);

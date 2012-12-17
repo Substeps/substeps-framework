@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.google.common.base.Function;
+import com.google.common.base.Strings;
 import com.technophobia.substeps.execution.ExecutionNodeResult;
 import com.technophobia.substeps.execution.ExecutionNodeVisitor;
 import com.technophobia.substeps.execution.ExecutionResult;
@@ -35,7 +35,9 @@ import com.technophobia.substeps.execution.ExecutionResult;
  * 
  * @author ian
  */
-public abstract class ExecutionNode implements Serializable {
+public abstract class ExecutionNode implements Serializable, IExecutionNode {
+
+    private static final long serialVersionUID = 1L;
 
     private static transient AtomicLong counter = new AtomicLong(1);
 
@@ -61,13 +63,12 @@ public abstract class ExecutionNode implements Serializable {
 
     private Set<String> tags; // used for analysis
 
-    
     public ExecutionNode() {
         this.id = counter.getAndIncrement();
         this.result = new ExecutionNodeResult(this.id);
     }
 
-     /**
+    /**
      * @return the depth
      */
     public int getDepth() {
@@ -141,7 +142,7 @@ public abstract class ExecutionNode implements Serializable {
     }
 
     public String getFileUri() {
-        
+
         return this.fileUri != null ? this.fileUri : "";
     }
 
@@ -165,14 +166,16 @@ public abstract class ExecutionNode implements Serializable {
         return this.result.getResult() == ExecutionResult.PASSED;
     }
 
-    public String toDebugString() {
-        //FRB 20121213 implement
-        return getDescription();
-    }
-    
     public abstract String getDescription();
-    
+
     public abstract <RETURN_TYPE> RETURN_TYPE dispatch(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor);
-    
+
     public abstract <RETURN_TYPE> List<RETURN_TYPE> accept(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor);
+
+    public String toDebugString() {
+        String debugString = Strings.repeat("\t", getDepth());
+        debugString += "id: " + getId() + ", type: " + getClass().getSimpleName() + ", description" + getDescription();
+        return debugString;
+    }
+
 }
