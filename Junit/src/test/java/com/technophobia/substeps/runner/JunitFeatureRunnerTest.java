@@ -38,7 +38,7 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
-import com.technophobia.substeps.execution.node.ExecutionNode;
+import com.technophobia.substeps.execution.node.IExecutionNode;
 import com.technophobia.substeps.model.StepImplementation;
 import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
 import com.technophobia.substeps.stepimplementations.MockStepImplementations;
@@ -117,9 +117,9 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
 
         verify(spy, times(1)).methodWithTableArgument(expectedTableParameter);
 
-        final ExecutionNode root = runner.getRootExecutionNode();
+        final IExecutionNode root = runner.getRootExecutionNode();
 
-        System.out.println(root.printTree());
+        System.out.println(TreePrinter.asString(root));
     }
 
     @Test
@@ -197,7 +197,7 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
 
         final RunNotifier notifier = mock(RunNotifier.class);
 
-        final Description rootDescription = runner.getDescription();
+        runner.getDescription();
 
         runner.run(notifier);
 
@@ -237,17 +237,22 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
 
         // test the number of times the notifier was called
 
-        verify(notifier, times(27)).fireTestStarted(argThat(any(Description.class)));
+        int started = 33;
+        int finished = 27;
+        int failed = 6;
+        Assert.assertEquals(started, failed + finished);
+        
+        verify(notifier, times(started)).fireTestStarted(argThat(any(Description.class)));
         // this is now up to 25 as more of a hierarchy with outlines
 
-        verify(notifier, times(22)).fireTestFinished(argThat(any(Description.class)));
-        verify(notifier, times(5)).fireTestFailure(argThat(any(Failure.class)));
+        verify(notifier, times(finished)).fireTestFinished(argThat(any(Description.class)));
+        verify(notifier, times(failed)).fireTestFailure(argThat(any(Failure.class)));
         // test failures now cascade upwards
 
         verify(spy, times(1)).meth4("#quoted parameter");
 
-        final ExecutionNode root = runner.getRootExecutionNode();
-        System.out.println(root.printTree());
+        final IExecutionNode root = runner.getRootExecutionNode();
+        System.out.println(TreePrinter.asString(root));
 
     }
 
@@ -405,9 +410,9 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
         verify(spy, never()).meth9();
         verify(spy, never()).meth6();
 
-        verify(notifier, times(6)).fireTestStarted(argThat(any(Description.class)));
+        verify(notifier, times(7)).fireTestStarted(argThat(any(Description.class)));
 
-        verify(notifier, times(5)).fireTestFailure(argThat(any(Failure.class)));
+        verify(notifier, times(6)).fireTestFailure(argThat(any(Failure.class)));
 
     }
 

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.technophobia.substeps.execution.node.ExecutionNode;
+import com.technophobia.substeps.execution.node.IExecutionNode;
 
 /**
  * @author ian
@@ -51,7 +52,7 @@ public class BuildFailureManager {
             buf.append(msg);
 
             for (final SubstepExecutionFailure fail : failures) {
-                final ExecutionNode node = fail.getExeccutionNode();
+                final IExecutionNode node = fail.getExeccutionNode();
                 if (!dealtWith.contains(node)) {
 //                    final List<ExecutionNode> hierarchy = new ArrayList<ExecutionNode>();
 //

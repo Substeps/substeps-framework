@@ -118,13 +118,6 @@
           <groupId>${project.groupId}</groupId>
           <artifactId>substeps-core</artifactId>
           <version>${substeps.core.version}</version>
-          <type>test-jar</type>
-          <scope>test</scope>
-        </dependency>     
-        <dependency>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>substeps-core</artifactId>
-          <version>${substeps.core.version}</version>
           <scope>test</scope>
         </dependency>
         <dependency>
@@ -198,6 +191,13 @@
         </dependency> 
 	
 
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>substeps-core</artifactId>
+          <version>${substeps.core.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
+        </dependency>     
     </dependencies>
 
     <build>

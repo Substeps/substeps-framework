@@ -32,7 +32,8 @@ import org.junit.runner.Description;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.technophobia.substeps.execution.node.ExecutionNode;
+import com.technophobia.substeps.execution.node.IExecutionNode;
+import com.technophobia.substeps.execution.node.NodeWithChildren;
 import com.technophobia.substeps.report.ExecutionReportBuilder;
 
 /**
@@ -74,8 +75,7 @@ public class EclipseDescriptionProvider implements DescriptionProvider {
         return newInstance;
     }
 
-    public Map<Long, Description> buildDescriptionMap(final ExecutionNode rootNode,
-            final Class<?> classContainingTheTests) {
+    public Map<Long, Description> buildDescriptionMap(final IExecutionNode rootNode, final Class<?> classContainingTheTests) {
         final Description rootDescription = Description.createSuiteDescription(classContainingTheTests);
 
         final Map<Long, Description> descriptionMap = new HashMap<Long, Description>();
@@ -84,8 +84,8 @@ public class EclipseDescriptionProvider implements DescriptionProvider {
 
         final DescriptorStatus status = new DescriptorStatus();
 
-        if (rootNode.hasChildren()) {
-            for (final ExecutionNode child : rootNode.getChildren()) {
+        if (rootNode instanceof NodeWithChildren &&  ((NodeWithChildren<?>)rootNode).hasChildren()) {
+            for (final IExecutionNode child : ((NodeWithChildren<?>)rootNode).getChildren()) {
                 rootDescription.addChild(buildDescription(child, descriptionMap, status));
             }
         }
@@ -111,7 +111,7 @@ public class EclipseDescriptionProvider implements DescriptionProvider {
 
         }
 
-        public String getIndexStringForNode(final ExecutionNode node) {
+        public String getIndexStringForNode(final IExecutionNode node) {
 
             // is this the first time at this depth?
             if (node.getDepth() > indexlist.size()) {
@@ -149,21 +149,25 @@ public class EclipseDescriptionProvider implements DescriptionProvider {
 
     }
 
-    private Description buildDescription(final ExecutionNode node, final Map<Long, Description> descriptionMap,
+    private Description buildDescription(final IExecutionNode node, final Map<Long, Description> descriptionMap,
             final DescriptorStatus status) {
         final Description des = buildDescription(getDescriptionForNode(node, status));
 
-        if (node.hasChildren() && node.getDepth() < 5) {
+        if (node instanceof NodeWithChildren) {
 
-            for (final ExecutionNode child : node.getChildren()) {
+            NodeWithChildren<?> nodeWithChildren = (NodeWithChildren<?>) node;
 
-                final Description childDescription = buildDescription(child, descriptionMap, status);
-                if (childDescription != null) {
-                    des.addChild(childDescription);
+            if (nodeWithChildren.hasChildren() && nodeWithChildren.getDepth() < 5) {
+
+                for (final IExecutionNode child : nodeWithChildren.getChildren()) {
+
+                    final Description childDescription = buildDescription(child, descriptionMap, status);
+                    if (childDescription != null) {
+                        des.addChild(childDescription);
+                    }
                 }
             }
         }
-
         descriptionMap.put(Long.valueOf(node.getId()), des);
 
         return des;
@@ -173,7 +177,7 @@ public class EclipseDescriptionProvider implements DescriptionProvider {
      * @param node
      * @return
      */
-    private String getDescriptionForNode(final ExecutionNode node, final DescriptorStatus status) {
+    private String getDescriptionForNode(final IExecutionNode node, final DescriptorStatus status) {
         final StringBuilder buf = new StringBuilder();
 
         ExecutionReportBuilder.buildDescriptionString(status.getIndexStringForNode(node) + ": ", node, buf);

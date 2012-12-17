@@ -28,7 +28,8 @@ import junit.framework.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.technophobia.substeps.execution.ExecutionNode;
+import com.technophobia.substeps.execution.node.ExecutionNode;
+import com.technophobia.substeps.execution.node.RootNode;
 import com.technophobia.substeps.runner.BuildFailureManager;
 import com.technophobia.substeps.runner.ExecutionConfig;
 import com.technophobia.substeps.runner.SubstepsRunnerMojo;
@@ -84,7 +85,7 @@ public class SubstepsRunnerMojoTest {
 
         final ExecutionConfig execConfig = new ExecutionConfig();
 
-        final ExecutionNode rootNode = new ExecutionNode();
+        final RootNode rootNode = new RootNode(null);
 
         method.invoke(mojo, rootNode, execConfig);
 

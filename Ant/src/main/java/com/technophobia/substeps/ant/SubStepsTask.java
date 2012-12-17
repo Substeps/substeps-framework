@@ -11,12 +11,13 @@ import org.apache.tools.ant.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.technophobia.substeps.execution.ExecutionNode;
+import com.technophobia.substeps.execution.node.ExecutionNode;
+import com.technophobia.substeps.execution.node.RootNode;
 import com.technophobia.substeps.report.ExecutionReportBuilder;
 import com.technophobia.substeps.runner.BuildFailureManager;
-import com.technophobia.substeps.runner.SubstepsExecutionConfig;
 import com.technophobia.substeps.runner.ExecutionNodeRunnerFactory;
 import com.technophobia.substeps.runner.SubstepExecutionFailure;
+import com.technophobia.substeps.runner.SubstepsExecutionConfig;
 import com.technophobia.substeps.runner.SubstepsRunner;
 
 public class SubStepsTask extends Task {
@@ -60,7 +61,7 @@ public class SubStepsTask extends Task {
 
         for (final SubstepsExecutionConfig executionConfig : executionConfigList) {
             final List<SubstepExecutionFailure> failures = new ArrayList<SubstepExecutionFailure>();
-            final ExecutionNode rootNode = runExecutionConfig(executionConfig, failures);
+            final RootNode rootNode = runExecutionConfig(executionConfig, failures);
 
             if (executionConfig.getDescription() != null) {
                 rootNode.setLine(executionConfig.getDescription());
@@ -84,12 +85,12 @@ public class SubStepsTask extends Task {
 
     }
 
-    private ExecutionNode runExecutionConfig(final SubstepsExecutionConfig theConfig,
+    private RootNode runExecutionConfig(final SubstepsExecutionConfig theConfig,
             final List<SubstepExecutionFailure> failures) {
 
         final SubstepsRunner runner = ExecutionNodeRunnerFactory.createRunner();
         runner.prepareExecutionConfig(theConfig);
-        final ExecutionNode rootNode = runner.getRootNode();
+        final RootNode rootNode = runner.getRootNode();
         final List<SubstepExecutionFailure> localFailures = runner.run();
         failures.addAll(localFailures);
         return rootNode;

@@ -28,7 +28,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.technophobia.substeps.execution.node.ExecutionNode;
+import com.technophobia.substeps.execution.node.IExecutionNode;
 
 /**
  * test to get to the bottom of sequencing test started notifications etc
@@ -136,7 +136,7 @@ public class TestNotifier implements IJunitNotifier {
      * uk.co.itmoore.bddrunner.runner.INotifier#notifyTestFailed(uk.co.itmoore
      * .bddrunner.execution.ExecutionNode, java.lang.Throwable)
      */
-    public void notifyTestFailed(final ExecutionNode rootNode, final Throwable cause) {
+    public void notifyTestFailed(final IExecutionNode rootNode, final Throwable cause) {
         // TODO Auto-generated method stub
 
     }
@@ -149,7 +149,7 @@ public class TestNotifier implements IJunitNotifier {
      * uk.co.itmoore.bddrunner.runner.INotifier#notifyTestStarted(uk.co.itmoore
      * .bddrunner.execution.ExecutionNode)
      */
-    public void notifyTestStarted(final ExecutionNode node) {
+    public void notifyTestStarted(final IExecutionNode node) {
         // TODO Auto-generated method stub
 
     }
@@ -162,7 +162,7 @@ public class TestNotifier implements IJunitNotifier {
      * uk.co.itmoore.bddrunner.runner.INotifier#notifyTestFinished(uk.co.itmoore
      * .bddrunner.execution.ExecutionNode)
      */
-    public void notifyTestFinished(final ExecutionNode node) {
+    public void notifyTestFinished(final IExecutionNode node) {
         // TODO Auto-generated method stub
 
     }
@@ -201,7 +201,7 @@ public class TestNotifier implements IJunitNotifier {
      * com.technophobia.substeps.runner.INotifier#notifyTestIgnored(com.technophobia
      * .substeps.execution.ExecutionNode)
      */
-    public void notifyTestIgnored(final ExecutionNode node) {
+    public void notifyTestIgnored(final IExecutionNode node) {
         // TODO Auto-generated method stub
 
     }
@@ -214,7 +214,7 @@ public class TestNotifier implements IJunitNotifier {
      * com.technophobia.substeps.runner.INotifier#notifyNodeFailed(com.technophobia
      * .substeps.execution.ExecutionNode, java.lang.Throwable)
      */
-    public void notifyNodeFailed(final ExecutionNode rootNode, final Throwable cause) {
+    public void notifyNodeFailed(final IExecutionNode rootNode, final Throwable cause) {
         // TODO Auto-generated method stub
 
     }
@@ -227,7 +227,7 @@ public class TestNotifier implements IJunitNotifier {
      * com.technophobia.substeps.runner.INotifier#notifyNodeStarted(com.technophobia
      * .substeps.execution.ExecutionNode)
      */
-    public void notifyNodeStarted(final ExecutionNode node) {
+    public void notifyNodeStarted(final IExecutionNode node) {
         // TODO Auto-generated method stub
 
     }
@@ -239,7 +239,7 @@ public class TestNotifier implements IJunitNotifier {
      * @see com.technophobia.substeps.runner.INotifier#notifyNodeFinished(com.
      * technophobia.substeps.execution.ExecutionNode)
      */
-    public void notifyNodeFinished(final ExecutionNode node) {
+    public void notifyNodeFinished(final IExecutionNode node) {
         // TODO Auto-generated method stub
 
     }
@@ -252,7 +252,7 @@ public class TestNotifier implements IJunitNotifier {
      * com.technophobia.substeps.runner.INotifier#notifyNodeIgnored(com.technophobia
      * .substeps.execution.ExecutionNode)
      */
-    public void notifyNodeIgnored(final ExecutionNode node) {
+    public void notifyNodeIgnored(final IExecutionNode node) {
         // TODO Auto-generated method stub
 
     }

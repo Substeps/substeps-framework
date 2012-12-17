@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
-import com.technophobia.substeps.execution.node.ExecutionNode;
+import com.technophobia.substeps.execution.node.IExecutionNode;
 
 public class JunitFeatureRunner extends org.junit.runner.Runner {
 
@@ -72,7 +72,7 @@ public class JunitFeatureRunner extends org.junit.runner.Runner {
 
     private IJunitNotifier notifier;
 
-    private ExecutionNode rootNode;
+    private IExecutionNode rootNode;
 
     // Used by tests only
     public JunitFeatureRunner() {
@@ -241,7 +241,7 @@ public class JunitFeatureRunner extends org.junit.runner.Runner {
     /**
      * @return
      */
-    public ExecutionNode getRootExecutionNode() {
+    public IExecutionNode getRootExecutionNode() {
         return rootNode;
     }
 }

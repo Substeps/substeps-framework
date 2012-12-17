@@ -26,7 +26,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.technophobia.substeps.execution.node.ExecutionNode;
+import com.technophobia.substeps.execution.node.IExecutionNode;
 
 /**
  * A wrapper around the Junit notifier and any other registered test listeners
@@ -120,7 +120,7 @@ public class JunitNotifier implements IJunitNotifier {
      * (com.technophobia.substeps.execution.ExecutionNode, java.lang.Throwable)
      */
 
-    public void notifyNodeFailed(final ExecutionNode node, final Throwable cause) {
+    public void notifyNodeFailed(final IExecutionNode node, final Throwable cause) {
 
         final Description description = descriptionMap.get(Long.valueOf(node.getId()));
         notifyTestFailed(description, cause);
@@ -135,7 +135,7 @@ public class JunitNotifier implements IJunitNotifier {
      * (com.technophobia.substeps.execution.ExecutionNode)
      */
 
-    public void notifyNodeStarted(final ExecutionNode node) {
+    public void notifyNodeStarted(final IExecutionNode node) {
 
         final Description description = descriptionMap.get(Long.valueOf(node.getId()));
 
@@ -154,7 +154,7 @@ public class JunitNotifier implements IJunitNotifier {
      * (com.technophobia.substeps.execution.ExecutionNode)
      */
 
-    public void notifyNodeFinished(final ExecutionNode node) {
+    public void notifyNodeFinished(final IExecutionNode node) {
 
         final Description description = descriptionMap.get(Long.valueOf(node.getId()));
         notifyTestFinished(description);
@@ -169,7 +169,7 @@ public class JunitNotifier implements IJunitNotifier {
      * (com.technophobia.substeps.execution.ExecutionNode)
      */
 
-    public void notifyNodeIgnored(final ExecutionNode node) {
+    public void notifyNodeIgnored(final IExecutionNode node) {
 
         final Description description = descriptionMap.get(Long.valueOf(node.getId()));
         notifyTestIgnored(description);
