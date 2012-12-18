@@ -237,11 +237,11 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
 
         // test the number of times the notifier was called
 
-        int started = 33;
-        int finished = 27;
+        int started = 30;
+        int finished = 24;
         int failed = 6;
         Assert.assertEquals(started, failed + finished);
-        
+
         verify(notifier, times(started)).fireTestStarted(argThat(any(Description.class)));
         // this is now up to 25 as more of a hierarchy with outlines
 
@@ -410,9 +410,9 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
         verify(spy, never()).meth9();
         verify(spy, never()).meth6();
 
-        verify(notifier, times(7)).fireTestStarted(argThat(any(Description.class)));
+        verify(notifier, times(6)).fireTestStarted(argThat(any(Description.class)));
 
-        verify(notifier, times(6)).fireTestFailure(argThat(any(Failure.class)));
+        verify(notifier, times(5)).fireTestFailure(argThat(any(Failure.class)));
 
     }
 

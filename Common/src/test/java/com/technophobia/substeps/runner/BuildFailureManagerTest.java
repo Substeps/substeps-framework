@@ -33,119 +33,106 @@ import com.technophobia.substeps.execution.node.RootNode;
 import com.technophobia.substeps.execution.node.TestBasicScenarioNodeBuilder;
 import com.technophobia.substeps.execution.node.TestFeatureNodeBuilder;
 import com.technophobia.substeps.execution.node.TestRootNodeBuilder;
-import com.technophobia.substeps.execution.node.TestSubstepNodeBuilder;
-
 
 /**
  * @author ian
- *
+ * 
  */
-public class BuildFailureManagerTest
-{
+public class BuildFailureManagerTest {
+
     public void nonFailingMethod() {
         System.out.println("no fail");
     }
-
 
     public void failingMethod() {
         System.out.println("uh oh");
         throw new IllegalStateException("that's it, had enough");
     }
 
-	
-	private RootNode getData(){
-		
-	       Method nonFailMethod = null;
-	        Method failMethod = null;
-	        try {
-	            nonFailMethod = this.getClass().getMethod("nonFailingMethod");
-	            failMethod = this.getClass().getMethod("failingMethod");
-	        } catch (final Exception e) {
-	            Assert.fail(e.getMessage());
-	        }
-	        Assert.assertNotNull(nonFailMethod);
-	        Assert.assertNotNull(failMethod);
-		
-	    TestRootNodeBuilder rootBuilder = new TestRootNodeBuilder();
-	    TestFeatureNodeBuilder featureBuilder = rootBuilder.addFeature(new Feature("test feature", "file")).addTags("@can_fail");
-	    TestBasicScenarioNodeBuilder scenarioNodeBuilder = featureBuilder.addBasicScenario("scenarioName");
-	    TestSubstepNodeBuilder substepsBuilder = scenarioNodeBuilder.addSubsteps().addStepImpl(getClass(), nonFailMethod).addStepImpl(getClass(), failMethod).addStepImpl(getClass(), nonFailMethod);
-	    
+    private RootNode getData() {
 
-	    RootNode rootNode = rootBuilder.build();
-	    
-	    final Throwable rootFail = new Exception("t1");
+        Method nonFailMethod = null;
+        Method failMethod = null;
+        try {
+            nonFailMethod = this.getClass().getMethod("nonFailingMethod");
+            failMethod = this.getClass().getMethod("failingMethod");
+        } catch (final Exception e) {
+            Assert.fail(e.getMessage());
+        }
+        Assert.assertNotNull(nonFailMethod);
+        Assert.assertNotNull(failMethod);
 
-		rootNode.getResult().setFailed(rootFail);
-		featureBuilder.getBuilt().getResult().setFailed(rootFail);
-		scenarioNodeBuilder.getBuilt().getResult().setFailed(rootFail);
-        
-        
-        substepsBuilder.getBuilt().getResult().setFailed(rootFail);
+        TestRootNodeBuilder rootBuilder = new TestRootNodeBuilder();
+        TestFeatureNodeBuilder featureBuilder = rootBuilder.addFeature(new Feature("test feature", "file")).addTags(
+                "@can_fail");
+        TestBasicScenarioNodeBuilder scenarioNodeBuilder = featureBuilder.addBasicScenario("scenarioName")
+                .addStepImpl(getClass(), nonFailMethod).addStepImpl(getClass(), failMethod)
+                .addStepImpl(getClass(), nonFailMethod);
 
-        substepsBuilder.getBuilt().getChildren().get(0).setLine("stepNode1");
+        RootNode rootNode = rootBuilder.build();
 
-        substepsBuilder.getBuilt().getChildren().get(1).setLine("stepNode2");
-        substepsBuilder.getBuilt().getChildren().get(1).getResult().setResult(ExecutionResult.NOT_RUN);
-        
-        substepsBuilder.getBuilt().getChildren().get(2).setLine("stepNode3");
-        substepsBuilder.getBuilt().getChildren().get(2).getResult().setResult(ExecutionResult.NOT_RUN);
-        
-        
+        final Throwable rootFail = new Exception("t1");
+
+        rootNode.getResult().setFailed(rootFail);
+        featureBuilder.getBuilt().getResult().setFailed(rootFail);
+        scenarioNodeBuilder.getBuilt().getResult().setFailed(rootFail);
+
+        scenarioNodeBuilder.getBuilt().getChildren().get(0).setLine("stepNode1");
+
+        scenarioNodeBuilder.getBuilt().getChildren().get(1).setLine("stepNode2");
+        scenarioNodeBuilder.getBuilt().getChildren().get(1).getResult().setResult(ExecutionResult.NOT_RUN);
+
+        scenarioNodeBuilder.getBuilt().getChildren().get(2).setLine("stepNode3");
+        scenarioNodeBuilder.getBuilt().getChildren().get(2).getResult().setResult(ExecutionResult.NOT_RUN);
+
         return rootNode;
-	}
-	
-	@Test
-	public void testNonCriticalFailures(){
-		
-		BuildFailureManager bfm = new BuildFailureManager();
-		
-		final RootNode rootNode = getData();
-		// set up the scenario
-		
-		final List<SubstepExecutionFailure> failures = new ArrayList<SubstepExecutionFailure>();
+    }
 
-		TestFeatureNodeBuilder featureBuilder = new TestFeatureNodeBuilder(new Feature("test feature", "file"));
+    @Test
+    public void testNonCriticalFailures() {
 
-		FeatureNode featureNode = featureBuilder.build();
+        BuildFailureManager bfm = new BuildFailureManager();
+
+        final RootNode rootNode = getData();
+        // set up the scenario
+
+        final List<SubstepExecutionFailure> failures = new ArrayList<SubstepExecutionFailure>();
+
+        TestFeatureNodeBuilder featureBuilder = new TestFeatureNodeBuilder(new Feature("test feature", "file"));
+
+        FeatureNode featureNode = featureBuilder.build();
         rootNode.getChildren().add(featureNode);
-		
-		final Throwable rootFail = new Exception("t1");
+
+        final Throwable rootFail = new Exception("t1");
 
         featureNode.getResult().setFailed(rootFail);
-        
-        final SubstepExecutionFailure f1 = 
-        		new SubstepExecutionFailure(rootFail, featureNode);
-        
+
+        final SubstepExecutionFailure f1 = new SubstepExecutionFailure(rootFail, featureNode);
+
         f1.setNonCritical(true);
 
         failures.add(f1);
-        
-		
+
         bfm.sortFailures(failures);
-        
+
         // just one non crit error
         Assert.assertFalse(bfm.testSuiteCompletelyPassed());
         Assert.assertTrue(bfm.testSuiteSomeFailures());
         Assert.assertFalse(bfm.testSuiteFailed());
-		
-		
-		
-		// see what happens with an @beforefailure
-		failures.clear();
-		
+
+        // see what happens with an @beforefailure
+        failures.clear();
+
         failures.add(new SubstepExecutionFailure(rootFail, featureNode, true));
         bfm = new BuildFailureManager();
         bfm.sortFailures(failures);
 
-        
         // just an @before fail
         Assert.assertFalse(bfm.testSuiteCompletelyPassed());
         Assert.assertTrue(bfm.testSuiteSomeFailures());
         Assert.assertTrue(bfm.testSuiteFailed());
 
-
-		failures.clear();
+        failures.clear();
         failures.add(new SubstepExecutionFailure(rootFail, featureNode));
         bfm = new BuildFailureManager();
         bfm.sortFailures(failures);
@@ -155,5 +142,5 @@ public class BuildFailureManagerTest
         Assert.assertTrue(bfm.testSuiteSomeFailures());
         Assert.assertTrue(bfm.testSuiteFailed());
 
-	}
+    }
 }
