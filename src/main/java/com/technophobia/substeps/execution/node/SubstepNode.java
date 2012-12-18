@@ -19,19 +19,23 @@
 package com.technophobia.substeps.execution.node;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.technophobia.substeps.execution.ExecutionNodeVisitor;
 
-public class SubstepNode extends NodeWithChildren<StepNode> implements StepNode {
+public class SubstepNode extends NodeWithChildren<StepNode> implements StepNode, TaggedNode {
 
     private static final long serialVersionUID = 1L;
 
     private final List<StepNode> substeps;
 
-    public SubstepNode(List<StepNode> substeps, int depth) {
+    private final Set<String> tags;
+
+    public SubstepNode(List<StepNode> substeps, Set<String> tags, int depth) {
 
         this.substeps = substeps;
+        this.tags = tags;
         setDepth(depth);
     }
 
@@ -66,5 +70,9 @@ public class SubstepNode extends NodeWithChildren<StepNode> implements StepNode 
     public String getDescription() {
 
         return getLine();
+    }
+
+    public Set<String> getTags() {
+        return tags;
     }
 }

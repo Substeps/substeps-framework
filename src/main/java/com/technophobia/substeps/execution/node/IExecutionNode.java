@@ -19,7 +19,6 @@
 package com.technophobia.substeps.execution.node;
 
 import java.util.List;
-import java.util.Set;
 
 import com.technophobia.substeps.execution.ExecutionNodeResult;
 import com.technophobia.substeps.execution.ExecutionNodeVisitor;
@@ -29,70 +28,59 @@ public interface IExecutionNode {
     /**
      * @return the depth of this node in the tree
      */
-     int getDepth();
+    int getDepth();
 
-     void setDepth(final int depth);
+    void setDepth(final int depth);
 
     /**
      * @return the id
      */
-     long getId();
+    long getId();
 
     /**
      * @return the line
      */
-     String getLine();
+    String getLine();
 
     /**
      * @param line
      *            the line to set
      */
-     void setLine(final String line);
+    void setLine(final String line);
 
-     /**
-      * 
-      * @return the id of this node as a Long
-      */
-     Long getLongId();
- 
+    /**
+     * 
+     * @return the id of this node as a Long
+     */
+    Long getLongId();
+
     /**
      * @return the result
      */
-     ExecutionNodeResult getResult();
-
-    /**
-     * @return the tags
-     */
-     Set<String> getTags();
-
-    /**
-     * @param tags
-     *            the tags to set
-     */
-     void setTags(final Set<String> tags);
+    ExecutionNodeResult getResult();
 
     /**
      * @return the filename
      */
-     String getFilename();
+    String getFilename();
 
-     String getFileUri();
+    String getFileUri();
 
-     void setFileUri(final String fileUri);
+    void setFileUri(final String fileUri);
 
-     int getLineNumber();
+    int getLineNumber();
 
-     void setLineNumber(final int lineNumber);
+    void setLineNumber(final int lineNumber);
 
-     boolean hasError();
+    boolean hasError();
 
-     boolean hasPassed();
+    boolean hasPassed();
 
-     String toDebugString();
+    String toDebugString();
 
-     String getDescription();
+    String getDescription();
 
-     <RETURN_TYPE> RETURN_TYPE dispatch(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor);
+    <RETURN_TYPE> RETURN_TYPE dispatch(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor);
 
-     <RETURN_TYPE> List<RETURN_TYPE> accept(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor);
+    <RETURN_TYPE> List<RETURN_TYPE> accept(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor);
 }

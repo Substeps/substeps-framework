@@ -9,15 +9,21 @@ import com.technophobia.substeps.execution.node.OutlineScenarioRowNode;
 import com.technophobia.substeps.execution.node.RootNode;
 import com.technophobia.substeps.execution.node.StepImplementationNode;
 import com.technophobia.substeps.execution.node.SubstepNode;
+import com.technophobia.substeps.execution.node.TaggedNode;
 
 /**
  * Allows a concrete visitor to override only methods which it is interested in,
  * also provides
  * 
  * visit(ExecutionNode) which can be overridden for default behaviour affecting
- * any node or visit(NodeWithChildren) which can be overridden for default
- * behaviour for nodes which have child nodes.
+ * any node
  * 
+ * visit(NodeWithChildren) which can be overridden for default behaviour for
+ * nodes which have child nodes.
+ * 
+ * visit(TaggedNode) which can be overridden for default behaviour affecting
+ * nodes which have tags, if not overridden these nodes will call
+ * visit(NodeWithChildren)
  * 
  * @author rbarefield
  * 
@@ -31,12 +37,12 @@ public abstract class AbstractExecutionNodeVisitor<RETURN_TYPE> implements Execu
 
     public RETURN_TYPE visit(FeatureNode featureNode) {
 
-        return visit((NodeWithChildren<?>) featureNode);
+        return visit((TaggedNode) featureNode);
     }
 
     public RETURN_TYPE visit(BasicScenarioNode basicScenarioNode) {
 
-        return visit((NodeWithChildren<?>) basicScenarioNode);
+        return visit((TaggedNode) basicScenarioNode);
     }
 
     public RETURN_TYPE visit(OutlineScenarioNode outlineNode) {
@@ -51,12 +57,16 @@ public abstract class AbstractExecutionNodeVisitor<RETURN_TYPE> implements Execu
 
     public RETURN_TYPE visit(SubstepNode substepNode) {
 
-        return visit((NodeWithChildren<?>) substepNode);
+        return visit((TaggedNode) substepNode);
     }
 
     public RETURN_TYPE visit(StepImplementationNode stepImplementationNode) {
 
         return visit((IExecutionNode) stepImplementationNode);
+    }
+
+    public RETURN_TYPE visit(TaggedNode node) {
+        return visit((NodeWithChildren<?>) node);
     }
 
     public RETURN_TYPE visit(NodeWithChildren<?> node) {

@@ -20,11 +20,12 @@ package com.technophobia.substeps.execution.node;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.technophobia.substeps.execution.ExecutionNodeVisitor;
 
-public class BasicScenarioNode extends ScenarioNode<SubstepNode> {
+public class BasicScenarioNode extends ScenarioNode<SubstepNode> implements TaggedNode {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,11 +33,14 @@ public class BasicScenarioNode extends ScenarioNode<SubstepNode> {
     private final SubstepNode step;
     private final String scenarioName;
 
-    public BasicScenarioNode(String scenarioName, SubstepNode background, SubstepNode step, int depth) {
+    private final Set<String> tags;
+
+    public BasicScenarioNode(String scenarioName, SubstepNode background, SubstepNode step, Set<String> tags, int depth) {
 
         this.scenarioName = scenarioName;
         this.background = background;
         this.step = step;
+        this.tags = tags;
         this.setDepth(depth);
     }
 
@@ -92,5 +96,9 @@ public class BasicScenarioNode extends ScenarioNode<SubstepNode> {
     public String getScenarioName() {
 
         return scenarioName;
+    }
+
+    public Set<String> getTags() {
+        return tags;
     }
 }

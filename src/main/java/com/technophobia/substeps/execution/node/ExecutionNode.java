@@ -21,7 +21,6 @@ package com.technophobia.substeps.execution.node;
 import java.io.File;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.google.common.base.Strings;
@@ -60,8 +59,6 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
     private String line;
 
     private final ExecutionNodeResult result;
-
-    private Set<String> tags; // used for analysis
 
     public ExecutionNode() {
         this.id = counter.getAndIncrement();
@@ -117,21 +114,6 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
      */
     public ExecutionNodeResult getResult() {
         return this.result;
-    }
-
-    /**
-     * @return the tags
-     */
-    public Set<String> getTags() {
-        return this.tags;
-    }
-
-    /**
-     * @param tags
-     *            the tags to set
-     */
-    public void setTags(final Set<String> tags) {
-        this.tags = tags;
     }
 
     /**

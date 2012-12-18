@@ -19,25 +19,29 @@
 package com.technophobia.substeps.execution.node;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.technophobia.substeps.execution.ExecutionNodeVisitor;
 import com.technophobia.substeps.execution.Feature;
 
-public class FeatureNode extends NodeWithChildren<ScenarioNode<?>> {
+public class FeatureNode extends NodeWithChildren<ScenarioNode<?>> implements TaggedNode {
 
     private static final long serialVersionUID = 1L;
 
     private final List<ScenarioNode<?>> scenarios;
     private final Feature feature;
+    private final Set<String> tags;
 
-    public FeatureNode(Feature feature, List<ScenarioNode<?>> scenarios) {
-        
+    public FeatureNode(Feature feature, List<ScenarioNode<?>> scenarios, Set<String> tags) {
+
         this.feature = feature;
         this.scenarios = scenarios;
+        this.tags = tags;
         this.setDepth(1);
     }
 
+    @Override
     public List<ScenarioNode<?>> getChildren() {
 
         return scenarios;
@@ -56,8 +60,8 @@ public class FeatureNode extends NodeWithChildren<ScenarioNode<?>> {
 
         toReturn.add(executionNodeVisitor.visit(this));
 
-        for(ScenarioNode<?> scenario : scenarios) {
-            
+        for (ScenarioNode<?> scenario : scenarios) {
+
             toReturn.addAll(scenario.accept(executionNodeVisitor));
         }
 
@@ -69,5 +73,9 @@ public class FeatureNode extends NodeWithChildren<ScenarioNode<?>> {
 
         return feature.getName();
     }
-    
+
+    public Set<String> getTags() {
+        return tags;
+    }
+
 }
