@@ -65,6 +65,6 @@ public class SubstepNode extends NodeWithChildren<StepNode> implements StepNode 
     @Override
     public String getDescription() {
 
-        return "Substep";
+        return getLine();
     }
 }

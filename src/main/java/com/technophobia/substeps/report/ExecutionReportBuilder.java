@@ -41,10 +41,10 @@ public abstract class ExecutionReportBuilder {
 
             throw new UnableToLoadExectuionReportBuilder(executionReportBuilderClassName, e);
         } catch (ClassNotFoundException e) {
-            
+
             throw new UnableToLoadExectuionReportBuilder(executionReportBuilderClassName, e);
         } catch (IllegalAccessException e) {
-            
+
             throw new UnableToLoadExectuionReportBuilder(executionReportBuilderClassName, e);
         }
     }
@@ -63,12 +63,8 @@ public abstract class ExecutionReportBuilder {
         if (prefix != null) {
             buf.append(prefix);
         }
-        
-        buf.append(node.getDescription());
 
-        if (node.getLine() != null) {
-            buf.append(node.getLine());
-        }
+        buf.append(node.getDescription());
     }
 
     public abstract void setOutputDirectory(File file);
