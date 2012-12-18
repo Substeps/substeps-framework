@@ -18,8 +18,8 @@
  */
 package com.technophobia.substeps.execution.node;
 
-
-public abstract class ScenarioNode<CHILD_TYPE extends IExecutionNode> extends NodeWithChildren<CHILD_TYPE> {
+public abstract class ScenarioNode<CHILD_TYPE extends IExecutionNode> extends NodeWithChildren<CHILD_TYPE> implements
+        TaggedNode {
 
     private static final long serialVersionUID = 1L;
 }

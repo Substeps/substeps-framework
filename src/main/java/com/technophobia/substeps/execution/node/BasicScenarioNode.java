@@ -18,35 +18,35 @@
  */
 package com.technophobia.substeps.execution.node;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.technophobia.substeps.execution.ExecutionNodeVisitor;
 
-public class BasicScenarioNode extends ScenarioNode<SubstepNode> implements TaggedNode {
+public class BasicScenarioNode extends ScenarioNode<StepNode> {
 
     private static final long serialVersionUID = 1L;
 
     private final SubstepNode background;
-    private final SubstepNode step;
+    private final List<StepNode> steps;
     private final String scenarioName;
 
     private final Set<String> tags;
 
-    public BasicScenarioNode(String scenarioName, SubstepNode background, SubstepNode step, Set<String> tags, int depth) {
+    public BasicScenarioNode(String scenarioName, SubstepNode background, List<StepNode> steps, Set<String> tags,
+            int depth) {
 
         this.scenarioName = scenarioName;
         this.background = background;
-        this.step = step;
+        this.steps = steps;
         this.tags = tags;
         this.setDepth(depth);
     }
 
-    public SubstepNode getStep() {
+    public List<StepNode> getSteps() {
 
-        return step;
+        return steps;
     }
 
     public SubstepNode getBackground() {
@@ -72,19 +72,17 @@ public class BasicScenarioNode extends ScenarioNode<SubstepNode> implements Tagg
             toReturn.addAll(this.background.accept(executionNodeVisitor));
         }
 
-        if (this.step != null) {
+        for (StepNode step : steps) {
 
-            toReturn.addAll(this.step.accept(executionNodeVisitor));
-        } else {
-            // TODO RB20121214 Add failure
+            toReturn.addAll(step.accept(executionNodeVisitor));
         }
 
         return toReturn;
     }
 
     @Override
-    public List<SubstepNode> getChildren() {
-        return Collections.singletonList(step);
+    public List<StepNode> getChildren() {
+        return steps;
     }
 
     @Override

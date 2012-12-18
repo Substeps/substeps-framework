@@ -47,12 +47,12 @@ public abstract class AbstractExecutionNodeVisitor<RETURN_TYPE> implements Execu
 
     public RETURN_TYPE visit(OutlineScenarioNode outlineNode) {
 
-        return visit((NodeWithChildren<?>) outlineNode);
+        return visit((TaggedNode) outlineNode);
     }
 
     public RETURN_TYPE visit(OutlineScenarioRowNode outlineScenarioRowNode) {
 
-        return visit((NodeWithChildren<?>) outlineScenarioRowNode);
+        return visit((TaggedNode) outlineScenarioRowNode);
     }
 
     public RETURN_TYPE visit(SubstepNode substepNode) {

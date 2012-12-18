@@ -19,6 +19,7 @@
 package com.technophobia.substeps.execution.node;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.technophobia.substeps.execution.ExecutionNodeVisitor;
@@ -30,10 +31,14 @@ public class OutlineScenarioNode extends ScenarioNode<OutlineScenarioRowNode> {
     private final List<OutlineScenarioRowNode> outlineRows;
     private final String scenarioName;
 
-    public OutlineScenarioNode(String scenarioName, List<OutlineScenarioRowNode> outlineRows, int depth) {
+    private final Set<String> tags;
+
+    public OutlineScenarioNode(String scenarioName, List<OutlineScenarioRowNode> outlineRows, Set<String> tags,
+            int depth) {
 
         this.scenarioName = scenarioName;
         this.outlineRows = outlineRows;
+        this.tags = tags;
         this.setDepth(depth);
     }
 
@@ -68,5 +73,9 @@ public class OutlineScenarioNode extends ScenarioNode<OutlineScenarioRowNode> {
     public String getDescription() {
 
         return "Scenario #: " + scenarioName;
+    }
+
+    public Set<String> getTags() {
+        return tags;
     }
 }

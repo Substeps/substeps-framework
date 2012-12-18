@@ -20,21 +20,25 @@ package com.technophobia.substeps.execution.node;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.technophobia.substeps.execution.ExecutionNodeVisitor;
 
-public class OutlineScenarioRowNode extends NodeWithChildren<BasicScenarioNode> {
+public class OutlineScenarioRowNode extends NodeWithChildren<BasicScenarioNode> implements TaggedNode {
 
     private static final long serialVersionUID = 1L;
 
     private final int rowIndex;
     private final BasicScenarioNode basicScenarioNode;
 
-    public OutlineScenarioRowNode(int rowIndex, BasicScenarioNode basicScenarioNode, int depth) {
+    private final Set<String> tags;
+
+    public OutlineScenarioRowNode(int rowIndex, BasicScenarioNode basicScenarioNode, Set<String> tags, int depth) {
 
         this.rowIndex = rowIndex;
         this.basicScenarioNode = basicScenarioNode;
+        this.tags = tags;
         this.setDepth(depth);
     }
 
@@ -72,5 +76,9 @@ public class OutlineScenarioRowNode extends NodeWithChildren<BasicScenarioNode> 
     public List<BasicScenarioNode> getChildren() {
 
         return Collections.singletonList(basicScenarioNode);
+    }
+
+    public Set<String> getTags() {
+        return tags;
     }
 }
