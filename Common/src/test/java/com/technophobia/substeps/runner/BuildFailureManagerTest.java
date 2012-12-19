@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.technophobia.substeps.execution.ExecutionResult;
@@ -39,7 +38,6 @@ import com.technophobia.substeps.execution.node.TestRootNodeBuilder;
  * @author ian
  * 
  */
-@Ignore("RB TODO 20121219")
 public class BuildFailureManagerTest {
 
     public void nonFailingMethod() {
