@@ -83,18 +83,18 @@ public class SubstepsJMXClient implements SubstepsRunner {
         }
     }
 
-    public void prepareExecutionConfig(final SubstepsExecutionConfig cfg) {
+    public RootNode prepareExecutionConfig(final SubstepsExecutionConfig cfg) {
 
-        this.mbean.prepareExecutionConfig(cfg);
+        return this.mbean.prepareExecutionConfig(cfg);
 
     }
 
-    public RootNode getRootNode() {
+    public List<SubstepExecutionFailure> getFailures() {
 
-        return this.mbean.getRootNode();
+        return this.mbean.getFailures();
     }
 
-    public List<SubstepExecutionFailure> run() {
+    public RootNode run() {
 
         return this.mbean.run();
     }

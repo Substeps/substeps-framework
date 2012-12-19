@@ -9,25 +9,25 @@ import com.technophobia.substeps.execution.node.RootNode;
 public class InProcessRunner implements MojoRunner {
 
     SubstepsRunner executionNodeRunner = ExecutionNodeRunnerFactory.createRunner();
-    private Log log;
+    private final Log log;
 
     InProcessRunner(Log log) {
 
         this.log = log;
     }
 
-    public List<SubstepExecutionFailure> run() {
+    public RootNode run() {
         log.info("Running substeps tests in process");
         return executionNodeRunner.run();
     }
 
-    public void prepareExecutionConfig(SubstepsExecutionConfig theConfig) {
+    public RootNode prepareExecutionConfig(SubstepsExecutionConfig theConfig) {
 
-        executionNodeRunner.prepareExecutionConfig(theConfig);
+        return executionNodeRunner.prepareExecutionConfig(theConfig);
     }
 
-    public RootNode getRootNode() {
-        return executionNodeRunner.getRootNode();
+    public List<SubstepExecutionFailure> getFailures() {
+        return executionNodeRunner.getFailures();
     }
 
     public void addNotifier(INotifier notifier) {

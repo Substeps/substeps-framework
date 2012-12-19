@@ -60,7 +60,7 @@ public class ForkedRunner implements MojoRunner {
 
     private ForkedProcessCloser shutdownHook;
 
-    private InputStreamConsumer consumer;
+    private final InputStreamConsumer consumer;
 
     ForkedRunner(Log log, int jmxPort, String vmArgs, List<String> testClasspathElements,
             List<String> stepImplementationArtifacts, ArtifactResolver artifactResolver,
@@ -296,20 +296,20 @@ public class ForkedRunner implements MojoRunner {
         stepImplementationArtifactJars.add(path);
     }
 
-    public void prepareExecutionConfig(SubstepsExecutionConfig theConfig) {
+    public RootNode prepareExecutionConfig(SubstepsExecutionConfig theConfig) {
 
-        this.substepsJmxClient.prepareExecutionConfig(theConfig);
+        return this.substepsJmxClient.prepareExecutionConfig(theConfig);
     }
 
-    public List<SubstepExecutionFailure> run() {
+    public RootNode run() {
 
         log.info("Running substeps tests in forked jvm");
         return this.substepsJmxClient.run();
     }
 
-    public RootNode getRootNode() {
+    public List<SubstepExecutionFailure> getFailures() {
 
-        return this.substepsJmxClient.getRootNode();
+        return this.substepsJmxClient.getFailures();
     }
 
     public void addNotifier(INotifier notifier) {

@@ -161,9 +161,7 @@ public class JunitFeatureRunner extends org.junit.runner.Runner {
             executionConfig.setDescription(classContainingTheTests.getSimpleName());
         }
 
-        runner.prepareExecutionConfig(executionConfig);
-
-        rootNode = runner.getRootNode();
+        rootNode = runner.prepareExecutionConfig(executionConfig);
 
         log.debug("rootNode.toDebugString():\n" + rootNode.toDebugString());
 

@@ -31,7 +31,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 
-import com.technophobia.substeps.execution.node.ExecutionNode;
 import com.technophobia.substeps.execution.node.RootNode;
 import com.technophobia.substeps.report.ExecutionReportBuilder;
 
@@ -65,23 +64,24 @@ public class SubstepsRunnerMojo extends AbstractMojo {
     private final ExecutionReportBuilder executionReportBuilder = null;
 
     /**
-     * When running in forked mode, a port is required to communicated between maven and substeps
+     * When running in forked mode, a port is required to communicated between
+     * maven and substeps
      * 
      * @parameter default-value="9999"
      * @required
      */
     private int jmxPort;
 
-
     /**
      * A space delimited string of vm arguments to pass to the forked jvm
-     *
+     * 
      * @parameter
      */
     private final String vmArgs = null;
 
     /**
-     * if true a jvm will be spawned to run substeps otherwise substeps will execute within the same jvm as maven
+     * if true a jvm will be spawned to run substeps otherwise substeps will
+     * execute within the same jvm as maven
      * 
      * @parameter default-value=true;
      * @required
@@ -89,7 +89,8 @@ public class SubstepsRunnerMojo extends AbstractMojo {
     private boolean runTestsInForkedVM;
 
     /**
-     * List of classes containing step implementations e.g. <param>com.technophobia.substeps.StepImplmentations<param>
+     * List of classes containing step implementations e.g.
+     * <param>com.technophobia.substeps.StepImplmentations<param>
      * 
      * @parameter
      */
@@ -101,7 +102,6 @@ public class SubstepsRunnerMojo extends AbstractMojo {
      * @readonly
      */
     private MavenProject project;
-
 
     private final BuildFailureManager buildFailureManager = new BuildFailureManager();
 
@@ -202,9 +202,7 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
         runner.prepareExecutionConfig(theConfig.asSubstepsExecutionConfig());
 
-        final List<SubstepExecutionFailure> failures = runner.run();
-
-        RootNode rootNode = runner.getRootNode();
+        RootNode rootNode = runner.run();
 
         if (theConfig.getDescription() != null) {
 
@@ -213,7 +211,7 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
         addToReport(rootNode);
 
-        this.buildFailureManager.sortFailures(failures);
+        this.buildFailureManager.addExecutionResult(rootNode);
     }
 
     private void addToReport(RootNode rootNode) {
