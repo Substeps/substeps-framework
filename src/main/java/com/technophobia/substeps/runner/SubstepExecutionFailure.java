@@ -21,6 +21,7 @@ package com.technophobia.substeps.runner;
 
 import java.io.Serializable;
 
+import com.google.common.base.Function;
 import com.technophobia.substeps.execution.node.IExecutionNode;
 
 /**
@@ -32,10 +33,18 @@ import com.technophobia.substeps.execution.node.IExecutionNode;
  */
 public class SubstepExecutionFailure implements Serializable {
 
+    public static final Function<SubstepExecutionFailure, Long> GET_NODE_ID = new Function<SubstepExecutionFailure, Long>() {
+
+        public Long apply(SubstepExecutionFailure failure) {
+            return failure.getExeccutionNode() == null ? null : failure.getExeccutionNode().getId();
+        }
+
+    };
+
     private static final long serialVersionUID = 4981517213059529046L;
 
     private final Throwable cause;
-    private IExecutionNode execcutionNode;
+    private IExecutionNode executionNode;
     private boolean setupOrTearDown = false;
     private boolean nonCritical = false;
 
@@ -52,7 +61,8 @@ public class SubstepExecutionFailure implements Serializable {
      */
     public SubstepExecutionFailure(final Throwable targetException, final IExecutionNode node) {
         this.cause = targetException;
-        this.execcutionNode = node;
+        this.executionNode = node;
+        this.executionNode.getResult().setFailure(this);
     }
 
     /**
@@ -75,7 +85,7 @@ public class SubstepExecutionFailure implements Serializable {
      * @return the execcutionNode
      */
     public IExecutionNode getExeccutionNode() {
-        return this.execcutionNode;
+        return this.executionNode;
     }
 
     /**
@@ -83,7 +93,7 @@ public class SubstepExecutionFailure implements Serializable {
      *            the execcutionNode to set
      */
     public void setExeccutionNode(final IExecutionNode execcutionNode) {
-        this.execcutionNode = execcutionNode;
+        this.executionNode = execcutionNode;
     }
 
     /**

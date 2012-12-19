@@ -28,11 +28,11 @@ import com.technophobia.substeps.execution.node.RootNode;
  */
 public interface SubstepsRunner {
 
-    void prepareExecutionConfig(final SubstepsExecutionConfig theConfig);
+    RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig);
 
-    List<SubstepExecutionFailure> run();
+    RootNode run();
 
-    RootNode getRootNode();
+    List<SubstepExecutionFailure> getFailures();
 
     void addNotifier(INotifier notifier);
 }

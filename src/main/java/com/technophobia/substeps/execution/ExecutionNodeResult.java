@@ -23,6 +23,8 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
 
+import com.technophobia.substeps.runner.SubstepExecutionFailure;
+
 public class ExecutionNodeResult implements Serializable {
 
     private static final long serialVersionUID = -1444083371334604179L;
@@ -37,6 +39,8 @@ public class ExecutionNodeResult implements Serializable {
     private Long completedAt;
 
     private byte[] screenshot;
+
+    private SubstepExecutionFailure substepExecutionFailure;
 
     public ExecutionNodeResult(final long id) {
         this.executionNodeId = id;
@@ -153,4 +157,14 @@ public class ExecutionNodeResult implements Serializable {
 
         this.screenshot = screenshot;
     }
+
+    public void setFailure(SubstepExecutionFailure substepExecutionFailure) {
+
+        this.substepExecutionFailure = substepExecutionFailure;
+    }
+
+    public SubstepExecutionFailure getFailure() {
+        return substepExecutionFailure;
+    }
+
 }
