@@ -21,6 +21,7 @@ package com.technophobia.substeps.execution.node;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import com.technophobia.substeps.execution.ExecutionNodeVisitor;
 
@@ -31,15 +32,18 @@ public class StepImplementationNode extends ExecutionNode implements StepNode {
     private final transient Class<?> targetClass;
     private final transient Method targetMethod;
 
+    private final Set<String> tags;
+
     // FIXME RB I'd prefer this to be final, it's like this because of the
     // builder.
     private transient Object[] methodArgs;
 
-    public StepImplementationNode(Class<?> targetClass, Method targetMethod, int depth) {
+    public StepImplementationNode(Class<?> targetClass, Method targetMethod, Set<String> tags, int depth) {
 
         this.targetClass = targetClass;
         this.targetMethod = targetMethod;
         this.setDepth(depth);
+        this.tags = tags;
     }
 
     public void appendMethodInfo(final StringBuilder buf) {
@@ -116,6 +120,10 @@ public class StepImplementationNode extends ExecutionNode implements StepNode {
     public String getDescription() {
 
         return getLine();
+    }
+
+    public Set<String> getTags() {
+        return tags;
     }
 
 }

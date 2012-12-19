@@ -24,7 +24,7 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.technophobia.substeps.execution.ExecutionNodeVisitor;
 
-public class SubstepNode extends NodeWithChildren<StepNode> implements StepNode, TaggedNode {
+public class SubstepNode extends NodeWithChildren<StepNode> implements StepNode {
 
     private static final long serialVersionUID = 1L;
 

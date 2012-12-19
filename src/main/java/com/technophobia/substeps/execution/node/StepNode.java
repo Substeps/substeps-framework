@@ -18,7 +18,6 @@
  */
 package com.technophobia.substeps.execution.node;
 
-
-public interface StepNode extends IExecutionNode {
+public interface StepNode extends IExecutionNode, TaggedNode {
 
 }

@@ -23,7 +23,7 @@ import com.technophobia.substeps.execution.node.TaggedNode;
  * 
  * visit(TaggedNode) which can be overridden for default behaviour affecting
  * nodes which have tags, if not overridden these nodes will call
- * visit(NodeWithChildren)
+ * visit(NodeWithChildren) or visit(IExecutionNode) depending on type.
  * 
  * @author rbarefield
  * 
@@ -62,11 +62,17 @@ public abstract class AbstractExecutionNodeVisitor<RETURN_TYPE> implements Execu
 
     public RETURN_TYPE visit(StepImplementationNode stepImplementationNode) {
 
-        return visit((IExecutionNode) stepImplementationNode);
+        return visit((TaggedNode) stepImplementationNode);
     }
 
     public RETURN_TYPE visit(TaggedNode node) {
-        return visit((NodeWithChildren<?>) node);
+
+        if (node instanceof NodeWithChildren<?>) {
+
+            return visit((NodeWithChildren<?>) node);
+        }
+
+        return visit((IExecutionNode) node);
     }
 
     public RETURN_TYPE visit(NodeWithChildren<?> node) {
