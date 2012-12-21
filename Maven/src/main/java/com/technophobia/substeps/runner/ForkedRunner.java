@@ -132,7 +132,6 @@ public class ForkedRunner implements MojoRunner {
         final AtomicBoolean processStartedOk = new AtomicBoolean(false);
 
         InputStreamConsumer consumer = null;
-        // try {
 
         final List<String> command = buildSubstepsRunnerCommand();
 
@@ -142,8 +141,6 @@ public class ForkedRunner implements MojoRunner {
 
         try {
             this.forkedJVMProcess = processBuilder.start();
-
-            // final InputStream stderr = ;
 
             consumer = new InputStreamConsumer(this.forkedJVMProcess.getInputStream(), log, processStarted,
                     processStartedOk);
@@ -314,7 +311,7 @@ public class ForkedRunner implements MojoRunner {
 
     public void addNotifier(INotifier notifier) {
 
-        // TODO
+        this.substepsJmxClient.addNotifier(notifier);
     }
 
 }

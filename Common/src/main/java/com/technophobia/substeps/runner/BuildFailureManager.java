@@ -64,7 +64,7 @@ public class BuildFailureManager extends AbstractExecutionNodeVisitor<String> {
                 IExecutionNode lastNode = failurePath.get(failurePath.size() - 1);
                 Throwable throwable = lastNode.getResult().getFailure().getCause();
 
-                if (throwable != null) {
+                if (throwable != null && throwable.getMessage() != null) {
 
                     buf.append(throwable.getMessage() + "\n");
                 }

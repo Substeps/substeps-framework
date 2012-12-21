@@ -25,8 +25,6 @@ import java.util.Map;
 import org.junit.Ignore;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.technophobia.substeps.execution.node.IExecutionNode;
 
@@ -39,25 +37,19 @@ import com.technophobia.substeps.execution.node.IExecutionNode;
 @Ignore("not a test!")
 public class TestNotifier implements IJunitNotifier {
 
-    private final Logger log = LoggerFactory.getLogger(TestNotifier.class);
-
     private Description currentlyRunning = null;
-
 
     public Description getCurrentlyRunning() {
         return currentlyRunning;
     }
 
-
     public List<Description> getFinished() {
         return finished;
     }
 
-
     public List<Description> getFailed() {
         return failed;
     }
-
 
     public List<Description> getAllStarted() {
         return allStarted;
@@ -67,7 +59,6 @@ public class TestNotifier implements IJunitNotifier {
     private final List<Description> failed = new ArrayList<Description>();
     private final List<Description> allStarted = new ArrayList<Description>();
     private final List<Description> ignored = new ArrayList<Description>();
-
 
     /**
      * {@inheritDoc}
@@ -82,7 +73,6 @@ public class TestNotifier implements IJunitNotifier {
         allStarted.add(des);
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -92,7 +82,6 @@ public class TestNotifier implements IJunitNotifier {
 
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -101,24 +90,19 @@ public class TestNotifier implements IJunitNotifier {
 
     }
 
-
     /**
      * {@inheritDoc}
      */
     public void pleaseStop() {
-        // TODO Auto-generated method stub
 
     }
-
 
     /**
      * {@inheritDoc}
      */
     public void setJunitRunNotifier(final RunNotifier junitNotifier) {
-        // TODO Auto-generated method stub
 
     }
-
 
     /**
      * {@inheritDoc}
@@ -128,7 +112,6 @@ public class TestNotifier implements IJunitNotifier {
 
     }
 
-
     /*
      * (non-Javadoc)
      * 
@@ -137,10 +120,8 @@ public class TestNotifier implements IJunitNotifier {
      * .bddrunner.execution.ExecutionNode, java.lang.Throwable)
      */
     public void notifyTestFailed(final IExecutionNode rootNode, final Throwable cause) {
-        // TODO Auto-generated method stub
 
     }
-
 
     /*
      * (non-Javadoc)
@@ -150,10 +131,8 @@ public class TestNotifier implements IJunitNotifier {
      * .bddrunner.execution.ExecutionNode)
      */
     public void notifyTestStarted(final IExecutionNode node) {
-        // TODO Auto-generated method stub
 
     }
-
 
     /*
      * (non-Javadoc)
@@ -163,10 +142,8 @@ public class TestNotifier implements IJunitNotifier {
      * .bddrunner.execution.ExecutionNode)
      */
     public void notifyTestFinished(final IExecutionNode node) {
-        // TODO Auto-generated method stub
 
     }
-
 
     /*
      * (non-Javadoc)
@@ -176,10 +153,8 @@ public class TestNotifier implements IJunitNotifier {
      * util.Map)
      */
     public void setDescriptionMap(final Map<Long, Description> descriptionMap) {
-        // TODO Auto-generated method stub
 
     }
-
 
     /*
      * (non-Javadoc)
@@ -189,10 +164,8 @@ public class TestNotifier implements IJunitNotifier {
      * .runner.INotifier)
      */
     public void addListener(final INotifier listener) {
-        // TODO Auto-generated method stub
 
     }
-
 
     /*
      * (non-Javadoc)
@@ -202,10 +175,8 @@ public class TestNotifier implements IJunitNotifier {
      * .substeps.execution.ExecutionNode)
      */
     public void notifyTestIgnored(final IExecutionNode node) {
-        // TODO Auto-generated method stub
 
     }
-
 
     /*
      * (non-Javadoc)
@@ -215,10 +186,8 @@ public class TestNotifier implements IJunitNotifier {
      * .substeps.execution.ExecutionNode, java.lang.Throwable)
      */
     public void notifyNodeFailed(final IExecutionNode rootNode, final Throwable cause) {
-        // TODO Auto-generated method stub
 
     }
-
 
     /*
      * (non-Javadoc)
@@ -228,10 +197,8 @@ public class TestNotifier implements IJunitNotifier {
      * .substeps.execution.ExecutionNode)
      */
     public void notifyNodeStarted(final IExecutionNode node) {
-        // TODO Auto-generated method stub
 
     }
-
 
     /*
      * (non-Javadoc)
@@ -240,10 +207,8 @@ public class TestNotifier implements IJunitNotifier {
      * technophobia.substeps.execution.ExecutionNode)
      */
     public void notifyNodeFinished(final IExecutionNode node) {
-        // TODO Auto-generated method stub
 
     }
-
 
     /*
      * (non-Javadoc)
@@ -253,7 +218,6 @@ public class TestNotifier implements IJunitNotifier {
      * .substeps.execution.ExecutionNode)
      */
     public void notifyNodeIgnored(final IExecutionNode node) {
-        // TODO Auto-generated method stub
 
     }
 
