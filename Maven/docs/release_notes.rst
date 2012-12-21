@@ -3,6 +3,14 @@ Substeps Runner - Release Notes
 
 - A list of changes per release 
 
+1.1.0
+-----
+
+- The maven plugin has been renamed to substeps-maven-plugin in keeping with standard conventions
+- By default the plugin now spawns a new instance of the JVM in which the tests are executed, communication is via JMX
+- Maven site now generated
+ 
+
 1.0.0
 -----
 - changes to support new reporting changes and the 1.0.0 release of substeps-core

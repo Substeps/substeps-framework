@@ -35,7 +35,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.technophobia.substeps.execution.ExecutionNode;
+import com.technophobia.substeps.execution.node.RootNode;
 import com.technophobia.substeps.jmx.SubstepsServerMBean;
 
 /**
@@ -83,18 +83,18 @@ public class SubstepsJMXClient implements SubstepsRunner {
         }
     }
 
-    public void prepareExecutionConfig(final SubstepsExecutionConfig cfg) {
+    public RootNode prepareExecutionConfig(final SubstepsExecutionConfig cfg) {
 
-        this.mbean.prepareExecutionConfig(cfg);
+        return this.mbean.prepareExecutionConfig(cfg);
 
     }
 
-    public ExecutionNode getRootNode() {
+    public List<SubstepExecutionFailure> getFailures() {
 
-        return this.mbean.getRootNode();
+        return this.mbean.getFailures();
     }
 
-    public List<SubstepExecutionFailure> run() {
+    public RootNode run() {
 
         return this.mbean.run();
     }

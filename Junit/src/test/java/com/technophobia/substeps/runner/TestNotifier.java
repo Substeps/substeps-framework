@@ -25,10 +25,8 @@ import java.util.Map;
 import org.junit.Ignore;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.technophobia.substeps.execution.ExecutionNode;
+import com.technophobia.substeps.execution.node.IExecutionNode;
 
 /**
  * test to get to the bottom of sequencing test started notifications etc
@@ -39,25 +37,19 @@ import com.technophobia.substeps.execution.ExecutionNode;
 @Ignore("not a test!")
 public class TestNotifier implements IJunitNotifier {
 
-    private final Logger log = LoggerFactory.getLogger(TestNotifier.class);
-
     private Description currentlyRunning = null;
-
 
     public Description getCurrentlyRunning() {
         return currentlyRunning;
     }
 
-
     public List<Description> getFinished() {
         return finished;
     }
 
-
     public List<Description> getFailed() {
         return failed;
     }
-
 
     public List<Description> getAllStarted() {
         return allStarted;
@@ -67,7 +59,6 @@ public class TestNotifier implements IJunitNotifier {
     private final List<Description> failed = new ArrayList<Description>();
     private final List<Description> allStarted = new ArrayList<Description>();
     private final List<Description> ignored = new ArrayList<Description>();
-
 
     /**
      * {@inheritDoc}
@@ -82,7 +73,6 @@ public class TestNotifier implements IJunitNotifier {
         allStarted.add(des);
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -92,7 +82,6 @@ public class TestNotifier implements IJunitNotifier {
 
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -101,24 +90,19 @@ public class TestNotifier implements IJunitNotifier {
 
     }
 
-
     /**
      * {@inheritDoc}
      */
     public void pleaseStop() {
-        // TODO Auto-generated method stub
 
     }
-
 
     /**
      * {@inheritDoc}
      */
     public void setJunitRunNotifier(final RunNotifier junitNotifier) {
-        // TODO Auto-generated method stub
 
     }
-
 
     /**
      * {@inheritDoc}
@@ -128,7 +112,6 @@ public class TestNotifier implements IJunitNotifier {
 
     }
 
-
     /*
      * (non-Javadoc)
      * 
@@ -136,11 +119,9 @@ public class TestNotifier implements IJunitNotifier {
      * uk.co.itmoore.bddrunner.runner.INotifier#notifyTestFailed(uk.co.itmoore
      * .bddrunner.execution.ExecutionNode, java.lang.Throwable)
      */
-    public void notifyTestFailed(final ExecutionNode rootNode, final Throwable cause) {
-        // TODO Auto-generated method stub
+    public void notifyTestFailed(final IExecutionNode rootNode, final Throwable cause) {
 
     }
-
 
     /*
      * (non-Javadoc)
@@ -149,11 +130,9 @@ public class TestNotifier implements IJunitNotifier {
      * uk.co.itmoore.bddrunner.runner.INotifier#notifyTestStarted(uk.co.itmoore
      * .bddrunner.execution.ExecutionNode)
      */
-    public void notifyTestStarted(final ExecutionNode node) {
-        // TODO Auto-generated method stub
+    public void notifyTestStarted(final IExecutionNode node) {
 
     }
-
 
     /*
      * (non-Javadoc)
@@ -162,11 +141,9 @@ public class TestNotifier implements IJunitNotifier {
      * uk.co.itmoore.bddrunner.runner.INotifier#notifyTestFinished(uk.co.itmoore
      * .bddrunner.execution.ExecutionNode)
      */
-    public void notifyTestFinished(final ExecutionNode node) {
-        // TODO Auto-generated method stub
+    public void notifyTestFinished(final IExecutionNode node) {
 
     }
-
 
     /*
      * (non-Javadoc)
@@ -176,10 +153,8 @@ public class TestNotifier implements IJunitNotifier {
      * util.Map)
      */
     public void setDescriptionMap(final Map<Long, Description> descriptionMap) {
-        // TODO Auto-generated method stub
 
     }
-
 
     /*
      * (non-Javadoc)
@@ -189,10 +164,8 @@ public class TestNotifier implements IJunitNotifier {
      * .runner.INotifier)
      */
     public void addListener(final INotifier listener) {
-        // TODO Auto-generated method stub
 
     }
-
 
     /*
      * (non-Javadoc)
@@ -201,11 +174,9 @@ public class TestNotifier implements IJunitNotifier {
      * com.technophobia.substeps.runner.INotifier#notifyTestIgnored(com.technophobia
      * .substeps.execution.ExecutionNode)
      */
-    public void notifyTestIgnored(final ExecutionNode node) {
-        // TODO Auto-generated method stub
+    public void notifyTestIgnored(final IExecutionNode node) {
 
     }
-
 
     /*
      * (non-Javadoc)
@@ -214,11 +185,9 @@ public class TestNotifier implements IJunitNotifier {
      * com.technophobia.substeps.runner.INotifier#notifyNodeFailed(com.technophobia
      * .substeps.execution.ExecutionNode, java.lang.Throwable)
      */
-    public void notifyNodeFailed(final ExecutionNode rootNode, final Throwable cause) {
-        // TODO Auto-generated method stub
+    public void notifyNodeFailed(final IExecutionNode rootNode, final Throwable cause) {
 
     }
-
 
     /*
      * (non-Javadoc)
@@ -227,11 +196,9 @@ public class TestNotifier implements IJunitNotifier {
      * com.technophobia.substeps.runner.INotifier#notifyNodeStarted(com.technophobia
      * .substeps.execution.ExecutionNode)
      */
-    public void notifyNodeStarted(final ExecutionNode node) {
-        // TODO Auto-generated method stub
+    public void notifyNodeStarted(final IExecutionNode node) {
 
     }
-
 
     /*
      * (non-Javadoc)
@@ -239,11 +206,9 @@ public class TestNotifier implements IJunitNotifier {
      * @see com.technophobia.substeps.runner.INotifier#notifyNodeFinished(com.
      * technophobia.substeps.execution.ExecutionNode)
      */
-    public void notifyNodeFinished(final ExecutionNode node) {
-        // TODO Auto-generated method stub
+    public void notifyNodeFinished(final IExecutionNode node) {
 
     }
-
 
     /*
      * (non-Javadoc)
@@ -252,8 +217,7 @@ public class TestNotifier implements IJunitNotifier {
      * com.technophobia.substeps.runner.INotifier#notifyNodeIgnored(com.technophobia
      * .substeps.execution.ExecutionNode)
      */
-    public void notifyNodeIgnored(final ExecutionNode node) {
-        // TODO Auto-generated method stub
+    public void notifyNodeIgnored(final IExecutionNode node) {
 
     }
 

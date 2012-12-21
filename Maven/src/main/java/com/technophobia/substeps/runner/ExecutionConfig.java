@@ -27,6 +27,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 /**
  * @author ricky
  */
+// Note: This class is populate SubstepsExecutionConfig via Reflection,
+// therefore changes here must be
+// mirrored in that class
 public class ExecutionConfig {
 
     /**
@@ -82,7 +85,7 @@ public class ExecutionConfig {
      * @parameter default-value=true
      * @required
      */
-    private boolean strict = true;
+    private final boolean strict = true;
 
     /**
      * If true any parse errors will fail the build immediately, rather than
@@ -92,7 +95,7 @@ public class ExecutionConfig {
      * @parameter default-value=true
      * @required
      */
-    private boolean fastFailParseErrors = true;
+    private final boolean fastFailParseErrors = true;
 
     /**
      * @parameter

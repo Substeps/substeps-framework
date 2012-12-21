@@ -28,7 +28,8 @@ import junit.framework.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.technophobia.substeps.execution.ExecutionNode;
+import com.technophobia.substeps.execution.node.ExecutionNode;
+import com.technophobia.substeps.execution.node.RootNode;
 import com.technophobia.substeps.runner.BuildFailureManager;
 import com.technophobia.substeps.runner.ExecutionConfig;
 import com.technophobia.substeps.runner.SubstepsRunnerMojo;
@@ -42,36 +43,34 @@ import com.technophobia.substeps.runner.SubstepsRunnerMojo;
  */
 public class SubstepsRunnerMojoTest {
 
-	//@Test
-	public void testNonCriticalFailures() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException{
-	
-		
-		
+    // @Test
+    public void testNonCriticalFailures() throws SecurityException, NoSuchMethodException, IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException {
+
         final SubstepsRunnerMojo mojo = new SubstepsRunnerMojo();
 
-        final Method executeInternalMethod = mojo.getClass().getMethod("executeInternal",
-        		BuildFailureManager.class, List.class);
-        
+        final Method executeInternalMethod = mojo.getClass().getMethod("executeInternal", BuildFailureManager.class,
+                List.class);
+
         Assert.assertNotNull(executeInternalMethod);
         executeInternalMethod.setAccessible(true);
 
         final BuildFailureManager bfm = null;
         final List<ExecutionConfig> cfgList = null;
-        
+
         executeInternalMethod.invoke(bfm, cfgList);
 
-	}
-	
+    }
+
     @Ignore("incomplete test")
     @Test
     public void testCriticalNonCriticalFailures() throws SecurityException, NoSuchMethodException,
-            IllegalArgumentException, IllegalAccessException, InvocationTargetException,
-            NoSuchFieldException {
+            IllegalArgumentException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
 
         final SubstepsRunnerMojo mojo = new SubstepsRunnerMojo();
 
-        final Method method = mojo.getClass().getMethod("checkRootNodeForFailure",
-                ExecutionNode.class, ExecutionConfig.class);
+        final Method method = mojo.getClass().getMethod("checkRootNodeForFailure", ExecutionNode.class,
+                ExecutionConfig.class);
 
         final Field failedNodesField = mojo.getClass().getField("failedNodes");
         final Field nonFatalFailedNodesField = mojo.getClass().getField("nonFatalFailedNodes");
@@ -84,13 +83,12 @@ public class SubstepsRunnerMojoTest {
 
         final ExecutionConfig execConfig = new ExecutionConfig();
 
-        final ExecutionNode rootNode = new ExecutionNode();
+        final RootNode rootNode = new RootNode("desc", null);
 
         method.invoke(mojo, rootNode, execConfig);
 
         final List<ExecutionNode> failedNodes = (List<ExecutionNode>) failedNodesField.get(mojo);
-        final List<ExecutionNode> nonFatalFailedNodes = (List<ExecutionNode>) nonFatalFailedNodesField
-                .get(mojo);
+        final List<ExecutionNode> nonFatalFailedNodes = (List<ExecutionNode>) nonFatalFailedNodesField.get(mojo);
 
     }
 

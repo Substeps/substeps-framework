@@ -55,12 +55,6 @@
 
 		<!-- Although this has a dependency on core it is important that the scope 
 			is TEST -->
-		<dependency>
-			<groupId>com.technophobia.substeps</groupId>
-			<artifactId>substeps-core</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
 
 		<dependency>
 			<groupId>com.technophobia.substeps</groupId>

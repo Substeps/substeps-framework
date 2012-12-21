@@ -1,3 +1,21 @@
+/*
+ *	Copyright Technophobia Ltd 2012
+ *
+ *   This file is part of Substeps.
+ *
+ *    Substeps is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Lesser General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    Substeps is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public License
+ *    along with Substeps.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.technophobia.substeps.runner;
 
 import java.io.File;
@@ -26,7 +44,7 @@ import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.technophobia.substeps.execution.ExecutionNode;
+import com.technophobia.substeps.execution.node.RootNode;
 
 public class ForkedRunner implements MojoRunner {
 
@@ -60,7 +78,7 @@ public class ForkedRunner implements MojoRunner {
 
     private ForkedProcessCloser shutdownHook;
 
-    private InputStreamConsumer consumer;
+    private final InputStreamConsumer consumer;
 
     ForkedRunner(Log log, int jmxPort, String vmArgs, List<String> testClasspathElements,
             List<String> stepImplementationArtifacts, ArtifactResolver artifactResolver,
@@ -132,7 +150,6 @@ public class ForkedRunner implements MojoRunner {
         final AtomicBoolean processStartedOk = new AtomicBoolean(false);
 
         InputStreamConsumer consumer = null;
-        // try {
 
         final List<String> command = buildSubstepsRunnerCommand();
 
@@ -142,8 +159,6 @@ public class ForkedRunner implements MojoRunner {
 
         try {
             this.forkedJVMProcess = processBuilder.start();
-
-            // final InputStream stderr = ;
 
             consumer = new InputStreamConsumer(this.forkedJVMProcess.getInputStream(), log, processStarted,
                     processStartedOk);
@@ -296,25 +311,25 @@ public class ForkedRunner implements MojoRunner {
         stepImplementationArtifactJars.add(path);
     }
 
-    public void prepareExecutionConfig(SubstepsExecutionConfig theConfig) {
+    public RootNode prepareExecutionConfig(SubstepsExecutionConfig theConfig) {
 
-        this.substepsJmxClient.prepareExecutionConfig(theConfig);
+        return this.substepsJmxClient.prepareExecutionConfig(theConfig);
     }
 
-    public List<SubstepExecutionFailure> run() {
+    public RootNode run() {
 
         log.info("Running substeps tests in forked jvm");
         return this.substepsJmxClient.run();
     }
 
-    public ExecutionNode getRootNode() {
+    public List<SubstepExecutionFailure> getFailures() {
 
-        return this.substepsJmxClient.getRootNode();
+        return this.substepsJmxClient.getFailures();
     }
 
     public void addNotifier(INotifier notifier) {
 
-        // TODO
+        this.substepsJmxClient.addNotifier(notifier);
     }
 
 }

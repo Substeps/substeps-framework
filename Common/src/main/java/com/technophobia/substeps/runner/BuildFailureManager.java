@@ -19,85 +19,91 @@
 
 package com.technophobia.substeps.runner;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import com.technophobia.substeps.execution.ExecutionNode;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.technophobia.substeps.execution.AbstractExecutionNodeVisitor;
+import com.technophobia.substeps.execution.node.IExecutionNode;
+import com.technophobia.substeps.execution.node.NodeWithChildren;
+import com.technophobia.substeps.execution.node.RootNode;
 
 /**
  * @author ian
  * 
  */
-public class BuildFailureManager {
+public class BuildFailureManager extends AbstractExecutionNodeVisitor<String> {
 
-    private List<SubstepExecutionFailure> criticalFailures = null;
-    private List<SubstepExecutionFailure> nonCriticalFailures = null;
+    private final List<List<IExecutionNode>> criticalFailures = Lists.newArrayList();
+    private final List<List<IExecutionNode>> nonCriticalFailures = Lists.newArrayList();
 
     public String getBuildFailureInfo() {
-        return getBuildInfoString("NON CRITICAL FAILURES:\n\n", this.nonCriticalFailures)
-                + getBuildInfoString("\n\nCRITICAL FAILURES:\n\n", this.criticalFailures);
+        return getBuildInfoString("NON CRITICAL FAILURES:", this.nonCriticalFailures)
+                + getBuildInfoString("CRITICAL FAILURES:", this.criticalFailures);
     }
 
-    private String getBuildInfoString(final String msg, final List<SubstepExecutionFailure> failures) {
-        final StringBuilder buf = new StringBuilder();
+    public void addExecutionResult(RootNode rootNode) {
 
-        final Set<ExecutionNode> dealtWith = new HashSet<ExecutionNode>();
+        addFailuresToLists(rootNode, Collections.<IExecutionNode> emptyList());
+    }
+
+    private String getBuildInfoString(final String msg, final List<List<IExecutionNode>> failures) {
+
+        final StringBuilder buf = new StringBuilder();
 
         if (failures != null && !failures.isEmpty()) {
 
+            buf.append("\n");
             buf.append(msg);
 
-            for (final SubstepExecutionFailure fail : failures) {
-                final ExecutionNode node = fail.getExeccutionNode();
-                if (!dealtWith.contains(node)) {
-                    final List<ExecutionNode> hierarchy = new ArrayList<ExecutionNode>();
+            for (List<IExecutionNode> failurePath : failures) {
 
-                    hierarchy.add(node);
+                buf.append("\n\n");
 
-                    // go up the tree as far as we can go
-                    ExecutionNode parent = node.getParent();
-                    while (parent != null) {
-                        hierarchy.add(parent);
-                        parent = parent.getParent();
-                    }
+                IExecutionNode lastNode = failurePath.get(failurePath.size() - 1);
+                Throwable throwable = lastNode.getResult().getFailure().getCause();
 
-                    Collections.reverse(hierarchy);
+                if (throwable != null && throwable.getMessage() != null) {
 
-                    for (final ExecutionNode node2 : hierarchy) {
-                        buf.append(node2.getDebugStringForThisNode());
-                        dealtWith.add(node2);
-                    }
+                    buf.append(throwable.getMessage() + "\n");
                 }
-                buf.append("\n");
+
+                buf.append("Trace:\n\n");
+
+                for (IExecutionNode node : failurePath) {
+
+                    buf.append(node.getId() + ":");
+                    buf.append(Strings.repeat("   ", node.getDepth()));
+                    buf.append(node.getDescription() + "\n");
+
+                }
             }
         }
+
         return buf.toString();
     }
 
-    /**
-     * @param failures
-     */
-    public void sortFailures(final List<SubstepExecutionFailure> failures) {
+    private void addFailuresToLists(IExecutionNode node, List<IExecutionNode> parents) {
 
-        for (final SubstepExecutionFailure fail : failures) {
+        List<IExecutionNode> path = Lists.newArrayList(parents);
+        path.add(node);
 
-            if (fail.isNonCritical()) {
+        if (node.getResult().getFailure() != null) {
 
-                if (this.nonCriticalFailures == null) {
-                    this.nonCriticalFailures = new ArrayList<SubstepExecutionFailure>();
-                }
+            SubstepExecutionFailure failure = node.getResult().getFailure();
 
-                this.nonCriticalFailures.add(fail);
+            if (failure.isNonCritical()) {
+
+                nonCriticalFailures.add(path);
             } else {
+                criticalFailures.add(path);
+            }
+        } else if (node instanceof NodeWithChildren<?>) {
 
-                if (this.criticalFailures == null) {
-                    this.criticalFailures = new ArrayList<SubstepExecutionFailure>();
-                }
+            for (IExecutionNode childNode : ((NodeWithChildren<?>) node).getChildren()) {
 
-                criticalFailures.add(fail);
+                addFailuresToLists(childNode, path);
             }
         }
     }
