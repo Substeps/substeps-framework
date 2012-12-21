@@ -63,21 +63,21 @@ public class BasicScenarioNode extends ScenarioNode<StepNode> {
     @Override
     public <RETURN_TYPE> List<RETURN_TYPE> accept(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor) {
 
-        List<RETURN_TYPE> toReturn = Lists.newArrayList();
+        List<RETURN_TYPE> results = Lists.newArrayList();
 
-        toReturn.add(executionNodeVisitor.visit(this));
+        results.add(executionNodeVisitor.visit(this));
 
         if (this.background != null) {
 
-            toReturn.addAll(this.background.accept(executionNodeVisitor));
+            results.addAll(this.background.accept(executionNodeVisitor));
         }
 
         for (StepNode step : steps) {
 
-            toReturn.addAll(step.accept(executionNodeVisitor));
+            results.addAll(step.accept(executionNodeVisitor));
         }
 
-        return toReturn;
+        return results;
     }
 
     @Override
