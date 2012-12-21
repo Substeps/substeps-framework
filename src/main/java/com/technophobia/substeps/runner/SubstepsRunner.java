@@ -1,9 +1,3 @@
-package com.technophobia.substeps.runner;
-
-import java.util.List;
-
-import com.technophobia.substeps.execution.ExecutionNode;
-
 /*
  *	Copyright Technophobia Ltd 2012
  *
@@ -22,17 +16,22 @@ import com.technophobia.substeps.execution.ExecutionNode;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with Substeps.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.technophobia.substeps.runner;
+
+import java.util.List;
+
+import com.technophobia.substeps.execution.node.RootNode;
 
 /**
  * Common interface for Substeps runners, prepare, then run.
  */
 public interface SubstepsRunner {
 
-    void prepareExecutionConfig(final SubstepsExecutionConfig theConfig);
+    RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig);
 
-    List<SubstepExecutionFailure> run();
+    RootNode run();
 
-    ExecutionNode getRootNode();
+    List<SubstepExecutionFailure> getFailures();
 
     void addNotifier(INotifier notifier);
 }

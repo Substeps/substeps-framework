@@ -22,6 +22,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Properties;
 
+//Note: This class is populated my maven via reflection, therefore changes here must be mirrored in
+//ExecutionConfig under the maven runner project
 public class SubstepsExecutionConfig implements Serializable {
 
     private static final long serialVersionUID = 1L;

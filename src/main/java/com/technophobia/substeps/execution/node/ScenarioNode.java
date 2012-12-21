@@ -16,15 +16,10 @@
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with Substeps.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.technophobia.substeps.report;
+package com.technophobia.substeps.execution.node;
 
-public class UnableToLoadExectuionReportBuilder extends RuntimeException {
+public abstract class ScenarioNode<CHILD_TYPE extends IExecutionNode> extends NodeWithChildren<CHILD_TYPE> implements
+        TaggedNode {
 
     private static final long serialVersionUID = 1L;
-
-    public UnableToLoadExectuionReportBuilder(String executionReportBuilderClassName, Throwable cause) {
-
-        super("Unable to load report builder with class name '" + executionReportBuilderClassName + "'", cause);
-    }
-
 }

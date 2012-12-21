@@ -18,7 +18,7 @@
  */
 package com.technophobia.substeps.runner;
 
-import com.technophobia.substeps.execution.ExecutionNode;
+import com.technophobia.substeps.execution.node.IExecutionNode;
 
 /**
  * 
@@ -31,21 +31,21 @@ public interface INotifier {
      * @param rootNode
      * @param cause
      */
-    void notifyNodeFailed(ExecutionNode rootNode, Throwable cause);
+    void notifyNodeFailed(IExecutionNode rootNode, Throwable cause);
 
     /**
      * @param node
      */
-    void notifyNodeStarted(ExecutionNode node);
+    void notifyNodeStarted(IExecutionNode node);
 
     /**
      * @param node
      */
-    void notifyNodeFinished(ExecutionNode node);
+    void notifyNodeFinished(IExecutionNode node);
 
     /**
      * @param node
      */
-    void notifyNodeIgnored(ExecutionNode node);
+    void notifyNodeIgnored(IExecutionNode node);
 
 }

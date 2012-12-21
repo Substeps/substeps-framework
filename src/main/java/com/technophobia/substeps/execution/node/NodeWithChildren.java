@@ -16,15 +16,38 @@
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with Substeps.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.technophobia.substeps.report;
+package com.technophobia.substeps.execution.node;
 
-public class UnableToLoadExectuionReportBuilder extends RuntimeException {
+import java.util.List;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+
+public abstract class NodeWithChildren<CHILD_TYPE extends IExecutionNode> extends ExecutionNode {
 
     private static final long serialVersionUID = 1L;
 
-    public UnableToLoadExectuionReportBuilder(String executionReportBuilderClassName, Throwable cause) {
+    public abstract List<CHILD_TYPE> getChildren();
 
-        super("Unable to load report builder with class name '" + executionReportBuilderClassName + "'", cause);
+    public boolean hasChildren() {
+        return this.getChildren() != null && !this.getChildren().isEmpty();
+    }
+
+    @Override
+    public String toDebugString() {
+
+        List<String> debugLines = Lists.newArrayList(super.toDebugString());
+        if (getChildren() != null) {
+
+            for (CHILD_TYPE child : getChildren()) {
+
+                if (child != null) {
+
+                    debugLines.add(child.toDebugString());
+                }
+            }
+        }
+        return Joiner.on("\n").join(debugLines);
     }
 
 }
