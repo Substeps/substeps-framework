@@ -65,7 +65,7 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
     /**
      * When running in forked mode, a port is required to communicate between
-     * maven and substeps, uo set explicitly use -DjmxPort=9999
+     * maven and substeps, to set explicitly use -DjmxPort=9999
      * 
      * @parameter default-value="9999" expression="${jmxPort}"
      */
