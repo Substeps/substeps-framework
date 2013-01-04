@@ -3,7 +3,7 @@
 
     <groupId>com.technophobia.substeps</groupId>
     <artifactId>substeps-runner-parent</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <!-- for OSS hosting -->
@@ -263,7 +263,7 @@
         <connection>${substeps-core.scm}</connection>
         <developerConnection>${substeps-core.scm}</developerConnection>
         <url>${substeps-core.scm.url}</url>
-      <tag>substeps-runner-parent-1.1.0</tag>
+      <tag>HEAD</tag>
   </scm>
 
 </project>
