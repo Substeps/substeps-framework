@@ -201,9 +201,9 @@
     </profiles>
 
     <scm>
-        <connection>${substeps-core.scm}</connection>
-        <developerConnection>${substeps-core.scm}</developerConnection>
-        <url>${substeps-core.scm.url}</url>
+        <connection>${substeps-core-api.scm}</connection>
+        <developerConnection>${substeps-core-api.scm}</developerConnection>
+        <url>${substeps-core-api.scm.url}</url>
       <tag>HEAD</tag>
   </scm>
 
