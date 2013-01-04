@@ -39,6 +39,7 @@ class InputStreamConsumer implements Runnable {
     private InputStreamReader isr = null;
     private BufferedReader br = null;
 
+
     public InputStreamConsumer(final InputStream stderr, final Log logger, final CountDownLatch processStarted,
             final AtomicBoolean processStartedOk) {
         this.logger = logger;
@@ -46,6 +47,7 @@ class InputStreamConsumer implements Runnable {
         this.processStartedOk = processStartedOk;
         this.stderr = stderr;
     }
+
 
     void closeQuietly(final Closeable closeable) {
 
@@ -60,6 +62,7 @@ class InputStreamConsumer implements Runnable {
         }
     }
 
+
     /**
      * 
      */
@@ -68,6 +71,7 @@ class InputStreamConsumer implements Runnable {
         closeQuietly(this.isr);
         closeQuietly(this.stderr);
     }
+
 
     /*
      * (non-Javadoc)
@@ -82,7 +86,12 @@ class InputStreamConsumer implements Runnable {
             this.br = new BufferedReader(this.isr);
 
             while ((line = this.br.readLine()) != null) {
-                this.logger.info(" *\t" + line);
+
+                // NB. this is not a logger as we don't want to be able to turn
+                // this off
+                // If the level of logging from the child process is verbose,
+                // change the logging level of the spawned process.
+                System.out.println(" *\t" + line);
 
                 if (line.contains("awaiting the shutdown notification...")) {
                     this.logger.info("mbean server process started");

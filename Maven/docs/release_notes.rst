@@ -9,6 +9,7 @@ Substeps Runner - Release Notes
 - The maven plugin has been renamed to substeps-maven-plugin in keeping with standard conventions
 - By default the plugin now spawns a new instance of the JVM in which the tests are executed, communication is via JMX
 - Maven site now generated
+- Output from child process uses System.out rather than Maven logger
  
 
 1.0.0
