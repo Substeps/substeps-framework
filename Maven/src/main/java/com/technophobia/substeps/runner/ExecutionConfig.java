@@ -85,7 +85,7 @@ public class ExecutionConfig {
      * @parameter default-value=true
      * @required
      */
-    private final boolean strict = true;
+    private boolean strict = true;
 
     /**
      * If true any parse errors will fail the build immediately, rather than
@@ -95,7 +95,7 @@ public class ExecutionConfig {
      * @parameter default-value=true
      * @required
      */
-    private final boolean fastFailParseErrors = true;
+    private boolean fastFailParseErrors = true;
 
     /**
      * @parameter

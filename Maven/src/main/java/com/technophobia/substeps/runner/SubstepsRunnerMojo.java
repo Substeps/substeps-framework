@@ -64,13 +64,12 @@ public class SubstepsRunnerMojo extends AbstractMojo {
     private final ExecutionReportBuilder executionReportBuilder = null;
 
     /**
-     * When running in forked mode, a port is required to communicated between
-     * maven and substeps
+     * When running in forked mode, a port is required to communicate between
+     * maven and substeps, to set explicitly use -DjmxPort=9999
      * 
-     * @parameter default-value="9999"
-     * @required
+     * @parameter default-value="9999" expression="${jmxPort}"
      */
-    private int jmxPort;
+    private Integer jmxPort;
 
     /**
      * A space delimited string of vm arguments to pass to the forked jvm
@@ -245,7 +244,6 @@ public class SubstepsRunnerMojo extends AbstractMojo {
     private void ensureValidConfiguration() throws MojoExecutionException {
 
         ensureForkedIfStepImplementationArtifactsSpecified();
-
     }
 
     private void ensureForkedIfStepImplementationArtifactsSpecified() throws MojoExecutionException {
@@ -256,4 +254,5 @@ public class SubstepsRunnerMojo extends AbstractMojo {
         }
 
     }
+
 }

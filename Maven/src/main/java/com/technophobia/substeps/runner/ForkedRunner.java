@@ -158,6 +158,9 @@ public class ForkedRunner implements MojoRunner {
         processBuilder.redirectErrorStream(true);
 
         try {
+
+            log.debug("Starting substeps process with command " + Joiner.on(" ").join(processBuilder.command()));
+
             this.forkedJVMProcess = processBuilder.start();
 
             consumer = new InputStreamConsumer(this.forkedJVMProcess.getInputStream(), log, processStarted,
