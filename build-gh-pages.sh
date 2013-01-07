@@ -17,8 +17,8 @@ rm -rf _static
 
 # move content over from the _build dir
 
-cp -R docs/_build/html/_static/mavensite _static/mavensite
 cp docs/_build/html _static
+cp -R docs/_build/html/_static/mavensite _static/mavensite
 cp docs/_build/html/*.html .
 cp docs/_build/html/*.inv .
 cp docs/_build/html/*.js .
