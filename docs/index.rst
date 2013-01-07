@@ -14,15 +14,16 @@ Overview
 - On completion of the maven plugin execution, a report is generated with details of the tests executed,
   passed and failed, along with any details of the failure. 
 
+- `Maven site <_static/mavensite/index.html>`_ details the parameters and usage of the maven plugin.  
+
 .. toctree::
    :maxdepth: 2
    :glob:
    
-   using*
    release*
-   compatibility*
    
-`Maven site <_static/mavensite/index.html>`_   
+   
+
 
 .. Note::
    `*` Some features are currently in development and may not be available at the time of reading!
