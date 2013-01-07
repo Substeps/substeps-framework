@@ -58,6 +58,7 @@
 		<dependency>
 			<groupId>com.technophobia.substeps</groupId>
 			<artifactId>substeps-core</artifactId>
+             <version>${substeps.core.version}</version>
 			<scope>test</scope>
 		</dependency>
 
