@@ -1,11 +1,11 @@
 Substeps Maven Plugin
 
 
- * Substeps is an open-source Behaviour Driven Development (BDD) test framework created by Technophobia.
+ * Substeps is an open-source Behaviour Driven Development (BDD) test framework created by {{{http://www.technophobia.com/} Technophobia}}.
 
  * These pages describe the maven plugin that can be used to execute suites of Substeps tests.
 
- * For full instructions as to how to setup a substeps project, please refer to the main susbteps pages for more details.
+ * For full instructions as to how to setup a substeps project, please refer to the main {{{http://technophobia.github.com/substeps/}Substeps pages}} for more details.
 
 
 Overview

@@ -3,6 +3,10 @@ Substeps Runner - Release Notes
 
 - A list of changes per release 
 
+1.1.0
+-----
+- Break out of individual subprojects for Maven, Junit and Ant.
+
 1.0.0
 -----
 - changes to support new reporting changes and the 1.0.0 release of substeps-core
