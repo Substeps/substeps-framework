@@ -80,11 +80,12 @@ public class ForkedRunner implements MojoRunner {
 
     private final InputStreamConsumer consumer;
 
-    ForkedRunner(Log log, int jmxPort, String vmArgs, List<String> testClasspathElements,
-            List<String> stepImplementationArtifacts, ArtifactResolver artifactResolver,
-            ArtifactFactory artifactFactory, MavenProjectBuilder mavenProjectBuilder,
-            ArtifactRepository localRepository, List<ArtifactRepository> remoteRepositories,
-            ArtifactMetadataSource artifactMetadataSource) throws MojoExecutionException {
+
+    ForkedRunner(final Log log, final int jmxPort, final String vmArgs, final List<String> testClasspathElements,
+            final List<String> stepImplementationArtifacts, final ArtifactResolver artifactResolver,
+            final ArtifactFactory artifactFactory, final MavenProjectBuilder mavenProjectBuilder,
+            final ArtifactRepository localRepository, final List<ArtifactRepository> remoteRepositories,
+            final ArtifactMetadataSource artifactMetadataSource) throws MojoExecutionException {
 
         this.log = log;
         this.jmxPort = jmxPort;
@@ -98,38 +99,40 @@ public class ForkedRunner implements MojoRunner {
         this.remoteRepositories = remoteRepositories;
         this.artifactMetadataSource = artifactMetadataSource;
 
-        consumer = startMBeanJVM();
+        this.consumer = startMBeanJVM();
 
         initialiseClient();
     }
 
+
     private void initialiseClient() throws MojoExecutionException {
 
-        substepsJmxClient = new SubstepsJMXClient();
+        this.substepsJmxClient = new SubstepsJMXClient();
 
-        shutdownHook = ForkedProcessCloser.addHook(substepsJmxClient, this.forkedJVMProcess, log);
+        this.shutdownHook = ForkedProcessCloser.addHook(this.substepsJmxClient, this.forkedJVMProcess, this.log);
 
-        substepsJmxClient.init(this.jmxPort);
+        this.substepsJmxClient.init(this.jmxPort);
     }
+
 
     public void shutdown() {
 
-        substepsJmxClient.shutdown();
+        this.substepsJmxClient.shutdown();
 
         if (this.forkedJVMProcess != null) {
 
             try {
-                log.info("waiting for forked process to return");
+                this.log.info("waiting for forked process to return");
 
                 final int waitFor = this.forkedJVMProcess.waitFor();
 
-                log.info("wait for forked VM returned with exit code: " + waitFor);
+                this.log.info("wait for forked VM returned with exit code: " + waitFor);
 
-                shutdownHook.notifyShutdownSuccessful();
+                this.shutdownHook.notifyShutdownSuccessful();
 
                 // now we can close the streams
-                if (consumer != null) {
-                    consumer.closeStreams();
+                if (this.consumer != null) {
+                    this.consumer.closeStreams();
                 }
 
             } catch (final InterruptedException e) {
@@ -138,9 +141,10 @@ public class ForkedRunner implements MojoRunner {
             }
         }
 
-        log.info("forked process returned");
+        this.log.info("forked process returned");
 
     }
+
 
     private InputStreamConsumer startMBeanJVM() throws MojoExecutionException {
         // launch the jvm process that will contain the Substeps MBean Server
@@ -159,11 +163,11 @@ public class ForkedRunner implements MojoRunner {
 
         try {
 
-            log.debug("Starting substeps process with command " + Joiner.on(" ").join(processBuilder.command()));
+            this.log.debug("Starting substeps process with command " + Joiner.on(" ").join(processBuilder.command()));
 
             this.forkedJVMProcess = processBuilder.start();
 
-            consumer = new InputStreamConsumer(this.forkedJVMProcess.getInputStream(), log, processStarted,
+            consumer = new InputStreamConsumer(this.forkedJVMProcess.getInputStream(), this.log, processStarted,
                     processStartedOk);
 
             final Thread t = new Thread(consumer);
@@ -175,20 +179,21 @@ public class ForkedRunner implements MojoRunner {
         }
 
         try {
-            log.info("waiting for process to start...");
+            this.log.info("waiting for process to start...");
             processStarted.await(START_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
             if (!processStartedOk.get()) {
                 throw new MojoExecutionException("Unable to launch VM process");
             }
 
-            log.info("process started");
+            this.log.info("process started");
         } catch (final InterruptedException e) {
 
             e.printStackTrace();
         }
         return consumer;
     }
+
 
     /**
      * @param cpBuf
@@ -201,7 +206,22 @@ public class ForkedRunner implements MojoRunner {
         final String classpath = createClasspathString();
 
         final List<String> command = Lists.newArrayList();
-        command.add("java");
+
+        // attempt to use JAVA_HOME
+        String javaHome = System.getenv("JAVA_HOME");
+        if (javaHome == null) {
+            javaHome = System.getenv("java_home");
+        }
+
+        if (javaHome == null) {
+            // not sure how we'd get here - maven running without JAVA_HOME
+            // set..??
+            this.log.warn("unable to resolve JAVA_HOME variable, assuming java is on the path...");
+            command.add("java");
+        } else {
+            command.add(javaHome + File.separator + "bin" + File.separator + "java");
+        }
+
         command.add("-Dfile.encoding=UTF-8");
         command.add("-Dcom.sun.management.jmxremote.port=" + this.jmxPort);
         command.add("-Dcom.sun.management.jmxremote.authenticate=false");
@@ -214,7 +234,7 @@ public class ForkedRunner implements MojoRunner {
             final String[] args = this.vmArgs.split(" ");
             for (final String arg : args) {
                 command.add(arg);
-                log.info("Adding jvm arg: " + arg);
+                this.log.info("Adding jvm arg: " + arg);
             }
         }
 
@@ -224,34 +244,37 @@ public class ForkedRunner implements MojoRunner {
         return command;
     }
 
-    @SuppressWarnings("unchecked")
-    private void addCurrentVmArgs(List<String> command) {
 
-        for (String key : (List<String>) Collections.list(System.getProperties().propertyNames())) {
+    @SuppressWarnings("unchecked")
+    private void addCurrentVmArgs(final List<String> command) {
+
+        for (final String key : (List<String>) Collections.list(System.getProperties().propertyNames())) {
 
             command.add("-D" + key + "=" + System.getProperty(key));
         }
 
     }
 
+
     private String createClasspathString() throws MojoExecutionException {
 
-        List<String> classPathElements = Lists.newArrayList();
+        final List<String> classPathElements = Lists.newArrayList();
 
-        classPathElements.addAll(testClasspathElements);
+        classPathElements.addAll(this.testClasspathElements);
         classPathElements.addAll(resolveStepImplementationArtifacts());
 
         return Joiner.on(File.pathSeparator).join(classPathElements);
     }
 
+
     @SuppressWarnings("unchecked")
     private List<String> resolveStepImplementationArtifacts() throws MojoExecutionException {
 
-        List<String> stepImplementationArtifactJars = Lists.newArrayList();
-        if (stepImplementationArtifacts != null) {
-            for (String stepImplementationArtifactString : stepImplementationArtifacts) {
+        final List<String> stepImplementationArtifactJars = Lists.newArrayList();
+        if (this.stepImplementationArtifacts != null) {
+            for (final String stepImplementationArtifactString : this.stepImplementationArtifacts) {
 
-                String[] artifactDetails = stepImplementationArtifactString.split(":");
+                final String[] artifactDetails = stepImplementationArtifactString.split(":");
 
                 if (artifactDetails.length != 3) {
                     throw new MojoExecutionException(
@@ -261,43 +284,45 @@ public class ForkedRunner implements MojoRunner {
 
                 try {
 
-                    Artifact stepImplementationJarArtifact = artifactFactory.createArtifact(artifactDetails[0],
-                            artifactDetails[1], artifactDetails[2], "test", "jar");
-                    artifactResolver.resolve(stepImplementationJarArtifact, remoteRepositories, localRepository);
+                    final Artifact stepImplementationJarArtifact = this.artifactFactory.createArtifact(
+                            artifactDetails[0], artifactDetails[1], artifactDetails[2], "test", "jar");
+                    this.artifactResolver.resolve(stepImplementationJarArtifact, this.remoteRepositories,
+                            this.localRepository);
 
                     addArtifactPath(stepImplementationArtifactJars, stepImplementationJarArtifact);
 
-                    Artifact stepImplementationPomArtifact = artifactFactory.createArtifact(artifactDetails[0],
-                            artifactDetails[1], artifactDetails[2], "test", "pom");
-                    artifactResolver.resolve(stepImplementationPomArtifact, remoteRepositories, localRepository);
-                    MavenProject stepImplementationProject = mavenProjectBuilder.buildFromRepository(
-                            stepImplementationPomArtifact, remoteRepositories, localRepository);
-                    Set<Artifact> stepImplementationArtifacts = stepImplementationProject.createArtifacts(
-                            artifactFactory, null, null);
+                    final Artifact stepImplementationPomArtifact = this.artifactFactory.createArtifact(
+                            artifactDetails[0], artifactDetails[1], artifactDetails[2], "test", "pom");
+                    this.artifactResolver.resolve(stepImplementationPomArtifact, this.remoteRepositories,
+                            this.localRepository);
+                    final MavenProject stepImplementationProject = this.mavenProjectBuilder.buildFromRepository(
+                            stepImplementationPomArtifact, this.remoteRepositories, this.localRepository);
+                    final Set<Artifact> stepImplementationArtifacts = stepImplementationProject.createArtifacts(
+                            this.artifactFactory, null, null);
 
-                    Set<Artifact> transitiveDependencies = artifactResolver.resolveTransitively(
+                    final Set<Artifact> transitiveDependencies = this.artifactResolver.resolveTransitively(
                             stepImplementationArtifacts, stepImplementationPomArtifact,
-                            stepImplementationProject.getManagedVersionMap(), localRepository, remoteRepositories,
-                            artifactMetadataSource).getArtifacts();
+                            stepImplementationProject.getManagedVersionMap(), this.localRepository,
+                            this.remoteRepositories, this.artifactMetadataSource).getArtifacts();
 
-                    for (Artifact transitiveDependency : transitiveDependencies) {
+                    for (final Artifact transitiveDependency : transitiveDependencies) {
                         addArtifactPath(stepImplementationArtifactJars, transitiveDependency);
                     }
 
-                } catch (ArtifactResolutionException e) {
+                } catch (final ArtifactResolutionException e) {
 
                     throw new MojoExecutionException("Unable to resolve artifact for substep implementation '"
                             + stepImplementationArtifactString + "'", e);
 
-                } catch (ProjectBuildingException e) {
+                } catch (final ProjectBuildingException e) {
 
                     throw new MojoExecutionException("Unable to resolve artifact for substep implementation '"
                             + stepImplementationArtifactString + "'", e);
-                } catch (InvalidDependencyVersionException e) {
+                } catch (final InvalidDependencyVersionException e) {
 
                     throw new MojoExecutionException("Unable to resolve artifact for substep implementation '"
                             + stepImplementationArtifactString + "'", e);
-                } catch (ArtifactNotFoundException e) {
+                } catch (final ArtifactNotFoundException e) {
 
                     throw new MojoExecutionException("Unable to resolve artifact for substep implementation '"
                             + stepImplementationArtifactString + "'", e);
@@ -308,29 +333,34 @@ public class ForkedRunner implements MojoRunner {
         return stepImplementationArtifactJars;
     }
 
-    private void addArtifactPath(List<String> stepImplementationArtifactJars, Artifact artifact) {
-        String path = artifact.getFile().getPath();
-        log.info("Adding dependency to classpath for forked jvm: " + path);
+
+    private void addArtifactPath(final List<String> stepImplementationArtifactJars, final Artifact artifact) {
+        final String path = artifact.getFile().getPath();
+        this.log.info("Adding dependency to classpath for forked jvm: " + path);
         stepImplementationArtifactJars.add(path);
     }
 
-    public RootNode prepareExecutionConfig(SubstepsExecutionConfig theConfig) {
+
+    public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
 
         return this.substepsJmxClient.prepareExecutionConfig(theConfig);
     }
 
+
     public RootNode run() {
 
-        log.info("Running substeps tests in forked jvm");
+        this.log.info("Running substeps tests in forked jvm");
         return this.substepsJmxClient.run();
     }
+
 
     public List<SubstepExecutionFailure> getFailures() {
 
         return this.substepsJmxClient.getFailures();
     }
 
-    public void addNotifier(INotifier notifier) {
+
+    public void addNotifier(final INotifier notifier) {
 
         this.substepsJmxClient.addNotifier(notifier);
     }
