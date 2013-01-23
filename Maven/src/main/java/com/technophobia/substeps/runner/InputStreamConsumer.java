@@ -91,7 +91,7 @@ class InputStreamConsumer implements Runnable {
                 // this off
                 // If the level of logging from the child process is verbose,
                 // change the logging level of the spawned process.
-                // System.out.println(" *\t" + line);
+                System.out.println(" *\t" + line);
 
                 if (line.contains("awaiting the shutdown notification...")) {
                     this.logger.info("mbean server process started");
