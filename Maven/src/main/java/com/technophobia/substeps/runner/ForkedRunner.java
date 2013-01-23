@@ -99,6 +99,8 @@ public class ForkedRunner implements MojoRunner {
         this.remoteRepositories = remoteRepositories;
         this.artifactMetadataSource = artifactMetadataSource;
 
+        this.substepsJmxClient = new SubstepsJMXClient();
+
         this.consumer = startMBeanJVM();
 
         initialiseClient();
@@ -106,10 +108,6 @@ public class ForkedRunner implements MojoRunner {
 
 
     private void initialiseClient() throws MojoExecutionException {
-
-        this.substepsJmxClient = new SubstepsJMXClient();
-
-        this.shutdownHook = ForkedProcessCloser.addHook(this.substepsJmxClient, this.forkedJVMProcess, this.log);
 
         this.substepsJmxClient.init(this.jmxPort);
     }
@@ -167,6 +165,9 @@ public class ForkedRunner implements MojoRunner {
 
             this.forkedJVMProcess = processBuilder.start();
 
+            // need to add the shutdown hook straight away
+            this.shutdownHook = ForkedProcessCloser.addHook(this.substepsJmxClient, this.forkedJVMProcess, this.log);
+
             consumer = new InputStreamConsumer(this.forkedJVMProcess.getInputStream(), this.log, processStarted,
                     processStartedOk);
 
@@ -178,11 +179,13 @@ public class ForkedRunner implements MojoRunner {
             e.printStackTrace();
         }
 
+        boolean exceptionThrown = false;
         try {
             this.log.info("waiting for process to start...");
             processStarted.await(START_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
             if (!processStartedOk.get()) {
+                exceptionThrown = true;
                 throw new MojoExecutionException("Unable to launch VM process");
             }
 
@@ -191,6 +194,7 @@ public class ForkedRunner implements MojoRunner {
 
             e.printStackTrace();
         }
+
         return consumer;
     }
 

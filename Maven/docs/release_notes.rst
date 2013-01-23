@@ -3,9 +3,13 @@ Substeps Runner - Release Notes
 
 - A list of changes per release 
 
+1.1.1
+-----
+- BUG: Exception thrown during statup would prevent spawned processes from shutting down.  Changed the sequence of when the shutdown hook is registered.
+- JAVA_HOME now used when running in forked mode rather than relying on the path.
+
 1.1.0
 -----
-
 - The maven plugin has been renamed to substeps-maven-plugin in keeping with standard conventions
 - By default the plugin now spawns a new instance of the JVM in which the tests are executed, communication is via JMX
 - Maven site now generated
