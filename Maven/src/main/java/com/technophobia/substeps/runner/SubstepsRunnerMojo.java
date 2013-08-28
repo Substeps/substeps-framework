@@ -144,6 +144,7 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
     private MojoRunner runner;
 
+
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         assertCompatibleCoreVersion();
@@ -156,52 +157,59 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
         processBuildData();
 
-        runner.shutdown();
+        this.runner.shutdown();
     }
+
 
     private void assertCompatibleCoreVersion() throws MojoExecutionException {
 
-        CoreVersionChecker.assertCompatibleVersion(getLog(), artifactFactory, artifactResolver, remoteRepositories,
-                localRepository, mavenProjectBuilder, project, pluginDependencies);
+        CoreVersionChecker.assertCompatibleVersion(getLog(), this.artifactFactory, this.artifactResolver,
+                this.remoteRepositories, this.localRepository, this.mavenProjectBuilder, this.project,
+                this.pluginDependencies);
     }
+
 
     private ForkedRunner createForkedRunner() throws MojoExecutionException {
 
         try {
 
-            return new ForkedRunner(getLog(), jmxPort, vmArgs, project.getTestClasspathElements(),
-                    stepImplementationArtifacts, artifactResolver, artifactFactory, mavenProjectBuilder,
-                    localRepository, remoteRepositories, artifactMetadataSource);
-        } catch (DependencyResolutionRequiredException e) {
+            return new ForkedRunner(getLog(), this.jmxPort, this.vmArgs, this.project.getTestClasspathElements(),
+                    this.stepImplementationArtifacts, this.artifactResolver, this.artifactFactory,
+                    this.mavenProjectBuilder, this.localRepository, this.remoteRepositories,
+                    this.artifactMetadataSource);
+        } catch (final DependencyResolutionRequiredException e) {
 
             throw new MojoExecutionException("Unable to resolve dependencies", e);
         }
     }
+
 
     private InProcessRunner createInProcessRunner() {
 
         return new InProcessRunner(getLog());
     }
 
+
     private void executeConfigs() throws MojoExecutionException {
 
-        if (executionConfigs == null || executionConfigs.isEmpty()) {
+        if (this.executionConfigs == null || this.executionConfigs.isEmpty()) {
 
             throw new MojoExecutionException("executionConfigs cannot be null or empty");
         }
 
-        for (final ExecutionConfig executionConfig : executionConfigs) {
+        for (final ExecutionConfig executionConfig : this.executionConfigs) {
 
             runExecutionConfig(executionConfig);
         }
 
     }
 
+
     private void runExecutionConfig(final ExecutionConfig theConfig) throws MojoExecutionException {
 
-        runner.prepareExecutionConfig(theConfig.asSubstepsExecutionConfig());
+        this.runner.prepareExecutionConfig(theConfig.asSubstepsExecutionConfig());
 
-        RootNode rootNode = runner.run();
+        final RootNode rootNode = this.runner.run();
 
         if (theConfig.getDescription() != null) {
 
@@ -213,12 +221,14 @@ public class SubstepsRunnerMojo extends AbstractMojo {
         this.buildFailureManager.addExecutionResult(rootNode);
     }
 
-    private void addToReport(RootNode rootNode) {
 
-        if (executionReportBuilder != null) {
-            executionReportBuilder.addRootExecutionNode(rootNode);
+    private void addToReport(final RootNode rootNode) {
+
+        if (this.executionReportBuilder != null) {
+            this.executionReportBuilder.addRootExecutionNode(rootNode);
         }
     }
+
 
     /**
      * @param data
@@ -241,14 +251,17 @@ public class SubstepsRunnerMojo extends AbstractMojo {
         }
     }
 
+
     private void ensureValidConfiguration() throws MojoExecutionException {
 
         ensureForkedIfStepImplementationArtifactsSpecified();
     }
 
+
     private void ensureForkedIfStepImplementationArtifactsSpecified() throws MojoExecutionException {
 
-        if (stepImplementationArtifacts != null && !stepImplementationArtifacts.isEmpty() && !runTestsInForkedVM) {
+        if (this.stepImplementationArtifacts != null && !this.stepImplementationArtifacts.isEmpty()
+                && !this.runTestsInForkedVM) {
             throw new MojoExecutionException(
                     "Invalid configuration of substeps runner, if stepImplementationArtifacts are specified runTestsInForkedVM must be true");
         }
