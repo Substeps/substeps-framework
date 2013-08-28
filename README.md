@@ -10,3 +10,4 @@ There is also a [Substeps Google group](http://groups.google.com/group/substeps?
 1.1.1
 -----
 * Addition of release notes!
+* Move of ExecutionContextSupplier, MutableSupplier plus other refactorings
