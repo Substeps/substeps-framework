@@ -28,21 +28,12 @@ public class SubstepNode extends NodeWithChildren<StepNode> implements StepNode 
 
     private static final long serialVersionUID = 1L;
 
-    private final List<StepNode> substeps;
-
     private final Set<String> tags;
 
     public SubstepNode(List<StepNode> substeps, Set<String> tags, int depth) {
-
-        this.substeps = substeps;
+        super(substeps);
         this.tags = tags;
         setDepth(depth);
-    }
-
-    @Override
-    public List<StepNode> getChildren() {
-
-        return substeps;
     }
 
     @Override
@@ -58,8 +49,7 @@ public class SubstepNode extends NodeWithChildren<StepNode> implements StepNode 
 
         toReturn.add(executionNodeVisitor.visit(this));
 
-        for (StepNode stepNode : substeps) {
-
+        for (StepNode stepNode : getChildren()) {
             toReturn.addAll(stepNode.accept(executionNodeVisitor));
         }
 

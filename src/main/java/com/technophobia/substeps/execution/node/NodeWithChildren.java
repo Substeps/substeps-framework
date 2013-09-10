@@ -27,19 +27,29 @@ public abstract class NodeWithChildren<CHILD_TYPE extends IExecutionNode> extend
 
     private static final long serialVersionUID = 1L;
 
-    public abstract List<CHILD_TYPE> getChildren();
+    private final List<CHILD_TYPE> children;
+
+    public NodeWithChildren(List<CHILD_TYPE> children){
+        this.children = children;
+
+        attachParentTo(children);
+    }
 
     public boolean hasChildren() {
-        return this.getChildren() != null && !this.getChildren().isEmpty();
+        return children != null && !children.isEmpty();
+    }
+
+    public List<CHILD_TYPE> getChildren(){
+        return children;
     }
 
     @Override
     public String toDebugString() {
 
         List<String> debugLines = Lists.newArrayList(super.toDebugString());
-        if (getChildren() != null) {
+        if (children != null) {
 
-            for (CHILD_TYPE child : getChildren()) {
+            for (CHILD_TYPE child : children) {
 
                 if (child != null) {
 
@@ -50,4 +60,9 @@ public abstract class NodeWithChildren<CHILD_TYPE extends IExecutionNode> extend
         return Joiner.on("\n").join(debugLines);
     }
 
+    private void attachParentTo(List<CHILD_TYPE> children) {
+        for (CHILD_TYPE child : children){
+            child.setParent(this);
+        }
+    }
 }

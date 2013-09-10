@@ -28,24 +28,16 @@ public class OutlineScenarioNode extends ScenarioNode<OutlineScenarioRowNode> {
 
     private static final long serialVersionUID = 1L;
 
-    private final List<OutlineScenarioRowNode> outlineRows;
     private final String scenarioName;
 
     private final Set<String> tags;
 
     public OutlineScenarioNode(String scenarioName, List<OutlineScenarioRowNode> outlineRows, Set<String> tags,
             int depth) {
-
+        super(outlineRows);
         this.scenarioName = scenarioName;
-        this.outlineRows = outlineRows;
         this.tags = tags;
         this.setDepth(depth);
-    }
-
-    @Override
-    public List<OutlineScenarioRowNode> getChildren() {
-
-        return outlineRows;
     }
 
     @Override
@@ -61,7 +53,7 @@ public class OutlineScenarioNode extends ScenarioNode<OutlineScenarioRowNode> {
 
         toReturn.add(executionNodeVisitor.visit(this));
 
-        for (OutlineScenarioRowNode outlineRow : outlineRows) {
+        for (OutlineScenarioRowNode outlineRow : getChildren()) {
 
             toReturn.addAll(outlineRow.accept(executionNodeVisitor));
         }

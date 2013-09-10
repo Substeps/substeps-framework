@@ -48,6 +48,10 @@ public interface IExecutionNode {
      */
     void setLine(final String line);
 
+    IExecutionNode getParent();
+
+    void setParent(IExecutionNode parent);
+
     /**
      * 
      * @return the id of this node as a Long

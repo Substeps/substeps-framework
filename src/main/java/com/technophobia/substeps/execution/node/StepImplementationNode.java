@@ -39,7 +39,6 @@ public class StepImplementationNode extends ExecutionNode implements StepNode {
     private transient Object[] methodArgs;
 
     public StepImplementationNode(Class<?> targetClass, Method targetMethod, Set<String> tags, int depth) {
-
         this.targetClass = targetClass;
         this.targetMethod = targetMethod;
         this.setDepth(depth);
