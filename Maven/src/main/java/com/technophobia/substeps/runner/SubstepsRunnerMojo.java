@@ -197,11 +197,17 @@ public class SubstepsRunnerMojo extends AbstractMojo {
             throw new MojoExecutionException("executionConfigs cannot be null or empty");
         }
 
-        for (final ExecutionConfig executionConfig : this.executionConfigs) {
+        try {
+            for (final ExecutionConfig executionConfig : this.executionConfigs) {
 
-            runExecutionConfig(executionConfig);
+                runExecutionConfig(executionConfig);
+            }
+        } catch (final Throwable t) {
+
+            // to cater for any odd exceptions thrown out.. at least this way
+            // jvm shouldn't just die, unless it was going to die anyway
+            throw new MojoExecutionException("Unhandled exception: " + t.getMessage(), t);
         }
-
     }
 
 
