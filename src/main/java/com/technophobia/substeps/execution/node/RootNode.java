@@ -27,21 +27,12 @@ public class RootNode extends NodeWithChildren<FeatureNode> {
 
     private static final long serialVersionUID = 1L;
 
-    private final List<FeatureNode> features;
-
     private final String featureSetDescription;
 
     public RootNode(String featureSetDescription, List<FeatureNode> features) {
-
+        super(features);
         this.featureSetDescription = featureSetDescription;
-        this.features = features;
         this.setDepth(0);
-    }
-
-    @Override
-    public List<FeatureNode> getChildren() {
-
-        return features;
     }
 
     @Override
@@ -57,7 +48,7 @@ public class RootNode extends NodeWithChildren<FeatureNode> {
 
         toReturn.add(executionNodeVisitor.visit(this));
 
-        for (FeatureNode feature : features) {
+        for (FeatureNode feature : getChildren()) {
 
             toReturn.addAll(feature.accept(executionNodeVisitor));
         }

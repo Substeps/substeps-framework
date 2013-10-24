@@ -58,11 +58,14 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
 
     private String line;
 
+    private IExecutionNode parent;
+
     private final ExecutionNodeResult result;
 
     public ExecutionNode() {
         this.id = counter.getAndIncrement();
         this.result = new ExecutionNodeResult(this.id);
+        this.parent = null;
     }
 
     /**
@@ -107,6 +110,17 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
      */
     public Long getLongId() {
         return Long.valueOf(this.id);
+    }
+
+    public void setParent(IExecutionNode parent) {
+        this.parent = parent;
+    }
+
+    /**
+     * @return The parent of this node
+     */
+    public IExecutionNode getParent() {
+        return parent;
     }
 
     /**

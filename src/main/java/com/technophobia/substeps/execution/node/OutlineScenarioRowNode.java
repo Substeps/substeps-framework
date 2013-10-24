@@ -30,20 +30,18 @@ public class OutlineScenarioRowNode extends NodeWithChildren<BasicScenarioNode> 
     private static final long serialVersionUID = 1L;
 
     private final int rowIndex;
-    private final BasicScenarioNode basicScenarioNode;
 
     private final Set<String> tags;
 
     public OutlineScenarioRowNode(int rowIndex, BasicScenarioNode basicScenarioNode, Set<String> tags, int depth) {
-
+        super(Collections.singletonList(basicScenarioNode));
         this.rowIndex = rowIndex;
-        this.basicScenarioNode = basicScenarioNode;
         this.tags = tags;
         this.setDepth(depth);
     }
 
     public BasicScenarioNode getBasicScenarioNode() {
-        return basicScenarioNode;
+        return getChildren().get(0);
     }
 
     @Override
@@ -59,8 +57,8 @@ public class OutlineScenarioRowNode extends NodeWithChildren<BasicScenarioNode> 
 
         toReturn.add(executionNodeVisitor.visit(this));
 
-        if (basicScenarioNode != null) {
-            toReturn.addAll(basicScenarioNode.accept(executionNodeVisitor));
+        if (getChildren().size() == 1) {
+            toReturn.addAll(getChildren().get(0).accept(executionNodeVisitor));
         }
 
         return toReturn;
@@ -69,13 +67,7 @@ public class OutlineScenarioRowNode extends NodeWithChildren<BasicScenarioNode> 
     @Override
     public String getDescription() {
 
-        return rowIndex + " " + basicScenarioNode.getScenarioName() + ":";
-    }
-
-    @Override
-    public List<BasicScenarioNode> getChildren() {
-
-        return Collections.singletonList(basicScenarioNode);
+        return rowIndex + " " + getChildren().get(0).getScenarioName() + ":";
     }
 
     public Set<String> getTags() {

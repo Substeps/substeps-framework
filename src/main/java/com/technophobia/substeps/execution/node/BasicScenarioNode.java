@@ -29,24 +29,22 @@ public class BasicScenarioNode extends ScenarioNode<StepNode> {
     private static final long serialVersionUID = 1L;
 
     private final SubstepNode background;
-    private final List<StepNode> steps;
     private final String scenarioName;
 
     private final Set<String> tags;
 
     public BasicScenarioNode(String scenarioName, SubstepNode background, List<StepNode> steps, Set<String> tags,
             int depth) {
-
+        super(steps);
         this.scenarioName = scenarioName;
         this.background = background;
-        this.steps = steps;
         this.tags = tags;
         this.setDepth(depth);
     }
 
     public List<StepNode> getSteps() {
 
-        return steps;
+        return getChildren();
     }
 
     public SubstepNode getBackground() {
@@ -72,17 +70,12 @@ public class BasicScenarioNode extends ScenarioNode<StepNode> {
             results.addAll(this.background.accept(executionNodeVisitor));
         }
 
-        for (StepNode step : steps) {
+        for (StepNode step : getChildren()) {
 
             results.addAll(step.accept(executionNodeVisitor));
         }
 
         return results;
-    }
-
-    @Override
-    public List<StepNode> getChildren() {
-        return steps;
     }
 
     @Override

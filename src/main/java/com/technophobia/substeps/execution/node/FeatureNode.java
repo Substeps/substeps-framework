@@ -29,22 +29,14 @@ public class FeatureNode extends NodeWithChildren<ScenarioNode<?>> implements Ta
 
     private static final long serialVersionUID = 1L;
 
-    private final List<ScenarioNode<?>> scenarios;
     private final Feature feature;
     private final Set<String> tags;
 
     public FeatureNode(Feature feature, List<ScenarioNode<?>> scenarios, Set<String> tags) {
-
+        super(scenarios);
         this.feature = feature;
-        this.scenarios = scenarios;
         this.tags = tags;
         this.setDepth(1);
-    }
-
-    @Override
-    public List<ScenarioNode<?>> getChildren() {
-
-        return scenarios;
     }
 
     @Override
@@ -60,7 +52,7 @@ public class FeatureNode extends NodeWithChildren<ScenarioNode<?>> implements Ta
 
         toReturn.add(executionNodeVisitor.visit(this));
 
-        for (ScenarioNode<?> scenario : scenarios) {
+        for (ScenarioNode<?> scenario : getChildren()) {
 
             toReturn.addAll(scenario.accept(executionNodeVisitor));
         }

@@ -18,8 +18,14 @@
  */
 package com.technophobia.substeps.execution.node;
 
+import java.util.List;
+
 public abstract class ScenarioNode<CHILD_TYPE extends IExecutionNode> extends NodeWithChildren<CHILD_TYPE> implements
         TaggedNode {
 
     private static final long serialVersionUID = 1L;
+
+    public ScenarioNode(List<CHILD_TYPE> children){
+        super(children);
+    }
 }
