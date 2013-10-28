@@ -151,7 +151,7 @@ public class ForkedRunner implements MojoRunner {
         final CountDownLatch processStarted = new CountDownLatch(1);
         final AtomicBoolean processStartedOk = new AtomicBoolean(false);
 
-        InputStreamConsumer consumer = null;
+        InputStreamConsumer localConsumer = null;
 
         final List<String> command = buildSubstepsRunnerCommand();
 
@@ -168,10 +168,10 @@ public class ForkedRunner implements MojoRunner {
             // need to add the shutdown hook straight away
             this.shutdownHook = ForkedProcessCloser.addHook(this.substepsJmxClient, this.forkedJVMProcess, this.log);
 
-            consumer = new InputStreamConsumer(this.forkedJVMProcess.getInputStream(), this.log, processStarted,
+            localConsumer = new InputStreamConsumer(this.forkedJVMProcess.getInputStream(), this.log, processStarted,
                     processStartedOk);
 
-            final Thread t = new Thread(consumer);
+            final Thread t = new Thread(this.consumer);
             t.start();
 
         } catch (final IOException e) {
@@ -195,7 +195,7 @@ public class ForkedRunner implements MojoRunner {
             e.printStackTrace();
         }
 
-        return consumer;
+        return localConsumer;
     }
 
 
