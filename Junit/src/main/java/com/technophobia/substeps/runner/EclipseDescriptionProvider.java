@@ -27,6 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.technophobia.substeps.runner.description.DescriptionBuilder;
+import com.technophobia.substeps.runner.description.DescriptorStatus;
+import com.technophobia.substeps.runner.description.JunitVersionedDescriptionBuilder;
 import org.junit.Assert;
 import org.junit.runner.Description;
 import org.slf4j.Logger;
@@ -44,36 +47,7 @@ public class EclipseDescriptionProvider implements DescriptionProvider {
 
     private final Logger log = LoggerFactory.getLogger(EclipseDescriptionProvider.class);
 
-    private Description buildDescription(final String s) {
-
-        Description newInstance = null;
-
-        Constructor<Description> constructor;
-        try {
-            constructor = Description.class.getDeclaredConstructor(String.class, Array.newInstance(Annotation.class, 0)
-                    .getClass());
-            constructor.setAccessible(true);
-
-            newInstance = constructor.newInstance(s, null);
-        } catch (final SecurityException e) {
-            log.error(e.getMessage(), e);
-        } catch (final NegativeArraySizeException e) {
-            log.error(e.getMessage(), e);
-        } catch (final NoSuchMethodException e) {
-            log.error(e.getMessage(), e);
-        } catch (final IllegalArgumentException e) {
-            log.error(e.getMessage(), e);
-        } catch (final InstantiationException e) {
-            log.error(e.getMessage(), e);
-        } catch (final IllegalAccessException e) {
-            log.error(e.getMessage(), e);
-        } catch (final InvocationTargetException e) {
-            log.error(e.getMessage(), e);
-        }
-
-        Assert.assertNotNull(newInstance);
-        return newInstance;
-    }
+    private final DescriptionBuilder descriptionBuilder = new JunitVersionedDescriptionBuilder();
 
     public Map<Long, Description> buildDescriptionMap(final IExecutionNode rootNode, final Class<?> classContainingTheTests) {
         final Description rootDescription = Description.createSuiteDescription(classContainingTheTests);
@@ -93,65 +67,9 @@ public class EclipseDescriptionProvider implements DescriptionProvider {
         return descriptionMap;
     }
 
-    public static class DescriptorStatus {
-
-        private final List<MutableInteger> indexlist = new ArrayList<MutableInteger>();
-
-        private static class MutableInteger {
-
-            private int count = 0;
-
-            public void increment() {
-                count++;
-            }
-        }
-
-        public DescriptorStatus() {
-            indexlist.add(new MutableInteger()); // ROOT
-
-        }
-
-        public String getIndexStringForNode(final IExecutionNode node) {
-
-            // is this the first time at this depth?
-            if (node.getDepth() > indexlist.size()) {
-
-                // add a new Int
-                indexlist.add(new MutableInteger());
-            }
-            if (node.getDepth() < indexlist.size()) {
-
-                final List<MutableInteger> delete = new ArrayList<MutableInteger>();
-
-                for (int i = node.getDepth(); i < indexlist.size(); i++) {
-                    delete.add(indexlist.get(i));
-                }
-                indexlist.removeAll(delete);
-            }
-
-            final MutableInteger last = indexlist.get(node.getDepth() - 1);
-            // increment the last one at this depth
-
-            last.increment();
-
-            final StringBuilder buf = new StringBuilder();
-            boolean first = true;
-            for (int i = 0; i < node.getDepth(); i++) {
-                if (!first) {
-                    buf.append("-");
-                }
-                buf.append(indexlist.get(i).count);
-                first = false;
-            }
-
-            return buf.toString();
-        }
-
-    }
-
     private Description buildDescription(final IExecutionNode node, final Map<Long, Description> descriptionMap,
             final DescriptorStatus status) {
-        final Description des = buildDescription(getDescriptionForNode(node, status));
+        final Description des = buildDescription(node, status);
 
         if (node instanceof NodeWithChildren) {
 
@@ -173,18 +91,13 @@ public class EclipseDescriptionProvider implements DescriptionProvider {
         return des;
     }
 
+    private Description buildDescription(IExecutionNode node, DescriptorStatus status) {
+        return descriptionBuilder.descriptionFor(node, status);
+    }
+
     /**
      * @param node
      * @return
      */
-    private String getDescriptionForNode(final IExecutionNode node, final DescriptorStatus status) {
-        final StringBuilder buf = new StringBuilder();
 
-        ExecutionReportBuilder.buildDescriptionString(status.getIndexStringForNode(node) + ": ", node, buf);
-
-        // TODO - think on Jenkins the report looks like the dot is being
-        // interpreted as package delimiter
-
-        return buf.toString();
-    }
 }
