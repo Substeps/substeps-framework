@@ -19,6 +19,7 @@
 package com.technophobia.substeps.runner;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -168,4 +169,15 @@ public class SubstepsExecutionConfig implements Serializable {
         this.executionListeners = executionListeners;
     }
 
+    public String printParameters() {
+        return "SubstepExecutionConfig [description=" + getDescription() + ", tags=" + getTags() + ", nonFatalTags="
+                + getNonFatalTags() + ", featureFile=" + getFeatureFile() + ", subStepsFileName="
+                + getSubStepsFileName() + ", strict=" + isStrict() + ", fastFailParseErrors=" + isFastFailParseErrors()
+                + ", nonStrictKeywordPrecedence=" + Arrays.toString(getNonStrictKeywordPrecedence())
+                + ", stepImplementationClassNames=" + Arrays.toString(getStepImplementationClassNames())
+                + ", initialisationClass=" + Arrays.toString(getInitialisationClass()) + ", stepImplementationClasses="
+                + getStepImplementationClasses() + ", initialisationClasses="
+                + Arrays.toString(getInitialisationClasses()) + ", executionListeners="
+                + Arrays.toString(getExecutionListeners()) + "]";
+    }
 }
