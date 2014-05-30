@@ -85,7 +85,7 @@ public class ExecutionConfig {
      * @parameter default-value=true
      * @required
      */
-    private boolean strict = true;
+    private final boolean strict = true;
 
     /**
      * If true any parse errors will fail the build immediately, rather than
@@ -95,7 +95,7 @@ public class ExecutionConfig {
      * @parameter default-value=true
      * @required
      */
-    private boolean fastFailParseErrors = true;
+    private final boolean fastFailParseErrors = true;
 
     /**
      * @parameter
@@ -131,29 +131,41 @@ public class ExecutionConfig {
      */
     private String[] initialisationClass;
 
+    /**
+     * 
+     * 
+     * 
+     * Class that implements INotifier will be called to notify of execution
+     * events
+     * 
+     * @parameter
+     * @required
+     */
+    private String[] executionListeners;
+
     public SubstepsExecutionConfig asSubstepsExecutionConfig() throws MojoExecutionException {
 
         try {
-            SubstepsExecutionConfig executionConfig = new SubstepsExecutionConfig();
+            final SubstepsExecutionConfig executionConfig = new SubstepsExecutionConfig();
 
             reflectivelySetFields(executionConfig);
 
             return executionConfig;
 
-        } catch (Exception exception) {
+        } catch (final Exception exception) {
 
             throw new MojoExecutionException("Unable to convert " + ExecutionConfig.class.getName() + " into "
                     + SubstepsExecutionConfig.class.getName(), exception);
         }
     }
 
-    private void reflectivelySetFields(SubstepsExecutionConfig executionConfig) throws NoSuchFieldException,
+    private void reflectivelySetFields(final SubstepsExecutionConfig executionConfig) throws NoSuchFieldException,
             IllegalAccessException {
 
-        for (Field mojoField : ExecutionConfig.class.getDeclaredFields()) {
+        for (final Field mojoField : ExecutionConfig.class.getDeclaredFields()) {
 
             if (!Modifier.isFinal(mojoField.getModifiers())) {
-                Field executionConfigField = SubstepsExecutionConfig.class.getDeclaredField(mojoField.getName());
+                final Field executionConfigField = SubstepsExecutionConfig.class.getDeclaredField(mojoField.getName());
                 executionConfigField.setAccessible(true);
                 executionConfigField.set(executionConfig, mojoField.get(this));
             }
