@@ -54,11 +54,13 @@ public class SubstepsExecutionConfig implements Serializable {
 
     private Class<?>[] initialisationClasses;
 
+    private String[] executionListeners;
+
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -66,7 +68,7 @@ public class SubstepsExecutionConfig implements Serializable {
         return tags;
     }
 
-    public void setTags(String tags) {
+    public void setTags(final String tags) {
         this.tags = tags;
     }
 
@@ -74,7 +76,7 @@ public class SubstepsExecutionConfig implements Serializable {
         return nonFatalTags;
     }
 
-    public void setNonFatalTags(String nonFatalTags) {
+    public void setNonFatalTags(final String nonFatalTags) {
         this.nonFatalTags = nonFatalTags;
     }
 
@@ -82,7 +84,7 @@ public class SubstepsExecutionConfig implements Serializable {
         return featureFile;
     }
 
-    public void setFeatureFile(String featureFile) {
+    public void setFeatureFile(final String featureFile) {
         this.featureFile = featureFile;
     }
 
@@ -90,7 +92,7 @@ public class SubstepsExecutionConfig implements Serializable {
         return subStepsFileName;
     }
 
-    public void setSubStepsFileName(String subStepsFileName) {
+    public void setSubStepsFileName(final String subStepsFileName) {
         this.subStepsFileName = subStepsFileName;
     }
 
@@ -98,7 +100,7 @@ public class SubstepsExecutionConfig implements Serializable {
         return strict;
     }
 
-    public void setStrict(boolean strict) {
+    public void setStrict(final boolean strict) {
         this.strict = strict;
     }
 
@@ -106,7 +108,7 @@ public class SubstepsExecutionConfig implements Serializable {
         return fastFailParseErrors;
     }
 
-    public void setFastFailParseErrors(boolean fastFailParseErrors) {
+    public void setFastFailParseErrors(final boolean fastFailParseErrors) {
         this.fastFailParseErrors = fastFailParseErrors;
     }
 
@@ -114,7 +116,7 @@ public class SubstepsExecutionConfig implements Serializable {
         return systemProperties;
     }
 
-    public void setSystemProperties(Properties systemProperties) {
+    public void setSystemProperties(final Properties systemProperties) {
         this.systemProperties = systemProperties;
     }
 
@@ -122,7 +124,7 @@ public class SubstepsExecutionConfig implements Serializable {
         return nonStrictKeywordPrecedence;
     }
 
-    public void setNonStrictKeywordPrecedence(String[] nonStrictKeywordPrecedence) {
+    public void setNonStrictKeywordPrecedence(final String[] nonStrictKeywordPrecedence) {
         this.nonStrictKeywordPrecedence = nonStrictKeywordPrecedence;
     }
 
@@ -130,7 +132,7 @@ public class SubstepsExecutionConfig implements Serializable {
         return stepImplementationClassNames;
     }
 
-    public void setStepImplementationClassNames(String[] stepImplementationClassNames) {
+    public void setStepImplementationClassNames(final String[] stepImplementationClassNames) {
         this.stepImplementationClassNames = stepImplementationClassNames;
     }
 
@@ -138,7 +140,7 @@ public class SubstepsExecutionConfig implements Serializable {
         return initialisationClass;
     }
 
-    public void setInitialisationClass(String[] initialisationClass) {
+    public void setInitialisationClass(final String[] initialisationClass) {
         this.initialisationClass = initialisationClass;
     }
 
@@ -146,7 +148,7 @@ public class SubstepsExecutionConfig implements Serializable {
         return stepImplementationClasses;
     }
 
-    public void setStepImplementationClasses(List<Class<?>> stepImplementationClasses) {
+    public void setStepImplementationClasses(final List<Class<?>> stepImplementationClasses) {
         this.stepImplementationClasses = stepImplementationClasses;
     }
 
@@ -154,8 +156,16 @@ public class SubstepsExecutionConfig implements Serializable {
         return initialisationClasses;
     }
 
-    public void setInitialisationClasses(Class<?>[] initialisationClasses) {
+    public void setInitialisationClasses(final Class<?>[] initialisationClasses) {
         this.initialisationClasses = initialisationClasses;
+    }
+
+    public String[] getExecutionListeners() {
+        return executionListeners;
+    }
+
+    public void setExecutionListeners(final String[] executionListeners) {
+        this.executionListeners = executionListeners;
     }
 
 }
