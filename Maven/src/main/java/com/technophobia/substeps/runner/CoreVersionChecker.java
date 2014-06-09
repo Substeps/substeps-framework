@@ -46,21 +46,21 @@ import com.google.common.collect.Iterables;
 public class CoreVersionChecker {
 
     private static final String EXCEPTION_PREFIX = "Exception whilst checking core version, ";
-    private ArtifactFactory artifactFactory;
-    private ArtifactResolver artifactResolver;
+    private final ArtifactFactory artifactFactory;
+    private final ArtifactResolver artifactResolver;
 
-    private List<ArtifactRepository> remoteRepositories;
-    private ArtifactRepository localRepository;
+    private final List<ArtifactRepository> remoteRepositories;
+    private final ArtifactRepository localRepository;
 
-    private MavenProjectBuilder mavenProjectBuilder;
+    private final MavenProjectBuilder mavenProjectBuilder;
 
     private final static String SUBSTEPS_GROUP_ID = "com.technophobia.substeps";
     private final static String API_ARTIFACT_ID = "substeps-core-api";
     private final static String CORE_ARTIFACT_ID = "substeps-core";
 
-    private Predicate<Dependency> IS_SUBSTEPS_CORE = new Predicate<Dependency>() {
+    private final Predicate<Dependency> IS_SUBSTEPS_CORE = new Predicate<Dependency>() {
 
-        public boolean apply(Dependency dependency) {
+        public boolean apply(final Dependency dependency) {
 
             return SUBSTEPS_GROUP_ID.equals(dependency.getGroupId())
                     && CORE_ARTIFACT_ID.equals(dependency.getArtifactId());
@@ -68,9 +68,9 @@ public class CoreVersionChecker {
         }
     };
 
-    private Predicate<Dependency> IS_SUBSTEPS_API = new Predicate<Dependency>() {
+    private final Predicate<Dependency> IS_SUBSTEPS_API = new Predicate<Dependency>() {
 
-        public boolean apply(Dependency dependency) {
+        public boolean apply(final Dependency dependency) {
 
             return SUBSTEPS_GROUP_ID.equals(dependency.getGroupId())
                     && API_ARTIFACT_ID.equals(dependency.getArtifactId());
@@ -78,28 +78,28 @@ public class CoreVersionChecker {
         }
     };
 
-    private Predicate<Artifact> ARTIFACT_IS_SUBSTEPS_API = new Predicate<Artifact>() {
+    private final Predicate<Artifact> ARTIFACT_IS_SUBSTEPS_API = new Predicate<Artifact>() {
 
-        public boolean apply(Artifact artifact) {
+        public boolean apply(final Artifact artifact) {
 
             return SUBSTEPS_GROUP_ID.equals(artifact.getGroupId()) && API_ARTIFACT_ID.equals(artifact.getArtifactId());
 
         }
     };
-    private Log log;
+    private final Log log;
 
-    public static void assertCompatibleVersion(Log log, ArtifactFactory artifactFactory,
-            ArtifactResolver artifactResolver, List<ArtifactRepository> remoteRepositories,
-            ArtifactRepository localRepository, MavenProjectBuilder mavenProjectBuilder, MavenProject runningProject,
-            List<Artifact> pluginsDependencies) throws MojoExecutionException {
+    public static void assertCompatibleVersion(final Log log, final ArtifactFactory artifactFactory,
+            final ArtifactResolver artifactResolver, final List<ArtifactRepository> remoteRepositories,
+            final ArtifactRepository localRepository, final MavenProjectBuilder mavenProjectBuilder,
+            final MavenProject runningProject, final List<Artifact> pluginsDependencies) throws MojoExecutionException {
 
         new CoreVersionChecker(log, artifactFactory, artifactResolver, remoteRepositories, localRepository,
                 mavenProjectBuilder).checkVersion(runningProject, pluginsDependencies);
     }
 
-    public CoreVersionChecker(Log log, ArtifactFactory artifactFactory, ArtifactResolver artifactResolver,
-            List<ArtifactRepository> remoteRepositories, ArtifactRepository localRepository,
-            MavenProjectBuilder mavenProjectBuilder) {
+    public CoreVersionChecker(final Log log, final ArtifactFactory artifactFactory,
+            final ArtifactResolver artifactResolver, final List<ArtifactRepository> remoteRepositories,
+            final ArtifactRepository localRepository, final MavenProjectBuilder mavenProjectBuilder) {
         this.log = log;
         this.artifactFactory = artifactFactory;
         this.artifactResolver = artifactResolver;
@@ -108,31 +108,31 @@ public class CoreVersionChecker {
         this.mavenProjectBuilder = mavenProjectBuilder;
     }
 
-    public void checkVersion(MavenProject runningProject, List<Artifact> pluginsDependencies)
+    public void checkVersion(final MavenProject runningProject, final List<Artifact> pluginsDependencies)
             throws MojoExecutionException {
 
-        Dependency substepsCoreDependency = Iterables.find((List<Dependency>) runningProject.getTestDependencies(),
-                IS_SUBSTEPS_CORE, null);
+        final Dependency substepsCoreDependency = Iterables.find(
+                (List<Dependency>) runningProject.getTestDependencies(), IS_SUBSTEPS_CORE, null);
 
         if (substepsCoreDependency == null) {
 
             log.warn("Invalid plugin configuration, no version of " + CORE_ARTIFACT_ID + " found");
 
         } else {
-            MavenProject coreProject = loadProject(substepsCoreDependency);
+            final MavenProject coreProject = loadProject(substepsCoreDependency);
 
-            Dependency apiDependencyInCore = Iterables.find((List<Dependency>) coreProject.getDependencies(),
+            final Dependency apiDependencyInCore = Iterables.find((List<Dependency>) coreProject.getDependencies(),
                     IS_SUBSTEPS_API, null);
 
-            Artifact apiArtifactInPlugin = Iterables.find(pluginsDependencies, ARTIFACT_IS_SUBSTEPS_API, null);
+            final Artifact apiArtifactInPlugin = Iterables.find(pluginsDependencies, ARTIFACT_IS_SUBSTEPS_API, null);
 
             assertSameVersion(apiDependencyInCore, apiArtifactInPlugin);
         }
     }
 
-    private MavenProject loadProject(Dependency substepsCoreDependency) throws MojoExecutionException {
+    private MavenProject loadProject(final Dependency substepsCoreDependency) throws MojoExecutionException {
 
-        Artifact corePomArtifact = artifactFactory.createArtifact(SUBSTEPS_GROUP_ID, CORE_ARTIFACT_ID,
+        final Artifact corePomArtifact = artifactFactory.createArtifact(SUBSTEPS_GROUP_ID, CORE_ARTIFACT_ID,
                 substepsCoreDependency.getVersion(), "test", "pom");
         try {
 
@@ -140,21 +140,21 @@ public class CoreVersionChecker {
 
             return mavenProjectBuilder.buildFromRepository(corePomArtifact, remoteRepositories, localRepository);
 
-        } catch (ArtifactResolutionException e) {
+        } catch (final ArtifactResolutionException e) {
 
             throw new MojoExecutionException(EXCEPTION_PREFIX
                     + "unable to find pom for version of core in dependencies", e);
-        } catch (ArtifactNotFoundException e) {
+        } catch (final ArtifactNotFoundException e) {
             throw new MojoExecutionException(EXCEPTION_PREFIX
                     + "unable to find pom for version of core in dependencies", e);
-        } catch (ProjectBuildingException pbe) {
+        } catch (final ProjectBuildingException pbe) {
 
             throw new MojoExecutionException(EXCEPTION_PREFIX + "unable to build pom of core", pbe);
         }
 
     }
 
-    private void assertSameVersion(Dependency apiDependencyInCore, Artifact apiArtifactInPlugin)
+    private void assertSameVersion(final Dependency apiDependencyInCore, final Artifact apiArtifactInPlugin)
             throws MojoExecutionException {
 
         if (apiDependencyInCore == null) {
@@ -168,11 +168,16 @@ public class CoreVersionChecker {
 
             if (!apiDependencyInCore.getVersion().equals(apiArtifactInPlugin.getVersion())) {
 
-                throw new MojoExecutionException(
-                        "Configuration invalid, the version of core references is using version '"
-                                + apiDependencyInCore.getVersion()
-                                + "' of the substeps API whilst this plugin is compiled against '"
-                                + apiArtifactInPlugin.getVersion() + "'");
+                // Throwing an exception here is too prohibitive - makes running
+                // against snapshot versions fail eg.
+                // Configuration invalid, the version of core references is
+                // using version '1.1.3-SNAPSHOT' of the substeps API whilst
+                // this plugin is compiled against '1.1.3-20140609.141134-3'
+
+                log.warn("Configuration * may * be invalid, the version of core references is using version '"
+                        + apiDependencyInCore.getVersion()
+                        + "' of the substeps API whilst this plugin is compiled against '"
+                        + apiArtifactInPlugin.getVersion() + "'");
             }
         }
     }
