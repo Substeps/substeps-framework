@@ -36,11 +36,11 @@ package com.technophobia.substeps.runner;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with Substeps.  If not, see <http://www.gnu.org/licenses/>.
  */
-public interface INotificationDistributor extends INotifier {
+public interface INotificationDistributor extends IExecutionListener {
 
     // the key under which the distributor is placed in the ExecutionContext
     public static final String NOTIFIER_DISTRIBUTOR_KEY = "notifier";
 
 
-    void addListener(final INotifier listener);
+    void addListener(final IExecutionListener listener);
 }
