@@ -120,7 +120,7 @@ public class JunitNotifier implements IJunitNotifier {
      * (com.technophobia.substeps.execution.ExecutionNode, java.lang.Throwable)
      */
 
-    public void notifyNodeFailed(final IExecutionNode node, final Throwable cause) {
+    public void onNodeFailed(final IExecutionNode node, final Throwable cause) {
 
         final Description description = descriptionMap.get(Long.valueOf(node.getId()));
         notifyTestFailed(description, cause);
@@ -135,7 +135,7 @@ public class JunitNotifier implements IJunitNotifier {
      * (com.technophobia.substeps.execution.ExecutionNode)
      */
 
-    public void notifyNodeStarted(final IExecutionNode node) {
+    public void onNodeStarted(final IExecutionNode node) {
 
         final Description description = descriptionMap.get(Long.valueOf(node.getId()));
 
@@ -154,7 +154,7 @@ public class JunitNotifier implements IJunitNotifier {
      * (com.technophobia.substeps.execution.ExecutionNode)
      */
 
-    public void notifyNodeFinished(final IExecutionNode node) {
+    public void onNodeFinished(final IExecutionNode node) {
 
         final Description description = descriptionMap.get(Long.valueOf(node.getId()));
         notifyTestFinished(description);
@@ -169,7 +169,7 @@ public class JunitNotifier implements IJunitNotifier {
      * (com.technophobia.substeps.execution.ExecutionNode)
      */
 
-    public void notifyNodeIgnored(final IExecutionNode node) {
+    public void onNodeIgnored(final IExecutionNode node) {
 
         final Description description = descriptionMap.get(Long.valueOf(node.getId()));
         notifyTestIgnored(description);
