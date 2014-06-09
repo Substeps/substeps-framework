@@ -33,5 +33,5 @@ public interface SubstepsRunner {
 
     List<SubstepExecutionFailure> getFailures();
 
-    void addNotifier(INotifier notifier);
+    void addNotifier(IExecutionListener notifier);
 }
