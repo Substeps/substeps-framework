@@ -9,6 +9,13 @@ There is also a [Substeps Google group](http://groups.google.com/group/substeps?
 
 Release Notes
 =============
+1.1.3
+-----
+* Changes to support ExecutionListener refactoring in core and api projects
+
+1.1.2
+-----
+* version number bump in line with other substeps libraries
 
 1.1.1
 -----
