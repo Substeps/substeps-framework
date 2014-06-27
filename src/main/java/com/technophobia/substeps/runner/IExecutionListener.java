@@ -25,27 +25,27 @@ import com.technophobia.substeps.execution.node.IExecutionNode;
  * @author imoore
  * 
  */
-public interface INotifier {
+public interface IExecutionListener {
 
     /**
      * @param rootNode
      * @param cause
      */
-    void notifyNodeFailed(IExecutionNode rootNode, Throwable cause);
+    void onNodeFailed(IExecutionNode rootNode, Throwable cause);
 
     /**
      * @param node
      */
-    void notifyNodeStarted(IExecutionNode node);
+    void onNodeStarted(IExecutionNode node);
 
     /**
      * @param node
      */
-    void notifyNodeFinished(IExecutionNode node);
+    void onNodeFinished(IExecutionNode node);
 
     /**
      * @param node
      */
-    void notifyNodeIgnored(IExecutionNode node);
+    void onNodeIgnored(IExecutionNode node);
 
 }
