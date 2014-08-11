@@ -119,7 +119,7 @@ public class TestNotifier implements IJunitNotifier {
      * uk.co.itmoore.bddrunner.runner.INotifier#notifyTestFailed(uk.co.itmoore
      * .bddrunner.execution.ExecutionNode, java.lang.Throwable)
      */
-    public void notifyTestFailed(final IExecutionNode rootNode, final Throwable cause) {
+    public void onTestFailed(final IExecutionNode rootNode, final Throwable cause) {
 
     }
 
@@ -130,7 +130,7 @@ public class TestNotifier implements IJunitNotifier {
      * uk.co.itmoore.bddrunner.runner.INotifier#notifyTestStarted(uk.co.itmoore
      * .bddrunner.execution.ExecutionNode)
      */
-    public void notifyTestStarted(final IExecutionNode node) {
+    public void onTestStarted(final IExecutionNode node) {
 
     }
 
@@ -141,7 +141,7 @@ public class TestNotifier implements IJunitNotifier {
      * uk.co.itmoore.bddrunner.runner.INotifier#notifyTestFinished(uk.co.itmoore
      * .bddrunner.execution.ExecutionNode)
      */
-    public void notifyTestFinished(final IExecutionNode node) {
+    public void onTestFinished(final IExecutionNode node) {
 
     }
 
@@ -163,7 +163,7 @@ public class TestNotifier implements IJunitNotifier {
      * uk.co.itmoore.bddrunner.runner.INotifier#addListener(uk.co.itmoore.bddrunner
      * .runner.INotifier)
      */
-    public void addListener(final INotifier listener) {
+    public void addListener(final IExecutionListener listener) {
 
     }
 
@@ -174,7 +174,7 @@ public class TestNotifier implements IJunitNotifier {
      * com.technophobia.substeps.runner.INotifier#notifyTestIgnored(com.technophobia
      * .substeps.execution.ExecutionNode)
      */
-    public void notifyTestIgnored(final IExecutionNode node) {
+    public void onTestIgnored(final IExecutionNode node) {
 
     }
 
@@ -185,7 +185,7 @@ public class TestNotifier implements IJunitNotifier {
      * com.technophobia.substeps.runner.INotifier#notifyNodeFailed(com.technophobia
      * .substeps.execution.ExecutionNode, java.lang.Throwable)
      */
-    public void notifyNodeFailed(final IExecutionNode rootNode, final Throwable cause) {
+    public void onNodeFailed(final IExecutionNode rootNode, final Throwable cause) {
 
     }
 
@@ -196,7 +196,7 @@ public class TestNotifier implements IJunitNotifier {
      * com.technophobia.substeps.runner.INotifier#notifyNodeStarted(com.technophobia
      * .substeps.execution.ExecutionNode)
      */
-    public void notifyNodeStarted(final IExecutionNode node) {
+    public void onNodeStarted(final IExecutionNode node) {
 
     }
 
@@ -206,7 +206,7 @@ public class TestNotifier implements IJunitNotifier {
      * @see com.technophobia.substeps.runner.INotifier#notifyNodeFinished(com.
      * technophobia.substeps.execution.ExecutionNode)
      */
-    public void notifyNodeFinished(final IExecutionNode node) {
+    public void onNodeFinished(final IExecutionNode node) {
 
     }
 
@@ -217,7 +217,7 @@ public class TestNotifier implements IJunitNotifier {
      * com.technophobia.substeps.runner.INotifier#notifyNodeIgnored(com.technophobia
      * .substeps.execution.ExecutionNode)
      */
-    public void notifyNodeIgnored(final IExecutionNode node) {
+    public void onNodeIgnored(final IExecutionNode node) {
 
     }
 

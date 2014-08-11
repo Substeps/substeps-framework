@@ -74,10 +74,10 @@ public class SubstepsJMXClient implements SubstepsRunner {
 
             throw new MojoExecutionException("Failed to connect to substeps server", e);
 
-        } catch (NullPointerException e) {
+        } catch (final NullPointerException e) {
 
             throw new MojoExecutionException("Failed to connect to substeps server", e);
-        } catch (MalformedObjectNameException e) {
+        } catch (final MalformedObjectNameException e) {
 
             throw new MojoExecutionException("Failed to connect to substeps server", e);
         }
@@ -99,9 +99,9 @@ public class SubstepsJMXClient implements SubstepsRunner {
         return this.mbean.run();
     }
 
-    public void addNotifier(INotifier notifier) {
+    public void addNotifier(final IExecutionListener listener) {
 
-        this.mbean.addNotifier(notifier);
+        this.mbean.addNotifier(listener);
     }
 
     public boolean shutdown() {
@@ -112,7 +112,7 @@ public class SubstepsJMXClient implements SubstepsRunner {
             this.mbean.shutdown();
             successfulShutdown = true;
 
-        } catch (RuntimeException re) {
+        } catch (final RuntimeException re) {
 
             this.log.debug("Unable to connect to server to shutdown, it may have already closed");
 

@@ -3,7 +3,7 @@
 
     <groupId>com.technophobia.substeps</groupId>
     <artifactId>substeps-runner-parent</artifactId>
-    <version>1.1.2-SNAPSHOT</version>
+    <version>1.1.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <!-- for OSS hosting -->
@@ -21,8 +21,8 @@
     </modules>
 
     <properties>
-      <substeps.core.version>1.1.1</substeps.core.version>
-      <substeps.api.version>1.1.1</substeps.api.version>
+      <substeps.core.version>1.1.3-SNAPSHOT</substeps.core.version>
+      <substeps.api.version>1.1.3-SNAPSHOT</substeps.api.version>
 
       <guava.version>10.0</guava.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -176,7 +176,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.10</version>
+            <version>4.11</version>
         </dependency>
 
         <dependency>

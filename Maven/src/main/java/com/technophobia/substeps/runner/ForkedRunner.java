@@ -80,7 +80,6 @@ public class ForkedRunner implements MojoRunner {
 
     private final InputStreamConsumer consumer;
 
-
     ForkedRunner(final Log log, final int jmxPort, final String vmArgs, final List<String> testClasspathElements,
             final List<String> stepImplementationArtifacts, final ArtifactResolver artifactResolver,
             final ArtifactFactory artifactFactory, final MavenProjectBuilder mavenProjectBuilder,
@@ -106,12 +105,10 @@ public class ForkedRunner implements MojoRunner {
         initialiseClient();
     }
 
-
     private void initialiseClient() throws MojoExecutionException {
 
         this.substepsJmxClient.init(this.jmxPort);
     }
-
 
     public void shutdown() {
 
@@ -142,7 +139,6 @@ public class ForkedRunner implements MojoRunner {
         this.log.info("forked process returned");
 
     }
-
 
     private InputStreamConsumer startMBeanJVM() throws MojoExecutionException {
         // launch the jvm process that will contain the Substeps MBean Server
@@ -198,7 +194,6 @@ public class ForkedRunner implements MojoRunner {
         return localConsumer;
     }
 
-
     /**
      * @param cpBuf
      * @return
@@ -248,7 +243,6 @@ public class ForkedRunner implements MojoRunner {
         return command;
     }
 
-
     @SuppressWarnings("unchecked")
     private void addCurrentVmArgs(final List<String> command) {
 
@@ -259,7 +253,6 @@ public class ForkedRunner implements MojoRunner {
 
     }
 
-
     private String createClasspathString() throws MojoExecutionException {
 
         final List<String> classPathElements = Lists.newArrayList();
@@ -269,7 +262,6 @@ public class ForkedRunner implements MojoRunner {
 
         return Joiner.on(File.pathSeparator).join(classPathElements);
     }
-
 
     @SuppressWarnings("unchecked")
     private List<String> resolveStepImplementationArtifacts() throws MojoExecutionException {
@@ -337,19 +329,16 @@ public class ForkedRunner implements MojoRunner {
         return stepImplementationArtifactJars;
     }
 
-
     private void addArtifactPath(final List<String> stepImplementationArtifactJars, final Artifact artifact) {
         final String path = artifact.getFile().getPath();
         this.log.info("Adding dependency to classpath for forked jvm: " + path);
         stepImplementationArtifactJars.add(path);
     }
 
-
     public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
 
         return this.substepsJmxClient.prepareExecutionConfig(theConfig);
     }
-
 
     public RootNode run() {
 
@@ -357,16 +346,14 @@ public class ForkedRunner implements MojoRunner {
         return this.substepsJmxClient.run();
     }
 
-
     public List<SubstepExecutionFailure> getFailures() {
 
         return this.substepsJmxClient.getFailures();
     }
 
+    public void addNotifier(final IExecutionListener listener) {
 
-    public void addNotifier(final INotifier notifier) {
-
-        this.substepsJmxClient.addNotifier(notifier);
+        this.substepsJmxClient.addNotifier(listener);
     }
 
 }

@@ -29,7 +29,7 @@ public class InProcessRunner implements MojoRunner {
     SubstepsRunner executionNodeRunner = ExecutionNodeRunnerFactory.createRunner();
     private final Log log;
 
-    InProcessRunner(Log log) {
+    InProcessRunner(final Log log) {
 
         this.log = log;
     }
@@ -39,7 +39,7 @@ public class InProcessRunner implements MojoRunner {
         return executionNodeRunner.run();
     }
 
-    public RootNode prepareExecutionConfig(SubstepsExecutionConfig theConfig) {
+    public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
 
         return executionNodeRunner.prepareExecutionConfig(theConfig);
     }
@@ -48,8 +48,8 @@ public class InProcessRunner implements MojoRunner {
         return executionNodeRunner.getFailures();
     }
 
-    public void addNotifier(INotifier notifier) {
-        executionNodeRunner.addNotifier(notifier);
+    public void addNotifier(final IExecutionListener listener) {
+        executionNodeRunner.addNotifier(listener);
     }
 
     public void shutdown() {
