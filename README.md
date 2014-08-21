@@ -11,6 +11,7 @@ There is also a [Substeps Google group](http://groups.google.com/group/substeps?
 1.1.3
 -----
 * Exposed a mechanism to allow users of substeps to specifiy custom execution listeners including renaming INotifier to IExecutionListener and renaming the notify_xxx methods to on_xxx.
+* Support for building of the caller hierarchy in the core
 
 1.1.2
 -----
