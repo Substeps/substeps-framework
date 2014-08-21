@@ -32,27 +32,28 @@ public class FeatureNode extends NodeWithChildren<ScenarioNode<?>> implements Ta
     private final Feature feature;
     private final Set<String> tags;
 
-    public FeatureNode(Feature feature, List<ScenarioNode<?>> scenarios, Set<String> tags) {
+    public FeatureNode(final Feature feature, final List<ScenarioNode<?>> scenarios, final Set<String> tags) {
         super(scenarios);
         this.feature = feature;
         this.tags = tags;
         this.setDepth(1);
+        setLine(feature.getName());
     }
 
     @Override
-    public <RETURN_TYPE> RETURN_TYPE dispatch(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor) {
+    public <RETURN_TYPE> RETURN_TYPE dispatch(final ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor) {
 
         return executionNodeVisitor.visit(this);
     }
 
     @Override
-    public <RETURN_TYPE> List<RETURN_TYPE> accept(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor) {
+    public <RETURN_TYPE> List<RETURN_TYPE> accept(final ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor) {
 
-        List<RETURN_TYPE> toReturn = Lists.newArrayList();
+        final List<RETURN_TYPE> toReturn = Lists.newArrayList();
 
         toReturn.add(executionNodeVisitor.visit(this));
 
-        for (ScenarioNode<?> scenario : getChildren()) {
+        for (final ScenarioNode<?> scenario : getChildren()) {
 
             toReturn.addAll(scenario.accept(executionNodeVisitor));
         }

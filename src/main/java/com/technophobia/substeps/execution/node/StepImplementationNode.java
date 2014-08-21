@@ -38,7 +38,7 @@ public class StepImplementationNode extends ExecutionNode implements StepNode {
     // builder.
     private transient Object[] methodArgs;
 
-    public StepImplementationNode(Class<?> targetClass, Method targetMethod, Set<String> tags, int depth) {
+    public StepImplementationNode(final Class<?> targetClass, final Method targetMethod, final Set<String> tags, final int depth) {
         this.targetClass = targetClass;
         this.targetMethod = targetMethod;
         this.setDepth(depth);
@@ -89,7 +89,7 @@ public class StepImplementationNode extends ExecutionNode implements StepNode {
         return methodArgs;
     }
 
-    public void setMethodArgs(Object[] methodArgs) {
+    public void setMethodArgs(final Object[] methodArgs) {
         this.methodArgs = methodArgs;
     }
 
@@ -104,13 +104,13 @@ public class StepImplementationNode extends ExecutionNode implements StepNode {
     }
 
     @Override
-    public <RETURN_TYPE> RETURN_TYPE dispatch(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor) {
+    public <RETURN_TYPE> RETURN_TYPE dispatch(final ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor) {
 
         return executionNodeVisitor.visit(this);
     }
 
     @Override
-    public <RETURN_TYPE> List<RETURN_TYPE> accept(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor) {
+    public <RETURN_TYPE> List<RETURN_TYPE> accept(final ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor) {
 
         return Collections.singletonList(executionNodeVisitor.visit(this));
     }
@@ -125,4 +125,9 @@ public class StepImplementationNode extends ExecutionNode implements StepNode {
         return tags;
     }
 
+    @Override
+    public String toDebugString() {
+        return super.toDebugString() + " impl: " 
+                + this.targetMethod.getDeclaringClass().getSimpleName() + "." + this.targetMethod.getName();
+    }
 }

@@ -33,13 +33,14 @@ public class BasicScenarioNode extends ScenarioNode<StepNode> {
 
     private final Set<String> tags;
 
-    public BasicScenarioNode(String scenarioName, SubstepNode background, List<StepNode> steps, Set<String> tags,
-            int depth) {
+    public BasicScenarioNode(final String scenarioName, final SubstepNode background, final List<StepNode> steps, final Set<String> tags,
+            final int depth) {
         super(steps);
         this.scenarioName = scenarioName;
         this.background = background;
         this.tags = tags;
         this.setDepth(depth);
+        setLine(scenarioName);
     }
 
     public List<StepNode> getSteps() {
@@ -53,15 +54,15 @@ public class BasicScenarioNode extends ScenarioNode<StepNode> {
     }
 
     @Override
-    public <RETURN_TYPE> RETURN_TYPE dispatch(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor) {
+    public <RETURN_TYPE> RETURN_TYPE dispatch(final ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor) {
 
         return executionNodeVisitor.visit(this);
     }
 
     @Override
-    public <RETURN_TYPE> List<RETURN_TYPE> accept(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor) {
+    public <RETURN_TYPE> List<RETURN_TYPE> accept(final ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor) {
 
-        List<RETURN_TYPE> results = Lists.newArrayList();
+        final List<RETURN_TYPE> results = Lists.newArrayList();
 
         results.add(executionNodeVisitor.visit(this));
 
@@ -70,7 +71,7 @@ public class BasicScenarioNode extends ScenarioNode<StepNode> {
             results.addAll(this.background.accept(executionNodeVisitor));
         }
 
-        for (StepNode step : getChildren()) {
+        for (final StepNode step : getChildren()) {
 
             results.addAll(step.accept(executionNodeVisitor));
         }

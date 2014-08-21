@@ -32,28 +32,29 @@ public class OutlineScenarioNode extends ScenarioNode<OutlineScenarioRowNode> {
 
     private final Set<String> tags;
 
-    public OutlineScenarioNode(String scenarioName, List<OutlineScenarioRowNode> outlineRows, Set<String> tags,
-            int depth) {
+    public OutlineScenarioNode(final String scenarioName, final List<OutlineScenarioRowNode> outlineRows, final Set<String> tags,
+            final int depth) {
         super(outlineRows);
         this.scenarioName = scenarioName;
         this.tags = tags;
         this.setDepth(depth);
+        setLine(scenarioName);
     }
 
     @Override
-    public <RETURN_TYPE> RETURN_TYPE dispatch(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor) {
+    public <RETURN_TYPE> RETURN_TYPE dispatch(final ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor) {
 
         return executionNodeVisitor.visit(this);
     }
 
     @Override
-    public <RETURN_TYPE> List<RETURN_TYPE> accept(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor) {
+    public <RETURN_TYPE> List<RETURN_TYPE> accept(final ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor) {
 
-        List<RETURN_TYPE> toReturn = Lists.newArrayList();
+        final List<RETURN_TYPE> toReturn = Lists.newArrayList();
 
         toReturn.add(executionNodeVisitor.visit(this));
 
-        for (OutlineScenarioRowNode outlineRow : getChildren()) {
+        for (final OutlineScenarioRowNode outlineRow : getChildren()) {
 
             toReturn.addAll(outlineRow.accept(executionNodeVisitor));
         }
