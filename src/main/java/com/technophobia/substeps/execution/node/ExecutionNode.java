@@ -112,7 +112,7 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
         return Long.valueOf(this.id);
     }
 
-    public void setParent(IExecutionNode parent) {
+    public void setParent(final IExecutionNode parent) {
         this.parent = parent;
     }
 
@@ -170,7 +170,7 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
 
     public String toDebugString() {
         String debugString = Strings.repeat("\t", getDepth());
-        debugString += "id: " + getId() + ", type: " + getClass().getSimpleName() + ", description" + getDescription();
+        debugString += "id: " + getId() + ", type: " + getClass().getSimpleName() + ", description: " + getDescription();
         return debugString;
     }
 
