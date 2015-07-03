@@ -213,7 +213,7 @@
                 <configuration>
                     <source>1.5</source>
                     <target>1.5</target>
-                    <inherit>true</inherit>
+                    <!--<inherit>true</inherit>-->
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
