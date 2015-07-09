@@ -87,12 +87,18 @@ public enum Configuration {
             try {
 
                 final PropertiesConfiguration defaultProps = new PropertiesConfiguration(url);
+
                 combinedConfig.addConfiguration(defaultProps, name);
             } catch (final ConfigurationException e) {
                 logger.error("error loading default properties", e);
                 throw new SubstepsConfigurationException(e);
             }
         }
+    }
+
+    public void addDefaultProperty(String key, Object value){
+
+        combinedConfig.addProperty(key, value);
     }
 
 
