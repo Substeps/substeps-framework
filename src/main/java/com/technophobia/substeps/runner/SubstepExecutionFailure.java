@@ -22,7 +22,9 @@ package com.technophobia.substeps.runner;
 import java.io.Serializable;
 
 import com.google.common.base.Function;
+import com.technophobia.substeps.execution.ExecutionResult;
 import com.technophobia.substeps.execution.node.IExecutionNode;
+import com.technophobia.substeps.execution.node.RootNode;
 
 /**
  * represents the failure of an execution - could be a step method, or a setup
@@ -43,16 +45,20 @@ public class SubstepExecutionFailure implements Serializable {
 
     private static final long serialVersionUID = 4981517213059529046L;
 
-    private final Throwable cause;
+    private transient final Throwable cause;
     private IExecutionNode executionNode;
     private boolean setupOrTearDown = false;
     private boolean nonCritical = false;
 
     private byte[] screenshot;
 
+    private ThrowableInfo throwableInfo;
+
     public SubstepExecutionFailure(final Throwable cause) {
 
         this.cause = cause;
+
+        this.throwableInfo = new ThrowableInfo(cause);
     }
 
     /**
@@ -63,6 +69,8 @@ public class SubstepExecutionFailure implements Serializable {
         this.cause = targetException;
         this.executionNode = node;
         this.executionNode.getResult().setFailure(this);
+        this.throwableInfo = new ThrowableInfo(cause);
+
     }
 
     /**
@@ -79,6 +87,11 @@ public class SubstepExecutionFailure implements Serializable {
 
         this(targetException, node);
         this.setupOrTearDown = setupOrTearDown;
+    }
+
+    public SubstepExecutionFailure(Throwable targetException,final IExecutionNode node, ExecutionResult result) {
+        this(targetException, node);
+        node.getResult().setResult(result);
     }
 
     /**
@@ -118,8 +131,12 @@ public class SubstepExecutionFailure implements Serializable {
         return this.cause;
     }
 
+
+    public ThrowableInfo getThrowableInfo(){
+        return this.throwableInfo;
+    }
     /**
-     * @param b
+     * @param isNonCritical
      */
     public void setNonCritical(final boolean isNonCritical) {
         this.nonCritical = isNonCritical;

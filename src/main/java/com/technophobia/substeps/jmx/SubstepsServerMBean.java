@@ -19,6 +19,9 @@
 
 package com.technophobia.substeps.jmx;
 
+import com.technophobia.substeps.execution.node.RootNode;
+import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
+import com.technophobia.substeps.runner.SubstepsExecutionConfig;
 import com.technophobia.substeps.runner.SubstepsRunner;
 
 /**
@@ -30,4 +33,9 @@ public interface SubstepsServerMBean extends SubstepsRunner {
     static final String SUBSTEPS_JMX_MBEAN_NAME = "com.technopobia.substeps.jmx:type=SubstepsServerMBean";
 
     void shutdown();
+
+    byte[] prepareExecutionConfigAsBytes(final SubstepsExecutionConfig theConfig);
+
+    byte[] runAsBytes();
+
 }
