@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.technophobia.substeps.model.Configuration;
 import com.technophobia.substeps.runner.description.DescriptionBuilder;
 import com.technophobia.substeps.runner.description.DescriptorStatus;
 import com.technophobia.substeps.runner.description.JunitVersionedDescriptionBuilder;
@@ -48,6 +49,12 @@ public class EclipseDescriptionProvider implements DescriptionProvider {
     private final Logger log = LoggerFactory.getLogger(EclipseDescriptionProvider.class);
 
     private final DescriptionBuilder descriptionBuilder = new JunitVersionedDescriptionBuilder();
+
+    private static final String STEP_DEPTH_KEY = "step.depth.description";
+
+    static {
+        Configuration.INSTANCE.addDefaultProperty(STEP_DEPTH_KEY, Integer.valueOf(5));
+    }
 
     public Map<Long, Description> buildDescriptionMap(final IExecutionNode rootNode, final Class<?> classContainingTheTests) {
         final Description rootDescription = Description.createSuiteDescription(classContainingTheTests);
@@ -75,7 +82,7 @@ public class EclipseDescriptionProvider implements DescriptionProvider {
 
             NodeWithChildren<?> nodeWithChildren = (NodeWithChildren<?>) node;
 
-            if (nodeWithChildren.hasChildren() && nodeWithChildren.getDepth() < 5) {
+            if (nodeWithChildren.hasChildren() && nodeWithChildren.getDepth() < Configuration.INSTANCE.getInt(STEP_DEPTH_KEY)) {
 
                 for (final IExecutionNode child : nodeWithChildren.getChildren()) {
 

@@ -237,7 +237,7 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
 
     /**
-     * @param data
+     *
      * @throws MojoFailureException
      */
     private void processBuildData() throws MojoFailureException {

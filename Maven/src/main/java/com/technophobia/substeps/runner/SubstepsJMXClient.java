@@ -70,6 +70,10 @@ public class SubstepsJMXClient implements SubstepsRunner {
             this.mbean = MBeanServerInvocationHandler.newProxyInstance(mbsc, objectName, SubstepsServerMBean.class,
                     false);
 
+        //    mbsc.addNotificationListener()
+                    //(objectName, this, null, null);
+
+
         } catch (final IOException e) {
 
             throw new MojoExecutionException("Failed to connect to substeps server", e);
