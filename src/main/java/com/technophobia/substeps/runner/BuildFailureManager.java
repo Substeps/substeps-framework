@@ -46,6 +46,27 @@ public class BuildFailureManager extends AbstractExecutionNodeVisitor<String> {
     public void addExecutionResult(RootNode rootNode) {
 
         addFailuresToLists(rootNode, Collections.<IExecutionNode> emptyList());
+
+        // possible that the failure is only in the root node...
+
+        if (rootNode.getResult().getFailure() != null && rootNode.getResult().getResult().isFailure() &&
+                nonCriticalFailures.isEmpty() && criticalFailures.isEmpty() ) {
+
+            SubstepExecutionFailure failure = rootNode.getResult().getFailure();
+//            List<IExecutionNode> path = Lists.newArrayList(parents);
+//            path.add(node);
+
+
+            if (failure.isNonCritical()) {
+                nonCriticalFailures.add(Lists.newArrayList((IExecutionNode)rootNode));
+            } else {
+                criticalFailures.add(Lists.newArrayList((IExecutionNode)rootNode));
+            }
+
+        }
+
+
+
     }
 
     private String getBuildInfoString(final String msg, final List<List<IExecutionNode>> failures) {
@@ -92,23 +113,29 @@ public class BuildFailureManager extends AbstractExecutionNodeVisitor<String> {
         List<IExecutionNode> path = Lists.newArrayList(parents);
         path.add(node);
 
-        if (node.getResult().getFailure() != null) {
+        if (node.getResult().getFailure() != null && node.getResult().getResult().isFailure()) {
 
-            SubstepExecutionFailure failure = node.getResult().getFailure();
+            // child first
+            if (node instanceof NodeWithChildren<?>) {
 
-            if (failure.isNonCritical()) {
+                for (IExecutionNode childNode : ((NodeWithChildren<?>) node).getChildren()) {
 
-                nonCriticalFailures.add(path);
-            } else {
-                criticalFailures.add(path);
+                    addFailuresToLists(childNode, path);
+                }
             }
-        } else if (node instanceof NodeWithChildren<?>) {
+            else {
 
-            for (IExecutionNode childNode : ((NodeWithChildren<?>) node).getChildren()) {
+                SubstepExecutionFailure failure = node.getResult().getFailure();
 
-                addFailuresToLists(childNode, path);
+                if (failure.isNonCritical()) {
+
+                    nonCriticalFailures.add(path);
+                } else {
+                    criticalFailures.add(path);
+                }
             }
         }
+
     }
 
     public boolean testSuiteCompletelyPassed() {

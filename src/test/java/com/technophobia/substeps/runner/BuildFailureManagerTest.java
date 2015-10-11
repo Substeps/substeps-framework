@@ -26,6 +26,7 @@ import com.technophobia.substeps.execution.node.TestBasicScenarioNodeBuilder;
 import com.technophobia.substeps.execution.node.TestFeatureNodeBuilder;
 import com.technophobia.substeps.execution.node.TestRootNodeBuilder;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -70,13 +71,14 @@ public class BuildFailureManagerTest {
 
         final Throwable rootFail = new Exception("t1");
 
+        SubstepExecutionFailure rootNodeFailure = new SubstepExecutionFailure(rootFail, rootNode, ExecutionResult.FAILED);
 
         SubstepExecutionFailure featureFail = new SubstepExecutionFailure(rootFail, featureBuilder.getBuilt(), ExecutionResult.FAILED);
 
         SubstepExecutionFailure scenarioFailure = new SubstepExecutionFailure(rootFail, scenarioNodeBuilder.getBuilt(), ExecutionResult.FAILED);
 
         scenarioNodeBuilder.getBuilt().getChildren().get(0).setLine("stepNode1");
-        SubstepExecutionFailure  stepFail = new SubstepExecutionFailure(rootFail, scenarioNodeBuilder.getBuilt().getChildren().get(0), ExecutionResult.NOT_RUN);
+        SubstepExecutionFailure  stepFail = new SubstepExecutionFailure(rootFail, scenarioNodeBuilder.getBuilt().getChildren().get(0), ExecutionResult.FAILED);
 
         scenarioNodeBuilder.getBuilt().getChildren().get(1).setLine("stepNode2");
         new SubstepExecutionFailure(rootFail, scenarioNodeBuilder.getBuilt().getChildren().get(1), ExecutionResult.NOT_RUN);
@@ -112,6 +114,9 @@ public class BuildFailureManagerTest {
 
         final Throwable rootFail = new Exception("t1");
 
+        SubstepExecutionFailure rootNodeFailure = new SubstepExecutionFailure(rootFail, rootNode, ExecutionResult.FAILED);
+
+
         SubstepExecutionFailure featureFail = new SubstepExecutionFailure(rootFail, featureBuilder.getBuilt(), ExecutionResult.FAILED);
         featureFail.setNonCritical(true);
 
@@ -119,7 +124,7 @@ public class BuildFailureManagerTest {
         scenarioFailure.setNonCritical(true);
 
         scenarioNodeBuilder.getBuilt().getChildren().get(0).setLine("stepNode1");
-        SubstepExecutionFailure  stepFail = new SubstepExecutionFailure(rootFail, scenarioNodeBuilder.getBuilt().getChildren().get(0), ExecutionResult.NOT_RUN);
+        SubstepExecutionFailure  stepFail = new SubstepExecutionFailure(rootFail, scenarioNodeBuilder.getBuilt().getChildren().get(0), ExecutionResult.FAILED);
         stepFail.setNonCritical(true);
 
         scenarioNodeBuilder.getBuilt().getChildren().get(1).setLine("stepNode2");
@@ -155,8 +160,11 @@ public class BuildFailureManagerTest {
 
         final Throwable rootFail = new Exception("t1");
 
-        // the setup failure, representing an @BeforeScenario as per AbstractScenarioNodeRunner.runSetup
-        new SubstepExecutionFailure(rootFail, scenarioNodeBuilder.getBuilt(), true);
+//        new SubstepExecutionFailure(rootFail, scenarioNodeBuilder.getBuilt(), true);
+
+
+//        SubstepExecutionFailure featureFail = new SubstepExecutionFailure(rootFail, featureBuilder.getBuilt(), ExecutionResult.FAILED);
+
 
         scenarioNodeBuilder.getBuilt().getChildren().get(0).setLine("stepNode1");
 
@@ -165,6 +173,8 @@ public class BuildFailureManagerTest {
         scenarioNodeBuilder.getBuilt().getChildren().get(2).setLine("stepNode3");
 
         final Throwable t = new IllegalStateException("No tests executed");
+
+        // the setup failure, representing an @BeforeScenario as per AbstractScenarioNodeRunner.runSetup
 
         SubstepExecutionFailure sef = new SubstepExecutionFailure(t, rootNode, ExecutionResult.FAILED);
 
@@ -175,6 +185,7 @@ public class BuildFailureManagerTest {
 
 
 
+//    @Ignore("is this a valid failure or is it test data related")
     @Test
     public void testNonCriticalFailures2() {
 
@@ -183,6 +194,9 @@ public class BuildFailureManagerTest {
         RootNode rootNode = getNonCriticalErrorNodeTree();
 
         bfm.addExecutionResult(rootNode);
+
+//        System.out.println("build info: " +
+//                bfm.getBuildFailureInfo());
 
         // just one non crit error
         Assert.assertFalse(bfm.testSuiteCompletelyPassed());
@@ -204,6 +218,9 @@ public class BuildFailureManagerTest {
         rootNode = getBeforesErrorNodeTree();
         bfm = new BuildFailureManager();
         bfm.addExecutionResult(rootNode);
+
+        System.out.println("build info: " +
+                bfm.getBuildFailureInfo());
 
         Assert.assertFalse(bfm.testSuiteCompletelyPassed());
         Assert.assertTrue(bfm.testSuiteSomeFailures());

@@ -20,6 +20,7 @@
 package com.technophobia.substeps.execution;
 
 import java.io.Serializable;
+import java.util.EnumSet;
 
 import com.technophobia.substeps.runner.SubstepExecutionFailure;
 
@@ -118,6 +119,12 @@ public class ExecutionNodeResult implements Serializable {
 
     public void setFailure(SubstepExecutionFailure substepExecutionFailure) {
 
+        // this is to prevent a failure from overwriting a parse or setup / tear down failure
+        EnumSet<ExecutionResult> excluded = EnumSet.of(ExecutionResult.PARSE_FAILURE, ExecutionResult.SETUP_TEARDOWN_FAILURE);
+
+        if (!excluded.contains(this.result)) {
+            this.result = ExecutionResult.FAILED;
+        }
         this.substepExecutionFailure = substepExecutionFailure;
     }
 
