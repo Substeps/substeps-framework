@@ -144,8 +144,8 @@ public class ForkedRunner implements MojoRunner {
         // launch the jvm process that will contain the Substeps MBean Server
         // build up the class path based on this projects classpath
 
-        final CountDownLatch processStarted = new CountDownLatch(1);
-        final AtomicBoolean processStartedOk = new AtomicBoolean(false);
+//        final CountDownLatch processStarted = new CountDownLatch(1);
+//        final AtomicBoolean processStartedOk = new AtomicBoolean(false);
 
         InputStreamConsumer localConsumer = null;
 
@@ -157,15 +157,16 @@ public class ForkedRunner implements MojoRunner {
 
         try {
 
-            this.log.debug("Starting substeps process with command " + Joiner.on(" ").join(processBuilder.command()));
+            this.log.info("Starting substeps process with command " + Joiner.on(" ").join(processBuilder.command()));
 
             this.forkedJVMProcess = processBuilder.start();
 
             // need to add the shutdown hook straight away
             this.shutdownHook = ForkedProcessCloser.addHook(this.substepsJmxClient, this.forkedJVMProcess, this.log);
 
-            localConsumer = new InputStreamConsumer(this.forkedJVMProcess.getInputStream(), this.log, processStarted,
-                    processStartedOk);
+            localConsumer = new InputStreamConsumer(this.forkedJVMProcess.getInputStream(), this.log);
+//            , processStarted,
+//                    processStartedOk);
 
             final Thread t = new Thread(this.consumer);
             t.start();
@@ -175,27 +176,26 @@ public class ForkedRunner implements MojoRunner {
             e.printStackTrace();
         }
 
-        boolean exceptionThrown = false;
-        try {
-            this.log.info("waiting for process to start...");
-            processStarted.await(START_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-
-            if (!processStartedOk.get()) {
-                exceptionThrown = true;
-                throw new MojoExecutionException("Unable to launch VM process");
-            }
-
-            this.log.info("process started");
-        } catch (final InterruptedException e) {
-
-            e.printStackTrace();
-        }
+//        boolean exceptionThrown = false;
+//        try {
+//            this.log.info("waiting for process to start...");
+//            processStarted.await(START_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+//
+//            if (!processStartedOk.get()) {
+//                exceptionThrown = true;
+//                throw new MojoExecutionException("Unable to launch VM process");
+//            }
+//
+//        } catch (final InterruptedException e) {
+//
+//            e.printStackTrace();
+//        }
+        this.log.info("process started");
 
         return localConsumer;
     }
 
     /**
-     * @param cpBuf
      * @return
      * @throws MojoExecutionException
      * @throws DependencyResolutionRequiredException
@@ -227,7 +227,7 @@ public class ForkedRunner implements MojoRunner {
         command.add("-Dcom.sun.management.jmxremote.ssl=false");
         command.add("-Djava.rmi.server.hostname=localhost");
 
-        addCurrentVmArgs(command);
+//        addCurrentVmArgs(command);
 
         if (this.vmArgs != null && !this.vmArgs.isEmpty()) {
             final String[] args = this.vmArgs.split(" ");

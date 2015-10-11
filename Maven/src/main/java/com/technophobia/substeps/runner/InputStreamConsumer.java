@@ -32,19 +32,14 @@ class InputStreamConsumer implements Runnable {
 
     private final Log logger;
 
-    private final CountDownLatch processStarted;
-    private final AtomicBoolean processStartedOk;
-
     private final InputStream stderr;
     private InputStreamReader isr = null;
     private BufferedReader br = null;
 
 
-    public InputStreamConsumer(final InputStream stderr, final Log logger, final CountDownLatch processStarted,
-            final AtomicBoolean processStartedOk) {
+    public InputStreamConsumer(final InputStream stderr, final Log logger){
+
         this.logger = logger;
-        this.processStarted = processStarted;
-        this.processStartedOk = processStartedOk;
         this.stderr = stderr;
     }
 
@@ -82,37 +77,27 @@ class InputStreamConsumer implements Runnable {
 
         String line = null;
         try {
-            this.isr = new InputStreamReader(this.stderr);
-            this.br = new BufferedReader(this.isr);
 
-            while ((line = this.br.readLine()) != null) {
 
-                // NB. this is not a logger as we don't want to be able to turn
-                // this off
-                // If the level of logging from the child process is verbose,
-                // change the logging level of the spawned process.
-                System.out.println(" *\t" + line);
+            int c;
+            StringBuilder buf = new StringBuilder();
+            while ((c = this.stderr.read()) != -1){
 
-                if (line.contains("awaiting the shutdown notification...")) {
-                    this.logger.info("mbean server process started");
-                    this.processStartedOk.set(true);
-                    this.processStarted.countDown();
+                String s = String.valueOf((char) c);
 
-                } else if (!this.processStartedOk.get()) {
-                    this.logger.info("line received but this was not the correct line: " + line);
+                if ((char)c == '\n'){
+                    line = buf.toString();
+
+                    buf = new StringBuilder();
+                    logger.info("*\t" + line);
                 }
-
+                else {
+                    buf.append(s);
+                }
             }
+
         } catch (final IOException e) {
-
-            e.printStackTrace();
-        } finally {
-
-            if (this.processStarted.getCount() > 0) {
-                this.logger
-                        .info("spawned process didn't start fully, no further output, an error is assumed and the process will terminate");
-                this.processStarted.countDown();
-            }
+            logger.error("error handling output streams", e);
         }
     }
 

@@ -55,12 +55,14 @@
 		<!-- Although this has a dependency on core it is important that the scope 
 			is TEST -->
 
+
 		<dependency>
 			<groupId>com.technophobia.substeps</groupId>
 			<artifactId>substeps-core</artifactId>
              <version>${substeps.core.version}</version>
 			<scope>test</scope>
 		</dependency>
+
 
 		<dependency>
 			<groupId>org.mockito</groupId>
