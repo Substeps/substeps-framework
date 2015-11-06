@@ -1,4 +1,4 @@
-substeps-api
+substeps-api [![Build Status](https://travis-ci.org/G2G3Digital/substeps-api.svg)](https://travis-ci.org/G2G3Digital/substeps-api)
 ============
 
 Welcome to the substeps-api project!
