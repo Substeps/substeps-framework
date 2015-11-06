@@ -1,4 +1,4 @@
-substeps-glossary
+substeps-glossary [![Build Status](https://travis-ci.org/G2G3Digital/substeps-glossary.svg)](https://travis-ci.org/G2G3Digital/substeps-glossary)
 =================
 
 Release Notes
