@@ -3,7 +3,7 @@ language: java
 sudo: false
 
 jdk:
-  - oraclejdk6
+  - oraclejdk7
 
 notifications:
   slack:
