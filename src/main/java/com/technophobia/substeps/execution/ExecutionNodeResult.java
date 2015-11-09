@@ -19,9 +19,8 @@
 
 package com.technophobia.substeps.execution;
 
-import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.StringWriter;
+import java.util.EnumSet;
 
 import com.technophobia.substeps.runner.SubstepExecutionFailure;
 
@@ -46,21 +45,6 @@ public class ExecutionNodeResult implements Serializable {
         this.executionNodeId = id;
     }
 
-    public String getStackTrace() {
-        if (thrown != null) {
-            final StringWriter sw = new StringWriter();
-            final PrintWriter pw = new PrintWriter(sw);
-
-            thrown.printStackTrace(pw);
-
-            pw.close();
-
-            return sw.toString();
-        } else {
-            return "";
-        }
-    }
-
     /**
      * @return the result
      */
@@ -80,7 +64,7 @@ public class ExecutionNodeResult implements Serializable {
      * @return the failureStackTrace
      */
     public Throwable getThrown() {
-        return thrown;
+        return substepExecutionFailure == null ? thrown : substepExecutionFailure.getCause();
     }
 
     /**
@@ -89,15 +73,6 @@ public class ExecutionNodeResult implements Serializable {
      */
     public void setThrown(final Throwable failureStackTrace) {
         thrown = failureStackTrace;
-    }
-
-    /**
-     * @param theException
-     */
-    public void setFailed(final Throwable theException) {
-        result = ExecutionResult.FAILED;
-        thrown = theException;
-        recordComplete();
     }
 
     /**
@@ -114,22 +89,6 @@ public class ExecutionNodeResult implements Serializable {
     public void setStarted() {
         result = ExecutionResult.RUNNING;
         startedAt = System.currentTimeMillis();
-    }
-
-    /**
-     * @param t
-     */
-    public void setFailedToParse(final Throwable t) {
-        result = ExecutionResult.PARSE_FAILURE;
-        thrown = t;
-    }
-
-    /**
-     * @param theException
-     */
-    public void setSetupTearFailure(final Throwable t) {
-        result = ExecutionResult.SETUP_TEARDOWN_FAILURE;
-        thrown = t;
     }
 
     /**
@@ -160,6 +119,12 @@ public class ExecutionNodeResult implements Serializable {
 
     public void setFailure(SubstepExecutionFailure substepExecutionFailure) {
 
+        // this is to prevent a failure from overwriting a parse or setup / tear down failure
+        EnumSet<ExecutionResult> excluded = EnumSet.of(ExecutionResult.PARSE_FAILURE, ExecutionResult.SETUP_TEARDOWN_FAILURE);
+
+        if (!excluded.contains(this.result)) {
+            this.result = ExecutionResult.FAILED;
+        }
         this.substepExecutionFailure = substepExecutionFailure;
     }
 

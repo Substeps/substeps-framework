@@ -16,26 +16,11 @@
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with Substeps.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.technophobia.substeps.execution.node;
 
-package com.technophobia.substeps.jmx;
+public interface TestStepNodeBuilder<T extends StepNode> {
 
-import com.technophobia.substeps.execution.node.RootNode;
-import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
-import com.technophobia.substeps.runner.SubstepsExecutionConfig;
-import com.technophobia.substeps.runner.SubstepsRunner;
+    T build();
 
-/**
- * @author ian
- * 
- */
-public interface SubstepsServerMBean extends SubstepsRunner {
-
-    static final String SUBSTEPS_JMX_MBEAN_NAME = "com.technopobia.substeps.jmx:type=SubstepsServerMBean";
-
-    void shutdown();
-
-    byte[] prepareExecutionConfigAsBytes(final SubstepsExecutionConfig theConfig);
-
-    byte[] runAsBytes();
-
+    TestStepNodeBuilder<T> addTag(String tag);
 }
