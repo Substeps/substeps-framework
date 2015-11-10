@@ -76,7 +76,7 @@ public class SubstepsRunnerMojo extends AbstractMojo {
      * 
      * @parameter
      */
-    private final String vmArgs = null;
+    private String vmArgs = null;
 
     /**
      * if true a jvm will be spawned to run substeps otherwise substeps will
@@ -237,7 +237,7 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
 
     /**
-     * @param data
+     *
      * @throws MojoFailureException
      */
     private void processBuildData() throws MojoFailureException {

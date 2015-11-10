@@ -12,6 +12,8 @@ Release Notes
 1.1.3
 -----
 * Changes to support ExecutionListener refactoring in core and api projects
+* bug with final modifier set on config class preventing it from bring set
+* configurable description depth parameter
 
 1.1.2
 -----

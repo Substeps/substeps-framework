@@ -39,7 +39,6 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
 import com.technophobia.substeps.execution.node.IExecutionNode;
-import com.technophobia.substeps.model.StepImplementation;
 import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
 import com.technophobia.substeps.stepimplementations.MockStepImplementations;
 import com.technophobia.substeps.steps.TestStepImplementations;
@@ -367,15 +366,7 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
         verify(spy, times(1)).meth10(table);
     }
 
-    @Test
-    public void testStepImplConstruction() {
-        final StepImplementation si = StepImplementation.parse("Given it is Christmas", this.getClass(), null);
 
-        Assert.assertNotNull(si);
-        Assert.assertThat(si.getValue(), is("Given it is Christmas"));
-        Assert.assertThat(si.getKeyword(), is("Given"));
-
-    }
 
     @Test
     public void testSubStepFailureHandledCorrectly() {

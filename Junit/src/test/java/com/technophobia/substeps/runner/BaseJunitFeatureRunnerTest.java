@@ -30,7 +30,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.Description;
 
-import com.technophobia.substeps.execution.ImplementationCache;
 
 /**
  * 
@@ -77,14 +76,12 @@ public abstract class BaseJunitFeatureRunnerTest implements TestCallback {
             final Field implCacheField = runnerObject.getClass().getDeclaredField("methodExecutor");
             implCacheField.setAccessible(true);
 
-            final ImplementationCache cache = (ImplementationCache) implCacheField
-                    .get(runnerObject);
+            final Object implementationCacheObject = implCacheField.get(runnerObject);
 
-            final Field instanceMapField = ImplementationCache.class
-                    .getDeclaredField("instanceMap");
+            final Field instanceMapField = implementationCacheObject.getClass().getDeclaredField("instanceMap");
             instanceMapField.setAccessible(true);
 
-            implsCache = (Map<Class<?>, Object>) instanceMapField.get(cache);
+            implsCache = (Map<Class<?>, Object>) instanceMapField.get(implementationCacheObject);
 
         } catch (final Exception e) {
             e.printStackTrace();
