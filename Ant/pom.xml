@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.technophobia.substeps</groupId>
+    <artifactId>substeps-ant-runner</artifactId>
+
+    <packaging>jar</packaging>
+
+    <parent>
+        <groupId>com.technophobia.substeps</groupId>
+        <artifactId>substeps-runner-parent</artifactId>
+        <version>1.1.3-SNAPSHOT</version>
+    </parent>
+
+    <name>SubSteps Ant Runner</name>
+    
+    <description>An ant task for substeps</description> 
+
+    <dependencies>
+
+	    <dependency>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant</artifactId>
+			<version>1.8.4</version>
+		</dependency>
+	            
+        <dependency>
+          <groupId>com.technophobia.substeps</groupId>
+          <artifactId>substeps-runner-common</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+
+
+		            
+    </dependencies>
+
+</project>

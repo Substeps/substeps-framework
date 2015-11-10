@@ -16,3 +16,5 @@ classes/
 *.ear
 *.iml
 .idea
+_build/
+
