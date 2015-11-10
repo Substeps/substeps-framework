@@ -1,17 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.technophobia.substeps</groupId>
+    <parent>
+        <groupId>com.technophobia.substeps</groupId>
+        <artifactId>substeps-framework</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+
     <artifactId>substeps-core</artifactId>
-    <version>1.1.3-SNAPSHOT</version>
+
     <packaging>jar</packaging>
 
-    <!-- for OSS hosting -->
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
 
     <name>SubSteps</name>
     
@@ -107,8 +106,7 @@
 	</contributors>
     
     <properties>
-	    <api.version>1.1.3-SNAPSHOT</api.version>
-        <substeps.maven.plugin.version>1.1.3-SNAPSHOT</substeps.maven.plugin.version>
+
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <hamcrest.version>1.3</hamcrest.version>
@@ -159,13 +157,13 @@
 		<dependency>
 			<groupId>com.technophobia.substeps</groupId>
 			<artifactId>substeps-core-api</artifactId>
-			<version>${api.version}</version>
+          <version>${project.version}</version>
 		</dependency>
 
         <dependency>
             <groupId>com.technophobia.substeps</groupId>
             <artifactId>substeps-core-api</artifactId>
-            <version>${api.version}</version>
+          <version>${project.version}</version>
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
@@ -415,7 +413,8 @@
 
 						<groupId>com.technophobia.substeps</groupId>
 						<artifactId>substeps-maven-plugin</artifactId>
-						<version>${substeps.maven.plugin.version}</version>
+                          <version>${project.version}</version>
+
 
 						<executions>
 
