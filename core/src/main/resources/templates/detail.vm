@@ -1,0 +1,38 @@
+<p>$!node.getType() - $node.filename - Result: $node.result.result.toString()</p>
+
+File: $node.id in
+
+<p>Details: $node.getDebugStringForThisNode()</p>
+
+#if ($node.result.thrown)
+
+<p>$node.result.thrown.message</p>
+
+<pre>
+$node.result.getStackTrace()
+</pre>
+
+#end
+
+
+
+<table class="table table-bordered table-condensed">
+    <tbody>
+    #foreach( $child in $node.children )
+
+        #set( $class = "")
+
+        #if($child.getResult().getResult() == "PASSED")
+            #set($class = 'class="success"')
+        #elseif($child.getResult().getResult() == "FAILED")
+            #set($class = 'class="error"')
+        #end
+
+        <tr $class>
+            <td>
+                $child.getDescription()
+            </td>
+        </tr>
+    #end
+    </tbody>
+</table>

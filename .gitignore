@@ -1,0 +1,21 @@
+target/
+.settings/
+.classpath
+.project
+logs/
+*.log
+velocity.log*
+.tomcatplugin
+*.dump
+classes/
+*.class
+*jacoco.exec
+# Package Files #
+*~
+*.war
+*.ear
+*.iml
+.idea
+*.iml
+_build/
+
