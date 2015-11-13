@@ -1,4 +1,4 @@
-substeps-framework [![Build Status](https://travis-ci.org/iantmoore/substeps-framework.svg)](https://travis-ci.org/iantmoore/substeps-framework)
+substeps-framework [![Build Status](https://travis-ci.org/G2G3Digital/substeps-framework.svg)](https://travis-ci.org/G2G3Digital/substeps-framework)
 ===================
 
 Welcome to the substeps-framework project!
