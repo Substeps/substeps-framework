@@ -37,6 +37,8 @@ abstract class ExecutionConfigDecorator {// extends SubstepsExecutionConfig {
         this.decoratedConfig = executionConfig;
     }
 
+    public String getScenarioName(){return decoratedConfig.getScenarioName();}
+
     // @Override
     public String getDescription() {
         return decoratedConfig.getDescription();
