@@ -85,7 +85,6 @@
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>
-					<inherit>true</inherit>
 					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
@@ -128,6 +127,21 @@
             </distributionManagement>
             
         </profile>
+
+
+	   <!-- override this profile to point to a different JDK or path.. -->
+		   <profile>
+			   <id>default-tools.jar</id>
+			   <activation>
+				   <activeByDefault>true</activeByDefault>
+			   </activation>
+				<properties>
+					<tools.jar.version>1.7.0_65</tools.jar.version>
+					<tools.jar.path>/usr/lib/jvm/java-7-openjdk-amd64/lib/tools.jar</tools.jar.path>
+				</properties>
+		   </profile>
+
+
     </profiles>
 
 	<dependencies>
@@ -145,12 +159,12 @@
         </dependency>
 
 		<dependency>
-		    <groupId>sun.jdk</groupId>
-		    <artifactId>tools</artifactId>
-		    <version>1.6.31</version>
-		    <scope>system</scope>
-		    <systemPath>${java.home}/../lib/tools.jar</systemPath>
-		  </dependency>
+			<groupId>jdk.tools</groupId>
+			<artifactId>jdk.tools</artifactId>
+			<version>${tools.jar.version}</version>
+			<scope>system</scope>
+			<systemPath>${tools.jar.path}</systemPath>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.maven</groupId>
