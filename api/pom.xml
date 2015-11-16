@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -9,109 +10,89 @@
 
     <artifactId>substeps-core-api</artifactId>
 
-    <packaging>jar</packaging>
-
-
-    <properties>
-      <guava.version>10.0</guava.version>
-    </properties>
-
     <name>SubSteps API</name>
-    
-    <organization>
-        <name>Technophobia Ltd</name>
-        <url>www.technophobia.com/</url>
-    </organization>
 
-    <licenses>
-        <license>
-            <name>LGPL 3.0 license</name>
-            <url>http://www.opensource.org/licenses/lgpl-3.0.html</url>
-            <distribution>manual</distribution>
-      </license>
-    </licenses>
-    
     <developers>
-   
+
         <developer>
-          <id>ianmoore</id>
-          <name>Ian Moore</name>
-          <organization>Technophobia</organization>
-          <roles>
-            <role>architect</role>
-            <role>developer</role>
-          </roles>
+            <id>ianmoore</id>
+            <name>Ian Moore</name>
+            <organization>Technophobia</organization>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
         </developer>
 
         <developer>
-          <id>rorygibson</id>
-          <name>Rory Gibson</name>
-          <organization>Technophobia</organization>
-          <roles>
-            <role>developer</role>
-          </roles>
+            <id>rorygibson</id>
+            <name>Rory Gibson</name>
+            <organization>Technophobia</organization>
+            <roles>
+                <role>developer</role>
+            </roles>
         </developer>
 
         <developer>
-          <id>davemoss</id>
-          <name>Dave Moss</name>
-          <organization>Technophobia</organization>
-          <roles>
-            <role>developer</role>
-          </roles>
+            <id>davemoss</id>
+            <name>Dave Moss</name>
+            <organization>Technophobia</organization>
+            <roles>
+                <role>developer</role>
+            </roles>
         </developer>
-  
-       <developer>
-          <id>stuartforbes</id>
-          <name>Stu Forbes</name>
-          <organization>Technophobia</organization>
-          <roles>
-            <role>developer</role>
-          </roles>
+
+        <developer>
+            <id>stuartforbes</id>
+            <name>Stu Forbes</name>
+            <organization>Technophobia</organization>
+            <roles>
+                <role>developer</role>
+            </roles>
         </developer>
-		
-       <developer>
-          <id>rickybarefield</id>
-          <name>Ricky Barefield</name>
-          <organization>Technophobia</organization>
-          <roles>
-            <role>developer</role>
-          </roles>
-       </developer>
-       
-       <developer>
-          <id>beercan1989</id>
-          <name>James Bacon</name>
-          <organization>G2G3 Digital</organization>
-          <url>https://github.com/beercan1989</url>
-          <roles>
-            <role>developer</role>
-          </roles>
+
+        <developer>
+            <id>rickybarefield</id>
+            <name>Ricky Barefield</name>
+            <organization>Technophobia</organization>
+            <roles>
+                <role>developer</role>
+            </roles>
         </developer>
-	  
+
+        <developer>
+            <id>beercan1989</id>
+            <name>James Bacon</name>
+            <organization>G2G3 Digital</organization>
+            <url>https://github.com/beercan1989</url>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+
     </developers>
 
-	<contributors>
-		<contributor>
-			<name>Iain Rawson</name>
-			<roles>
-				<role>developer</role>
-			</roles>
-		</contributor>
-	</contributors>
-    
+    <contributors>
+        <contributor>
+            <name>Iain Rawson</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </contributor>
+    </contributors>
 
-
-    
+    <properties>
+        <guava.version>10.0</guava.version>
+    </properties>
 
     <dependencies>
 
-		<dependency>
-		    <groupId>commons-configuration</groupId>
-		    <artifactId>commons-configuration</artifactId>
-		    <version>1.8</version>
-		</dependency>
-		
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>1.8</version>
+        </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -123,7 +104,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.6.4</version>
-           <scope>test</scope>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -150,39 +131,16 @@
             <artifactId>annotations</artifactId>
             <version>1.3.2</version>
         </dependency>
-        
+
     </dependencies>
 
     <build>
         <finalName>${project.artifactId}</finalName>
+
         <plugins>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.3.2</version>
-
-                <configuration>
-                    <localCheckout>true</localCheckout>
-                    <pushChanges>false</pushChanges>
-                </configuration>
-
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
                 <executions>
                     <execution>
                         <goals>
@@ -191,42 +149,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
-
-
-
-    <profiles>
-        
-        <!-- A profile used by default for internal dev, using the repos set up in proeprties defined above, rather than the OSS nexus repos -->    
-        <profile>
-            <id>internalDev</id>
-             
-            <distributionManagement>
-                <snapshotRepository>
-                    <id>${nexus.snapshot.artifacts}</id>
-                    <name>${nexus.snapshot.artifacts}</name>
-                    <url>${nexus.snapshot.url}</url>
-                    <uniqueVersion>false</uniqueVersion>
-                </snapshotRepository>
-                <repository>
-                    <id>${nexus.release.artifacts}</id>
-                    <name>${nexus.release.artifacts}</name>
-                    <url>${nexus.releases.url}</url>
-                </repository>
-            </distributionManagement>
-            
-        </profile>
-        
-     
-    </profiles>
-
-    <scm>
-        <connection>${substeps-core-api.scm}</connection>
-        <developerConnection>${substeps-core-api.scm}</developerConnection>
-        <url>${substeps-core-api.scm.url}</url>
-      <tag>HEAD</tag>
-  </scm>
-
 </project>

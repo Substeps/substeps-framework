@@ -10,22 +10,8 @@
 	<artifactId>substeps-glossary-builder</artifactId>
 	<packaging>maven-plugin</packaging>
 
-	
 	<name>SubSteps Glossary Builder</name>
 
-   <organization>
-        <name>Technophobia Ltd</name>
-        <url>www.technophobia.com/</url>
-    </organization>
-
-    <licenses>
-        <license>
-            <name>LGPL 3.0 license</name>
-            <url>http://www.opensource.org/licenses/lgpl-3.0.html</url>
-            <distribution>manual</distribution>
-      </license>
-    </licenses>
-    
     <developers>
    
         <developer>
@@ -50,98 +36,44 @@
     </developers>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<hamcrest.version>1.3.RC2</hamcrest.version>
 		<guava.version>10.0</guava.version>
 		<mockito.version>1.9.0-rc1</mockito.version>
 		<maven.version>2.2.1</maven.version>
-
 		
         <xstream.version>1.4.2</xstream.version>
-        <!--  
-        
-        THESE PROPERTIES NEED TO BE DEFINED IN AN ACTIVE PROFILE IN SETTINGS.XML 
-        
-        <substeps-glossary.scm>scm:git:git://github.com/${your username}/substeps-glossary.git<substeps-glossary.scm>
-        <substeps-glossary.scm.url> <substeps-glossary.scm.url>
-        
-		<nexus.snapshot.artifacts>internalsnapshots</nexus.snapshot.artifacts>
-		<nexus.release.artifacts>internalreleases</nexus.release.artifacts>
-        
-          <nexus.snapshot.url>http://someserver.com/${nexus.snapshot.artifacts}/</nexus.snapshot.url>
-        <nexus.releases.url>http://someserver.com/${nexus.release.artifacts}/</nexus.releases.url>
-        
-        -->
 	</properties>
-
-
 
 	<build>
 		<plugins>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-					<inherit>true</inherit>
-					<encoding>${project.build.sourceEncoding}</encoding>
-				</configuration>
-			</plugin>
-
 			<plugin>
 				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-component-metadata</artifactId>
-				<version>1.5.5</version>
 
 				<executions>
 					<execution>
+						<id>generate-metadata</id>
 						<goals>
 							<goal>generate-metadata</goal>
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
 	</build>
-
-   <profiles>
-        
-        <!-- A profile used by default for internal dev, using the repos set up in proeprties defined above, rather than the OSS nexus repos -->    
-        <profile>
-            <id>internalDev</id>
-             
-            <distributionManagement>
-                <snapshotRepository>
-                    <id>${nexus.snapshot.artifacts}</id>
-                    <name>${nexus.snapshot.artifacts}</name>
-                    <url>${nexus.snapshot.url}</url>
-                    <uniqueVersion>false</uniqueVersion>
-                </snapshotRepository>
-                <repository>
-                    <id>${nexus.release.artifacts}</id>
-                    <name>${nexus.release.artifacts}</name>
-                    <url>${nexus.releases.url}</url>
-                </repository>
-            </distributionManagement>
-            
-        </profile>
-    </profiles>
 
 	<dependencies>
 
 		<dependency>
 			<groupId>com.technophobia.substeps</groupId>
 			<artifactId>substeps-core</artifactId>
-          <version>${project.version}</version>
+            <version>${project.version}</version>
 		</dependency>
 
         <dependency>
-                <groupId>com.technophobia.substeps</groupId>
-                <artifactId>substeps-core-api</artifactId>
-          <version>${project.version}</version>
+            <groupId>com.technophobia.substeps</groupId>
+            <artifactId>substeps-core-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
 		<dependency>
@@ -214,7 +146,6 @@
 			<scope>test</scope>
 		</dependency>
 
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -227,7 +158,6 @@
 			<artifactId>guava</artifactId>
 			<version>${guava.version}</version>
 		</dependency>
-
 
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
@@ -242,13 +172,4 @@
 		</dependency>
 
 	</dependencies>
-
-    <scm>
-        
-        <connection>${substeps-glossary.scm}</connection>
-        <developerConnection>${substeps-glossary.scm}</developerConnection>
-        <url>${substeps-glossary.scm.url}</url>
-    </scm>
-
-
 </project>
