@@ -12,75 +12,6 @@
 
     <name>SubSteps API</name>
 
-    <developers>
-
-        <developer>
-            <id>ianmoore</id>
-            <name>Ian Moore</name>
-            <organization>Technophobia</organization>
-            <roles>
-                <role>architect</role>
-                <role>developer</role>
-            </roles>
-        </developer>
-
-        <developer>
-            <id>rorygibson</id>
-            <name>Rory Gibson</name>
-            <organization>Technophobia</organization>
-            <roles>
-                <role>developer</role>
-            </roles>
-        </developer>
-
-        <developer>
-            <id>davemoss</id>
-            <name>Dave Moss</name>
-            <organization>Technophobia</organization>
-            <roles>
-                <role>developer</role>
-            </roles>
-        </developer>
-
-        <developer>
-            <id>stuartforbes</id>
-            <name>Stu Forbes</name>
-            <organization>Technophobia</organization>
-            <roles>
-                <role>developer</role>
-            </roles>
-        </developer>
-
-        <developer>
-            <id>rickybarefield</id>
-            <name>Ricky Barefield</name>
-            <organization>Technophobia</organization>
-            <roles>
-                <role>developer</role>
-            </roles>
-        </developer>
-
-        <developer>
-            <id>beercan1989</id>
-            <name>James Bacon</name>
-            <organization>G2G3 Digital</organization>
-            <url>https://github.com/beercan1989</url>
-            <roles>
-                <role>developer</role>
-            </roles>
-        </developer>
-
-    </developers>
-
-    <contributors>
-        <contributor>
-            <name>Iain Rawson</name>
-            <roles>
-                <role>developer</role>
-            </roles>
-        </contributor>
-    </contributors>
-
     <properties>
         <guava.version>10.0</guava.version>
     </properties>
@@ -135,8 +66,6 @@
     </dependencies>
 
     <build>
-        <finalName>${project.artifactId}</finalName>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

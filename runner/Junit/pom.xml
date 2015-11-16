@@ -7,14 +7,9 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-
 	<artifactId>substeps-junit-runner</artifactId>
 
-	<packaging>jar</packaging>
-
-
 	<name>SubSteps JUnit Runner</name>
-
 	<description>A junit runner for substeps</description>
 
 	<build>
@@ -25,52 +20,41 @@
 
 				<executions>
 					<execution>
+						<id>extract-core-substep-test-code</id>
+
 						<phase>test-compile</phase>
 						<goals>
 							<goal>unpack-dependencies</goal>
 						</goals>
 
 						<configuration>
-
 							<includeArtifactIds>substeps-core</includeArtifactIds>
 							<includeTypes>test-jar</includeTypes>
 							<outputDirectory>${project.build.directory}/core-tests</outputDirectory>
 						</configuration>
-
 					</execution>
 				</executions>
-
 			</plugin>
-
 		</plugins>
-
 	</build>
 
 	<dependencies>
-
 		<dependency>
 			<groupId>com.technophobia.substeps</groupId>
 			<artifactId>substeps-runner-common</artifactId>
 		</dependency>
 
-		<!-- Although this has a dependency on core it is important that the scope 
-			is TEST -->
-
-
+		<!-- Although this has a dependency on core it is important that the scope is TEST -->
 		<dependency>
 			<groupId>com.technophobia.substeps</groupId>
 			<artifactId>substeps-core</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-
-		<dependency>
+        <dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-
 	</dependencies>
 
 </project>
