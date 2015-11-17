@@ -772,25 +772,6 @@ public class ExecutionNodeRunnerTest {
         Assert.assertThat(scenario1.getResult().getResult(), is(ExecutionResult.FAILED));
         Assert.assertThat(scenario2.getResult().getResult(), is(ExecutionResult.PASSED));
 
-
-//            Assert.assertThat(rowBuilder1.getBuilt().getResult().getResult(), is(ExecutionResult.FAILED));
-//            Assert.assertThat(rowBuilder2.getBuilt().getResult().getResult(), is(ExecutionResult.PASSED));
-//
-//            Assert.assertThat(outlineScenarioBuilder.getBuilt().getResult().getResult(), is(ExecutionResult.FAILED));
-//            Assert.assertThat(row1ScenarioBuilder.getBuilt().getChildren().get(0).getResult().getResult(),
-//                    is(ExecutionResult.PASSED));
-//            Assert.assertThat(row1ScenarioBuilder.getBuilt().getChildren().get(1).getResult().getResult(),
-//                    is(ExecutionResult.FAILED));
-//            Assert.assertThat(row1ScenarioBuilder.getBuilt().getChildren().get(2).getResult().getResult(),
-//                    is(ExecutionResult.NOT_RUN));
-//
-//            Assert.assertThat(row2ScenarioBuilder.getBuilt().getChildren().get(0).getResult().getResult(),
-//                    is(ExecutionResult.PASSED));
-//            Assert.assertThat(row2ScenarioBuilder.getBuilt().getChildren().get(1).getResult().getResult(),
-//                    is(ExecutionResult.PASSED));
-//            Assert.assertThat(row2ScenarioBuilder.getBuilt().getChildren().get(2).getResult().getResult(),
-//                    is(ExecutionResult.PASSED));
-
         // TODO check that the number of errors is correct
 
         Assert.assertFalse("expecting some failures", failures.isEmpty());
@@ -801,9 +782,6 @@ public class ExecutionNodeRunnerTest {
     }
 
 
-    // TODO check that a test with a valid error, then a non fatal is recorded as a fatal and vice versa
-
-//    @Ignore("wip")
     @Test
     public void testValidErrorPlusNonCriticalFailures() throws NoSuchFieldException, IllegalAccessException {
 
@@ -868,9 +846,6 @@ public class ExecutionNodeRunnerTest {
             }
 
             final RootNode rootNode = rootNodeBuilder.build();
-
-//            System.out.println("rootNode debug string: " +
-//                    rootNode.toDebugString());
 
             BasicScenarioNode scenario1 = scenario1Builder.getBuilt();
             BasicScenarioNode scenario2 = scenario2Builder.getBuilt();
@@ -959,6 +934,48 @@ public class ExecutionNodeRunnerTest {
             // just two failures for the actual steps that failed
             Assert.assertThat(failures.size(), is(2));
         }
+    }
+
+
+    @Test
+    public void testExecutionNodeTreeBuildingWithScenarioName() {
+
+        // this failure used to be more dramatic - now the parameter name is
+        // passed instead - not such a big failure
+
+        final String feature = "./target/test-classes/features/allFeatures.feature";
+        final String scenarioName = "Simple top level scenario";
+        final String substeps = "./target/test-classes/substeps/simple.substeps";
+        final IExecutionListener notifier = mock(IExecutionListener.class);
+
+        final List<SubstepExecutionFailure> failures = new ArrayList<SubstepExecutionFailure>();
+
+
+
+        final List<Class<?>> stepImplementationClasses = new ArrayList<Class<?>>();
+        stepImplementationClasses.add(MockStepImplementations.class);
+
+        final SubstepsExecutionConfig executionConfig = new SubstepsExecutionConfig();
+
+        Assert.assertTrue(failures.isEmpty());
+
+        executionConfig.setScenarioName(scenarioName);
+        executionConfig.setFeatureFile(feature);
+        executionConfig.setSubStepsFileName(substeps);
+        executionConfig.setDescription("ExecutionNodeRunner Test feature set");
+
+        executionConfig.setStepImplementationClasses(stepImplementationClasses);
+
+        executionConfig.setStrict(false);
+        executionConfig.setNonStrictKeywordPrecedence(new String[]{"Given", "And"});
+
+        executionConfig.setFastFailParseErrors(false);
+
+        final RootNode rootNode = runner.prepareExecutionConfig(executionConfig);
+
+        Assert.assertThat(rootNode.getChildren().size(), is(1));
+
+        Assert.assertThat(rootNode.getChildren().get(0).getChildren().size(), is(1));
     }
 
 

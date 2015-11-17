@@ -50,8 +50,6 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sun.net.www.protocol.file.FileURLConnection;
-
 import com.google.common.io.Files;
 import com.technophobia.substeps.execution.ExecutionResult;
 import com.technophobia.substeps.execution.node.ExecutionNode;
@@ -300,7 +298,8 @@ public class DefaultExecutionReportBuilder extends ExecutionReportBuilder {
         final URLConnection urlConnection = originUrl.openConnection();
         if (urlConnection instanceof JarURLConnection) {
             copyJarResourcesRecursively(destination, (JarURLConnection) urlConnection);
-        } else if (urlConnection instanceof FileURLConnection) {
+        } else if (originUrl.getProtocol().toLowerCase().startsWith("file")) {
+
             FileUtils.copyDirectory(new File(originUrl.getPath()), destination);
         } else {
             throw new RuntimeException("URLConnection[" + urlConnection.getClass().getSimpleName()
