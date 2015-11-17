@@ -17,3 +17,4 @@ Useful Links:
 -----
 * New single repo to make ongoing maintenance / build dependencies easier
 * Enabled a scenario name to be used in addition to a feature file to restrict what gets run
+* Travis-CI now produces publicly accessible snapshot builds
