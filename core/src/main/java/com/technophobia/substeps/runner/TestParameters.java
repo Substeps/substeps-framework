@@ -44,12 +44,17 @@ public class TestParameters {
     private final String featureFile;
     private List<FeatureFile> featureFileList = null;
     private boolean failParseErrorsImmediately = true;
-
+    private final String scenarioName;
 
     public TestParameters(final TagManager tagManager, final Syntax syntax, final String featureFile) {
+        this(tagManager, syntax, featureFile, null);
+    }
+
+        public TestParameters(final TagManager tagManager, final Syntax syntax, final String featureFile, final String scenarioName) {
         this.tagManager = tagManager;
         this.syntax = syntax;
         this.featureFile = featureFile;
+        this.scenarioName = scenarioName;
     }
 
 
@@ -95,7 +100,10 @@ public class TestParameters {
 
 
     public boolean isRunnable(final Scenario scenario) {
-        return tagManager.acceptTaggedScenario(scenario.getTags());
+
+        return (this.scenarioName != null && this.scenarioName.equals(scenario.getDescription())) ||
+            (this.scenarioName == null && tagManager.acceptTaggedScenario(scenario.getTags()));
+
     }
 
 

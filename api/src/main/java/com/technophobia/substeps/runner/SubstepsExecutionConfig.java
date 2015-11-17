@@ -39,6 +39,8 @@ public class SubstepsExecutionConfig implements Serializable {
 
     private String subStepsFileName;
 
+    private String scenarioName;
+
     private boolean strict = true;
 
     private boolean fastFailParseErrors = true;
@@ -169,10 +171,20 @@ public class SubstepsExecutionConfig implements Serializable {
         this.executionListeners = executionListeners;
     }
 
+    public String getScenarioName() {
+        return scenarioName;
+    }
+
+    public void setScenarioName(String scenarioName) {
+        this.scenarioName = scenarioName;
+    }
+
+
+
     public String printParameters() {
         return "SubstepExecutionConfig [description=" + getDescription() + ", tags=" + getTags() + ", nonFatalTags="
                 + getNonFatalTags() + ", featureFile=" + getFeatureFile() + ", subStepsFileName="
-                + getSubStepsFileName() + ", strict=" + isStrict() + ", fastFailParseErrors=" + isFastFailParseErrors()
+                + getSubStepsFileName() + ", strict=" + isStrict() + ", fastFailParseErrors=" + isFastFailParseErrors() + ", scenarioName=" + getScenarioName()
                 + ", nonStrictKeywordPrecedence=" + Arrays.toString(getNonStrictKeywordPrecedence())
                 + ", stepImplementationClassNames=" + Arrays.toString(getStepImplementationClassNames())
                 + ", initialisationClass=" + Arrays.toString(getInitialisationClass()) + ", stepImplementationClasses="

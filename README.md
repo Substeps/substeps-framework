@@ -16,3 +16,4 @@ Useful Links:
 2.0.0
 -----
 * New single repo to make ongoing maintenance / build dependencies easier
+* Enabled a scenario name to be used in addition to a feature file to restrict what gets run

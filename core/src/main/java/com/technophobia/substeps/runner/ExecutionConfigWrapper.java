@@ -85,7 +85,7 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
     private String printParameters() {
         return "ExecutionConfig [description=" + getDescription() + ", tags=" + getTags() + ", nonFatalTags="
                 + getNonFatalTags() + ", featureFile=" + getFeatureFile() + ", subStepsFileName="
-                + getSubStepsFileName() + ", strict=" + isStrict() + ", fastFailParseErrors=" + isFastFailParseErrors()
+                + getSubStepsFileName() + ", scenarioName=" + getScenarioName() +  ", strict=" + isStrict() + ", fastFailParseErrors=" + isFastFailParseErrors()
                 + ", nonStrictKeywordPrecedence=" + Arrays.toString(getNonStrictKeywordPrecedence())
                 + ", stepImplementationClassNames=" + Arrays.toString(getStepImplementationClassNames())
                 + ", initialisationClass=" + Arrays.toString(getInitialisationClass()) + ", stepImplementationClasses="
