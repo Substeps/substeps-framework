@@ -6,7 +6,7 @@ jdk:
   - oraclejdk7
   
 script:
-  - mvn verify
+  - 'if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then mvn deploy --settings travis/settings.xml; else mvn verify; fi'
 
 notifications:
   slack:

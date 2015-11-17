@@ -23,10 +23,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.technophobia.substeps.helper.AssertHelper;
 import com.technophobia.substeps.model.FeatureFile;
 import com.technophobia.substeps.model.Scenario;
 import com.technophobia.substeps.model.Syntax;
@@ -44,12 +44,17 @@ public class TestParameters {
     private final String featureFile;
     private List<FeatureFile> featureFileList = null;
     private boolean failParseErrorsImmediately = true;
-
+    private final String scenarioName;
 
     public TestParameters(final TagManager tagManager, final Syntax syntax, final String featureFile) {
+        this(tagManager, syntax, featureFile, null);
+    }
+
+        public TestParameters(final TagManager tagManager, final Syntax syntax, final String featureFile, final String scenarioName) {
         this.tagManager = tagManager;
         this.syntax = syntax;
         this.featureFile = featureFile;
+        this.scenarioName = scenarioName;
     }
 
 
@@ -76,8 +81,8 @@ public class TestParameters {
         log.debug("Current dir is: " + f.getAbsolutePath());
 
         if (failOnNoFeatures) {
-            Assert.assertNotNull("No Feature files found!", featureFileList);
-            Assert.assertFalse("No Feature files found!", featureFileList.isEmpty());
+            AssertHelper.assertNotNull("No Feature files found!", featureFileList);
+            AssertHelper.assertFalse("No Feature files found!", featureFileList.isEmpty());
         } else if (featureFileList == null) {
             featureFileList = Collections.emptyList();
         }
@@ -95,7 +100,10 @@ public class TestParameters {
 
 
     public boolean isRunnable(final Scenario scenario) {
-        return tagManager.acceptTaggedScenario(scenario.getTags());
+
+        return (this.scenarioName != null && this.scenarioName.equals(scenario.getDescription())) ||
+            (this.scenarioName == null && tagManager.acceptTaggedScenario(scenario.getTags()));
+
     }
 
 

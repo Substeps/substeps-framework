@@ -9,10 +9,7 @@
 
     <artifactId>substeps-runner-common</artifactId>
 
-    <packaging>jar</packaging>
-
     <name>SubSteps Runner Common</name>
-    
     <description>Contains common components for running substeps</description>  
 
 </project>

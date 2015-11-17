@@ -38,6 +38,7 @@ import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import com.technophobia.substeps.helper.AssertHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -46,11 +47,8 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import sun.net.www.protocol.file.FileURLConnection;
 
 import com.google.common.io.Files;
 import com.technophobia.substeps.execution.ExecutionResult;
@@ -125,7 +123,7 @@ public class DefaultExecutionReportBuilder extends ExecutionReportBuilder {
                 FileUtils.deleteDirectory(reportDir);
             }
 
-            Assert.assertTrue("failed to create directory: " + reportDir, reportDir.mkdirs());
+            AssertHelper.assertTrue("failed to create directory: " + reportDir, reportDir.mkdirs());
 
             copyStaticResources(reportDir);
 
@@ -300,7 +298,8 @@ public class DefaultExecutionReportBuilder extends ExecutionReportBuilder {
         final URLConnection urlConnection = originUrl.openConnection();
         if (urlConnection instanceof JarURLConnection) {
             copyJarResourcesRecursively(destination, (JarURLConnection) urlConnection);
-        } else if (urlConnection instanceof FileURLConnection) {
+        } else if (originUrl.getProtocol().toLowerCase().startsWith("file")) {
+
             FileUtils.copyDirectory(new File(originUrl.getPath()), destination);
         } else {
             throw new RuntimeException("URLConnection[" + urlConnection.getClass().getSimpleName()

@@ -118,7 +118,7 @@ public class ExecutionNodeRunner implements SubstepsRunner {
         final Syntax syntax = SyntaxBuilder.buildSyntax(config.getStepImplementationClasses(), subStepsFile,
                 config.isStrict(), config.getNonStrictKeywordPrecedence());
 
-        final TestParameters parameters = new TestParameters(tagmanager, syntax, config.getFeatureFile());
+        final TestParameters parameters = new TestParameters(tagmanager, syntax, config.getFeatureFile(), config.getScenarioName());
 
         parameters.setFailParseErrorsImmediately(config.isFastFailParseErrors());
         parameters.init();
