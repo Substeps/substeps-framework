@@ -28,12 +28,12 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import junit.framework.Assert;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+
+import com.technophobia.substeps.helper.AssertHelper;
 import com.technophobia.substeps.model.Background;
 import com.technophobia.substeps.model.FeatureFile;
 import com.technophobia.substeps.model.Scenario;
@@ -64,7 +64,7 @@ public class FeatureFileParser {
         final FeatureFile ff = new FeatureFile();
         ff.setSourceFile(featureFile);
 
-        Assert.assertTrue("Feature file: " + featureFile.getAbsolutePath() + " does not exist!", featureFile.exists());
+        AssertHelper.assertTrue("Feature file: " + featureFile.getAbsolutePath() + " does not exist!", featureFile.exists());
 
         readFeatureFile(featureFile);
 

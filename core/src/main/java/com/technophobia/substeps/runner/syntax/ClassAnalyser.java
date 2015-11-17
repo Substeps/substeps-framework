@@ -20,8 +20,7 @@ package com.technophobia.substeps.runner.syntax;
 
 import java.lang.reflect.Method;
 
-import org.junit.Assert;
-
+import com.technophobia.substeps.helper.AssertHelper;
 import com.technophobia.substeps.model.StepImplementation;
 import com.technophobia.substeps.model.SubSteps.AdditionalStepImplementations;
 import com.technophobia.substeps.model.SubSteps.Step;
@@ -55,7 +54,7 @@ public class ClassAnalyser {
             final String stepValue = stepValueFrom(m);
 
             final StepImplementation impl = StepImplementation.parse(stepValue, loadedClass, m);
-            Assert.assertNotNull("unable to resolve the keyword / method for: " + stepValue + " in class: "
+            AssertHelper.assertNotNull("unable to resolve the keyword / method for: " + stepValue + " in class: "
                     + loadedClass, impl);
 
             syntax.addStepImplementation(impl);

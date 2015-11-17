@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.runner.Description;
-
 public class Scenario extends RootFeature {
 
     @Override
@@ -42,8 +40,6 @@ public class Scenario extends RootFeature {
     private int scenarioLineNumber;
     private int exampleKeysLineNumber;
 
-    private Description junitDescription;
-
     private int sourceStartOffset = -1;
     private int sourceStartLineNumber = -1;
 
@@ -60,21 +56,6 @@ public class Scenario extends RootFeature {
 
     public boolean hasBackground() {
         return this.background != null;
-    }
-
-    /**
-     * @return the junitDescription
-     */
-    public Description getJunitDescription() {
-        return this.junitDescription;
-    }
-
-    /**
-     * @param junitDescription
-     *            the junitDescription to set
-     */
-    public void setJunitDescription(final Description junitDescription) {
-        this.junitDescription = junitDescription;
     }
 
     public String getDescription() {
