@@ -19,7 +19,12 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.technophobia.substeps</groupId>
+            <artifactId>substeps-runner-common</artifactId>
+        </dependency>
 
+        <!-- Maven Plugin Dependencies -->
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-artifact</artifactId>
@@ -44,31 +49,22 @@
             <version>${maven.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Test Dependencies -->
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>maven-plugin-testing-harness</artifactId>
             <version>1.0-beta-1</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <version>${hamcrest.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <version>${hamcrest.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.technophobia.substeps</groupId>
-            <artifactId>substeps-runner-common</artifactId>
-        </dependency>
-
     </dependencies>
 
     <build>
@@ -79,7 +75,6 @@
             </plugin>
         </plugins>
     </build>
-
 
     <reporting>
         <plugins>

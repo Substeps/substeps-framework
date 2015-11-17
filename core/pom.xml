@@ -12,53 +12,41 @@
 
     <name>SubSteps Core</name>
 
-    <properties>
-        <hamcrest.version>1.3</hamcrest.version>
-        <junit.version>4.11</junit.version>
-
-        <guava.version>10.0</guava.version>
-        <mockito.version>1.9.0-rc1</mockito.version>
-
-        <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-        <sonar.phase>verify</sonar.phase>
-        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-
-        <sonar.jacoco.jar>${basedir}/jacoco/jacocoagent.jar</sonar.jacoco.jar>
-        <sonar.jacoco.reportPath>${basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
-
-        <xstream.version>1.4.2</xstream.version>
-    </properties>
-
     <dependencies>
-
-	    <dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-core</artifactId>
-			<version>${hamcrest.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-library</artifactId>
-			<version>${hamcrest.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.technophobia.substeps</groupId>
-			<artifactId>substeps-core-api</artifactId>
-          <version>${project.version}</version>
-		</dependency>
-
         <dependency>
             <groupId>com.technophobia.substeps</groupId>
             <artifactId>substeps-core-api</artifactId>
-          <version>${project.version}</version>
-            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.technophobia.substeps</groupId>
+            <artifactId>substeps-core-api</artifactId>
             <type>test-jar</type>
         </dependency>
 
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.findbugs</groupId>
+            <artifactId>annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>velocity</groupId>
@@ -71,89 +59,51 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.1</version>
         </dependency>
-
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.1</version>
         </dependency>
-
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.6.4</version>
-            <scope>provided</scope>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.4</version>
-           <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
-            <scope>test</scope>
-        </dependency>
-
+        <!-- Test Dependencies -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>${mockito.version}</version>
+        </dependency>
+
+        <!-- Test Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
-            <groupId>net.sourceforge.findbugs</groupId>
-            <artifactId>annotations</artifactId>
-            <version>1.3.2</version>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>test</scope>
         </dependency>
-
-		<dependency>
-		    <groupId>commons-configuration</groupId>
-		    <artifactId>commons-configuration</artifactId>
-		    <version>1.8</version>
-		</dependency>
-
-        <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <version>${xstream.version}</version>
-        </dependency>
-
-        <dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.3.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>2.1</version>
-		</dependency>
-
     </dependencies>
 
 
@@ -190,7 +140,6 @@
                     </excludes>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 
@@ -214,41 +163,13 @@
                 </configuration>
             </plugin>
         </plugins>
-
     </reporting>
 
     <profiles>
-
         <profile>
-            <id>ccProfile</id>
-
+            <id>sonar</id>
             <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-compiler-plugin</artifactId>
-                            <configuration>
-                                <compilerArgument>-g</compilerArgument>
-                                <source>${java.version}</source>
-                                <target>${java.version}</target>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-
                 <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine>-javaagent:${sonar.jacoco.jar}=destfile=${sonar.jacoco.reportPath}</argLine>
-                            <includes>
-                                <include>**/*.java</include>
-                            </includes>
-                        </configuration>
-                    </plugin>
-
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>sonar-maven-plugin</artifactId>
@@ -258,17 +179,17 @@
         </profile>
 
 		<profile>
-			<id>selfTestReport</id>
-			<activation>
-				<activeByDefault>false</activeByDefault><!-- TODO - Move to relevant project -->
-			</activation>
+			<id>self-test-report</id> <!-- TODO - Review this placement -->
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
 
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>com.technophobia.substeps</groupId>
 						<artifactId>substeps-maven-plugin</artifactId>
-                        <version>${project.version}</version>
+                        <version>${stable.substeps.version}</version>
 
 						<executions>
 
@@ -280,6 +201,9 @@
 								</goals>
 
 								<configuration>
+                                    <runTestsInForkedVM>false</runTestsInForkedVM>
+                                    <!-- TODO: Fix problem that produces java.lang.ClassNotFoundException: com.technophobia.substeps.runner.ForkedProcessCloser$GracefullShutdownRunner -->
+
 									<executionConfigs>
 										<executionConfig>
 											<description>Runs tests which generate a report</description>
@@ -311,6 +235,9 @@
 								</goals>
 
 								<configuration>
+                                    <runTestsInForkedVM>false</runTestsInForkedVM>
+                                    <!-- TODO: Fix problem that produces java.lang.ClassNotFoundException: com.technophobia.substeps.runner.ForkedProcessCloser$GracefullShutdownRunner -->
+
 									<executionConfigs>
 										<executionConfig>
 											<description>Test the report generation</description>
@@ -330,24 +257,22 @@
 						</executions>
 
 						<dependencies>
+                            <!-- Following dependencies added to self test the report -->
+                            <dependency>
+                                <groupId>com.technophobia.substeps</groupId>
+                                <artifactId>webdriver-substeps</artifactId>
+                                <version>${stable.substeps.version}</version>
+                            </dependency>
+
 							<dependency>
 								<groupId>org.slf4j</groupId>
 								<artifactId>slf4j-log4j12</artifactId>
-								<version>1.6.4</version>
+                                <version>${slf4j.version}</version>
 							</dependency>
 						</dependencies>
 					</plugin>
 				</plugins>
 			</build>
-
-			<dependencies>
-				<!-- Following dependencies added to self test the report -->
-				<dependency>
-					<groupId>com.technophobia.substeps</groupId>
-					<artifactId>webdriver-substeps</artifactId>
-					<version>1.1.3</version>
-				</dependency>
-			</dependencies>
 		</profile>
     </profiles>
 </project>

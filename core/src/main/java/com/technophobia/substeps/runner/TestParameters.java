@@ -23,10 +23,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.technophobia.substeps.helper.AssertHelper;
 import com.technophobia.substeps.model.FeatureFile;
 import com.technophobia.substeps.model.Scenario;
 import com.technophobia.substeps.model.Syntax;
@@ -76,8 +76,8 @@ public class TestParameters {
         log.debug("Current dir is: " + f.getAbsolutePath());
 
         if (failOnNoFeatures) {
-            Assert.assertNotNull("No Feature files found!", featureFileList);
-            Assert.assertFalse("No Feature files found!", featureFileList.isEmpty());
+            AssertHelper.assertNotNull("No Feature files found!", featureFileList);
+            AssertHelper.assertFalse("No Feature files found!", featureFileList.isEmpty());
         } else if (featureFileList == null) {
             featureFileList = Collections.emptyList();
         }

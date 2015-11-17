@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import org.junit.Assert;
+import com.technophobia.substeps.helper.AssertHelper;
 
 import com.technophobia.substeps.model.SubSteps.StepImplementations;
 
@@ -76,7 +76,7 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
                 stepImplementationClassList.add(implClass);
 
             } catch (final ClassNotFoundException e) {
-                Assert.fail("ClassNotFoundException: " + e.getMessage());
+                AssertHelper.fail("ClassNotFoundException: " + e.getMessage());
             }
         }
         return stepImplementationClassList;
@@ -108,12 +108,11 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
                     if (IExecutionListener.class.isAssignableFrom(implClass)) {
                         notifierClassList.add((Class<? extends IExecutionListener>) implClass);
                     } else {
-
-                        Assert.fail("Execution Listener does not extend com.technophobia.substeps.runner.INotifier");
+                        AssertHelper.fail("Execution Listener does not extend com.technophobia.substeps.runner.INotifier");
                     }
 
                 } catch (final ClassNotFoundException e) {
-                    Assert.fail("ClassNotFoundException: " + e.getMessage());
+                    AssertHelper.fail("ClassNotFoundException: " + e.getMessage());
                 }
             }
         }
