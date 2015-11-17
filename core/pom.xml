@@ -256,20 +256,30 @@
 							</execution>
 						</executions>
 
-						<dependencies>
+                        <dependencies>
                             <!-- Following dependencies added to self test the report -->
                             <dependency>
                                 <groupId>com.technophobia.substeps</groupId>
                                 <artifactId>webdriver-substeps</artifactId>
                                 <version>${stable.substeps.version}</version>
                             </dependency>
+                            <dependency>
+                                <groupId>com.technophobia.substeps</groupId>
+                                <artifactId>substeps-core-api</artifactId>
+                                <version>${project.version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>com.technophobia.substeps</groupId>
+                                <artifactId>substeps-core</artifactId>
+                                <version>${project.version}</version>
+                            </dependency>
 
-							<dependency>
-								<groupId>org.slf4j</groupId>
-								<artifactId>slf4j-log4j12</artifactId>
+                            <dependency>
+                                <groupId>org.slf4j</groupId>
+                                <artifactId>slf4j-log4j12</artifactId>
                                 <version>${slf4j.version}</version>
-							</dependency>
-						</dependencies>
+                            </dependency>
+                        </dependencies>
 					</plugin>
 				</plugins>
 			</build>
