@@ -9,7 +9,7 @@ script:
   - mvn verify
 
 after_success:
-  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && mvn deploy || false'
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && mvn deploy'
 
 notifications:
   slack:
