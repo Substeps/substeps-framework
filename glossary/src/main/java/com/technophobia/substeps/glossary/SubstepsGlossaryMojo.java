@@ -29,6 +29,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -131,7 +133,7 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
     /**
      * @param classToDocument
      *            = fqn of a class, dotted syntax
-     * @param isSourcePath
+     * @param dir
      * @return
      */
     private String resolveClassToPath(final String classToDocument, final String dir) {
@@ -194,11 +196,26 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
 
             // always do this
             saveXMLFile(classStepTags);
+
+            // and this!
+            saveJsonFile(classStepTags);
         } else {
             log.error("no results to write out");
         }
     }
 
+    /**
+     * @param classStepTags
+     *
+     */
+    private void saveJsonFile(final List<StepImplementationsDescriptor> classStepTags) {
+
+        Gson gson = new GsonBuilder().create();
+
+        final String json = gson.toJson(classStepTags);
+
+        writeOutputFile(json, "stepimplementations.json");
+    }
 
     /**
      * @param classStepTags
@@ -209,7 +226,12 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
 
         final String xml = serializer.toXML(classStepTags);
 
-        final File output = new File(outputDirectory, XMLSubstepsGlossarySerializer.XML_FILE_NAME);
+        writeOutputFile(xml, XMLSubstepsGlossarySerializer.XML_FILE_NAME);
+
+    }
+
+    private void writeOutputFile(String xml, String filename) {
+        final File output = new File(outputDirectory, filename);
 
         if (!outputDirectory.exists()) {
             if (!outputDirectory.mkdirs()) {
@@ -221,9 +243,8 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
         try {
             Files.write(xml, output, Charset.forName("UTF-8"));
         } catch (final IOException e) {
-            e.printStackTrace();
+            log.error("error writing file", e);
         }
-
     }
 
 
