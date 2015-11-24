@@ -12,15 +12,31 @@ import java.util.List;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.codehaus.classworlds.ClassRealm;
-import org.codehaus.plexus.component.configurator.AbstractComponentConfigurator;
+
+import org.codehaus.classworlds.ClassRealmAdapter;
+import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
+import org.codehaus.plexus.component.configurator.ComponentConfigurator;
 import org.codehaus.plexus.component.configurator.ConfigurationListener;
 import org.codehaus.plexus.component.configurator.converters.composite.ObjectWithFieldsConverter;
-import org.codehaus.plexus.component.configurator.converters.special.ClassRealmConverter;
+import org.codehaus.plexus.component.configurator.converters.lookup.ConverterLookup;
+import org.codehaus.plexus.component.configurator.converters.lookup.DefaultConverterLookup;
+import org.codehaus.plexus.component.configurator.expression.DefaultExpressionEvaluator;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
+
+
+//import org.codehaus.classworlds.ClassRealm;
+import org.codehaus.plexus.component.configurator.AbstractComponentConfigurator;
+//import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
+//import org.codehaus.plexus.component.configurator.ConfigurationListener;
+//import org.codehaus.plexus.component.configurator.converters.composite.ObjectWithFieldsConverter;
+import org.codehaus.plexus.component.configurator.converters.special.ClassRealmConverter;
+//import org.codehaus.plexus.component.configurator.expression.DefaultExpressionEvaluator;
+//import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+//import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
+//import org.codehaus.plexus.configuration.PlexusConfiguration;
 
 /**
  * A custom ComponentConfigurator which adds the project's runtime classpath
@@ -45,6 +61,24 @@ public class IncludeProjectDependenciesComponentConfigurator extends
     private final Log log = new SystemStreamLog();
 
 
+//    public void configureComponent(Object component, PlexusConfiguration configuration,
+//
+//                                   org.codehaus.plexus.classworlds.realm.ClassRealm containerRealm) throws ComponentConfigurationException {
+//        this.configureComponent(component, configuration, new DefaultExpressionEvaluator(), containerRealm);
+//    }
+//
+//    public void configureComponent(Object component, PlexusConfiguration configuration,
+//                                   ExpressionEvaluator expressionEvaluator,
+//                                   org.codehaus.plexus.classworlds.realm.ClassRealm containerRealm) throws ComponentConfigurationException {
+//        this.configureComponent(component, configuration, expressionEvaluator, containerRealm, (ConfigurationListener)null);
+//    }
+//
+//    public void configureComponent(Object component, PlexusConfiguration configuration,
+//                                   ExpressionEvaluator expressionEvaluator,
+//                                   org.codehaus.plexus.classworlds.realm.ClassRealm containerRealm,
+//                                   ConfigurationListener listener) throws ComponentConfigurationException {
+
+
     @Override
     public void configureComponent(final Object component,
             final PlexusConfiguration configuration,
@@ -61,7 +95,7 @@ public class IncludeProjectDependenciesComponentConfigurator extends
         final ObjectWithFieldsConverter converter = new ObjectWithFieldsConverter();
 
         converter.processConfiguration(this.converterLookup, component,
-                containerRealm.getClassLoader(), configuration,
+                containerRealm, configuration,
                 expressionEvaluator, listener);
 
     }
@@ -99,8 +133,8 @@ public class IncludeProjectDependenciesComponentConfigurator extends
 
             for (final URL url : testUrls) {
 
-                containerRealm.addConstituent(url);
-
+//                containerRealm.addConstituent(url);
+                containerRealm.addURL(url);
             }
         }
 

@@ -24,10 +24,12 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 
@@ -39,115 +41,120 @@ import com.technophobia.substeps.report.ExecutionReportBuilder;
  * executionConfigs, encapsulating the required config and setup and tear down
  * details
  * 
- * @goal run-features
- * @requiresDependencyResolution test
- * @phase integration-test
- * 
- * @configurator include-project-dependencies
  */
-@SuppressWarnings("unchecked")
+@Mojo( name = "run-features",
+        defaultPhase = LifecyclePhase.INTEGRATION_TEST,
+        requiresDependencyResolution = ResolutionScope.TEST,
+        requiresProject = true,
+        configurator = "include-project-dependencies")
 public class SubstepsRunnerMojo extends AbstractMojo {
+
 
     /**
      * 
      * See <a href="./executionConfig.html">ExecutionConfig</a>
      * 
-     * @parameter
      */
+
+    @Parameter
     private List<ExecutionConfig> executionConfigs;
 
     /**
      * The execution report builder you wish to use
      * 
-     * @parameter
      */
+    @Parameter
     private final ExecutionReportBuilder executionReportBuilder = null;
 
     /**
      * When running in forked mode, a port is required to communicate between
      * maven and substeps, to set explicitly use -DjmxPort=9999
-     * 
-     * @parameter default-value="9999" expression="${jmxPort}"
      */
+    @Parameter( defaultValue = "9999" )
     private Integer jmxPort;
 
     /**
      * A space delimited string of vm arguments to pass to the forked jvm
      * 
-     * @parameter
      */
+    @Parameter
+
     private String vmArgs = null;
 
     /**
      * if true a jvm will be spawned to run substeps otherwise substeps will
      * execute within the same jvm as maven
      * 
-     * @parameter default-value=true;
-     * @required
      */
-    private boolean runTestsInForkedVM;
+    @Parameter( property = "runTestsInForkedVM", defaultValue = "false" )
+
+    private boolean runTestsInForkedVM = false;
 
     /**
      * List of classes containing step implementations e.g.
      * <param>com.technophobia.substeps.StepImplmentations<param>
      * 
-     * @parameter
      */
+    @Parameter
     private List<String> stepImplementationArtifacts;
 
     /**
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Parameter(defaultValue = "${project}", readonly = true )
     private MavenProject project;
 
     private final BuildFailureManager buildFailureManager = new BuildFailureManager();
 
     /**
-     * @component
+     * at component
      */
+    @Component
     private ArtifactResolver artifactResolver;
 
     /**
-     * @component
+     * at component
      */
+    @Component
+
     private ArtifactFactory artifactFactory;
 
     /**
-     * @component
+     * at component
      */
+    @Component
+
     private MavenProjectBuilder mavenProjectBuilder;
 
     /**
-     * @parameter default-value="${localRepository}"
-     * @readonly
      */
+    @Parameter(  defaultValue = "${localRepository}" )
+
     private org.apache.maven.artifact.repository.ArtifactRepository localRepository;
 
     /**
-     * @parameter default-value="${project.remoteArtifactRepositories}"
-     * @readonly
      */
+    @Parameter(  defaultValue = "${project.remoteArtifactRepositories}" )
+
     private List remoteRepositories;
 
     /**
-     * @parameter expression="${plugin.artifacts}"
-     * @readonly
      */
+    @Parameter(  defaultValue = "${plugin.artifacts}" )
+
     private List<Artifact> pluginDependencies;
 
     /**
-     * @component
+//     * at component
      */
+    @Component
     private ArtifactMetadataSource artifactMetadataSource;
 
     private MojoRunner runner;
 
-
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
-        assertCompatibleCoreVersion();
+//        assertCompatibleCoreVersion();
 
         ensureValidConfiguration();
 
@@ -161,18 +168,21 @@ public class SubstepsRunnerMojo extends AbstractMojo {
     }
 
 
-    private void assertCompatibleCoreVersion() throws MojoExecutionException {
-
-        CoreVersionChecker.assertCompatibleVersion(getLog(), this.artifactFactory, this.artifactResolver,
-                this.remoteRepositories, this.localRepository, this.mavenProjectBuilder, this.project,
-                this.pluginDependencies);
-    }
+//    private void assertCompatibleCoreVersion() throws MojoExecutionException {
+//
+//        CoreVersionChecker.assertCompatibleVersion(getLog(), this.artifactFactory, this.artifactResolver,
+//                this.remoteRepositories, this.localRepository, this.mavenProjectBuilder, this.project,
+//                this.pluginDependencies);
+//    }
 
 
     private ForkedRunner createForkedRunner() throws MojoExecutionException {
 
         try {
 
+            if (this.project == null) {
+                this.getLog().error("this.project is null");
+            }
             return new ForkedRunner(getLog(), this.jmxPort, this.vmArgs, this.project.getTestClasspathElements(),
                     this.stepImplementationArtifacts, this.artifactResolver, this.artifactFactory,
                     this.mavenProjectBuilder, this.localRepository, this.remoteRepositories,
@@ -272,6 +282,127 @@ public class SubstepsRunnerMojo extends AbstractMojo {
                     "Invalid configuration of substeps runner, if stepImplementationArtifacts are specified runTestsInForkedVM must be true");
         }
 
+    }
+
+
+    public List<ExecutionConfig> getExecutionConfigs() {
+        return executionConfigs;
+    }
+
+    public void setExecutionConfigs(List<ExecutionConfig> executionConfigs) {
+        this.executionConfigs = executionConfigs;
+    }
+
+    public ExecutionReportBuilder getExecutionReportBuilder() {
+        return executionReportBuilder;
+    }
+
+    public Integer getJmxPort() {
+        return jmxPort;
+    }
+
+    public void setJmxPort(Integer jmxPort) {
+        this.jmxPort = jmxPort;
+    }
+
+    public String getVmArgs() {
+        return vmArgs;
+    }
+
+    public void setVmArgs(String vmArgs) {
+        this.vmArgs = vmArgs;
+    }
+
+    public boolean isRunTestsInForkedVM() {
+        return runTestsInForkedVM;
+    }
+
+    public void setRunTestsInForkedVM(boolean runTestsInForkedVM) {
+        this.runTestsInForkedVM = runTestsInForkedVM;
+    }
+
+    public List<String> getStepImplementationArtifacts() {
+        return stepImplementationArtifacts;
+    }
+
+    public void setStepImplementationArtifacts(List<String> stepImplementationArtifacts) {
+        this.stepImplementationArtifacts = stepImplementationArtifacts;
+    }
+
+    public MavenProject getProject() {
+        return project;
+    }
+
+    public void setProject(MavenProject project) {
+        this.project = project;
+    }
+
+    public BuildFailureManager getBuildFailureManager() {
+        return buildFailureManager;
+    }
+
+    public ArtifactResolver getArtifactResolver() {
+        return artifactResolver;
+    }
+
+    public void setArtifactResolver(ArtifactResolver artifactResolver) {
+        this.artifactResolver = artifactResolver;
+    }
+
+    public ArtifactFactory getArtifactFactory() {
+        return artifactFactory;
+    }
+
+    public void setArtifactFactory(ArtifactFactory artifactFactory) {
+        this.artifactFactory = artifactFactory;
+    }
+
+    public MavenProjectBuilder getMavenProjectBuilder() {
+        return mavenProjectBuilder;
+    }
+
+    public void setMavenProjectBuilder(MavenProjectBuilder mavenProjectBuilder) {
+        this.mavenProjectBuilder = mavenProjectBuilder;
+    }
+
+    public ArtifactRepository getLocalRepository() {
+        return localRepository;
+    }
+
+    public void setLocalRepository(ArtifactRepository localRepository) {
+        this.localRepository = localRepository;
+    }
+
+    public List getRemoteRepositories() {
+        return remoteRepositories;
+    }
+
+    public void setRemoteRepositories(List remoteRepositories) {
+        this.remoteRepositories = remoteRepositories;
+    }
+
+    public List<Artifact> getPluginDependencies() {
+        return pluginDependencies;
+    }
+
+    public void setPluginDependencies(List<Artifact> pluginDependencies) {
+        this.pluginDependencies = pluginDependencies;
+    }
+
+    public ArtifactMetadataSource getArtifactMetadataSource() {
+        return artifactMetadataSource;
+    }
+
+    public void setArtifactMetadataSource(ArtifactMetadataSource artifactMetadataSource) {
+        this.artifactMetadataSource = artifactMetadataSource;
+    }
+
+    public MojoRunner getRunner() {
+        return runner;
+    }
+
+    public void setRunner(MojoRunner runner) {
+        this.runner = runner;
     }
 
 }
