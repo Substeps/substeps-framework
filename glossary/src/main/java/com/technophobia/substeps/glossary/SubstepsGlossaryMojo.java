@@ -33,6 +33,10 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,13 +45,13 @@ import com.google.common.io.Files;
 import com.sun.tools.javadoc.Main;
 
 /**
- * 
- * @goal generate-docs
- * @requiresDependencyResolution test
- * @phase generate-resources
- * 
- * @configurator include-project-dependencies
+ * A Maven plugin to generate a json representation of the step implementations in this library.  That json is then used in verious plugins and IDE's etc.
  */
+@Mojo( name = "generate-docs",
+        defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
+        requiresDependencyResolution = ResolutionScope.TEST,
+        requiresProject = true,
+        configurator = "include-project-dependencies")
 public class SubstepsGlossaryMojo extends AbstractMojo {
 
     private final Logger log = LoggerFactory.getLogger(SubstepsGlossaryMojo.class);
@@ -55,27 +59,24 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
     /**
      * Location of the file.
      * 
-     * @parameter expression="${project.build.outputDirectory}"
-     * @required
      */
+    @Parameter(defaultValue = "${project.build.outputDirectory}", required = true)
     private File outputDirectory;
 
     /**
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Parameter(defaultValue = "${project}", required = true, readonly = true)
     private MavenProject project;
 
     /**
-     * @parameter
-     * @required
      */
+    @Parameter(required = true)
     private String[] stepImplementationClassNames;
 
     /**
      * @parameter
      */
+    @Parameter
     private final GlossaryPublisher glossaryPublisher = null;
 
     private final XMLSubstepsGlossarySerializer serializer = new XMLSubstepsGlossarySerializer();
@@ -131,7 +132,7 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
     /**
      * @param classToDocument
      *            = fqn of a class, dotted syntax
-     * @param isSourcePath
+     * @param dir the directory of the source
      * @return
      */
     private String resolveClassToPath(final String classToDocument, final String dir) {
