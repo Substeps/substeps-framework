@@ -1,8 +1,17 @@
-substeps-glossary [![Build Status](https://travis-ci.org/G2G3Digital/substeps-glossary.svg)](https://travis-ci.org/G2G3Digital/substeps-glossary)
+substeps-glossary 
 =================
 
 Release Notes
 =============
+
+2.0.0
+-----
+* Step implementaiton publisher that renders Markdown add the following config to the glossary publisher config:
+
+```              <glossaryPublisher implementation="com.technophobia.substeps.glossary.MarkdownSubstepsPublisher">
+                <outputFile>${project.build.directory}/my-stepimplementations.md</outputFile>
+              </glossaryPublisher>```
+
 
 1.1.1
 -----
