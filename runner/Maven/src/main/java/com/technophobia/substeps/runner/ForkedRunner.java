@@ -310,11 +310,11 @@ public class ForkedRunner implements MojoRunner {
                     throw new MojoExecutionException("Unable to resolve artifact for substep implementation '"
                             + stepImplementationArtifactString + "'", e);
 
-                } catch (final ProjectBuildingException e) {
+                } catch (final InvalidDependencyVersionException e) {
 
                     throw new MojoExecutionException("Unable to resolve artifact for substep implementation '"
                             + stepImplementationArtifactString + "'", e);
-                } catch (final InvalidDependencyVersionException e) {
+                } catch (final ProjectBuildingException e) {
 
                     throw new MojoExecutionException("Unable to resolve artifact for substep implementation '"
                             + stepImplementationArtifactString + "'", e);

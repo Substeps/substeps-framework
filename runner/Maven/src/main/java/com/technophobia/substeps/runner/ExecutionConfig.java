@@ -23,6 +23,7 @@ import java.lang.reflect.Modifier;
 import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * @author ricky
@@ -36,8 +37,8 @@ public class ExecutionConfig {
      * A descriptive name for the configuration, this is used in the test
      * execution report
      * 
-     * @parameter
      */
+    @Parameter
     private String description;
 
     /**
@@ -45,8 +46,8 @@ public class ExecutionConfig {
      * otherwise it won’t. multiple tags are space seperated. Tags can be
      * excluded by prefixing with
      * 
-     * @parameter
      */
+    @Parameter
     private String tags;
 
     /**
@@ -57,24 +58,22 @@ public class ExecutionConfig {
      * succeed. Over the course of a project this list should be reduced as
      * confidence in the delivery grows. Format is the same for <tags>
      * 
-     * @parameter
      */
+    @Parameter
     private String nonFatalTags;
 
     /**
      * Path to the feature file, or directory containing the feature files
      * 
-     * @parameter
-     * @required
      */
+    @Parameter(required = true)
     private String featureFile;
 
     /**
      * Path to directory of substep files, or a single substep file
      * 
-     * @parameter
-     * @required
      */
+    @Parameter(required = true)
     private String subStepsFileName;
 
     /**
@@ -82,9 +81,8 @@ public class ExecutionConfig {
      * nonStrictKeywordPrecedence to look for alternate expressions if an exact
      * match can’t be found. Useful for porting Cucumber features.
      * 
-     * @parameter default-value=true
-     * @required
      */
+    @Parameter(required = true, defaultValue = "true")
     private boolean strict = true;
 
     /**
@@ -92,14 +90,13 @@ public class ExecutionConfig {
      * attempting to execute as much as possible and fail those tests that can’t
      * be parsed
      * 
-     * @parameter default-value=true
-     * @required
      */
+    @Parameter(required = true)
     private boolean fastFailParseErrors = true;
 
     /**
-     * @parameter
      */
+    @Parameter
     private Properties systemProperties;
 
     /**
@@ -108,17 +105,16 @@ public class ExecutionConfig {
      * ... Then if a step was defined in a feature or substep as “When I login”,
      * but implemented as “Given I login”, the feature would parse correctly.
      * 
-     * @parameter
      */
+    @Parameter
     private String[] nonStrictKeywordPrecedence;
 
     /**
      * List of classes containing step implementations eg
      * <param>com.technophobia.substeps.StepImplmentations<param>
      * 
-     * @parameter
-     * @required
      */
+    @Parameter(required = true)
     private String[] stepImplementationClassNames;
 
     /**
@@ -127,21 +123,17 @@ public class ExecutionConfig {
      * initialisation classes associated with the step implementations will be
      * used.
      * 
-     * @parameter
      */
+    @Parameter
     private String[] initialisationClass;
 
     /**
-     * 
-     * 
-     * 
      * Class that implements INotifier will be called to notify of execution
      * events
-     * 
-     * @parameter
-     * @required
      */
+    @Parameter(required = true)
     private String[] executionListeners;
+
 
     public SubstepsExecutionConfig asSubstepsExecutionConfig() throws MojoExecutionException {
 
@@ -172,9 +164,102 @@ public class ExecutionConfig {
         }
     }
 
+
+
     public String getDescription() {
 
         return this.description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
+    public String getNonFatalTags() {
+        return nonFatalTags;
+    }
+
+    public void setNonFatalTags(String nonFatalTags) {
+        this.nonFatalTags = nonFatalTags;
+    }
+
+    public String getFeatureFile() {
+        return featureFile;
+    }
+
+    public void setFeatureFile(String featureFile) {
+        this.featureFile = featureFile;
+    }
+
+    public String getSubStepsFileName() {
+        return subStepsFileName;
+    }
+
+    public void setSubStepsFileName(String subStepsFileName) {
+        this.subStepsFileName = subStepsFileName;
+    }
+
+    public boolean isStrict() {
+        return strict;
+    }
+
+    public void setStrict(boolean strict) {
+        this.strict = strict;
+    }
+
+    public boolean isFastFailParseErrors() {
+        return fastFailParseErrors;
+    }
+
+    public void setFastFailParseErrors(boolean fastFailParseErrors) {
+        this.fastFailParseErrors = fastFailParseErrors;
+    }
+
+    public Properties getSystemProperties() {
+        return systemProperties;
+    }
+
+    public void setSystemProperties(Properties systemProperties) {
+        this.systemProperties = systemProperties;
+    }
+
+    public String[] getNonStrictKeywordPrecedence() {
+        return nonStrictKeywordPrecedence;
+    }
+
+    public void setNonStrictKeywordPrecedence(String[] nonStrictKeywordPrecedence) {
+        this.nonStrictKeywordPrecedence = nonStrictKeywordPrecedence;
+    }
+
+    public String[] getStepImplementationClassNames() {
+        return stepImplementationClassNames;
+    }
+
+    public void setStepImplementationClassNames(String[] stepImplementationClassNames) {
+        this.stepImplementationClassNames = stepImplementationClassNames;
+    }
+
+    public String[] getInitialisationClass() {
+        return initialisationClass;
+    }
+
+    public void setInitialisationClass(String[] initialisationClass) {
+        this.initialisationClass = initialisationClass;
+    }
+
+    public String[] getExecutionListeners() {
+        return executionListeners;
+    }
+
+    public void setExecutionListeners(String[] executionListeners) {
+        this.executionListeners = executionListeners;
+    }
 }
