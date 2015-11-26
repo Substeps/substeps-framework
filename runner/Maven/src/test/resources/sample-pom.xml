@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.technophobia.substeps</groupId>
+	<artifactId>mojo-sample</artifactId>
+	<version>1.1.3-SNAPSHOT</version>
+
+	<packaging>jar</packaging>
+	<name>pom sample</name>
+	<description>a sample pom for testing the mojo</description>
+
+
+	<licenses>
+		<license>
+		    <name>LGPL 3.0 license</name>
+		    <url>http://www.opensource.org/licenses/lgpl-3.0.html</url>
+		    <distribution>manual</distribution>
+		</license>
+	</licenses>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.technophobia.substeps</groupId>
+            <artifactId>substeps-core</artifactId>
+            <version>${substeps.core.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.4</version>
+        </dependency>
+
+    </dependencies>
+
+
+    <build>
+
+
+        <plugins>
+
+            <plugin>
+                <groupId>com.technophobia.substeps</groupId>
+                <artifactId>substeps-maven-plugin</artifactId>
+
+                <executions>
+                    <execution>
+                        <id>SubSteps Test</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>run-features</goal>
+                        </goals>
+                        <configuration>
+
+                            <!-- not actually in the runner yet!
+                            <jvmArgs>
+                                <jvmArg>-javaagent:${sonar.jacoco.jar}=destfile=${sonar.jacoco.itReportPath},includes=com.technophobia.substeps.*</jvmArg>
+                            </jvmArgs> -->
+
+                        </configuration>
+                    </execution>
+                </executions>
+
+                <configuration>
+
+                    <runTestsInForkedVM>false</runTestsInForkedVM>
+                    <!--                          <log4jConfigPath>${basedir}/src/test/resources/log4j.xml</log4jConfigPath> -->
+
+
+                    <executionConfigs>
+
+                        <!-- self test features -->
+
+                        <executionConfig>
+                            <description>Self Test Features</description>
+                            <tags>@non-visual</tags>
+                            <fastFailParseErrors>false</fastFailParseErrors>
+                            <featureFile>/target/test-classes/features</featureFile> <!-- typically you'd use ${basedir} here, no need to for test purposes -->
+                            <subStepsFileName>/target/test-classes/substeps</subStepsFileName> <!-- ditto -->
+
+                            <stepImplementationClassNames>
+                                <param>com.technophobia.webdriver.substeps.impl.BaseWebdriverSubStepImplementations</param>
+                            </stepImplementationClassNames>
+
+                            <executionListeners>
+                                <!--	<param>com.technophobia.substeps.runner.logger.AnsiColourExecutionLogger</param> -->
+                                <param>com.technophobia.substeps.runner.logger.StepExecutionLogger</param>
+                            </executionListeners>
+
+                        </executionConfig>
+                    </executionConfigs>
+
+                    <executionReportBuilder implementation="com.technophobia.substeps.mojo.runner.StubExecutionReportBuilder">
+                        <outputDirectory>/some/folder</outputDirectory>
+                        <reportTitle>sample pom - report title</reportTitle>
+                    </executionReportBuilder>
+
+                </configuration>
+                <dependencies>
+
+                    <dependency>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                        <version>1.6.4</version>
+                    </dependency>
+
+                </dependencies>
+            </plugin>
+
+        </plugins>
+
+    </build>
+
+
+
+</project>
