@@ -1,4 +1,4 @@
-substeps-runner [![Build Status](https://travis-ci.org/G2G3Digital/substeps-runner.svg)](https://travis-ci.org/G2G3Digital/substeps-runner)
+substeps-runner
 ===============
 
 Runners to execute substeps, currently includes an ANT runner, a Maven plugin and a Junit runner.  

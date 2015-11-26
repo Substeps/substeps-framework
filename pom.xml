@@ -111,9 +111,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.6</java.version>
-        <java.signature.artifact>java16-sun</java.signature.artifact>
-        <java.signature.version>1.10</java.signature.version>
+        <java.version>1.8</java.version>
 
         <stable.substeps.version>1.1.3</stable.substeps.version>
 
@@ -283,11 +281,6 @@
 
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>animal-sniffer-maven-plugin</artifactId>
-            </plugin>
-
-            <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
             </plugin>
@@ -350,28 +343,6 @@
                         <target>${java.version}</target>
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>animal-sniffer-maven-plugin</artifactId>
-                    <version>1.14</version>
-
-                    <configuration>
-                        <signature>
-                            <groupId>org.codehaus.mojo.signature</groupId>
-                            <artifactId>${java.signature.artifact}</artifactId>
-                            <version>${java.signature.version}</version>
-                        </signature>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>ensure-java-api-compatibility</id>
-                            <phase>test</phase>
-                            <goals>
-                                <goal>check</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
