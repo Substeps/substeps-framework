@@ -10,5 +10,16 @@
             <username>${env.OSSRH_USER}</username>
             <password>${env.OSSRH_PASSWORD}</password>
         </server>
+
+        <server>
+            <id>scm.credentials</id>
+            <username>${env.GITHUB_USER}</username>
+            <password>${env.GITHUB_PASSWORD}</password>
+        </server>
+
+        <server>
+            <id>gpg.passphrase</id>
+            <passphrase>${env.GPG_PASSPHRASE}</passphrase>
+        </server>
     </servers>
 </settings>

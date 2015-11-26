@@ -2,11 +2,9 @@ language: java
 
 sudo: false
 
-jdk:
-  - oraclejdk8
+jdk: oraclejdk8
   
-script:
-  - 'if [ "${TRAVIS_PULL_REQUEST}" = "false" ] && [ "${DEPLOY_ENABLED}" = "true" ]; then mvn deploy --settings travis/settings.xml; else mvn verify; fi'
+script: ./travis/mvn-verify-deploy-release.bash
 
 notifications:
   slack:
