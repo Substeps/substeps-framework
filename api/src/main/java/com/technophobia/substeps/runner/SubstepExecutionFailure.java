@@ -27,17 +27,15 @@ import com.technophobia.substeps.execution.node.IExecutionNode;
 import com.technophobia.substeps.execution.node.RootNode;
 
 /**
- * represents the failure of an execution - could be a step method, or a setup
- * method, may or may not be critical
- * 
+ * Represents the failure of an execution - could be a step method, or a setup method, may or may not be critical
+ *
  * @author ian
- * 
  */
 public class SubstepExecutionFailure implements Serializable {
 
     public static final Function<SubstepExecutionFailure, Long> GET_NODE_ID = new Function<SubstepExecutionFailure, Long>() {
 
-        public Long apply(SubstepExecutionFailure failure) {
+        public Long apply(final SubstepExecutionFailure failure) {
             return failure.getExeccutionNode() == null ? null : failure.getExeccutionNode().getId();
         }
 
@@ -52,7 +50,8 @@ public class SubstepExecutionFailure implements Serializable {
 
     private byte[] screenshot;
 
-    private ThrowableInfo throwableInfo;
+    private final ThrowableInfo throwableInfo;
+
 
     public SubstepExecutionFailure(final Throwable cause) {
 
@@ -61,38 +60,52 @@ public class SubstepExecutionFailure implements Serializable {
         this.throwableInfo = new ThrowableInfo(cause);
     }
 
+
     /**
-     * @param targetException
-     * @param node
+     * @param cause the cause of the failure
+     * @param node  the node that failed execution
      */
-    public SubstepExecutionFailure(final Throwable targetException, final IExecutionNode node) {
-        this.cause = targetException;
+    public SubstepExecutionFailure(final Throwable cause, final IExecutionNode node) {
+        this.cause = cause;
         this.executionNode = node;
         this.executionNode.getResult().setFailure(this);
         this.throwableInfo = new ThrowableInfo(cause);
 
     }
 
+
     /**
-     * @param targetException
-     * @param node
+     * @param cause      the cause of the failure
+     * @param node       the node that failed execution
+     * @param screenshot the bytes representing the screenshot taken when the node execution failed
      */
-    public SubstepExecutionFailure(final Throwable targetException, final IExecutionNode node, final byte[] screenshot) {
-        this(targetException, node);
+    public SubstepExecutionFailure(final Throwable cause, final IExecutionNode node, final byte[] screenshot) {
+        this(cause, node);
         this.setScreenshot(screenshot);
     }
 
-    public SubstepExecutionFailure(final Throwable targetException, final IExecutionNode node,
-            final boolean setupOrTearDown) {
 
-        this(targetException, node);
+    /**
+     * @param cause           the cause of the failure
+     * @param node            the node that failed execution
+     * @param setupOrTearDown thrown during setup or tear down phase
+     */
+    public SubstepExecutionFailure(final Throwable cause, final IExecutionNode node, final boolean setupOrTearDown) {
+        this(cause, node);
         this.setupOrTearDown = setupOrTearDown;
     }
 
-    public SubstepExecutionFailure(Throwable targetException,final IExecutionNode node, ExecutionResult result) {
-        this(targetException, node);
+
+    /**
+     * @param cause  the cause of the failure
+     * @param node   the node that failed execution
+     * @param result the execution result
+     */
+    public SubstepExecutionFailure(final Throwable cause, final IExecutionNode node, final ExecutionResult result) {
+        this(cause, node);
         node.getResult().setResult(result);
     }
+
 
     /**
      * @return the execcutionNode
@@ -101,13 +114,14 @@ public class SubstepExecutionFailure implements Serializable {
         return this.executionNode;
     }
 
+
     /**
-     * @param execcutionNode
-     *            the execcutionNode to set
+     * @param execcutionNode the execcutionNode to set
      */
     public void setExeccutionNode(final IExecutionNode execcutionNode) {
         this.executionNode = execcutionNode;
     }
+
 
     /**
      * @return the setupOrTearDown
@@ -116,13 +130,14 @@ public class SubstepExecutionFailure implements Serializable {
         return this.setupOrTearDown;
     }
 
+
     /**
-     * @param setupOrTearDown
-     *            the setupOrTearDown to set
+     * @param setupOrTearDown the setupOrTearDown to set
      */
     public void setSetupOrTearDown(final boolean setupOrTearDown) {
         this.setupOrTearDown = setupOrTearDown;
     }
+
 
     /**
      * @return the cause
@@ -132,16 +147,19 @@ public class SubstepExecutionFailure implements Serializable {
     }
 
 
-    public ThrowableInfo getThrowableInfo(){
+    public ThrowableInfo getThrowableInfo() {
         return this.throwableInfo;
     }
+
+
     /**
-     * @param isNonCritical
+     * @param isNonCritical is the error non critical
      */
     public void setNonCritical(final boolean isNonCritical) {
         this.nonCritical = isNonCritical;
 
     }
+
 
     /**
      * @return the nonCritical
@@ -150,11 +168,13 @@ public class SubstepExecutionFailure implements Serializable {
         return this.nonCritical;
     }
 
+
     public byte[] getScreenshot() {
         return screenshot;
     }
 
-    public void setScreenshot(byte[] screenshot) {
+
+    public void setScreenshot(final byte[] screenshot) {
         this.screenshot = screenshot;
     }
 }

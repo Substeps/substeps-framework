@@ -24,17 +24,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A custom ComponentConfigurator which adds the project's runtime classpath
- * elements to the
+ * A custom ComponentConfigurator which adds the project's runtime classpath elements to the
  * 
  * @author Brian Jackson
  * @since Aug 1, 2008 3:04:17 PM
  * 
- * @plexus.component 
- *                   role="org.codehaus.plexus.component.configurator.ComponentConfigurator"
+ * @plexus.component role="org.codehaus.plexus.component.configurator.ComponentConfigurator"
  *                   role-hint="include-project-dependencies"
- * @plexus.requirement role=
- *                     "org.codehaus.plexus.component.configurator.converters.lookup.ConverterLookup"
+ *
+ * @plexus.requirement role="org.codehaus.plexus.component.configurator.converters.lookup.ConverterLookup"
  *                     role-hint="default"
  */
 public class IncludeProjectDependenciesComponentConfigurator extends AbstractComponentConfigurator {

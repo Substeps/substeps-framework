@@ -104,12 +104,6 @@ public class ClasspathScanner {
 
 	}
 
-	/**
-	 * @param class1
-	 * @param classLoader
-	 * @return
-	 */
-
 	public List<Class<?>> getClassesWithAnnotation(final Class<? extends Annotation> desiredAnnotation,
 			final ClassLoader classLoader) {
 		// scan the classpath and look for classes with that annotation

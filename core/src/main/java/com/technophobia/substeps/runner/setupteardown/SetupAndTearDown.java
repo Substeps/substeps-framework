@@ -30,9 +30,8 @@ import com.technophobia.substeps.model.Scope;
 
 /**
  * Class to encapsulate setup and tear down methods and the ordering of them
- * 
+ *
  * @author imoore
- * 
  */
 public class SetupAndTearDown {
 
@@ -44,13 +43,16 @@ public class SetupAndTearDown {
 
     private final BeforeAndAfterMethods beforeAndAfterMethods;
 
+
     public String getLoggingConfigName() {
         return this.loggingConfigName;
     }
 
+
     public void setLoggingConfigName(final String loggingConfigName) {
         this.loggingConfigName = loggingConfigName;
     }
+
 
     public SetupAndTearDown(final Class<?>[] classes, final MethodExecutor methodExecutor) {
 
@@ -59,6 +61,7 @@ public class SetupAndTearDown {
         this.methodExecutor.addImplementationClasses(classes);
     }
 
+
     public void runBeforeAll() throws Throwable {
 
         prepareLoggingConfig();
@@ -66,40 +69,34 @@ public class SetupAndTearDown {
         runAllMethods(MethodState.BEFORE_ALL);
     }
 
-    /**
-	 */
+
     public void runAfterAll() throws Throwable {
         runAllMethods(MethodState.AFTER_ALL);
 
         removeLoggingConfig();
     }
 
-    /**
-	 * 
-	 */
+
     public void runBeforeFeatures() throws Throwable {
         runAllMethods(MethodState.BEFORE_FEATURES);
     }
 
-    /**
-	 */
+
     public void runAfterFeatures() throws Throwable {
         runAllMethods(MethodState.AFTER_FEATURES);
     }
 
-    /**
-	 * 
-	 */
+
     public void runBeforeScenarios() throws Throwable {
         runAllMethods(MethodState.BEFORE_SCENARIOS);
     }
 
-    /**
-	 */
+
     public void runAfterScenarios() throws Throwable {
         runAllMethods(MethodState.AFTER_SCENARIOS);
 
     }
+
 
     private void runAllMethods(final MethodState methodState) throws Throwable {
 
@@ -107,6 +104,7 @@ public class SetupAndTearDown {
 
         this.methodExecutor.executeMethods(setupAndTearDownMethods);
     }
+
 
     private void prepareLoggingConfig() {
 
@@ -119,14 +117,12 @@ public class SetupAndTearDown {
         }
     }
 
+
     private void removeLoggingConfig() {
         MDC.remove("className");
     }
 
-    /**
-     * @param scope
-     * @throws Throwable
-     */
+
     public void runSetup(final Scope currentScope) throws Throwable {
         this.log.trace("running setup for scope: " + currentScope);
 
@@ -152,13 +148,11 @@ public class SetupAndTearDown {
 
     }
 
-    /**
-     * @param scope
-     */
+
     public void runTearDown(final Scope currentScope) throws Throwable {
         this.log.trace("runTearDown: " + currentScope);
 
-        // TODO could implement this as methods on Scope itself
+        // TODO: could implement this as methods on Scope itself
         switch (currentScope) {
             case SUITE: {
                 runAfterAll();
@@ -173,9 +167,7 @@ public class SetupAndTearDown {
             case SCENARIO: {
                 runAfterScenarios();
 
-                // TODO for outline scenarios this might mean setup and tear
-                // down
-                // gets run an extra time each...
+                // TODO: for outline scenarios this might mean setup and tear down gets run an extra time each...
                 break;
             }
             case SCENARIO_OUTLINE_ROW:

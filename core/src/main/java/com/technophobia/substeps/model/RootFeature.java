@@ -23,39 +23,31 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 /**
- * 
- * 
  * @author imoore
- * 
  */
 public abstract class RootFeature {
 
     private String rawText;
     private Set<String> tags = Sets.newHashSet();
 
-    /**
-     * @return the tags
-     */
+
     public Set<String> getTags() {
         return tags;
     }
+
 
     public void setRawText(final String rawText) {
         this.rawText = rawText;
     }
 
-    /**
-     * @param currentTags
-     */
+
     public void setTags(final Set<String> currentTags) {
 
         tags = currentTags;
 
     }
 
-    /**
-     * @return
-     */
+
     public String getRawText() {
         return rawText;
     }

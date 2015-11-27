@@ -119,7 +119,7 @@ abstract class ExecutionConfigDecorator {// extends SubstepsExecutionConfig {
     }
 
     /**
-     * @return
+     * @return list of execusion listeners
      */
     public String[] getExecutionListeners() {
         return decoratedConfig.getExecutionListeners();

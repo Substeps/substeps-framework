@@ -34,7 +34,6 @@ import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
 
 /**
  * @author ian
- * 
  */
 public enum Configuration {
 
@@ -43,7 +42,7 @@ public enum Configuration {
     private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
 
     private final CombinedConfiguration combinedConfig = new CombinedConfiguration(
-            new OverrideCombiner());
+        new OverrideCombiner());
 
 
     private Configuration() {
@@ -63,7 +62,7 @@ public enum Configuration {
 
             try {
                 final PropertiesConfiguration customProps = new PropertiesConfiguration(
-                        customPropsUrl);
+                    customPropsUrl);
                 combinedConfig.addConfiguration(customProps, "customProps");
 
             } catch (final ConfigurationException e) {
@@ -77,9 +76,9 @@ public enum Configuration {
     /**
      * Implementors of substep libraries should call this with default
      * properties for their library
-     * 
-     * @param url
-     *            to a properties file containing default values
+     *
+     * @param url  to a properties file containing default values
+     * @param name to name of the properties file that is being added
      */
     public void addDefaultProperties(final URL url, final String name) {
 
@@ -96,8 +95,8 @@ public enum Configuration {
         }
     }
 
-    public void addDefaultProperty(String key, Object value){
 
+    public void addDefaultProperty(final String key, final Object value) {
         combinedConfig.addProperty(key, value);
     }
 
@@ -113,7 +112,7 @@ public enum Configuration {
             buf.append("In config: ").append(configurationName).append("\n");
 
             final org.apache.commons.configuration.Configuration cfg = combinedConfig
-                    .getConfiguration(configurationName);
+                .getConfiguration(configurationName);
 
             final Iterator<String> keys = cfg.getKeys();
 

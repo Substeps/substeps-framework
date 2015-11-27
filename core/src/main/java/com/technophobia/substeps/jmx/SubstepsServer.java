@@ -111,9 +111,6 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
     }
 
 
-    /**
-     * @param shutdownSignal
-     */
     public SubstepsServer(final CountDownLatch shutdownSignal) {
         this.shutdownSignal = shutdownSignal;
 

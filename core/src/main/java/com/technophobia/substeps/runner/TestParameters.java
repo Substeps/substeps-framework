@@ -34,7 +34,6 @@ import com.technophobia.substeps.runner.syntax.FileUtils;
 
 /**
  * @author ian
- * 
  */
 public class TestParameters {
     private final Logger log = LoggerFactory.getLogger(TestParameters.class);
@@ -46,11 +45,14 @@ public class TestParameters {
     private boolean failParseErrorsImmediately = true;
     private final String scenarioName;
 
+
     public TestParameters(final TagManager tagManager, final Syntax syntax, final String featureFile) {
         this(tagManager, syntax, featureFile, null);
     }
 
-        public TestParameters(final TagManager tagManager, final Syntax syntax, final String featureFile, final String scenarioName) {
+
+    public TestParameters(final TagManager tagManager, final Syntax syntax, final String featureFile,
+        final String scenarioName) {
         this.tagManager = tagManager;
         this.syntax = syntax;
         this.featureFile = featureFile;
@@ -92,7 +94,7 @@ public class TestParameters {
 
 
     /**
-     * @return
+     * @return list of Feature files
      */
     public List<FeatureFile> getFeatureFileList() {
         return featureFileList;
@@ -123,25 +125,18 @@ public class TestParameters {
     }
 
 
-    /**
-     * @return
-     */
     public Syntax getSyntax() {
         return syntax;
     }
 
 
-    /**
-     * @return
-     */
     public boolean isFailParseErrorsImmediately() {
         return failParseErrorsImmediately;
     }
 
 
     /**
-     * @param failParseErrorsImmediately
-     *            the failParseErrorsImmediately to set
+     * @param failParseErrorsImmediately the failParseErrorsImmediately to set
      */
     public void setFailParseErrorsImmediately(final boolean failParseErrorsImmediately) {
         this.failParseErrorsImmediately = failParseErrorsImmediately;

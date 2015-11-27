@@ -102,10 +102,10 @@
             </plugin>
 
             <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-plugin-plugin</artifactId>
-            <version>3.4</version>
-            <configuration></configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>3.4</version>
+                <configuration/>
                 <executions>
                     <execution>
                         <id>default-descriptor</id>
@@ -123,10 +123,31 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
-    </build>
 
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <configuration>
+                        <tags>
+                            <tag>
+                                <name>plexus.component</name>
+                                <placement>t</placement>
+                                <head>Plexus component:</head>
+                            </tag>
+                            <tag>
+                                <name>plexus.requirement</name>
+                                <placement>t</placement>
+                                <head>Plexus Requirement:</head>
+                            </tag>
+                        </tags>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
     <reporting>
         <plugins>

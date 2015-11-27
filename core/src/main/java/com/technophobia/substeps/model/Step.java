@@ -165,7 +165,7 @@ public class Step {
             if (this.paramNames == null) {
                 this.paramNames = new ArrayList<String>();
             }
-            String s = matcher.group(2);
+            final String s = matcher.group(2);
             log.debug("adding " + s + " as a paramname");
             this.paramNames.add(s);
             findIdx = matcher.end(2);
@@ -181,9 +181,6 @@ public class Step {
 
     }
 
-    /**
-     * @return
-     */
     public String toDebugString() {
         if (this.keyword == null) {
             this.log.debug("annot of step is null: " + this.getClass().getSimpleName());
@@ -205,8 +202,8 @@ public class Step {
     }
 
     /**
-     * returns the regex pattern string including the capture groups
-     * @return
+     *
+     * @return returns the regex pattern string including the capture groups
      */
     public String getPattern() {
         return this.pattern;
@@ -217,7 +214,7 @@ public class Step {
     }
 
     /**
-     * @param data
+     * @param data the table data
      */
     public void addTableData(final String[] data) {
 
@@ -240,8 +237,7 @@ public class Step {
     }
 
     /**
-     * returns the text as it appears in the substep files, including any <angle> brackets denoting parameters
-     * @return
+     * @return the text as it appears in the substep files, including any &lt;angle&gt; brackets denoting parameters
      */
     public String getParameterLine() {
         return this.parameterLine != null ? this.parameterLine : this.line;
@@ -267,7 +263,7 @@ public class Step {
     }
 
     /**
-     * @param substitutedInlineTable
+     * @param substitutedInlineTable the substituted inline table
      */
     public void setSubstitutedInlineTable(final List<Map<String, String>> substitutedInlineTable) {
         this.substitutedInlineTable = substitutedInlineTable;

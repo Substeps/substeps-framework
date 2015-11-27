@@ -99,8 +99,6 @@
         </dependency>
     </dependencies>
 
-
-
     <build>
         <plugins>
             <plugin>
@@ -279,5 +277,64 @@
 				</plugins>
 			</build>
 		</profile>
+
+        <profile>
+            <id>disable-substeps-plugin-when-maven-test-skip</id>
+            <activation>
+                <property>
+                    <name>maven.test.skip</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.technophobia.substeps</groupId>
+                            <artifactId>substeps-maven-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                    <id>Tests to generate a report</id>
+                                    <phase>none</phase>
+                                </execution>
+                                <execution>
+                                    <id>SubSteps Test</id>
+                                    <phase>none</phase>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+        <profile>
+            <id>disable-substeps-plugin-when-skip-tests</id>
+            <activation>
+                <property>
+                    <name>skipTests</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.technophobia.substeps</groupId>
+                            <artifactId>substeps-maven-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                    <id>Tests to generate a report</id>
+                                    <phase>none</phase>
+                                </execution>
+                                <execution>
+                                    <id>SubSteps Test</id>
+                                    <phase>none</phase>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
     </profiles>
 </project>

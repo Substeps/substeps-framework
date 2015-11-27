@@ -2,12 +2,48 @@ language: java
 
 sudo: false
 
-jdk:
-  - oraclejdk8
-  
-script:
-  - 'if [ "${TRAVIS_PULL_REQUEST}" = "false" ] && [ "${DEPLOY_ENABLED}" = "true" ]; then mvn deploy --settings travis/settings.xml; else mvn verify; fi'
+jdk: oraclejdk8
 
 notifications:
   slack:
     secure: "g3zr8QxdJdMvaQnYEDfa13oOlseYGPm8IXUAURnu+oNdBMXzvB7yYDCBp/c9kF0QJTwLWOqrGnJyBK3hE4cWJFt+hdvQMXWSVJb4mf3gICDv4s5sVzvvY+Lh/TadiS5tsM1wZZjhIbCkc2HAjM/J3+YOtN/oK6cyOudDJBPByzEjW/PF5/At6ZyMVQo0bOga+zpZhIKVC2L6w4rtXiCh7FsUo7qV+svRxRK8Qm+rsvV3Qp8wpRjSk5HaPVw4L4eOPkMvFyDIhW6HJldtUU8cF4Tabb7whKcjHtNW0t5i+WAlfd0uOdVBNMrw4aMsIJdlgY33TlPVNGHi7YGL4ht22dScfQNtZhGKXgqoS/nFahmLzXDs8rv8RyC4T96Eumb8tPq4ii6eG3j5+FqxMwOuuU93CxijvsSYbqQmwECNphYAm1ftyb4R5cFYAZ/4EFc6tn7KfpF3FZ6YB6W6vj9Q9VOVjxofPR/MAqOGl9Kqe380zvgpg7Oef/cRb2dqT7pi61QzX/gwsvIlRake+n1WI1xobNeC6Msj+6e5uYkpDyJpJZzzPYtAPab3xZvXQGy+53Ykohuxxa+9jR9ybfcdkjPfWKV10EZBvmxw8s2IL/V1dR2ZtBjCibaHIxp60tn4FzuCQWeSEbSJVVpibU8YtkxIpLSoklALjEejDz5GX20="
+
+deploy:
+  - provider: script
+      skip_cleanup: true
+      script: mvn deploy --settings travis/settings.xml
+      on:
+      	repo: G2G3Digital/substeps-framework
+        branch: master
+
+  - provider: releases
+      skip_cleanup: true
+      api_key:
+        secure: CmA6f4kyBVVF6hDpPArW6Kn8KcKuhbx4vXKAAQcUjZAvC3/qBzmfjDofxebDn4UGCPC3njUE9EI6twbt2GMauroOJpfJfHWRymrpv1Tjm5+E5Vb2XteauZgn2p0/mhklABF8VLCjAYhpdOmbumVEUOqyhnh0wlTf+JPGBH3r9RXbCpvEIiO4yLvuUVTKk+FLSnhLhZAotCr/HFTpr0X19yXJ7UqP/4C4LNfQ+cPZ2kmXcew9tlvbChHBR+Gfs/zHsSNp90TE+YmPVUFurx23BFmKRv2XGythYBddLB7ou4TsUBL/H/RFUUlDDVpLJe9ebsAe3QHhRJjbHfs4XJoxrkOFW9HArJlZrapuejsq+aZVPd3QFoRFsoxsQBfaodri4pJ20XQxoJ9wZJJMayi+hV60/x3rNGcYrrUINnwjtGbsFmDP0hoHnUbTNEsMpUtgwvOLpOY/Jv8CbdzI01++Ml6Uj9rJcbsncr2qwqp/hkr+Y70NLs+Cd/qaVR8UQAkHM2RbYtovtvIlIJoRYJgXAc4DIhT+GrLH9UauCE/jbPD4Ak3UdxZwL5iyiQzVA1IKCx7H7xXZNbIgtB0Xch5Z1iRLmnhq9hox3G/X0dSkQXRPZULMoObXRtDQJhExnLwFPaawgFUrUxmz5GelmIBmKe38ShXDV/GcAA0sfW+tXMw=
+      file:
+        - ./api/target/substeps-core-api.jar
+        - ./api/target/substeps-core-api-tests.jar
+        - ./api/target/substeps-core-api-sources.jar
+        - ./api/target/substeps-core-api-javadoc.jar
+        - ./core/target/substeps-core.jar
+        - ./core/target/substeps-core-tests.jar
+        - ./core/target/substeps-core-javadoc.jar
+        - ./core/target/substeps-core-sources.jar
+        - ./runner/Junit/target/substeps-junit-runner-javadoc.jar
+        - ./runner/Junit/target/substeps-junit-runner-sources.jar
+        - ./runner/Junit/target/substeps-junit-runner.jar
+        - ./runner/Maven/target/substeps-maven-plugin-javadoc.jar
+        - ./runner/Maven/target/substeps-maven-plugin.jar
+        - ./runner/Maven/target/substeps-maven-plugin-sources.jar
+        - ./runner/Ant/target/substeps-ant-runner.jar
+        - ./runner/Ant/target/substeps-ant-runner-sources.jar
+        - ./runner/Ant/target/substeps-ant-runner-javadoc.jar
+        - ./runner/Common/target/substeps-runner-common-sources.jar
+        - ./runner/Common/target/substeps-runner-common.jar
+        - ./runner/Common/target/substeps-runner-common-javadoc.jar
+        - ./glossary/target/substeps-glossary-builder.jar
+        - ./glossary/target/substeps-glossary-builder-javadoc.jar
+        - ./glossary/target/substeps-glossary-builder-sources.jar
+      on:
+        repo: G2G3Digital/substeps-framework
+        tags: true

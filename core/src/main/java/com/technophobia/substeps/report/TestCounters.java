@@ -26,7 +26,6 @@ import com.technophobia.substeps.execution.node.IExecutionNode;
 
 /**
  * @author ian
- * 
  */
 public class TestCounters {
 
@@ -35,6 +34,7 @@ public class TestCounters {
     private int ignored = 0;
     private int passed = 0;
     private int failed = 0;
+
 
     public double getSuccessPc() {
 
@@ -48,25 +48,31 @@ public class TestCounters {
         return rtn;
     }
 
+
     public void addCount() {
         count++;
     }
+
 
     public void addRun() {
         run++;
     }
 
+
     public void addIgnored() {
         ignored++;
     }
+
 
     public void addPassed() {
         passed++;
     }
 
+
     public void addFailed() {
         failed++;
     }
+
 
     /**
      * @return the count
@@ -75,12 +81,14 @@ public class TestCounters {
         return count;
     }
 
+
     /**
      * @return the run
      */
     public int getRun() {
         return run;
     }
+
 
     /**
      * @return the ignored
@@ -89,12 +97,14 @@ public class TestCounters {
         return ignored;
     }
 
+
     /**
      * @return the passed
      */
     public int getPassed() {
         return passed;
     }
+
 
     /**
      * @return the failed
@@ -103,9 +113,7 @@ public class TestCounters {
         return failed;
     }
 
-    /**
-     * @param node
-     */
+
     public void apply(final IExecutionNode node) {
 
         final ExecutionNodeResult result = node.getResult();

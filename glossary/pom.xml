@@ -22,7 +22,6 @@
         <maven>3.0</maven>
     </prerequisites>
 
-
     <build>
         <plugins>
             <plugin>
@@ -52,12 +51,31 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <configuration>
+                        <tags>
+                            <tag>
+                                <name>plexus.component</name>
+                                <placement>t</placement>
+                                <head>Plexus component:</head>
+                            </tag>
+                            <tag>
+                                <name>plexus.requirement</name>
+                                <placement>t</placement>
+                                <head>Plexus Requirement:</head>
+                            </tag>
+                        </tags>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
-
-
-
 
     <dependencies>
         <dependency>

@@ -45,9 +45,6 @@ public class SubstepsJMXServer {
 
     private final CountDownLatch shutdownSignal = new CountDownLatch(1);
 
-    /**
-     * @param args
-     */
     public static void main(final String[] args) {
 
         // this is the thing that will be instantiated by an external process
@@ -62,9 +59,6 @@ public class SubstepsJMXServer {
         server.run();
     }
 
-    /**
-	 * 
-	 */
     private void run() {
 
         this.log.trace("starting jmx server");

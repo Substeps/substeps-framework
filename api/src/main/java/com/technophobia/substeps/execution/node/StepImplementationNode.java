@@ -34,24 +34,24 @@ public class StepImplementationNode extends ExecutionNode implements StepNode {
 
     private final Set<String> tags;
 
-    // FIXME RB I'd prefer this to be final, it's like this because of the
-    // builder.
+    // FIXME: RB I'd prefer this to be final, it's like this because of the builder.
     private transient Object[] methodArgs;
 
-    public StepImplementationNode(final Class<?> targetClass, final Method targetMethod, final Set<String> tags, final int depth) {
+
+    public StepImplementationNode(final Class<?> targetClass, final Method targetMethod, final Set<String> tags,
+        final int depth) {
         this.targetClass = targetClass;
         this.targetMethod = targetMethod;
         this.setDepth(depth);
         this.tags = tags;
     }
 
+
     public void appendMethodInfo(final StringBuilder buf) {
         appendMethodInfo(null, buf);
     }
 
-    /**
-     * @param buf
-     */
+
     public void appendMethodInfo(final String prefix, final StringBuilder buf) {
         if (this.targetClass != null && this.targetMethod != null) {
 
@@ -85,23 +85,28 @@ public class StepImplementationNode extends ExecutionNode implements StepNode {
         }
     }
 
+
     public Object[] getMethodArgs() {
         return methodArgs;
     }
 
+
     public void setMethodArgs(final Object[] methodArgs) {
         this.methodArgs = methodArgs;
     }
+
 
     public Class<?> getTargetClass() {
 
         return targetClass;
     }
 
+
     public Method getTargetMethod() {
 
         return targetMethod;
     }
+
 
     @Override
     public <RETURN_TYPE> RETURN_TYPE dispatch(final ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor) {
@@ -109,11 +114,13 @@ public class StepImplementationNode extends ExecutionNode implements StepNode {
         return executionNodeVisitor.visit(this);
     }
 
+
     @Override
     public <RETURN_TYPE> List<RETURN_TYPE> accept(final ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor) {
 
         return Collections.singletonList(executionNodeVisitor.visit(this));
     }
+
 
     @Override
     public String getDescription() {
@@ -121,13 +128,15 @@ public class StepImplementationNode extends ExecutionNode implements StepNode {
         return getLine();
     }
 
+
     public Set<String> getTags() {
         return tags;
     }
 
+
     @Override
     public String toDebugString() {
-        return super.toDebugString() + " impl: " 
-                + this.targetMethod.getDeclaringClass().getSimpleName() + "." + this.targetMethod.getName();
+        return super.toDebugString() + " impl: "
+            + this.targetMethod.getDeclaringClass().getSimpleName() + "." + this.targetMethod.getName();
     }
 }

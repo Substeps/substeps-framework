@@ -131,6 +131,9 @@
         <sonar.jacoco.jar>${project.basedir}/jacoco/jacocoagent.jar</sonar.jacoco.jar>
 -->
         <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
+
+        <!-- Configuration to enable SCM access via Travis-CI -->
+        <project.scm.id>scm.credentials</project.scm.id>
     </properties>
 
     <distributionManagement>
@@ -353,12 +356,12 @@
                     <configuration>
                         <serverId>ossrh</serverId>
                         <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
                         <tags>
                             <javaVersion>${java.version}</javaVersion>
                         </tags>
 
-                        <!-- TODO: Add Travis-CI configuration for OSSRH access -->
+                        <!-- TODO: Turn back on after first Travis release -->
+                        <autoReleaseAfterClose>false</autoReleaseAfterClose>
                     </configuration>
                 </plugin>
                 <plugin>
