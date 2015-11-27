@@ -30,6 +30,7 @@ public class Scenario extends RootFeature {
         return "Scenario: " + this.description;
     }
 
+
     private String description;
     private Background background = null;
     private List<Step> steps;
@@ -43,6 +44,7 @@ public class Scenario extends RootFeature {
     private int sourceStartOffset = -1;
     private int sourceStartLineNumber = -1;
 
+
     /**
      * @return the background
      */
@@ -50,53 +52,62 @@ public class Scenario extends RootFeature {
         return this.background;
     }
 
+
     public void setBackground(final Background background) {
         this.background = background;
     }
+
 
     public boolean hasBackground() {
         return this.background != null;
     }
 
+
     public String getDescription() {
         return this.description;
     }
+
 
     public void setDescription(final String description) {
         this.description = description;
     }
 
+
     public List<Step> getSteps() {
         return this.steps;
     }
+
 
     public List<ExampleParameter> getExampleParameters() {
         return this.exampleParameters;
     }
 
+
     public void setOutline(final boolean outline) {
         this.outline = outline;
     }
+
 
     public int getScenarioLineNumber() {
         return this.scenarioLineNumber;
     }
 
+
     public int getExampleKeysLineNumber() {
         return this.exampleKeysLineNumber;
     }
+
 
     public void setScenarioLineNumber(final int scenarioLineNumber) {
         this.scenarioLineNumber = scenarioLineNumber;
     }
 
+
     public void setExampleKeysLineNumber(final int exampleKeysLineNumber) {
         this.exampleKeysLineNumber = exampleKeysLineNumber;
     }
 
-    /**
-     * @param cukeArg
-     */
+
     public void addStep(final Step cukeArg) {
         if (cukeArg != null) {
             if (this.steps == null) {
@@ -106,14 +117,13 @@ public class Scenario extends RootFeature {
         }
     }
 
-    /**
-     * @param split
-     */
+
     public void addExampleKeys(final String[] split) {
         this.paramNames = split;
         this.exampleParameters = new ArrayList<ExampleParameter>();
 
     }
+
 
     public void addExampleValues(final int lineNumber, final String[] split) {
         // Cucumber compatibility - with cuke you can get away with not defining
@@ -125,12 +135,14 @@ public class Scenario extends RootFeature {
         this.exampleParameters.add(new ExampleParameter(lineNumber, row));
     }
 
+
     /**
-     * @return
+     * @return if it is an outline scenario
      */
     public boolean isOutline() {
         return this.outline;
     }
+
 
     /**
      * @return the sourceStartOffset
@@ -139,13 +151,14 @@ public class Scenario extends RootFeature {
         return this.sourceStartOffset;
     }
 
+
     /**
-     * @param sourceStartOffset
-     *            the sourceStartOffset to set
+     * @param sourceStartOffset the sourceStartOffset to set
      */
     public void setSourceStartOffset(final int sourceStartOffset) {
         this.sourceStartOffset = sourceStartOffset;
     }
+
 
     /**
      * @return the sourceStartLineNumber
@@ -154,18 +167,17 @@ public class Scenario extends RootFeature {
         return this.sourceStartLineNumber;
     }
 
+
     /**
-     * @param sourceStartLineNumber
-     *            the sourceStartLineNumber to set
+     * @param sourceStartLineNumber the sourceStartLineNumber to set
      */
     public void setSourceStartLineNumber(final int sourceStartLineNumber) {
         this.sourceStartLineNumber = sourceStartLineNumber;
     }
 
+
     public boolean hasSteps() {
-
         return steps != null && !steps.isEmpty();
-
     }
 
 }

@@ -23,8 +23,7 @@ import com.google.common.base.Supplier;
 /**
  * 
  * Supplier interface which allows the the T being supplied to be replaced
- * 
- * @param &lt;T&gt;
+ *
  */
 public interface MutableSupplier<T> extends Supplier<T> {
 

@@ -27,13 +27,16 @@ public class Feature implements Serializable {
     private final String name;
     private final String filename;
 
+
     /**
-     * @param name
+     * @param name     feature name
+     * @param filename feature file name
      */
     public Feature(final String name, final String filename) {
         this.name = name;
         this.filename = filename;
     }
+
 
     /**
      * @return the name
@@ -41,6 +44,7 @@ public class Feature implements Serializable {
     public String getName() {
         return name;
     }
+
 
     /**
      * @return the filename

@@ -42,6 +42,7 @@ public class ClassAnalyser {
         }
     }
 
+
     /**
      * @param loadedClass
      * @param stepImplementationMap
@@ -55,64 +56,66 @@ public class ClassAnalyser {
 
             final StepImplementation impl = StepImplementation.parse(stepValue, loadedClass, m);
             AssertHelper.assertNotNull("unable to resolve the keyword / method for: " + stepValue + " in class: "
-                    + loadedClass, impl);
+                + loadedClass, impl);
 
             syntax.addStepImplementation(impl);
         }
     }
 
+
     /**
      * Determines if class defers step implementations to another class
-     * 
-     * @param loadedClass
+     *
+     * @param loadedClass The class containing the annotation
      * @return true if it defers, false otherwise
      */
     protected boolean hasAdditionalStepsAnnotation(final Class<?> loadedClass) {
         return loadedClass.isAnnotationPresent(AdditionalStepImplementations.class);
     }
 
+
     /**
      * Returns the Additional Step implementations this class defers to
-     * 
-     * @param loadedClass
-     *            The class containing the annotation
+     *
+     * @param loadedClass The class containing the annotation
      * @return The classes this class defers steps to
      */
     protected Class<?>[] getAdditionalStepClasses(final Class<?> loadedClass) {
         return loadedClass.getAnnotation(AdditionalStepImplementations.class).value();
     }
 
+
     /**
      * Determines if this method is a step definition method
-     * 
-     * @param m
-     *            method
+     *
+     * @param m method
      * @return true if it is a step, otherwise false
      */
     protected boolean isStepMethod(final Method m) {
         return m.isAnnotationPresent(Step.class);
     }
 
+
     /**
      * Returns the step value for this method
-     * 
-     * @param m
-     *            The method containing the step definition
+     *
+     * @param m The method containing the step definition
      * @return The value associated with the step definition
      */
     protected String stepValueFrom(final Method m) {
         return m.getAnnotation(Step.class).value();
     }
 
+
     /**
      * Analyses all deferred step implementation classes of the loading class
-     * 
+     *
      * @param loadedClass
      * @param syntax
      * @param syntaxErrorReporter
      */
     private void analyseAdditionalStepImplementations(final Class<?> loadedClass, final Syntax syntax,
-            final Class<?>[] additionalStepImplementationClasses) {
+        final Class<?>[] additionalStepImplementationClasses) {
         for (final Class<?> stepImplClass : additionalStepImplementationClasses) {
             analyseClass(stepImplClass, syntax);
         }

@@ -31,7 +31,7 @@ import com.technophobia.substeps.execution.ExecutionResult;
 /**
  * represents a node on the tree of features, scenarios, substeps etc including
  * outlines and backgrounds
- * 
+ *
  * @author ian
  */
 public abstract class ExecutionNode implements Serializable, IExecutionNode {
@@ -49,7 +49,6 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
      * generated. This information could be seen as debug information - however
      * it is useful in other places - for example in editor plugins where we
      * have the compiled code but need to show where it came from to the user.
-     * 
      */
     private String fileUri;
     private int lineNumber;
@@ -62,11 +61,13 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
 
     private final ExecutionNodeResult result;
 
+
     public ExecutionNode() {
         this.id = counter.getAndIncrement();
         this.result = new ExecutionNodeResult(this.id);
         this.parent = null;
     }
+
 
     /**
      * @return the depth
@@ -75,13 +76,14 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
         return this.depth;
     }
 
+
     /**
-     * @param depth
-     *            the depth to set
+     * @param depth the depth to set
      */
     public void setDepth(final int depth) {
         this.depth = depth;
     }
+
 
     /**
      * @return the id
@@ -90,6 +92,7 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
         return this.id;
     }
 
+
     /**
      * @return the line
      */
@@ -97,24 +100,24 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
         return this.line;
     }
 
+
     /**
-     * @param line
-     *            the line to set
+     * @param line the line to set
      */
     public void setLine(final String line) {
         this.line = line;
     }
 
-    /**
-     * @return
-     */
+
     public Long getLongId() {
         return Long.valueOf(this.id);
     }
 
+
     public void setParent(final IExecutionNode parent) {
         this.parent = parent;
     }
+
 
     /**
      * @return The parent of this node
@@ -123,12 +126,14 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
         return parent;
     }
 
+
     /**
      * @return the result
      */
     public ExecutionNodeResult getResult() {
         return this.result;
     }
+
 
     /**
      * @return the filename
@@ -137,30 +142,37 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
         return new File(getFileUri()).getName();
     }
 
+
     public String getFileUri() {
 
         return this.fileUri != null ? this.fileUri : "";
     }
 
+
     public void setFileUri(final String fileUri) {
         this.fileUri = fileUri;
     }
+
 
     public int getLineNumber() {
         return this.lineNumber;
     }
 
+
     public void setLineNumber(final int lineNumber) {
         this.lineNumber = lineNumber;
     }
+
 
     public boolean hasError() {
         return result.getResult() == ExecutionResult.FAILED || result.getResult() == ExecutionResult.PARSE_FAILURE;
     }
 
+
     public boolean hasPassed() {
         return this.result.getResult() == ExecutionResult.PASSED;
     }
+
 
     public abstract String getDescription();
 
@@ -168,9 +180,11 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
 
     public abstract <RETURN_TYPE> List<RETURN_TYPE> accept(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor);
 
+
     public String toDebugString() {
         String debugString = Strings.repeat("\t", getDepth());
-        debugString += "id: " + getId() + ", type: " + getClass().getSimpleName() + ", description: " + getDescription();
+        debugString +=
+            "id: " + getId() + ", type: " + getClass().getSimpleName() + ", description: " + getDescription();
         return debugString;
     }
 

@@ -21,30 +21,28 @@ package com.technophobia.substeps.runner;
 import com.technophobia.substeps.execution.node.IExecutionNode;
 
 /**
- * 
  * @author imoore
- * 
  */
 public interface IExecutionListener {
 
     /**
-     * @param rootNode
-     * @param cause
+     * @param rootNode the node that was been executed
+     * @param cause    the Throwable thrown while executing the node
      */
     void onNodeFailed(IExecutionNode rootNode, Throwable cause);
 
     /**
-     * @param node
+     * @param node the node that has is going to be executed
      */
     void onNodeStarted(IExecutionNode node);
 
     /**
-     * @param node
+     * @param node the node that has finished been executed
      */
     void onNodeFinished(IExecutionNode node);
 
     /**
-     * @param node
+     * @param node the node that has been ignored
      */
     void onNodeIgnored(IExecutionNode node);
 

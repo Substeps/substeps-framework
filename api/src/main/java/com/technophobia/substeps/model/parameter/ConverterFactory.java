@@ -20,31 +20,34 @@ package com.technophobia.substeps.model.parameter;
 
 /**
  * Factory class to create parameter converters and to convert values from
- * String to whatever the parameter actually is. <br/>
+ * String to whatever the parameter actually is. <br>
  * It allows for custom converters to be defined using the @StepParameter
  * annotation, but also maintains a collection of default converters that will
- * cover the majority of cases. <br/>
- * 
- * Possible modifications: TODO Load converters based on naming convention. TODO
- * Register converters based on an annotation on the Converter TODO Create more
- * default converters (BigDecimal, Float, URL, File, etc.)
- * 
+ * cover the majority of cases. <br>
+ * <p>
+ * Possible modifications:
+ * - TODO: Load converters based on naming convention.
+ * - TODO: Register converters based on an annotation on the Converter
+ * - TODO: Create more default converters (BigDecimal, Float, URL, File, etc.)
+ *
  * @author irawson
  */
 public final class ConverterFactory {
 
-    // TODO Need a better way to inject/configure this list (annotations? config
-    // file?)
+    // TODO: Need a better way to inject/configure this list (annotations? config file?)
     private static final Converter<?>[] CONVERTER_LIST = { new StringConverter(), new IntegerConverter(),
-            new LongConverter(), new DoubleConverter(), new BooleanConverter(), };
+        new LongConverter(), new DoubleConverter(), new BooleanConverter(), };
+
 
     private ConverterFactory() {
         // hide constructor
     }
 
+
     public static <T> T convert(final String value, final Class<T> cls, final Class<? extends Converter<?>> custom) {
         return (T) getConverter(cls, custom).convert(value);
     }
+
 
     public static Converter<?> getConverter(final Class<?> cls, final Class<? extends Converter<?>> custom) {
 
@@ -63,6 +66,7 @@ public final class ConverterFactory {
 
         throw new IllegalArgumentException("Cannot find converter for " + cls.getName());
     }
+
 
     private static Converter<?> createCustomConverter(final Class<?> cls, final Class<? extends Converter<?>> custom) {
 

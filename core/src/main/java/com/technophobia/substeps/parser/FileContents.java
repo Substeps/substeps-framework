@@ -43,6 +43,7 @@ import com.google.common.io.Files;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with Substeps.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 /**
  * Encapsulate some details about a file; a list of lines, offsets of those
  * lines, plus the original content. Shared functionality between the feature
@@ -73,9 +74,6 @@ public class FileContents {
     }
 
 
-    /**
-     * @return
-     */
     public int getNumberOfLines() {
         return this.lines.size();
     }
@@ -166,39 +164,24 @@ public class FileContents {
     }
 
 
-    /**
-     * @param lineNumberIdx
-     * @return
-     */
     public String getLineAt(final int lineNumberIdx) {
 
         return this.lines.get(normaliseLineNumber(lineNumberIdx));
     }
 
 
-    /**
-     * @param lineNumberIdx
-     * @return
-     */
     public int getLineStartOffsetForLineIndex(final int lineNumberIdx) {
 
         return this.lineStartOffsets[normaliseLineNumber(lineNumberIdx)];
     }
 
 
-    /**
-     * @param lineNumberIdx
-     * @return
-     */
     public int getSourceStartOffsetForLineIndex(final int lineNumberIdx) {
         final String line = getLineAt(lineNumberIdx);
         return getLineStartOffsetForLineIndex(lineNumberIdx) + firstCharacterIndex(line);
     }
 
 
-    /**
-     * @return
-     */
     public String getFullContent() {
 
         return this.fullContents;

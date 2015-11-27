@@ -27,127 +27,123 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 
  * represents a step that consists of sub steps
- * 
+ *
  * @author ian
- * 
  */
 public class ParentStep {
 
-	private static final Logger log = LoggerFactory.getLogger(ParentStep.class);
+    private static final Logger log = LoggerFactory.getLogger(ParentStep.class);
+
+    private final Step parent;
+    private List<Step> substeps;
+    private ExampleParameter paramValueMap;
+
+    public static final ParentStepNameComparator PARENT_STEP_COMPARATOR = new ParentStepNameComparator();
 
 
-	private final Step parent;
-	private List<Step> substeps;
-	private ExampleParameter paramValueMap;
+    public int getSourceLineNumber() {
+        return this.parent.getSourceLineNumber();
+    }
 
-	public static final ParentStepNameComparator PARENT_STEP_COMPARATOR = new ParentStepNameComparator();
 
-	public int getSourceLineNumber() {
-		return this.parent.getSourceLineNumber();
-	}
+    public ParentStep(final Step parent) {
+        this.parent = parent;
+    }
 
-	public ParentStep(final Step parent) {
-		this.parent = parent;
-	}
 
-	public void addStep(final Step step) {
-		if (this.substeps == null) {
-			this.substeps = new ArrayList<Step>();
-		}
-		this.substeps.add(step);
-	}
+    public void addStep(final Step step) {
+        if (this.substeps == null) {
+            this.substeps = new ArrayList<Step>();
+        }
+        this.substeps.add(step);
+    }
 
-	/**
-	 * @return
-	 */
-	public Step getParent() {
-		return this.parent;
-	}
 
-	/**
-	 * @return
-	 */
-	public List<Step> getSteps() {
-		return this.substeps;
-	}
+    public Step getParent() {
+        return this.parent;
+    }
 
-	/**
-	 * @param step
-	 */
-	// only called by tests
-	public void initialiseParamValues(final Step step) {
-		final HashMap<String, String> map = new HashMap<String, String>();
 
-		final String[] paramValues = Util.getArgs(this.parent.getPattern(),
-				step.getLine(), null);
+    public List<Step> getSteps() {
+        return this.substeps;
+    }
 
-		if (paramValues != null) {
-			for (int i = 0; i < paramValues.length; i++) {
-				map.put(this.parent.getParamNames().get(i), paramValues[i]);
-			}
-		}
-		this.paramValueMap = new ExampleParameter(step.getSourceLineNumber(),
-				map);
-	}
 
-	public void initialiseParamValues(final int lineNumber, final String line) {
+    // only called by tests
+    public void initialiseParamValues(final Step step) {
+        final HashMap<String, String> map = new HashMap<String, String>();
 
-		initialiseParamValues(lineNumber, line, null);
-	}
+        final String[] paramValues = Util.getArgs(this.parent.getPattern(),
+            step.getLine(), null);
 
-	public void initialiseParamValues(final int lineNumber, final String line, String[] keywordPrecedence) {
+        if (paramValues != null) {
+            for (int i = 0; i < paramValues.length; i++) {
+                map.put(this.parent.getParamNames().get(i), paramValues[i]);
+            }
+        }
+        this.paramValueMap = new ExampleParameter(step.getSourceLineNumber(),
+            map);
+    }
 
-		log.debug("initialiseParamValues with line: " + line);
 
-		final String[] paramValues = Util.getArgs(this.parent.getPattern(),
-				line, keywordPrecedence);
+    public void initialiseParamValues(final int lineNumber, final String line) {
 
-		if (paramValues != null) {
+        initialiseParamValues(lineNumber, line, null);
+    }
 
-			final Map<String, String> map = new HashMap<String, String>();
 
-			for (int i = 0; i < paramValues.length; i++) {
+    public void initialiseParamValues(final int lineNumber, final String line, String[] keywordPrecedence) {
 
-				String key = this.parent.getParamNames().get(i);
+        log.debug("initialiseParamValues with line: " + line);
 
-				if (key.equals("value1")){
-					log.debug("break");
-				}
-				log.debug("putting value: " + paramValues[i] +
-						" under key: " + key + " i " + i);
+        final String[] paramValues = Util.getArgs(this.parent.getPattern(),
+            line, keywordPrecedence);
 
-				map.put(this.parent.getParamNames().get(i), paramValues[i]);
-			}
-			this.paramValueMap = new ExampleParameter(lineNumber, map);
-		}
-	}
+        if (paramValues != null) {
 
-	public ExampleParameter getParamValueMap() {
-		return this.paramValueMap;
-	}
+            final Map<String, String> map = new HashMap<String, String>();
 
-	public final String getSubStepFileUri() {
-		return this.getParent().getSource().getAbsolutePath();
-	}
+            for (int i = 0; i < paramValues.length; i++) {
 
-	public final String getSubStepFile() {
-		return this.getParent().getSource().getName();
-	}
+                String key = this.parent.getParamNames().get(i);
 
-	/**
-	 * @param altLine
-	 * @return
-	 */
-	public ParentStep cloneWithAltLine(final String altLine) {
-		final ParentStep clone = new ParentStep(
-				this.parent.cloneWithAlternativeLine(altLine));
-		// clone.initialiseParamValues(clone.parent.getParameterLine());
+                if (key.equals("value1")) {
+                    log.debug("break");
+                }
+                log.debug("putting value: " + paramValues[i] +
+                    " under key: " + key + " i " + i);
 
-		clone.substeps = this.substeps;
-		clone.paramValueMap = this.paramValueMap;
+                map.put(this.parent.getParamNames().get(i), paramValues[i]);
+            }
+            this.paramValueMap = new ExampleParameter(lineNumber, map);
+        }
+    }
 
-		return clone;
-	}
+
+    public ExampleParameter getParamValueMap() {
+        return this.paramValueMap;
+    }
+
+
+    public final String getSubStepFileUri() {
+        return this.getParent().getSource().getAbsolutePath();
+    }
+
+
+    public final String getSubStepFile() {
+        return this.getParent().getSource().getName();
+    }
+
+
+    public ParentStep cloneWithAltLine(final String altLine) {
+        final ParentStep clone = new ParentStep(
+            this.parent.cloneWithAlternativeLine(altLine));
+        // clone.initialiseParamValues(clone.parent.getParameterLine());
+
+        clone.substeps = this.substeps;
+        clone.paramValueMap = this.paramValueMap;
+
+        return clone;
+    }
 }

@@ -39,8 +39,6 @@ import com.technophobia.substeps.model.Scope;
  *    // to use the context
  *    myContextSupplier.get()
  * </pre>
- * 
- * @param &lt;T&gt;
  */
 public class ExecutionContextSupplier<T> implements MutableSupplier<T> {
 

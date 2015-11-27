@@ -21,26 +21,20 @@ package com.technophobia.substeps.model;
 
 import java.io.File;
 
-
 /**
  * @author ian
- *
  */
 public class StepImplementationUsage {
 
     private final String parameterLine;
     private final File source;
     private final int lineNumber;
-    /**
-     * @param parameterLine
-     * @param source
-     * @param lineNumber
-     */
+
+
     public StepImplementationUsage(final String parameterLine, final File source, final int lineNumber) {
         this.parameterLine = parameterLine;
         this.source = source;
         this.lineNumber = lineNumber;
     }
-    
 
 }

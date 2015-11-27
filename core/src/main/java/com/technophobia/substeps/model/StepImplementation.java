@@ -22,13 +22,12 @@ import java.lang.reflect.Method;
 
 /**
  * This class represents an annotated method which implements a step, ie @Step
+ *
  * @author ian
- * 
  */
 public class StepImplementation {
     /**
      * this is the pattern as defined in the step implementation
-     * 
      */
     private final String value;
     private final Class<?> implementedIn;
@@ -38,7 +37,7 @@ public class StepImplementation {
 
 
     public StepImplementation(final Class<?> loadedClass, final String keyword,
-            final String valueString, final Method m) {
+        final String valueString, final Method m) {
         implementedIn = loadedClass;
         value = valueString;
         method = m;
@@ -47,7 +46,7 @@ public class StepImplementation {
 
 
     public static StepImplementation parse(final String fullLine, final Class<?> loadedClass,
-            final Method m) {
+        final Method m) {
         final int idx = fullLine.indexOf(' ');
         if (idx > 0) {
             final String key = fullLine.substring(0, idx);
@@ -59,7 +58,6 @@ public class StepImplementation {
         }
     }
 
-    
 
     /**
      * @return the value
@@ -86,7 +84,7 @@ public class StepImplementation {
 
 
     /**
-     * @return
+     * @return the keyword
      */
     public String getKeyword() {
         return keyword;
@@ -95,7 +93,7 @@ public class StepImplementation {
 
     public StepImplementation cloneWithKeyword(final String keyword) {
         return new StepImplementation(getImplementedIn(), keyword, getValue().replaceFirst(
-                getKeyword(), keyword), getMethod());
+            getKeyword(), keyword), getMethod());
     }
 
 

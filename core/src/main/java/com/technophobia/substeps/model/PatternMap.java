@@ -27,9 +27,8 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * a map of regex patterns to other things.
- * 
+ *
  * @author imoore
- * 
  */
 public class PatternMap<V> {
 
@@ -45,14 +44,13 @@ public class PatternMap<V> {
 
     /**
      * Adds a new pattern to the map.
-     * 
+     * <p>
      * Users of this class <em>must</em> check if the pattern has already been added
      * by using {@link containsPattern} to avoid IllegalStateException in the event that
-     * the pattern has already been added to the map. 
-     * 
-     * @param pattern
-     * @param value
-     * 
+     * the pattern has already been added to the map.
+     *
+     * @param pattern the pattern
+     * @param value   the value
      * @throws IllegalStateException - if the map already contains the specified patter.
      */
     public void put(final String pattern, final V value) throws IllegalStateException {
@@ -87,7 +85,7 @@ public class PatternMap<V> {
     }
 
 
-    public List<V> getRelaxedValue(String sourceKey, String[] keywordPrecedence){
+    public List<V> getRelaxedValue(final String sourceKey, final String[] keywordPrecedence) {
         // TODO - lookup in the relaxed map, based on the keyword precedence
 
         String baseLine = null;
@@ -95,7 +93,7 @@ public class PatternMap<V> {
         for (final String altKeyword : keywordPrecedence) {
 
             baseLine = StringUtils.removeStart(sourceKey, altKeyword);
-            if (!baseLine.equals(sourceKey)){
+            if (!baseLine.equals(sourceKey)) {
                 break;
             }
         }
@@ -104,13 +102,14 @@ public class PatternMap<V> {
         for (final String altKeyword : keywordPrecedence) {
 
             vals = get(altKeyword + baseLine);
-            if (!vals.isEmpty()){
+            if (!vals.isEmpty()) {
                 break;
             }
         }
 
         return vals;
     }
+
 
     public List<V> get(final String string) {
         List<V> vals = null;
@@ -142,12 +141,6 @@ public class PatternMap<V> {
     }
 
 
-    /**
-     * @param param
-     * @param i
-     * 
-     * @return
-     */
     public V get(final String param, final int idx) {
         V rtn = null;
         if (param != null) {
@@ -162,19 +155,11 @@ public class PatternMap<V> {
     }
 
 
-    /**
-     * @param pattern
-     * @return
-     */
     public boolean containsPattern(final String pattern) {
         return keys.containsKey(pattern);
     }
 
 
-    /**
-     * @param newPattern
-     * @return
-     */
     public V getValueForPattern(final String pattern) {
         return keys.get(pattern);
     }
