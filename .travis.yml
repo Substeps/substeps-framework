@@ -10,40 +10,40 @@ notifications:
 
 deploy:
   - provider: script
-      skip_cleanup: true
-      script: mvn deploy --settings travis/settings.xml
-      on:
-      	repo: G2G3Digital/substeps-framework
-        branch: master
+    skip_cleanup: true
+    script: mvn deploy --settings travis/settings.xml
+    on:
+      repo: G2G3Digital/substeps-framework
+      branch: master
 
   - provider: releases
-      skip_cleanup: true
-      api_key:
-        secure: CmA6f4kyBVVF6hDpPArW6Kn8KcKuhbx4vXKAAQcUjZAvC3/qBzmfjDofxebDn4UGCPC3njUE9EI6twbt2GMauroOJpfJfHWRymrpv1Tjm5+E5Vb2XteauZgn2p0/mhklABF8VLCjAYhpdOmbumVEUOqyhnh0wlTf+JPGBH3r9RXbCpvEIiO4yLvuUVTKk+FLSnhLhZAotCr/HFTpr0X19yXJ7UqP/4C4LNfQ+cPZ2kmXcew9tlvbChHBR+Gfs/zHsSNp90TE+YmPVUFurx23BFmKRv2XGythYBddLB7ou4TsUBL/H/RFUUlDDVpLJe9ebsAe3QHhRJjbHfs4XJoxrkOFW9HArJlZrapuejsq+aZVPd3QFoRFsoxsQBfaodri4pJ20XQxoJ9wZJJMayi+hV60/x3rNGcYrrUINnwjtGbsFmDP0hoHnUbTNEsMpUtgwvOLpOY/Jv8CbdzI01++Ml6Uj9rJcbsncr2qwqp/hkr+Y70NLs+Cd/qaVR8UQAkHM2RbYtovtvIlIJoRYJgXAc4DIhT+GrLH9UauCE/jbPD4Ak3UdxZwL5iyiQzVA1IKCx7H7xXZNbIgtB0Xch5Z1iRLmnhq9hox3G/X0dSkQXRPZULMoObXRtDQJhExnLwFPaawgFUrUxmz5GelmIBmKe38ShXDV/GcAA0sfW+tXMw=
-      file:
-        - ./api/target/substeps-core-api.jar
-        - ./api/target/substeps-core-api-tests.jar
-        - ./api/target/substeps-core-api-sources.jar
-        - ./api/target/substeps-core-api-javadoc.jar
-        - ./core/target/substeps-core.jar
-        - ./core/target/substeps-core-tests.jar
-        - ./core/target/substeps-core-javadoc.jar
-        - ./core/target/substeps-core-sources.jar
-        - ./runner/Junit/target/substeps-junit-runner-javadoc.jar
-        - ./runner/Junit/target/substeps-junit-runner-sources.jar
-        - ./runner/Junit/target/substeps-junit-runner.jar
-        - ./runner/Maven/target/substeps-maven-plugin-javadoc.jar
-        - ./runner/Maven/target/substeps-maven-plugin.jar
-        - ./runner/Maven/target/substeps-maven-plugin-sources.jar
-        - ./runner/Ant/target/substeps-ant-runner.jar
-        - ./runner/Ant/target/substeps-ant-runner-sources.jar
-        - ./runner/Ant/target/substeps-ant-runner-javadoc.jar
-        - ./runner/Common/target/substeps-runner-common-sources.jar
-        - ./runner/Common/target/substeps-runner-common.jar
-        - ./runner/Common/target/substeps-runner-common-javadoc.jar
-        - ./glossary/target/substeps-glossary-builder.jar
-        - ./glossary/target/substeps-glossary-builder-javadoc.jar
-        - ./glossary/target/substeps-glossary-builder-sources.jar
-      on:
-        repo: G2G3Digital/substeps-framework
-        tags: true
+    skip_cleanup: true
+    api_key:
+      secure: CmA6f4kyBVVF6hDpPArW6Kn8KcKuhbx4vXKAAQcUjZAvC3/qBzmfjDofxebDn4UGCPC3njUE9EI6twbt2GMauroOJpfJfHWRymrpv1Tjm5+E5Vb2XteauZgn2p0/mhklABF8VLCjAYhpdOmbumVEUOqyhnh0wlTf+JPGBH3r9RXbCpvEIiO4yLvuUVTKk+FLSnhLhZAotCr/HFTpr0X19yXJ7UqP/4C4LNfQ+cPZ2kmXcew9tlvbChHBR+Gfs/zHsSNp90TE+YmPVUFurx23BFmKRv2XGythYBddLB7ou4TsUBL/H/RFUUlDDVpLJe9ebsAe3QHhRJjbHfs4XJoxrkOFW9HArJlZrapuejsq+aZVPd3QFoRFsoxsQBfaodri4pJ20XQxoJ9wZJJMayi+hV60/x3rNGcYrrUINnwjtGbsFmDP0hoHnUbTNEsMpUtgwvOLpOY/Jv8CbdzI01++Ml6Uj9rJcbsncr2qwqp/hkr+Y70NLs+Cd/qaVR8UQAkHM2RbYtovtvIlIJoRYJgXAc4DIhT+GrLH9UauCE/jbPD4Ak3UdxZwL5iyiQzVA1IKCx7H7xXZNbIgtB0Xch5Z1iRLmnhq9hox3G/X0dSkQXRPZULMoObXRtDQJhExnLwFPaawgFUrUxmz5GelmIBmKe38ShXDV/GcAA0sfW+tXMw=
+    file:
+      - ./api/target/substeps-core-api.jar
+      - ./api/target/substeps-core-api-tests.jar
+      - ./api/target/substeps-core-api-sources.jar
+      - ./api/target/substeps-core-api-javadoc.jar
+      - ./core/target/substeps-core.jar
+      - ./core/target/substeps-core-tests.jar
+      - ./core/target/substeps-core-javadoc.jar
+      - ./core/target/substeps-core-sources.jar
+      - ./runner/Junit/target/substeps-junit-runner-javadoc.jar
+      - ./runner/Junit/target/substeps-junit-runner-sources.jar
+      - ./runner/Junit/target/substeps-junit-runner.jar
+      - ./runner/Maven/target/substeps-maven-plugin-javadoc.jar
+      - ./runner/Maven/target/substeps-maven-plugin.jar
+      - ./runner/Maven/target/substeps-maven-plugin-sources.jar
+      - ./runner/Ant/target/substeps-ant-runner.jar
+      - ./runner/Ant/target/substeps-ant-runner-sources.jar
+      - ./runner/Ant/target/substeps-ant-runner-javadoc.jar
+      - ./runner/Common/target/substeps-runner-common-sources.jar
+      - ./runner/Common/target/substeps-runner-common.jar
+      - ./runner/Common/target/substeps-runner-common-javadoc.jar
+      - ./glossary/target/substeps-glossary-builder.jar
+      - ./glossary/target/substeps-glossary-builder-javadoc.jar
+      - ./glossary/target/substeps-glossary-builder-sources.jar
+    on:
+      repo: G2G3Digital/substeps-framework
+      tags: true
