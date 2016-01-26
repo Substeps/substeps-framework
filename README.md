@@ -1,19 +1,28 @@
-substeps-framework [![Build Status](https://travis-ci.org/G2G3Digital/substeps-framework.svg)](https://travis-ci.org/G2G3Digital/substeps-framework)&nbsp;[![Maven Central](https://img.shields.io/maven-central/v/com.technophobia.substeps/substeps-framework/badge.png)](http://search.maven.org/#search%7Cga%7C1%7Cg%3Acom.technophobia.substeps)
+substeps-framework [![Build Status](https://travis-ci.org/Substeps/substeps-framework.svg)](https://travis-ci.org/Substeps/substeps-framework)&nbsp;[![Maven Central](https://img.shields.io/maven-central/v/org.substeps/substeps-framework/badge.png)](http://search.maven.org/#search%7Cga%7C1%7Cg%3Aorg.substeps)
 ===================
 
 Welcome to the substeps-framework project!
 
 The new home for:  
-[![Maven Central](https://img.shields.io/maven-central/v/com.technophobia.substeps/substeps-core-api.png?label=substeps-api)](https://maven-badges.herokuapp.com/maven-central/com.technophobia.substeps/substeps-core-api)  
- [![Maven Central](https://img.shields.io/maven-central/v/com.technophobia.substeps/substeps-core.png?label=substeps-core)](https://maven-badges.herokuapp.com/maven-central/com.technophobia.substeps/substeps-core)  
- [![Maven Central](https://img.shields.io/maven-central/v/com.technophobia.substeps/substeps-maven-plugin.png?label=substeps-maven-plugin)](https://maven-badges.herokuapp.com/maven-central/com.technophobia.substeps/substeps-maven-plugin)  
- [![Maven Central](https://img.shields.io/maven-central/v/com.technophobia.substeps/substeps-junit-runner.png?label=substeps-junit-runner)](https://maven-badges.herokuapp.com/maven-central/com.technophobia.substeps/substeps-junit-runner)  
- [![Maven Central](https://img.shields.io/maven-central/v/com.technophobia.substeps/substeps-ant-runner.png?label=substeps-ant-runner)](https://maven-badges.herokuapp.com/maven-central/com.technophobia.substeps/substeps-ant-runner)  
- [![Maven Central](https://img.shields.io/maven-central/v/com.technophobia.substeps/substeps-glossary-builder.png?label=substeps-glossary)](https://maven-badges.herokuapp.com/maven-central/com.technophobia.substeps/substeps-glossary-builder)
+[![Maven Central](https://img.shields.io/maven-central/v/org.substeps/substeps-core-api.png?label=substeps-api)](https://maven-badges.herokuapp.com/maven-central/org.substeps/substeps-core-api)  
+ [![Maven Central](https://img.shields.io/maven-central/v/org.substeps/substeps-core.png?label=substeps-core)](https://maven-badges.herokuapp.com/maven-central/org.substeps/substeps-core)  
+ [![Maven Central](https://img.shields.io/maven-central/v/org.substeps/substeps-maven-plugin.png?label=substeps-maven-plugin)](https://maven-badges.herokuapp.com/maven-central/org.substeps/substeps-maven-plugin)  
+ [![Maven Central](https://img.shields.io/maven-central/v/org.substeps/substeps-junit-runner.png?label=substeps-junit-runner)](https://maven-badges.herokuapp.com/maven-central/org.substeps/substeps-junit-runner)  
+ [![Maven Central](https://img.shields.io/maven-central/v/org.substeps/substeps-ant-runner.png?label=substeps-ant-runner)](https://maven-badges.herokuapp.com/maven-central/org.substeps/substeps-ant-runner)  
+ [![Maven Central](https://img.shields.io/maven-central/v/org.substeps/substeps-glossary-builder.png?label=substeps-glossary)](https://maven-badges.herokuapp.com/maven-central/org.substeps/substeps-glossary-builder)
 
 Requirements
 ------------
  * Java 8
+
+1.0.0
+-----
+* Forked from G2G3.Digital as no longer being maintained.  Group renamed to org.substeps and version number reset to 1.0
+
+
+
+com.technophobia.substeps releases
+==================================
 
 2.0.0
 -----
@@ -24,5 +33,5 @@ Requirements
 
 Useful Links
 ------------
- * [Substeps documentation](http://substeps.g2g3.digital) - http://substeps.g2g3.digital
+ * [Original Substeps documentation](http://substeps.g2g3.digital) - http://substeps.g2g3.digital
  * [Substeps Google group](https://groups.google.com/forum/?hl=en-GB#!forum/substeps) - https://groups.google.com/forum/?hl=en-GB#!forum/substeps

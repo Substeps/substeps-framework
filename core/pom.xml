@@ -3,9 +3,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.technophobia.substeps</groupId>
+        <groupId>org.substeps</groupId>
         <artifactId>substeps-framework</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>substeps-core</artifactId>
@@ -14,11 +14,11 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.technophobia.substeps</groupId>
+            <groupId>org.substeps</groupId>
             <artifactId>substeps-core-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.technophobia.substeps</groupId>
+            <groupId>org.substeps</groupId>
             <artifactId>substeps-core-api</artifactId>
             <type>test-jar</type>
         </dependency>
@@ -171,8 +171,9 @@
         </profile>
 -->
 
+        <!-- needs a stable version to run this..
 		<profile>
-			<id>self-test-report</id> <!-- TODO - Review this placement -->
+			<id>self-test-report</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -180,7 +181,7 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>com.technophobia.substeps</groupId>
+						<groupId>org.substeps</groupId>
 						<artifactId>substeps-maven-plugin</artifactId>
                         <version>${stable.substeps.version}</version>
 
@@ -195,7 +196,7 @@
 
 								<configuration>
                                     <runTestsInForkedVM>false</runTestsInForkedVM>
-                                    <!-- TODO: Fix problem that produces java.lang.ClassNotFoundException: com.technophobia.substeps.runner.ForkedProcessCloser$GracefullShutdownRunner -->
+                                    TODO: Fix problem that produces java.lang.ClassNotFoundException: org.substeps.runner.ForkedProcessCloser$GracefullShutdownRunner
 
 									<executionConfigs>
 										<executionConfig>
@@ -212,7 +213,7 @@
 										</executionConfig>
 									</executionConfigs>
 
-									<executionReportBuilder implementation="com.technophobia.substeps.report.DefaultExecutionReportBuilder">
+									<executionReportBuilder implementation="org.substeps.report.DefaultExecutionReportBuilder">
 
 										<outputDirectory>${project.build.testOutputDirectory}/web</outputDirectory>
 										<reportTitle>Substeps Report - ${project.version} </reportTitle>
@@ -229,7 +230,7 @@
 
 								<configuration>
                                     <runTestsInForkedVM>false</runTestsInForkedVM>
-                                    <!-- TODO: Fix problem that produces java.lang.ClassNotFoundException: com.technophobia.substeps.runner.ForkedProcessCloser$GracefullShutdownRunner -->
+                                     TODO: Fix problem that produces java.lang.ClassNotFoundException: org.substeps.runner.ForkedProcessCloser$GracefullShutdownRunner
 
 									<executionConfigs>
 										<executionConfig>
@@ -250,19 +251,19 @@
 						</executions>
 
                         <dependencies>
-                            <!-- Following dependencies added to self test the report -->
+                             Following dependencies added to self test the report
                             <dependency>
-                                <groupId>com.technophobia.substeps</groupId>
+                                <groupId>org.substeps</groupId>
                                 <artifactId>webdriver-substeps</artifactId>
                                 <version>${stable.substeps.version}</version>
                             </dependency>
                             <dependency>
-                                <groupId>com.technophobia.substeps</groupId>
+                                <groupId>org.substeps</groupId>
                                 <artifactId>substeps-core-api</artifactId>
                                 <version>${project.version}</version>
                             </dependency>
                             <dependency>
-                                <groupId>com.technophobia.substeps</groupId>
+                                <groupId>org.substeps</groupId>
                                 <artifactId>substeps-core</artifactId>
                                 <version>${project.version}</version>
                             </dependency>
@@ -277,6 +278,7 @@
 				</plugins>
 			</build>
 		</profile>
+-->
 
         <profile>
             <id>disable-substeps-plugin-when-maven-test-skip</id>
@@ -290,7 +292,7 @@
                 <pluginManagement>
                     <plugins>
                         <plugin>
-                            <groupId>com.technophobia.substeps</groupId>
+                            <groupId>org.substeps</groupId>
                             <artifactId>substeps-maven-plugin</artifactId>
                             <executions>
                                 <execution>
@@ -319,7 +321,7 @@
                 <pluginManagement>
                     <plugins>
                         <plugin>
-                            <groupId>com.technophobia.substeps</groupId>
+                            <groupId>org.substeps</groupId>
                             <artifactId>substeps-maven-plugin</artifactId>
                             <executions>
                                 <execution>
