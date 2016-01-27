@@ -278,7 +278,6 @@
 				</plugins>
 			</build>
 		</profile>
--->
 
         <profile>
             <id>disable-substeps-plugin-when-maven-test-skip</id>
@@ -338,5 +337,7 @@
                 </pluginManagement>
             </build>
         </profile>
+        -->
+
     </profiles>
 </project>
