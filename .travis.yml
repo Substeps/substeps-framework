@@ -4,7 +4,7 @@ sudo: false
 
 jdk: oraclejdk8
 
-script: mvn deploy --settings ~/settings.xml
+script: mvn deploy --settings travis/settings.xml
 
 
 #deploy:
