@@ -12,7 +12,7 @@
     <url>https://github.com/Substeps/substeps-framework</url>
 
     <scm>
-        <connection>scm:git:git@github.com:Substeps/substeps-framework.git</connection>
+        <connection>scm:git:https://github.com:Substeps/substeps-framework.git</connection>
         <developerConnection>scm:git:git@github.com:Substeps/substeps-framework.git</developerConnection>
         <url>https://github.com/Substeps/substeps-framework.git</url>
     </scm>

@@ -7,7 +7,8 @@ decrypt:
   pubring.gpg: "repo/pubring.gpg.asc"
   secring.gpg: "repo/secring.gpg.asc"
 release:
-  script: |
-    mvn release:prepare release:perform -B --settings /home/r/settings.xml
+  script: |-
+    mvn clean
+    mvn release:prepare release:perform -B -X --settings /home/r/settings.xml
   commanders:
     - iantmoore
