@@ -371,7 +371,8 @@
 
                     <extensions>true</extensions>
                     <configuration>
-                        <serverId>ossrh</serverId>
+
+                        <serverId>oss.sonatype.org</serverId>
                         <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                         <tags>
                             <javaVersion>${java.version}</javaVersion>
