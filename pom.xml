@@ -14,7 +14,7 @@
     <scm>
         <connection>scm:git:git@github.com:Substeps/substeps-framework.git</connection>
         <developerConnection>scm:git:git@github.com:Substeps/substeps-framework.git</developerConnection>
-        <url>git@github.com:Substeps/substeps-framework.git</url>
+        <url>https://github.com/Substeps/substeps-framework.git</url>
     </scm>
 
     <licenses>
