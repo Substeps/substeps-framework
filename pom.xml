@@ -393,6 +393,7 @@
                         <releaseProfiles>release</releaseProfiles>
                         <goals>deploy</goals>
                         <pushChanges>false</pushChanges>
+                        <localCheckout>true</localCheckout>
 
                         <!-- TODO: Add Travis-CI configuration for SCM access -->
                     </configuration>
