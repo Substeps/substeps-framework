@@ -9,7 +9,7 @@ decrypt:
 release:
   script: |-
     mvn clean
-    mvn release:prepare release:perform -B --settings /home/r/settings.xml
+    mvn release:prepare release:perform -B -PSubsteps.org --settings /home/r/settings.xml
   commanders:
     - iantmoore
 
