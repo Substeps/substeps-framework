@@ -1,7 +1,7 @@
 docker:
-  image: "mostalive/ubuntu-14.04-oracle-jdk8"
-install:
-  - "sudo apt-get install -y maven"
+  image: "maven:3.3-jdk-8"
+#install:
+#  - "sudo apt-get install -y maven"
 decrypt:
   settings.xml: "repo/settings.xml.asc"
   pubring.gpg: "repo/pubring.gpg.asc"
