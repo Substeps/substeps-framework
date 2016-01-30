@@ -8,14 +8,14 @@ decrypt:
   secring.gpg: "repo/secring.gpg.asc"
 release:
   script: |-
+    mvn clean
+    mvn release:prepare release:perform -B --settings /home/r/settings.xml
+  commanders:
+    - iantmoore
+
 #      mvn clean verify
 #      mvn versions:set "-DnewVersion=${tag}"
 #      git commit -am "${tag}"
 #      mvn clean deploy --settings /home/r/settings.xml
 #      mvn versions:set "-DnewVersion=${nexttag}-SNAPSHOT"
 #      git commit -am "prepare next version"
-
-    mvn clean
-    mvn release:prepare release:perform -B --settings /home/r/settings.xml
-  commanders:
-    - iantmoore
