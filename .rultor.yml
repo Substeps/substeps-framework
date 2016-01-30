@@ -2,6 +2,9 @@ docker:
   image: "maven:3.3-jdk-8"
 #install:
 #  - "sudo apt-get install -y maven"
+release:
+  commanders:
+    - iantmoore
 decrypt:
   settings.xml: "repo/settings.xml.asc"
   pubring.gpg: "repo/pubring.gpg.asc"
