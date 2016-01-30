@@ -1,5 +1,5 @@
 docker:
-  image: "ubuntu-14.04-oracle-jdk8"
+  image: "dockerfile/java:oracle-java8"
 install:
   - "sudo apt-get install -y maven"
 decrypt:
