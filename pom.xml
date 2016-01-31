@@ -4,7 +4,7 @@
 
     <groupId>org.substeps</groupId>
     <artifactId>substeps-framework</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>SubSteps Framework</name>
@@ -375,7 +375,7 @@
                         <serverId>oss.sonatype.org</serverId>
                         <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                         <tags>
-                            <javaVersion>${java.version}</javaVersion>
+                            <javaVersion>r${java.version}</javaVersion>
                         </tags>
 
                         <!-- TODO: Turn back on after first Travis release -->
