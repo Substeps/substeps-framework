@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.substeps</groupId>
         <artifactId>substeps-runner-parent</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.1</version>
     </parent>
 
     <artifactId>substeps-runner-common</artifactId>
