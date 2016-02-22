@@ -44,9 +44,9 @@ public class StepImplementationNodeRunner extends AbstractNodeRunner<StepImpleme
 
             addFailure(node, context, e.getTargetException());
 
-        } catch (final Throwable t) {
+        } catch (final Exception e) {
 
-            addFailure(node, context, t);
+            addFailure(node, context, e);
         }
 
         return success;

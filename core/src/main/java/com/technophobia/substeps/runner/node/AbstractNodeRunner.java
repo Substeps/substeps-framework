@@ -53,11 +53,6 @@ public abstract class AbstractNodeRunner<NODE_TYPE extends IExecutionNode, VISIT
                 log.trace("Exception caught in {}, rethrowing...", AbstractNodeRunner.class.getSimpleName(), e);
                 throw new RuntimeException(e);
 
-            } catch (final Throwable e) {
-
-                log.trace("Throwable caught in {}, rethrowing...", AbstractNodeRunner.class.getSimpleName(), e);
-                throw new RuntimeException(e);
-
             } finally {
 
                 afterExecute(node, success, context);

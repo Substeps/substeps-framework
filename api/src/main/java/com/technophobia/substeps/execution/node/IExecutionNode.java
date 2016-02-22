@@ -18,12 +18,13 @@
  */
 package com.technophobia.substeps.execution.node;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.technophobia.substeps.execution.ExecutionNodeResult;
 import com.technophobia.substeps.execution.ExecutionNodeVisitor;
 
-public interface IExecutionNode {
+public interface IExecutionNode extends Serializable{
 
     /**
      * @return the depth of this node in the tree

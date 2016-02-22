@@ -18,12 +18,11 @@
  */
 package com.technophobia.substeps.glossary;
 
-import com.google.common.io.Files;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -32,6 +31,8 @@ import java.util.Map.Entry;
  * 
  */
 public class MarkdownSubstepsPublisher implements GlossaryPublisher {
+
+    private static final Logger log = LoggerFactory.getLogger(MarkdownSubstepsPublisher.class);
 
     /**
      * @parameter default-value = stepimplementations.md
@@ -47,43 +48,15 @@ public class MarkdownSubstepsPublisher implements GlossaryPublisher {
      * List)
      */
     public void publish(final List<StepImplementationsDescriptor> stepimplementationDescriptors) {
-        final Map<String, List<StepDescriptor>> sectionSorted = new TreeMap<String, List<StepDescriptor>>();
 
-        for (final StepImplementationsDescriptor descriptor : stepimplementationDescriptors) {
 
-            for (final StepDescriptor stepTag : descriptor.getExpressions()) {
-
-                String section = stepTag.getSection();
-                if (section == null || section.isEmpty()) {
-                    section = "Miscellaneous";
-                }
-
-                List<StepDescriptor> subList = sectionSorted.get(section);
-
-                if (subList == null) {
-                    subList = new ArrayList<StepDescriptor>();
-                    sectionSorted.put(section, subList);
-                }
-                subList.add(stepTag);
-            }
-        }
+        final Map<String, List<StepDescriptor>> sectionSorted = GlossaryHelper.sortStepDescriptions(stepimplementationDescriptors);
 
         final String md = buildMarkdown(sectionSorted);
 
-        outputFile.delete();
-
-        // write out
-        try {
-            if (outputFile.createNewFile()) {
-                Files.write(md, outputFile, Charset.defaultCharset());
-            } else {
-                // TODO
-            }
-        } catch (final IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        GlossaryHelper.writeOutputFile(md, outputFile);
     }
+
 
 
     /**
@@ -91,12 +64,6 @@ public class MarkdownSubstepsPublisher implements GlossaryPublisher {
      */
     private String buildMarkdown(final Map<String, List<StepDescriptor>> sectionSorted) {
         final StringBuilder buf = new StringBuilder();
-
-//        buf.append("<html><head></head><body> <table border=\"1\">\n<tr><th>Keyword</th> <th>Example</th> <th>Description</th></tr>\n");
-
-        // buf.append(String.format(TRAC_TABLE_FORMAT, "'''Keyword'''",
-        // "'''Example'''", "'''Description'''"))
-        // .append("\n");
 
         final Set<Entry<String, List<StepDescriptor>>> entrySet = sectionSorted.entrySet();
 

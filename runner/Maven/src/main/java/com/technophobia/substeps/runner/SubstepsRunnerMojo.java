@@ -212,11 +212,11 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
                 runExecutionConfig(executionConfig);
             }
-        } catch (final Throwable t) {
+        } catch (final Exception e) {
 
             // to cater for any odd exceptions thrown out.. at least this way
             // jvm shouldn't just die, unless it was going to die anyway
-            throw new MojoExecutionException("Unhandled exception: " + t.getMessage(), t);
+            throw new MojoExecutionException("Unhandled exception: " + e.getMessage(), e);
         }
     }
 

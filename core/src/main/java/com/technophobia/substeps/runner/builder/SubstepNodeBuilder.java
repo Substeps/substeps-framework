@@ -259,7 +259,7 @@ public class SubstepNodeBuilder {
                 setMethodParameters(execImpl, step.getParameterLine(), parent, step.getSubstitutedInlineTable(),
                         stepImplementationNode);
 
-            } catch (final Throwable e) {
+            } catch (final Exception e) {
 
                 if (throwExceptionIfUnableToBuildMethodArgs) {
                     throw new RuntimeException(e);

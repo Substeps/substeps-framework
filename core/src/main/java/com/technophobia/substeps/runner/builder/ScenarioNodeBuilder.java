@@ -81,22 +81,22 @@ public class ScenarioNodeBuilder {
 
                 scenarioNode = buildBasicScenarioNode(scenario, null, inheritedTags, depth);
             }
-        } catch (final Throwable t) {
+        } catch (final Exception e) {
 
             // something has gone wrong parsing this scenario, no point
             // running it so mark it as failed now
             if (log.isDebugEnabled()) {
-                log.debug("Failed to parse " + scenario.getDescription() + ", creating dummy node", t);
+                log.debug("Failed to parse " + scenario.getDescription() + ", creating dummy node", e);
             }
             scenarioNode = new BasicScenarioNode(scenario.getDescription(), null, Collections.<StepNode> emptyList(),
                     Collections.<String> emptySet(), depth);
 
-            new SubstepExecutionFailure(t, scenarioNode, ExecutionResult.PARSE_FAILURE);
+            new SubstepExecutionFailure(e, scenarioNode, ExecutionResult.PARSE_FAILURE);
 //            scenarioNode.getResult().setFailedToParse(t);
 
             if (parameters.isFailParseErrorsImmediately()) {
 
-                throw new SubstepsConfigurationException(t);
+                throw new SubstepsConfigurationException(e);
             }
         }
 

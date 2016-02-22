@@ -54,7 +54,7 @@ public class ClasspathScanner {
 
 			} else {
 				// jar file
-				JarFile jarFile;
+				JarFile jarFile = null;
 				try {
 					jarFile = new JarFile(f);
 
@@ -74,6 +74,14 @@ public class ClasspathScanner {
 					}
 				} catch (final IOException e) {
 					// don't care
+				}
+				finally{
+					if (jarFile != null) {
+						try {
+							jarFile.close();
+						} catch (IOException e) {
+						}
+					}
 				}
 
 				// load up contents of jar
@@ -95,7 +103,7 @@ public class ClasspathScanner {
 			} catch (final NoClassDefFoundError e) {
 				// don't care
 			} catch (final ClassNotFoundException e) {
-				// don't care about that eitehr
+				// don't care about that either
 			}
 
 		}

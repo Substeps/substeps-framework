@@ -112,8 +112,7 @@ public class SubstepsJMXServer {
                     this.log.debug("shutdown notification received");
 
                 } catch (final InterruptedException e) {
-
-                    e.printStackTrace();
+                    log.error("InterruptedException", e);
                 }
             }
 
