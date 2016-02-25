@@ -30,44 +30,24 @@ import java.util.Map.Entry;
  * @author ian
  * 
  */
-public class MarkdownSubstepsPublisher implements GlossaryPublisher {
+public class MarkdownSubstepsPublisher extends FileBasedGlossaryPublisher  implements GlossaryPublisher {
 
-    private static final Logger log = LoggerFactory.getLogger(MarkdownSubstepsPublisher.class);
-
-    /**
-     * @parameter default-value = stepimplementations.md
-     */
-    private File outputFile;
-
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.technophobia.substeps.runner.GlossaryPublisher#publish(java.util.
-     * List)
-     */
-    public void publish(final List<StepImplementationsDescriptor> stepimplementationDescriptors) {
-
-
-        final Map<String, List<StepDescriptor>> sectionSorted = GlossaryHelper.sortStepDescriptions(stepimplementationDescriptors);
-
-        final String md = buildMarkdown(sectionSorted);
-
-        GlossaryHelper.writeOutputFile(md, outputFile);
+    @Override
+    public String getDefaultFileName(){
+        return "stepimplementations.md";
     }
-
 
 
     /**
      * @param sectionSorted
      */
-    private String buildMarkdown(final Map<String, List<StepDescriptor>> sectionSorted) {
+    @Override
+    public String buildFileContents(final Map<String, Collection<StepDescriptor>> sectionSorted) {
         final StringBuilder buf = new StringBuilder();
 
-        final Set<Entry<String, List<StepDescriptor>>> entrySet = sectionSorted.entrySet();
+        final Set<Entry<String, Collection<StepDescriptor>>> entrySet = sectionSorted.entrySet();
 
-        for (final Entry<String, List<StepDescriptor>> e : entrySet) {
+        for (final Entry<String, Collection<StepDescriptor>> e : entrySet) {
             buf.append(String.format(TABLE_ROW_SECTION_FORMAT, e.getKey())).append("\n");
 
             buildStepTagRows(buf, e.getValue());
@@ -78,13 +58,13 @@ public class MarkdownSubstepsPublisher implements GlossaryPublisher {
     }
 
 
-    private void buildStepTagRows(final StringBuilder buf, final List<StepDescriptor> infos) {
+    private void buildStepTagRows(final StringBuilder buf, final Collection<StepDescriptor> infos) {
 
-        Collections.sort(infos, new Comparator<StepDescriptor>() {
-            public int compare(final StepDescriptor s1, final StepDescriptor s2) {
-                return s1.getExpression().compareTo(s2.getExpression());
-            }
-        });
+//        Collections.sort(infos, new Comparator<StepDescriptor>() {
+//            public int compare(final StepDescriptor s1, final StepDescriptor s2) {
+//                return s1.getExpression().compareTo(s2.getExpression());
+//            }
+//        });
 
         for (final StepDescriptor info : infos) {
 

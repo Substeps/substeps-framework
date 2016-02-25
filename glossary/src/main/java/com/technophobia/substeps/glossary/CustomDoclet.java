@@ -29,6 +29,8 @@ import com.sun.javadoc.Parameter;
 import com.sun.javadoc.RootDoc;
 import com.sun.javadoc.Tag;
 import com.technophobia.substeps.model.SubSteps.Step;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TODO
@@ -38,6 +40,7 @@ import com.technophobia.substeps.model.SubSteps.Step;
  */
 public class CustomDoclet extends Doclet {
 
+    private static final Logger log = LoggerFactory.getLogger(CustomDoclet.class);
     private static List<StepImplementationsDescriptor> classStepTagsList;
 
 
@@ -69,49 +72,49 @@ public class CustomDoclet extends Doclet {
                 implClass = root.getClass().getClassLoader().loadClass(cd.qualifiedTypeName());
                 implMethods = implClass.getMethods();
 
-            } catch (final ClassNotFoundException e) {
-                e.printStackTrace();
-            }
+                final MethodDoc[] methods = cd.methods();
 
-            final MethodDoc[] methods = cd.methods();
+                for (final MethodDoc md : methods) {
 
-            for (final MethodDoc md : methods) {
+                    final Method underlyingMethod = getMethod(implMethods, md);
 
-                final Method underlyingMethod = getMethod(implMethods, md);
+                    if (underlyingMethod != null) {
+                        final Step annotation = underlyingMethod.getAnnotation(Step.class);
 
-                if (underlyingMethod != null) {
-                    final Step annotation = underlyingMethod.getAnnotation(Step.class);
+                        if (annotation != null)
 
-                    if (annotation != null)
+                        {
+                            final StepDescriptor expression = new StepDescriptor();
 
-                    {
-                        final StepDescriptor expression = new StepDescriptor();
+                            classStepTags.addStepTags(expression);
 
-                        classStepTags.addStepTags(expression);
+                            expression.setDescription(md.commentText().replaceAll("\n", " "));
 
-                        expression.setDescription(md.commentText().replaceAll("\n", " "));
+                            expression.setExample(getSingleJavadocTagValue(md, "example"));
+                            expression.setSection(getSingleJavadocTagValue(md, "section"));
 
-                        expression.setExample(getSingleJavadocTagValue(md, "example"));
-                        expression.setSection(getSingleJavadocTagValue(md, "section"));
+                            String line = annotation.value();
 
-                        String line = annotation.value();
+                            final Parameter[] parameters = md.parameters();
+                            if (parameters != null && parameters.length > 0) {
+                                for (final Parameter p : parameters) {
+                                    // replace any captures with <variable name>
 
-                        final Parameter[] parameters = md.parameters();
-                        if (parameters != null && parameters.length > 0) {
-                            for (final Parameter p : parameters) {
-                                // replace any captures with <variable name>
+                                    line = line.replaceFirst("\\([^\\)]*\\)", "<" + p.name() + ">");
 
-                                line = line.replaceFirst("\\([^\\)]*\\)", "<" + p.name() + ">");
-
-                                p.typeName();
+                                    p.typeName();
+                                }
                             }
+                            line = line.replaceAll("\\?", "");
+                            line = line.replaceAll("\\\\", "");
+                            expression.setExpression(line);
                         }
-                        line = line.replaceAll("\\?", "");
-                        line = line.replaceAll("\\\\", "");
-                        expression.setExpression(line);
                     }
                 }
+            } catch (final ClassNotFoundException e) {
+                log.error("ClassNotFoundException", e);
             }
+
         }
 
         return true;
@@ -120,7 +123,7 @@ public class CustomDoclet extends Doclet {
 
     /**
      * @param md
-     * @param expression
+     * @param tagName
      */
     private static String getSingleJavadocTagValue(final MethodDoc md, final String tagName) {
         String rtn = null;
@@ -135,7 +138,6 @@ public class CustomDoclet extends Doclet {
 
 
     /**
-     * @param implClass
      * @param implMethods
      * @param md
      * @return

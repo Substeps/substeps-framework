@@ -26,4 +26,8 @@ public class SubstepsRuntimeException extends SubstepsException {
         super(msg);
     }
 
+    public SubstepsRuntimeException(final String msg, Throwable cause) {
+        super(msg, cause);
+    }
+
 }

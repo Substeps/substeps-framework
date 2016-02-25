@@ -19,12 +19,8 @@
 package com.technophobia.substeps.glossary;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
@@ -35,37 +31,18 @@ import org.slf4j.LoggerFactory;
  * @author ian
  * 
  */
-public class HTMLSubstepsPublisher implements GlossaryPublisher {
+public class HTMLSubstepsPublisher extends FileBasedGlossaryPublisher implements GlossaryPublisher {
 
-    private static final Logger log = LoggerFactory.getLogger(HTMLSubstepsPublisher.class);
-    /**
-     * @parameter default-value = stepimplementations.html
-     */
-    private File outputFile;
-
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.technophobia.substeps.runner.GlossaryPublisher#publish(java.util.
-     * List)
-     */
-    public void publish(final List<StepImplementationsDescriptor> stepimplementationDescriptors) {
-
-        final Map<String, List<StepDescriptor>> sectionSorted = GlossaryHelper.sortStepDescriptions(stepimplementationDescriptors);
-
-        final String html = buildHtml(sectionSorted);
-
-        GlossaryHelper.writeOutputFile(html, outputFile);
+    @Override
+    public String getDefaultFileName(){
+        return "stepimplementations.html";
     }
-
-
 
     /**
      * @param sectionSorted
      */
-    private String buildHtml(final Map<String, List<StepDescriptor>> sectionSorted) {
+    @Override
+    public  String buildFileContents(final Map<String, Collection<StepDescriptor>> sectionSorted) {
         final StringBuilder buf = new StringBuilder();
 
         buf.append("<html><head></head><body> <table border=\"1\">\n<tr><th>Keyword</th> <th>Example</th> <th>Description</th></tr>\n");
@@ -74,9 +51,9 @@ public class HTMLSubstepsPublisher implements GlossaryPublisher {
         // "'''Example'''", "'''Description'''"))
         // .append("\n");
 
-        final Set<Entry<String, List<StepDescriptor>>> entrySet = sectionSorted.entrySet();
+        final Set<Entry<String, Collection<StepDescriptor>>> entrySet = sectionSorted.entrySet();
 
-        for (final Entry<String, List<StepDescriptor>> e : entrySet) {
+        for (final Entry<String, Collection<StepDescriptor>> e : entrySet) {
             buf.append(String.format(TABLE_ROW_SECTION_FORMAT, e.getKey())).append("\n");
 
             buildStepTagRows(buf, e.getValue());
@@ -87,13 +64,8 @@ public class HTMLSubstepsPublisher implements GlossaryPublisher {
     }
 
 
-    private void buildStepTagRows(final StringBuilder buf, final List<StepDescriptor> infos) {
+    private void buildStepTagRows(final StringBuilder buf, final Collection<StepDescriptor> infos) {
 
-        Collections.sort(infos, new Comparator<StepDescriptor>() {
-            public int compare(final StepDescriptor s1, final StepDescriptor s2) {
-                return s1.getExpression().compareTo(s2.getExpression());
-            }
-        });
 
         for (final StepDescriptor info : infos) {
 

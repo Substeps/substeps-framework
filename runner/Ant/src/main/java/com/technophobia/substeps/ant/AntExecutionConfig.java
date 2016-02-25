@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.technophobia.substeps.runner.SubstepsExecutionConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AntExecutionConfig extends SubstepsExecutionConfig {
 
@@ -14,6 +16,9 @@ public class AntExecutionConfig extends SubstepsExecutionConfig {
     private List<InitialisationClass> initialisationClasses = new ArrayList<InitialisationClass>();
 
     private String outputDirectory = "";
+
+    private final Logger log = LoggerFactory.getLogger(AntExecutionConfig.class);
+
 
     @Override
     public List<Class<?>> getStepImplementationClasses() {
@@ -27,7 +32,7 @@ public class AntExecutionConfig extends SubstepsExecutionConfig {
                 classes.add(loader.loadClass(clazz.toString()));
             }
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            log.error("ClassNotFoundException", e);
         }
         return classes;
     }
@@ -46,7 +51,7 @@ public class AntExecutionConfig extends SubstepsExecutionConfig {
                     classes.add(loader.loadClass(clazz.toString()));
                 }
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                log.error("ClassNotFoundException", e);
             }
         }
 

@@ -92,13 +92,14 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
 
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("IOException writing bytes", e);
+
         }
         finally{
             try {
                 bos.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("IOException closing output stream", e);
             }
 
         }

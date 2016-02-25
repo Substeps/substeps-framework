@@ -298,8 +298,7 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
                         break;
                     }
                 } catch (final IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    log.error("IO Exception opening jar file", e);
                 }
             }
         }

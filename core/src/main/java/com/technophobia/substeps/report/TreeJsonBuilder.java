@@ -88,7 +88,7 @@ public final class TreeJsonBuilder extends AbstractExecutionNodeVisitor<JsonObje
 
         } catch (IOException e) {
 
-            throw new SubstepsRuntimeException("Failed writing to detail json file");
+            throw new SubstepsRuntimeException("Failed writing to detail json file", e);
 
         } finally {
 
@@ -97,7 +97,7 @@ public final class TreeJsonBuilder extends AbstractExecutionNodeVisitor<JsonObje
                     writer.flush();
                     writer.close();
                 } catch (IOException e) {
-                    throw new SubstepsRuntimeException("Failed writing to detail json file");
+                    throw new SubstepsRuntimeException("Failed writing to detail json file", e);
                 }
             }
 

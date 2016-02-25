@@ -75,7 +75,7 @@ public final class DetailedJsonBuilder extends AbstractExecutionNodeVisitor<Json
 
         } catch (IOException e) {
 
-            throw new SubstepsRuntimeException("Failed writing to detail json file");
+            throw new SubstepsRuntimeException("Failed writing to detail json file", e);
         } finally {
 
             if (writer != null) {
@@ -83,7 +83,7 @@ public final class DetailedJsonBuilder extends AbstractExecutionNodeVisitor<Json
                     writer.flush();
                     writer.close();
                 } catch (IOException e) {
-                    throw new SubstepsRuntimeException("Failed writing to detail json file");
+                    throw new SubstepsRuntimeException("Failed writing to detail json file", e);
                 }
             }
 

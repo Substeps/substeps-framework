@@ -148,7 +148,7 @@ public class Syntax {
                 patternMap.put(pattern, impl);
             } catch (final PatternSyntaxException e) {
 
-                Syntax.log.warn("Invalid step implementation pattern: " + e.getMessage() + "\n" + impl.getClass() + "."
+                log.warn("Invalid step implementation pattern: " + e.getMessage() + "\n" + impl.getClass() + "."
                     + impl.getMethod() + " will not be added to the syntax");
             }
 
