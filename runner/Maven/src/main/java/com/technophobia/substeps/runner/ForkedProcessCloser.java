@@ -95,7 +95,7 @@ public class ForkedProcessCloser implements Runnable {
 
         public void run() {
 
-            ForkedProcessCloser.this.log.info("Attempting to shutdown remote substep server via jmx");
+            log.info("Attempting to shutdown remote substep server via jmx");
 
             try {
 
@@ -106,7 +106,7 @@ public class ForkedProcessCloser implements Runnable {
                 }
             } catch (Exception e) {
 
-                ForkedProcessCloser.this.log.info("Failed to shutdown the server gracefully");
+                log.info("Failed to shutdown the server gracefully", e);
             }
 
         }

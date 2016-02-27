@@ -36,7 +36,7 @@ public class JunitVersionedDescriptionBuilder implements DescriptionBuilder {
             log.debug("Junit 4.11 is on the classpath");
             return true;
         } catch (NoSuchMethodException e) {
-            log.debug("Junit 4.11 is not on the classpath");
+            log.debug("Junit 4.11 is not on the classpath", e);
             return false;
         }
     }

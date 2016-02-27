@@ -33,8 +33,6 @@ class InputStreamConsumer implements Runnable {
     private final Log logger;
 
     private final InputStream stderr;
-    private InputStreamReader isr = null;
-    private BufferedReader br = null;
 
 
     public InputStreamConsumer(final InputStream stderr, final Log logger){
@@ -51,8 +49,7 @@ class InputStreamConsumer implements Runnable {
             try {
                 closeable.close();
             } catch (final IOException e) {
-
-                e.printStackTrace();
+                logger.error("IOException closing", e);
             }
         }
     }
@@ -62,8 +59,6 @@ class InputStreamConsumer implements Runnable {
      * 
      */
     public void closeStreams() {
-        closeQuietly(this.br);
-        closeQuietly(this.isr);
         closeQuietly(this.stderr);
     }
 

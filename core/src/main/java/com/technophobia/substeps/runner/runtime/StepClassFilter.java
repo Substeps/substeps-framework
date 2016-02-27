@@ -71,7 +71,7 @@ public class StepClassFilter implements Predicate<Class<?>> {
         } catch (final ArrayStoreException ex) {
             LOG.warn("ArrayStoreException encountered when querying "
                     + clazz.getName()
-                    + ".getAnnotations(). This usually implies the classes annotations are not on the build path - is this class compiling? Returning false for now");
+                    + ".getAnnotations(). This usually implies the classes annotations are not on the build path - is this class compiling? Returning false for now", ex);
             return false;
         }
     }

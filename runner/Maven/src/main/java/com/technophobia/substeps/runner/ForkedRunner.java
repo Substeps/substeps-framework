@@ -132,7 +132,7 @@ public class ForkedRunner implements MojoRunner {
 
             } catch (final InterruptedException e) {
                 // not sure what we can do at this point...
-                e.printStackTrace();
+                log.error("InterruptedException waiting for shutdown", e);
             }
         }
 
@@ -143,9 +143,6 @@ public class ForkedRunner implements MojoRunner {
     private InputStreamConsumer startMBeanJVM() throws MojoExecutionException {
         // launch the jvm process that will contain the Substeps MBean Server
         // build up the class path based on this projects classpath
-
-//        final CountDownLatch processStarted = new CountDownLatch(1);
-//        final AtomicBoolean processStartedOk = new AtomicBoolean(false);
 
         InputStreamConsumer localConsumer = null;
 
@@ -165,31 +162,14 @@ public class ForkedRunner implements MojoRunner {
             this.shutdownHook = ForkedProcessCloser.addHook(this.substepsJmxClient, this.forkedJVMProcess, this.log);
 
             localConsumer = new InputStreamConsumer(this.forkedJVMProcess.getInputStream(), this.log);
-//            , processStarted,
-//                    processStartedOk);
 
             final Thread t = new Thread(this.consumer);
             t.start();
 
         } catch (final IOException e) {
-
-            e.printStackTrace();
+            log.error("IOException starting", e);
         }
 
-//        boolean exceptionThrown = false;
-//        try {
-//            this.log.info("waiting for process to start...");
-//            processStarted.await(START_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-//
-//            if (!processStartedOk.get()) {
-//                exceptionThrown = true;
-//                throw new MojoExecutionException("Unable to launch VM process");
-//            }
-//
-//        } catch (final InterruptedException e) {
-//
-//            e.printStackTrace();
-//        }
         this.log.info("process started");
 
         return localConsumer;

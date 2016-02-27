@@ -91,8 +91,8 @@ public class ScenarioNodeBuilder {
             scenarioNode = new BasicScenarioNode(scenario.getDescription(), null, Collections.<StepNode> emptyList(),
                     Collections.<String> emptySet(), depth);
 
+            // ctor has side effects... eeeurgh!
             new SubstepExecutionFailure(e, scenarioNode, ExecutionResult.PARSE_FAILURE);
-//            scenarioNode.getResult().setFailedToParse(t);
 
             if (parameters.isFailParseErrorsImmediately()) {
 

@@ -76,7 +76,7 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
                 stepImplementationClassList.add(implClass);
 
             } catch (final ClassNotFoundException e) {
-                AssertHelper.fail("ClassNotFoundException: " + e.getMessage());
+                throw new AssertionError(e);
             }
         }
         return stepImplementationClassList;
@@ -112,7 +112,7 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
                     }
 
                 } catch (final ClassNotFoundException e) {
-                    AssertHelper.fail("ClassNotFoundException: " + e.getMessage());
+                    throw new AssertionError(e);
                 }
             }
         }

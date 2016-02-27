@@ -43,7 +43,7 @@ import org.junit.Test;
  */
 public class MojoTest extends AbstractMojoTestCase {
 
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         // required for mojo lookups to work
         super.setUp();
     }

@@ -45,7 +45,7 @@ import com.technophobia.substeps.jmx.SubstepsServerMBean;
  */
 public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
 
-    Logger log = LoggerFactory.getLogger(SubstepsJMXClient.class);
+    private static Logger log = LoggerFactory.getLogger(SubstepsJMXClient.class);
     private SubstepsServerMBean mbean;
 
     private JMXConnector cntor = null;
@@ -100,7 +100,7 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
                 mbsc.addNotificationListener(objectName, this, null, null);
                 added = true;
             } catch (InstanceNotFoundException e) {
-                log.debug("adding notification InstanceNotFoundException");
+                log.debug("adding notification InstanceNotFoundException", e);
             }
         }
     }
@@ -179,7 +179,7 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
 
         } catch (final RuntimeException re) {
 
-            this.log.debug("Unable to connect to server to shutdown, it may have already closed");
+            this.log.debug("Unable to connect to server to shutdown, it may have already closed", re);
 
         }
         return successfulShutdown;
@@ -215,15 +215,17 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
             rn = (T)ois.readObject();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("IOException reading object input stream", e);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+
+            log.error("ClassNotFoundException", e);
+
         }
         finally{
             try {
                 bis.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("IOException closing object input stream", e);
             }
         }
         return rn;

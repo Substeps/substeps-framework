@@ -80,6 +80,7 @@ public class ClasspathScanner {
 						try {
 							jarFile.close();
 						} catch (IOException e) {
+							// don't care
 						}
 					}
 				}
@@ -133,11 +134,7 @@ public class ClasspathScanner {
 	}
 
 	private List<File> getAllFiles(final File root, final String extension) {
-		final FileFilter filter = new FileFilter() {
-			public boolean accept(final File f) {
-				return f.isDirectory() || (f.isFile() && f.getName().endsWith(extension));
-			}
-		};
+		final FileFilter filter = f -> f.isDirectory() || (f.isFile() && f.getName().endsWith(extension));
 
 		final List<File> files = new ArrayList<File>();
 

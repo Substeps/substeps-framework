@@ -134,15 +134,27 @@ public class BeforeAndAfterMethods {
     private void sortMethodLists(final List<Class<?>> classHierarchy) {
         final Comparator<Method> methodComparator = new MethodComparator(classHierarchy);
 
-        for (final MethodState methodState : methodMap.keySet()) {
-            final List<Method> methodsForState = methodMap.get(methodState);
-            sortMethodList(methodsForState, methodComparator);
+
+        for (final Map.Entry<MethodState,  List<Method>> e : methodMap.entrySet()){
+
+            sortMethodList(e.getValue(), methodComparator);
 
             // Execute after tests in reverse order
-            if (!methodState.isBeforeTest()) {
-                Collections.reverse(methodsForState);
+            if (!e.getKey().isBeforeTest()) {
+                Collections.reverse(e.getValue());
             }
+
         }
+
+//        for (final MethodState methodState : methodMap.keySet()) {
+//            final List<Method> methodsForState = methodMap.get(methodState);
+//            sortMethodList(methodsForState, methodComparator);
+//
+//            // Execute after tests in reverse order
+//            if (!methodState.isBeforeTest()) {
+//                Collections.reverse(methodsForState);
+//            }
+//        }
     }
 
 
