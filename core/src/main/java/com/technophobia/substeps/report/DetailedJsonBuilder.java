@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,17 +18,6 @@
  */
 package com.technophobia.substeps.report;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.List;
-
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.joda.time.Duration;
-import org.joda.time.format.PeriodFormat;
-import org.joda.time.format.PeriodFormatter;
-
 import com.google.common.io.Files;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -39,6 +28,16 @@ import com.technophobia.substeps.execution.node.IExecutionNode;
 import com.technophobia.substeps.execution.node.NodeWithChildren;
 import com.technophobia.substeps.execution.node.StepImplementationNode;
 import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.joda.time.Duration;
+import org.joda.time.format.PeriodFormat;
+import org.joda.time.format.PeriodFormatter;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.List;
 
 public final class DetailedJsonBuilder extends AbstractExecutionNodeVisitor<JsonObject> {
 
@@ -111,7 +110,7 @@ public final class DetailedJsonBuilder extends AbstractExecutionNodeVisitor<Json
     }
 
     private JsonObject createBasicDetailsWithChildDetails(String nodeType, IExecutionNode node,
-            List<? extends IExecutionNode> childNodes) {
+                                                          List<? extends IExecutionNode> childNodes) {
 
         JsonObject json = createBasicDetails(nodeType, node);
         addDetailsForChildren(json, childNodes);

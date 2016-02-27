@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,12 +18,12 @@
  */
 package com.technophobia.substeps.execution.node;
 
+import com.technophobia.substeps.execution.ExecutionNodeVisitor;
+
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import com.technophobia.substeps.execution.ExecutionNodeVisitor;
 
 public class StepImplementationNode extends ExecutionNode implements StepNode {
 
@@ -39,7 +39,7 @@ public class StepImplementationNode extends ExecutionNode implements StepNode {
 
 
     public StepImplementationNode(final Class<?> targetClass, final Method targetMethod, final Set<String> tags,
-        final int depth) {
+                                  final int depth) {
         this.targetClass = targetClass;
         this.targetMethod = targetMethod;
         this.setDepth(depth);
@@ -137,6 +137,6 @@ public class StepImplementationNode extends ExecutionNode implements StepNode {
     @Override
     public String toDebugString() {
         return super.toDebugString() + " impl: "
-            + this.targetMethod.getDeclaringClass().getSimpleName() + "." + this.targetMethod.getName();
+                + this.targetMethod.getDeclaringClass().getSimpleName() + "." + this.targetMethod.getName();
     }
 }

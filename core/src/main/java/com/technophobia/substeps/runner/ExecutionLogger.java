@@ -4,7 +4,7 @@ import com.google.common.base.Strings;
 import com.technophobia.substeps.execution.node.IExecutionNode;
 
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *

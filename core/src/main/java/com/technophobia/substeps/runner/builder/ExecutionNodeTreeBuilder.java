@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,17 +18,16 @@
  */
 package com.technophobia.substeps.runner.builder;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
 import com.technophobia.substeps.execution.node.FeatureNode;
 import com.technophobia.substeps.execution.node.RootNode;
 import com.technophobia.substeps.model.FeatureFile;
 import com.technophobia.substeps.runner.TestParameters;
 
+import java.util.List;
+
 /**
  * @author ian
- * 
  */
 public class ExecutionNodeTreeBuilder {
 

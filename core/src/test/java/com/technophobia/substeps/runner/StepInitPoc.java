@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,13 +18,12 @@
  */
 package com.technophobia.substeps.runner;
 
-import java.util.List;
-import java.util.Set;
-
-import org.junit.Test;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.junit.Test;
+
+import java.util.List;
+import java.util.Set;
 
 public class StepInitPoc {
 

@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,53 +18,50 @@
  */
 package com.technophobia.substeps.model.parameter;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
-
-import com.technophobia.substeps.model.parameter.Converter;
-import com.technophobia.substeps.model.parameter.ConverterFactory;
-
 public class ConverterFactoryTest {
 
-	public static class DummyConverter implements Converter<String> {
+    public static class DummyConverter implements Converter<String> {
 
-		public boolean canConvert(final Class<?> cls) {
-			return cls == String.class;
-		}
+        public boolean canConvert(final Class<?> cls) {
+            return cls == String.class;
+        }
 
-		public String convert(final String value) {
-			return "dummy";
-		}
-	}
-
-
-	@Test
-	public void testConvertInteger() {
-		final Integer expected = Integer.valueOf(7);
-		final String value = "7";
-
-		final Integer actual = ConverterFactory.convert(value, Integer.class, null);
-		assertEquals(expected, actual);
-	}
+        public String convert(final String value) {
+            return "dummy";
+        }
+    }
 
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testConvertObject() {
-		ConverterFactory.convert("test text", Object.class, null);
-	}
+    @Test
+    public void testConvertInteger() {
+        final Integer expected = Integer.valueOf(7);
+        final String value = "7";
+
+        final Integer actual = ConverterFactory.convert(value, Integer.class, null);
+        assertEquals(expected, actual);
+    }
 
 
-	@Test
-	public void testCustomStringConverterWithString() {
-		final Converter<?> converter = ConverterFactory.getConverter(String.class, DummyConverter.class);
-		assertTrue(converter instanceof DummyConverter);
-	}
+    @Test(expected = IllegalArgumentException.class)
+    public void testConvertObject() {
+        ConverterFactory.convert("test text", Object.class, null);
+    }
 
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testCustomStringConverterWithInteger() {
-		ConverterFactory.getConverter(Integer.class, DummyConverter.class);
-	}
+    @Test
+    public void testCustomStringConverterWithString() {
+        final Converter<?> converter = ConverterFactory.getConverter(String.class, DummyConverter.class);
+        assertTrue(converter instanceof DummyConverter);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCustomStringConverterWithInteger() {
+        ConverterFactory.getConverter(Integer.class, DummyConverter.class);
+    }
 }

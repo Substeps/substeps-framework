@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,25 +18,19 @@
  */
 package com.technophobia.substeps.glossary;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.Doclet;
-import com.sun.javadoc.MethodDoc;
-import com.sun.javadoc.Parameter;
-import com.sun.javadoc.RootDoc;
-import com.sun.javadoc.Tag;
+import com.sun.javadoc.*;
 import com.technophobia.substeps.model.SubSteps.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * TODO
- * 
+ *
  * @author imoore
- * 
  */
 public class CustomDoclet extends Doclet {
 

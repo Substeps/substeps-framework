@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -19,23 +19,21 @@
 
 package com.technophobia.substeps.runner;
 
-import static org.hamcrest.CoreMatchers.is;
+import com.technophobia.substeps.model.SubSteps.StepImplementations;
+import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
+import com.technophobia.substeps.runner.logger.AnsiColourExecutionLogger;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.technophobia.substeps.model.SubSteps.StepImplementations;
-import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
-import com.technophobia.substeps.runner.logger.AnsiColourExecutionLogger;
+import static org.hamcrest.CoreMatchers.is;
 
 /**
  * @author ian
- * 
  */
 public class ExecutionConfigTest {
 
@@ -60,64 +58,64 @@ public class ExecutionConfigTest {
     public static class InitClass6 {
     }
 
-    @StepImplementations(requiredInitialisationClasses = { InitClass1.class })
+    @StepImplementations(requiredInitialisationClasses = {InitClass1.class})
     public static class StepImplsClass1 {
     }
 
-    @StepImplementations(requiredInitialisationClasses = { InitClass2.class, InitClass1.class })
+    @StepImplementations(requiredInitialisationClasses = {InitClass2.class, InitClass1.class})
     public static class StepImplsClass2_1 {
     }
 
-    @StepImplementations(requiredInitialisationClasses = { InitClass3.class, InitClass2.class })
+    @StepImplementations(requiredInitialisationClasses = {InitClass3.class, InitClass2.class})
     public static class StepImplsClass3_2 {
     }
 
-    @StepImplementations(requiredInitialisationClasses = { InitClass3.class, InitClass4.class, InitClass5.class })
+    @StepImplementations(requiredInitialisationClasses = {InitClass3.class, InitClass4.class, InitClass5.class})
     public static class StepImplsClass3_4_5 {
     }
 
-    @StepImplementations(requiredInitialisationClasses = { InitClass3.class, InitClass6.class })
+    @StepImplementations(requiredInitialisationClasses = {InitClass3.class, InitClass6.class})
     public static class StepImplsClass3_6 {
     }
 
-    @StepImplementations(requiredInitialisationClasses = { InitClass3.class, InitClass2.class })
+    @StepImplementations(requiredInitialisationClasses = {InitClass3.class, InitClass2.class})
     public static class StepImplsClass3_2_Duplicate {
     }
 
-    @StepImplementations(requiredInitialisationClasses = { InitClass1.class, InitClass2.class, InitClass3.class })
+    @StepImplementations(requiredInitialisationClasses = {InitClass1.class, InitClass2.class, InitClass3.class})
     public static class StepImplsClass1_2_3 {
     }
 
-    @StepImplementations(requiredInitialisationClasses = { InitClass1.class, InitClass4.class, InitClass3.class })
+    @StepImplementations(requiredInitialisationClasses = {InitClass1.class, InitClass4.class, InitClass3.class})
     public static class StepImplsClass1_4_3 {
     }
 
-    @StepImplementations(requiredInitialisationClasses = { InitClass1.class, InitClass2.class, InitClass3.class,
-            InitClass4.class })
+    @StepImplementations(requiredInitialisationClasses = {InitClass1.class, InitClass2.class, InitClass3.class,
+            InitClass4.class})
     public static class StepImplsClass1_2_3_4 {
     }
 
-    @StepImplementations(requiredInitialisationClasses = { InitClass2.class, InitClass3.class })
+    @StepImplementations(requiredInitialisationClasses = {InitClass2.class, InitClass3.class})
     public static class StepImplsClass2_3 {
     }
 
-    @StepImplementations(requiredInitialisationClasses = { InitClass2.class, InitClass5.class, InitClass6.class })
+    @StepImplementations(requiredInitialisationClasses = {InitClass2.class, InitClass5.class, InitClass6.class})
     public static class StepImplsClass2_5_6 {
     }
 
-    @StepImplementations(requiredInitialisationClasses = { InitClass5.class, InitClass6.class, InitClass1.class })
+    @StepImplementations(requiredInitialisationClasses = {InitClass5.class, InitClass6.class, InitClass1.class})
     public static class StepImplsClass5_6_1 {
     }
 
-    @StepImplementations(requiredInitialisationClasses = { InitClass1.class, InitClass4.class })
+    @StepImplementations(requiredInitialisationClasses = {InitClass1.class, InitClass4.class})
     public static class StepImplsClass1_4 {
     }
 
-    @StepImplementations(requiredInitialisationClasses = { InitClass1.class, InitClass5.class, InitClass2.class })
+    @StepImplementations(requiredInitialisationClasses = {InitClass1.class, InitClass5.class, InitClass2.class})
     public static class StepImplsClass1_5_2 {
     }
 
-    @StepImplementations(requiredInitialisationClasses = { InitClass2.class, InitClass5.class })
+    @StepImplementations(requiredInitialisationClasses = {InitClass2.class, InitClass5.class})
     public static class StepImplsClass2_5 {
     }
 
@@ -209,7 +207,7 @@ public class ExecutionConfigTest {
         final SubstepsExecutionConfig configImpl = new SubstepsExecutionConfig();
         final ExecutionConfigWrapper config = new ExecutionConfigWrapper(configImpl);
 
-        final String[] initClasses = { "java.lang.String", "java.math.BigDecimal" };
+        final String[] initClasses = {"java.lang.String", "java.math.BigDecimal"};
 
         configImpl.setInitialisationClass(initClasses);
         final Class<?>[] initialisationClasses = config.determineInitialisationClasses();

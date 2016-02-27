@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,22 +18,19 @@
  */
 package com.technophobia.substeps.runner;
 
+import com.technophobia.substeps.execution.AbstractExecutionNodeVisitor;
+import com.technophobia.substeps.execution.node.IExecutionNode;
+import com.technophobia.substeps.execution.node.TaggedNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.technophobia.substeps.execution.AbstractExecutionNodeVisitor;
-import com.technophobia.substeps.execution.node.IExecutionNode;
-import com.technophobia.substeps.execution.node.TaggedNode;
-
 /**
- * 
  * @author imoore
- * 
  */
 public class TagManager extends AbstractExecutionNodeVisitor<Boolean> {
 
@@ -116,7 +113,7 @@ public class TagManager extends AbstractExecutionNodeVisitor<Boolean> {
     @Override
     public Boolean visit(IExecutionNode node) {
 
-        return acceptTaggedScenario(Collections.<String> emptySet());
+        return acceptTaggedScenario(Collections.<String>emptySet());
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -83,9 +83,9 @@ public class RootNodeRunner extends AbstractNodeRunner<RootNode, Void> {
             // have a look at the constituent features
             List<FeatureNode> featureNodes = node.getChildren();
             boolean rootNodeStateSet = false;
-            for (FeatureNode featureNode : node.getChildren()){
+            for (FeatureNode featureNode : node.getChildren()) {
 
-                if(featureNode.getResult().getResult() == ExecutionResult.FAILED && !featureNode.getResult().getFailure().isNonCritical()){
+                if (featureNode.getResult().getResult() == ExecutionResult.FAILED && !featureNode.getResult().getFailure().isNonCritical()) {
                     // we've got one valid feature failure, fail the root node
                     SubstepsRuntimeException e = new SubstepsRuntimeException("At least one critical Feature failed");
                     SubstepExecutionFailure sef = new SubstepExecutionFailure(e, node, ExecutionResult.FAILED);
@@ -96,7 +96,7 @@ public class RootNodeRunner extends AbstractNodeRunner<RootNode, Void> {
                 }
             }
 
-            if (!rootNodeStateSet){
+            if (!rootNodeStateSet) {
                 // got this far, must be ok
                 node.getResult().setFinished();
                 context.getNotificationDistributor().onNodeFinished(node);
@@ -118,7 +118,6 @@ public class RootNodeRunner extends AbstractNodeRunner<RootNode, Void> {
 //                lastException.fillInStackTrace();
 //                SubstepExecutionFailure sef = new SubstepExecutionFailure(lastException, node, ExecutionResult.FAILED);
 //            }
-
 
 
 //            SubstepExecutionFailure sef = new SubstepExecutionFailure(lastException, node, ExecutionResult.FAILED);

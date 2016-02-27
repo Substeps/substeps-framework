@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,13 +18,13 @@
  */
 package com.technophobia.substeps.execution.node;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.technophobia.substeps.execution.ExecutionNodeResult;
 import com.technophobia.substeps.execution.ExecutionNodeVisitor;
 
-public interface IExecutionNode extends Serializable{
+import java.io.Serializable;
+import java.util.List;
+
+public interface IExecutionNode extends Serializable {
 
     /**
      * @return the depth of this node in the tree
@@ -44,8 +44,7 @@ public interface IExecutionNode extends Serializable{
     String getLine();
 
     /**
-     * @param line
-     *            the line to set
+     * @param line the line to set
      */
     void setLine(final String line);
 
@@ -54,7 +53,6 @@ public interface IExecutionNode extends Serializable{
     void setParent(IExecutionNode parent);
 
     /**
-     * 
      * @return the id of this node as a Long
      */
     Long getLongId();

@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps Maven Runner.
  *
@@ -18,28 +18,18 @@
  */
 package com.technophobia.substeps.mojo.runner;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.List;
-
 import com.technophobia.substeps.report.ExecutionReportBuilder;
 import com.technophobia.substeps.runner.ExecutionConfig;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Assert;
-import org.junit.Ignore;
-import static org.hamcrest.Matchers.*;
-
-
 import com.technophobia.substeps.runner.SubstepsRunnerMojo;
-import org.junit.Rule;
-import org.junit.Test;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.junit.Assert;
+
+import java.io.File;
+
+import static org.hamcrest.Matchers.*;
 
 /**
  * @author ian
- * 
  */
 public class MojoTest extends AbstractMojoTestCase {
 
@@ -50,19 +40,19 @@ public class MojoTest extends AbstractMojoTestCase {
 
     public void testMojoGoal() throws Exception {
 
-        File testPom = new File( getBasedir(),
-                "src/test/resources/sample-pom.xml" );
+        File testPom = new File(getBasedir(),
+                "src/test/resources/sample-pom.xml");
 
         final SubstepsRunnerMojo mojo = (SubstepsRunnerMojo) lookupMojo("run-features", testPom);
 
-         Assert.assertNotNull("expecting a mojo", mojo);
+        Assert.assertNotNull("expecting a mojo", mojo);
 
         ExecutionConfig executionConfig = mojo.getExecutionConfigs().get(0);
         Assert.assertNotNull(executionConfig);
 
-        Assert.assertThat(executionConfig, is (notNullValue()));
+        Assert.assertThat(executionConfig, is(notNullValue()));
 
-        Assert.assertThat(executionConfig.getDescription(), is ("Self Test Features"));
+        Assert.assertThat(executionConfig.getDescription(), is("Self Test Features"));
 
         Assert.assertThat(executionConfig.getTags(), is("@non-visual"));
         Assert.assertThat(executionConfig.isFastFailParseErrors(), is(false));
@@ -78,7 +68,7 @@ public class MojoTest extends AbstractMojoTestCase {
         Assert.assertNotNull(executionReportBuilder);
         Assert.assertThat(executionReportBuilder, instanceOf(StubExecutionReportBuilder.class));
 
-        StubExecutionReportBuilder stub = (StubExecutionReportBuilder)executionReportBuilder;
+        StubExecutionReportBuilder stub = (StubExecutionReportBuilder) executionReportBuilder;
 
         Assert.assertThat(stub.getReportTitle(), is("sample pom - report title"));
 

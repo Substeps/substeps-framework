@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,30 +18,13 @@
  */
 package com.technophobia.substeps.report;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
-import java.net.JarURLConnection;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-
+import com.google.common.io.Files;
+import com.technophobia.substeps.execution.ExecutionResult;
+import com.technophobia.substeps.execution.node.ExecutionNode;
+import com.technophobia.substeps.execution.node.RootNode;
 import com.technophobia.substeps.helper.AssertHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -51,10 +34,16 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.io.Files;
-import com.technophobia.substeps.execution.ExecutionResult;
-import com.technophobia.substeps.execution.node.ExecutionNode;
-import com.technophobia.substeps.execution.node.RootNode;
+import java.io.*;
+import java.net.JarURLConnection;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * @author ian
@@ -262,7 +251,7 @@ public class DefaultExecutionReportBuilder extends ExecutionReportBuilder {
     }
 
     private void renderAndWriteToFile(final File reportDir, final VelocityContext vCtx, final String vm,
-            final String targetFilename) throws IOException {
+                                      final String targetFilename) throws IOException {
 
         final Writer writer = new BufferedWriter(new FileWriter(new File(reportDir, targetFilename)));
 

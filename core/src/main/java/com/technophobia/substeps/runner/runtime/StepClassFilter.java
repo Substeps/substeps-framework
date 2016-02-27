@@ -18,14 +18,13 @@
  */
 package com.technophobia.substeps.runner.runtime;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-
+import com.google.common.base.Predicate;
+import com.technophobia.substeps.model.SubSteps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicate;
-import com.technophobia.substeps.model.SubSteps;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 public class StepClassFilter implements Predicate<Class<?>> {
 

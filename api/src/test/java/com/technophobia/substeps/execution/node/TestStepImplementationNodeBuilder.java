@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,10 +18,10 @@
  */
 package com.technophobia.substeps.execution.node;
 
+import com.google.common.collect.Sets;
+
 import java.lang.reflect.Method;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 public class TestStepImplementationNodeBuilder implements TestStepNodeBuilder<StepImplementationNode> {
 

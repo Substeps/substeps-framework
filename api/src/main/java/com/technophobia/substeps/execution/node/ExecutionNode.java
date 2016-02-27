@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,15 +18,15 @@
  */
 package com.technophobia.substeps.execution.node;
 
-import java.io.File;
-import java.io.Serializable;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
-
 import com.google.common.base.Strings;
 import com.technophobia.substeps.execution.ExecutionNodeResult;
 import com.technophobia.substeps.execution.ExecutionNodeVisitor;
 import com.technophobia.substeps.execution.ExecutionResult;
+
+import java.io.File;
+import java.io.Serializable;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * represents a node on the tree of features, scenarios, substeps etc including
@@ -184,7 +184,7 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
     public String toDebugString() {
         String debugString = Strings.repeat("\t", getDepth());
         debugString +=
-            "id: " + getId() + ", type: " + getClass().getSimpleName() + ", description: " + getDescription();
+                "id: " + getId() + ", type: " + getClass().getSimpleName() + ", description: " + getDescription();
         return debugString;
     }
 

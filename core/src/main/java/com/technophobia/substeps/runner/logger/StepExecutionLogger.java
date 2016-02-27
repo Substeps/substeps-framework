@@ -19,10 +19,9 @@
 
 package com.technophobia.substeps.runner.logger;
 
+import com.technophobia.substeps.runner.ExecutionLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.technophobia.substeps.runner.ExecutionLogger;
 
 public class StepExecutionLogger extends ExecutionLogger {
 

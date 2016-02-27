@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,35 +18,24 @@
  */
 package com.technophobia.substeps.runner.builder;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.collect.Lists;
 import com.technophobia.substeps.execution.node.StepImplementationNode;
 import com.technophobia.substeps.execution.node.StepNode;
 import com.technophobia.substeps.execution.node.SubstepNode;
-import com.technophobia.substeps.model.ExampleParameter;
-import com.technophobia.substeps.model.ParentStep;
-import com.technophobia.substeps.model.PatternMap;
-import com.technophobia.substeps.model.Step;
-import com.technophobia.substeps.model.StepImplementation;
+import com.technophobia.substeps.model.*;
 import com.technophobia.substeps.model.SubSteps.StepParameter;
-import com.technophobia.substeps.model.Util;
 import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
 import com.technophobia.substeps.model.parameter.Converter;
 import com.technophobia.substeps.runner.TestParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SubstepNodeBuilder {
 
@@ -59,9 +48,9 @@ public class SubstepNodeBuilder {
     }
 
     public SubstepNode build(final String scenarioDescription, final List<Step> steps,
-            final PatternMap<ParentStep> subStepsMapLocal, final ParentStep parent,
-            final ExampleParameter parametersForSteps, final boolean throwExceptionIfUnableToBuildMethodArgs,
-            final Set<String> tags, final int depth) {
+                             final PatternMap<ParentStep> subStepsMapLocal, final ParentStep parent,
+                             final ExampleParameter parametersForSteps, final boolean throwExceptionIfUnableToBuildMethodArgs,
+                             final Set<String> tags, final int depth) {
 
         if (steps == null || steps.isEmpty()) {
 
@@ -81,9 +70,9 @@ public class SubstepNodeBuilder {
     }
 
     public StepNode buildStepNode(final String scenarioDescription, final Step step,
-            final PatternMap<ParentStep> subStepsMapLocal, final ParentStep parent,
-            final ExampleParameter parametersForSteps, final boolean throwExceptionIfUnableToBuildMethodArgs,
-            final Set<String> tags, final int depth) {
+                                  final PatternMap<ParentStep> subStepsMapLocal, final ParentStep parent,
+                                  final ExampleParameter parametersForSteps, final boolean throwExceptionIfUnableToBuildMethodArgs,
+                                  final Set<String> tags, final int depth) {
 
         substituteStepParametersIntoStep(parametersForSteps, step);
 
@@ -102,7 +91,7 @@ public class SubstepNodeBuilder {
 
             stepNode = buildSubstepNode(scenarioDescription, step, subStepsMapLocal,
                     throwExceptionIfUnableToBuildMethodArgs, tags, depth, substepsParent);
-            
+
             // this step was implemented by a substep as opposed to a step impl
 
         } else {
@@ -115,8 +104,8 @@ public class SubstepNodeBuilder {
     }
 
     private SubstepNode buildSubstepNode(final String scenarioDescription, final Step step,
-            final PatternMap<ParentStep> subStepsMapLocal, final boolean throwExceptionIfUnableToBuildMethodArgs,
-            final Set<String> tags, final int depth, final ParentStep substepsParent) {
+                                         final PatternMap<ParentStep> subStepsMapLocal, final boolean throwExceptionIfUnableToBuildMethodArgs,
+                                         final Set<String> tags, final int depth, final ParentStep substepsParent) {
 
         log.trace("buildSubstepNode: scenarioDescription: " + scenarioDescription + " step line " + step.getLine() + " param line: " + step.getParameterLine());
 
@@ -127,8 +116,7 @@ public class SubstepNodeBuilder {
 
             substepsParent.initialiseParamValues(-1, step.getParameterLine(), this.parameters.getSyntax().getNonStrictKeywordPrecedence());
 
-        }
-        else {
+        } else {
 
             log.trace("init param vals as strict");
 
@@ -158,9 +146,9 @@ public class SubstepNodeBuilder {
 
         final SubstepNode substepNode = build(scenarioDescription, substepsParent.getSteps(), subStepsMapLocal,
                 substepsParent, parametersForSubSteps, throwExceptionIfUnableToBuildMethodArgs, tags, depth);
-     // Change TPCLA-299
-     //  substepNode.setLine(substepsParent.getParent().getParameterLine());
-       substepNode.setLine(step.getLine());
+        // Change TPCLA-299
+        //  substepNode.setLine(substepsParent.getParent().getParameterLine());
+        substepNode.setLine(step.getLine());
         substepNode.setFileUri(substepsParent.getSubStepFileUri());
         substepNode.setLineNumber(substepsParent.getSourceLineNumber());
         return substepNode;
@@ -194,8 +182,7 @@ public class SubstepNodeBuilder {
                         substepsParent = substepsParent.cloneWithAltLine(substepsParent.getParent().getLine());
 
                         break;
-                    }
-                    else {
+                    } else {
                         log.trace("subStepsMapLocal.get(altLine) no results for: " + altLine);
                     }
                 }
@@ -236,7 +223,7 @@ public class SubstepNodeBuilder {
     }
 
     public StepImplementationNode buildStepImplementationNode(final ParentStep parent, final Step step,
-            final boolean throwExceptionIfUnableToBuildMethodArgs, final Set<String> tags, final int depth) {
+                                                              final boolean throwExceptionIfUnableToBuildMethodArgs, final Set<String> tags, final int depth) {
 
         log.debug("looking for impl for step: " + step.toString());
 
@@ -311,7 +298,7 @@ public class SubstepNodeBuilder {
     }
 
     private void setMethodParameters(final StepImplementation execImpl, final String stepParameter,
-            final ParentStep parent, final List<Map<String, String>> inlineTable, final StepImplementationNode stepNode)
+                                     final ParentStep parent, final List<Map<String, String>> inlineTable, final StepImplementationNode stepNode)
             throws IllegalArgumentException {
 
         final Method stepImplementationMethod = execImpl.getMethod();
@@ -338,9 +325,9 @@ public class SubstepNodeBuilder {
     }
 
     private Object[] getStepMethodArguments(final String stepParameter, final Map<String, String> parentArguments,
-            final String stepImplementationPattern, final List<Map<String, String>> inlineTable,
-            final Class<?>[] parameterTypes, final Class<? extends Converter<?>>[] converterTypes,
-            final StepImplementationNode stepNode) {
+                                            final String stepImplementationPattern, final List<Map<String, String>> inlineTable,
+                                            final Class<?>[] parameterTypes, final Class<? extends Converter<?>>[] converterTypes,
+                                            final StepImplementationNode stepNode) {
         // does the stepParameter contain any <> which require substitution ?
         log.debug("getStepMethodArguments for: " + stepParameter);
 
@@ -413,7 +400,7 @@ public class SubstepNodeBuilder {
                     String val = parentArguments.get(key);
                     log.debug("replacing: <" + key + "> with: " + val + " in string: [" + rtn + "]");
 
-                    if ("value".equals(key)){
+                    if ("value".equals(key)) {
                         log.debug("break");
                     }
 

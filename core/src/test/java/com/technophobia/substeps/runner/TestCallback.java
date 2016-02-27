@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -19,16 +19,14 @@
 package com.technophobia.substeps.runner;
 
 /**
- * 
  * @author imoore
- * 
  */
 public interface TestCallback {
 
-	/**
-	 * @param methodName
-	 * @param params
-	 */
-	void doCallback(String methodName, String[] params);
+    /**
+     * @param methodName
+     * @param params
+     */
+    void doCallback(String methodName, String[] params);
 
 }

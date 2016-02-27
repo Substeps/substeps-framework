@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -21,7 +21,6 @@ package com.technophobia.substeps.execution;
 
 /**
  * @author ian
- * 
  */
 public enum ExecutionResult {
     IGNORED(false), NOT_INCLUDED(false), NOT_RUN(false), RUNNING(false), PASSED(false), FAILED(true), NON_CRITICAL_FAILURE(false), PARSE_FAILURE(true),
@@ -31,11 +30,11 @@ public enum ExecutionResult {
 
     private boolean isFailure;
 
-    public boolean isFailure(){
+    public boolean isFailure() {
         return isFailure;
     }
 
-    ExecutionResult(boolean isFailure){
+    ExecutionResult(boolean isFailure) {
         this.isFailure = isFailure;
     }
 }

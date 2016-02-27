@@ -1,9 +1,7 @@
 /**
- * Copyright Ian Moore 2014 
+ * Copyright Ian Moore 2014
  */
 package com.technophobia.substeps.execution.node;
-
-
 
 
 /**
@@ -15,20 +13,20 @@ package com.technophobia.substeps.execution.node;
 public class ExecutionNodeUsage {
 
     IExecutionNode theNode;
-    
-    public ExecutionNodeUsage(final IExecutionNode theNode){
+
+    public ExecutionNodeUsage(final IExecutionNode theNode) {
         this.theNode = theNode;
     }
-    
+
     @Override
-    public String toString(){
+    public String toString() {
         return "u: " + theNode.getDescription();
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return theNode.getDescription();
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -58,6 +56,6 @@ public class ExecutionNodeUsage {
         }
         return true;
     }
-    
-    
+
+
 }

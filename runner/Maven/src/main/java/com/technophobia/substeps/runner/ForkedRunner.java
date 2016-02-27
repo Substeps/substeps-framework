@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,15 +18,9 @@
  */
 package com.technophobia.substeps.runner;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.technophobia.substeps.execution.node.RootNode;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -42,9 +36,11 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import com.technophobia.substeps.execution.node.RootNode;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class ForkedRunner implements MojoRunner {
 
@@ -81,10 +77,10 @@ public class ForkedRunner implements MojoRunner {
     private final InputStreamConsumer consumer;
 
     ForkedRunner(final Log log, final int jmxPort, final String vmArgs, final List<String> testClasspathElements,
-            final List<String> stepImplementationArtifacts, final ArtifactResolver artifactResolver,
-            final ArtifactFactory artifactFactory, final MavenProjectBuilder mavenProjectBuilder,
-            final ArtifactRepository localRepository, final List<ArtifactRepository> remoteRepositories,
-            final ArtifactMetadataSource artifactMetadataSource) throws MojoExecutionException {
+                 final List<String> stepImplementationArtifacts, final ArtifactResolver artifactResolver,
+                 final ArtifactFactory artifactFactory, final MavenProjectBuilder mavenProjectBuilder,
+                 final ArtifactRepository localRepository, final List<ArtifactRepository> remoteRepositories,
+                 final ArtifactMetadataSource artifactMetadataSource) throws MojoExecutionException {
 
         this.log = log;
         this.jmxPort = jmxPort;

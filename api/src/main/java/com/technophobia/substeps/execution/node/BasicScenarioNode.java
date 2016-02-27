@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,11 +18,11 @@
  */
 package com.technophobia.substeps.execution.node;
 
-import java.util.List;
-import java.util.Set;
-
 import com.google.common.collect.Lists;
 import com.technophobia.substeps.execution.ExecutionNodeVisitor;
+
+import java.util.List;
+import java.util.Set;
 
 public class BasicScenarioNode extends ScenarioNode<StepNode> {
 
@@ -34,7 +34,7 @@ public class BasicScenarioNode extends ScenarioNode<StepNode> {
     private final Set<String> tags;
 
     public BasicScenarioNode(final String scenarioName, final SubstepNode background, final List<StepNode> steps, final Set<String> tags,
-            final int depth) {
+                             final int depth) {
         super(steps);
         this.scenarioName = scenarioName;
         this.background = background;

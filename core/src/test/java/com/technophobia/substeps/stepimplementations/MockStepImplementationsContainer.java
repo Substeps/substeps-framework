@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -22,7 +22,7 @@ import com.technophobia.substeps.model.SubSteps.AdditionalStepImplementations;
 import com.technophobia.substeps.model.SubSteps.StepImplementations;
 
 @StepImplementations
-@AdditionalStepImplementations({ MockStepImplementations.class })
+@AdditionalStepImplementations({MockStepImplementations.class})
 public class MockStepImplementationsContainer {
     // No-op
 }

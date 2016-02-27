@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -19,12 +19,11 @@
 
 package com.technophobia.substeps.model;
 
+import junit.framework.Assert;
+import org.junit.Test;
+
 import java.util.List;
 import java.util.regex.Pattern;
-
-import junit.framework.Assert;
-
-import org.junit.Test;
 
 public class PatternMapTest {
 

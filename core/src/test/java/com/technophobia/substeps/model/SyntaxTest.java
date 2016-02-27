@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,13 +18,13 @@
  */
 package com.technophobia.substeps.model;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class SyntaxTest {
 
@@ -96,8 +96,8 @@ public class SyntaxTest {
     @Test
     public void canGetStepImplementationsInNonStrictModeWhenKeywordMatchesAnnotation() throws Exception {
 
-        this.syntax.setStrict(false, new String[] { DEFINITION_1_1_KEYWORD, DEFINITION_1_2_KEYWORD,
-                DEFINITION_2_1_KEYWORD, DEFINITION_2_2_KEYWORD });
+        this.syntax.setStrict(false, new String[]{DEFINITION_1_1_KEYWORD, DEFINITION_1_2_KEYWORD,
+                DEFINITION_2_1_KEYWORD, DEFINITION_2_2_KEYWORD});
 
         final String keyword = DEFINITION_2_2_KEYWORD;
         final String parameterLine = DEFINITION_2_2_PARAMATER_LINE_FULL;
@@ -115,8 +115,8 @@ public class SyntaxTest {
     @Test
     public void canGetStepImplementationsInNonStrictModeWhenKeywordDoesNotMatchAnnotation() throws Exception {
 
-        this.syntax.setStrict(false, new String[] { DEFINITION_1_1_KEYWORD, DEFINITION_1_2_KEYWORD,
-                DEFINITION_2_1_KEYWORD, DEFINITION_2_2_KEYWORD });
+        this.syntax.setStrict(false, new String[]{DEFINITION_1_1_KEYWORD, DEFINITION_1_2_KEYWORD,
+                DEFINITION_2_1_KEYWORD, DEFINITION_2_2_KEYWORD});
 
         final String keyword = DEFINITION_2_2_KEYWORD;
         final String parameterLine = DEFINITION_2_2_KEYWORD + DEFINITION_2_1_PARAMATER_LINE_SUFFIX;
@@ -144,7 +144,7 @@ public class SyntaxTest {
     }
 
     private StepImplementation stepImplementation(final String keyword, final String parameterLine,
-            final Class<?> clazz, final String methodName) throws Exception {
+                                                  final Class<?> clazz, final String methodName) throws Exception {
         return new StepImplementation(clazz, keyword, parameterLine, clazz.getMethod(methodName));
     }
 

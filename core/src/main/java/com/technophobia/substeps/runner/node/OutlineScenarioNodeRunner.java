@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,9 +18,9 @@
  */
 package com.technophobia.substeps.runner.node;
 
-import com.technophobia.substeps.execution.node.RootNodeExecutionContext;
 import com.technophobia.substeps.execution.node.OutlineScenarioNode;
 import com.technophobia.substeps.execution.node.OutlineScenarioRowNode;
+import com.technophobia.substeps.execution.node.RootNodeExecutionContext;
 import com.technophobia.substeps.model.Scope;
 
 public class OutlineScenarioNodeRunner extends AbstractNodeRunner<OutlineScenarioNode, Void> {

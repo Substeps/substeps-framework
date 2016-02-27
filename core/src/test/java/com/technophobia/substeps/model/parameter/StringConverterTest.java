@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,53 +18,48 @@
  */
 package com.technophobia.substeps.model.parameter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import com.technophobia.substeps.model.parameter.StringConverter;
+import static org.junit.Assert.*;
 
 public class StringConverterTest {
 
-	private StringConverter converter;
+    private StringConverter converter;
 
 
-	@Before
-	public void setUp() {
-		converter = new StringConverter();
-	}
+    @Before
+    public void setUp() {
+        converter = new StringConverter();
+    }
 
 
-	@Test
-	public void testCanConvertString() {
-		final boolean canConvert = converter.canConvert(String.class);
-		assertTrue(canConvert);
-	}
+    @Test
+    public void testCanConvertString() {
+        final boolean canConvert = converter.canConvert(String.class);
+        assertTrue(canConvert);
+    }
 
 
-	@Test
-	public void testCanConvertInteger() {
-		final boolean canConvert = converter.canConvert(Integer.class);
-		assertFalse(canConvert);
-	}
+    @Test
+    public void testCanConvertInteger() {
+        final boolean canConvert = converter.canConvert(Integer.class);
+        assertFalse(canConvert);
+    }
 
 
-	@Test
-	public void testConvertValidString() {
-		final String value = "test string";
+    @Test
+    public void testConvertValidString() {
+        final String value = "test string";
 
-		final String actual = converter.convert(value);
-		assertEquals(value, actual);
-	}
+        final String actual = converter.convert(value);
+        assertEquals(value, actual);
+    }
 
 
-	@Test
-	public void testConvertNullString() {
-		final String actual = converter.convert(null);
-		assertNull(actual);
-	}
+    @Test
+    public void testConvertNullString() {
+        final String actual = converter.convert(null);
+        assertNull(actual);
+    }
 }

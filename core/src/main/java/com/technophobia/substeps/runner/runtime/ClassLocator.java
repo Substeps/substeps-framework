@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -22,5 +22,5 @@ import java.util.Iterator;
 
 public interface ClassLocator {
 
-	Iterator<Class<?>> fromPath(String path);
+    Iterator<Class<?>> fromPath(String path);
 }

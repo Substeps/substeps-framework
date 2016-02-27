@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,18 +18,16 @@
  */
 package com.technophobia.substeps.runner.syntax;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
-
 import com.technophobia.substeps.model.SubSteps;
 import com.technophobia.substeps.model.Syntax;
 import com.technophobia.substeps.scanner.ClasspathScanner;
 
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
+
 /**
- * 
  * @author imoore
- * 
  */
 public final class SyntaxBuilder {
     private SyntaxBuilder() {
@@ -52,30 +50,30 @@ public final class SyntaxBuilder {
 
 
     public static Syntax buildSyntax(final List<Class<?>> stepImplementationClasses, final File subStepsFile,
-            final boolean strict, final String[] nonStrictKeywordPrecedence) {
+                                     final boolean strict, final String[] nonStrictKeywordPrecedence) {
         return buildSyntax(stepImplementationClasses, subStepsFile, strict, nonStrictKeywordPrecedence,
                 new ClassAnalyser());
     }
 
 
     public static Syntax buildSyntax(final List<Class<?>> stepImplementationClasses, final File subStepsFile,
-            final boolean strict, final String[] nonStrictKeywordPrecedence, final ClassAnalyser classAnalyser) {
+                                     final boolean strict, final String[] nonStrictKeywordPrecedence, final ClassAnalyser classAnalyser) {
         return buildSyntax(stepImplementationClasses, subStepsFile, strict, nonStrictKeywordPrecedence, classAnalyser,
                 true);
     }
 
 
     public static Syntax buildSyntax(final List<Class<?>> stepImplementationClasses, final File subStepsFile,
-            final boolean strict, final String[] nonStrictKeywordPrecedence, final ClassAnalyser classAnalyser,
-            final boolean failOnDuplicateEntries) {
+                                     final boolean strict, final String[] nonStrictKeywordPrecedence, final ClassAnalyser classAnalyser,
+                                     final boolean failOnDuplicateEntries) {
         return buildSyntax(stepImplementationClasses, subStepsFile, strict, nonStrictKeywordPrecedence, classAnalyser,
                 failOnDuplicateEntries, new DefaultSyntaxErrorReporter());
     }
 
 
     public static Syntax buildSyntax(final List<Class<?>> stepImplementationClasses, final File subStepsFile,
-            final boolean strict, final String[] nonStrictKeywordPrecedence, final ClassAnalyser classAnalyser,
-            final boolean failOnDuplicateEntries, final SyntaxErrorReporter syntaxErrorReporter) {
+                                     final boolean strict, final String[] nonStrictKeywordPrecedence, final ClassAnalyser classAnalyser,
+                                     final boolean failOnDuplicateEntries, final SyntaxErrorReporter syntaxErrorReporter) {
         final Syntax syntax = buildBaseSyntax(stepImplementationClasses, classAnalyser, failOnDuplicateEntries,
                 syntaxErrorReporter);
 
@@ -92,8 +90,8 @@ public final class SyntaxBuilder {
 
 
     private static Syntax buildBaseSyntax(final List<Class<?>> stepImplementationClasses,
-            final ClassAnalyser classAnalyser, final boolean failOnDuplicateEntries,
-            final SyntaxErrorReporter syntaxErrorReporter) {
+                                          final ClassAnalyser classAnalyser, final boolean failOnDuplicateEntries,
+                                          final SyntaxErrorReporter syntaxErrorReporter) {
         // step implementations (arranged by StepDefinition, ie the annotation)
         // +
         // sub step definitions

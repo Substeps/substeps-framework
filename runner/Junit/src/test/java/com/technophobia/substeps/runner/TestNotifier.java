@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,21 +18,19 @@
  */
 package com.technophobia.substeps.runner;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import com.technophobia.substeps.execution.node.IExecutionNode;
 import org.junit.Ignore;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
-import com.technophobia.substeps.execution.node.IExecutionNode;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * test to get to the bottom of sequencing test started notifications etc
- * 
+ *
  * @author imoore
- * 
  */
 @Ignore("not a test!")
 public class TestNotifier implements IJunitNotifier {

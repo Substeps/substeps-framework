@@ -1,23 +1,17 @@
 package com.technophobia.substeps.ant;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.technophobia.substeps.execution.node.RootNode;
+import com.technophobia.substeps.report.ExecutionReportBuilder;
+import com.technophobia.substeps.runner.*;
 import junit.framework.Assert;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.technophobia.substeps.execution.node.RootNode;
-import com.technophobia.substeps.report.ExecutionReportBuilder;
-import com.technophobia.substeps.runner.BuildFailureManager;
-import com.technophobia.substeps.runner.ExecutionNodeRunnerFactory;
-import com.technophobia.substeps.runner.SubstepExecutionFailure;
-import com.technophobia.substeps.runner.SubstepsExecutionConfig;
-import com.technophobia.substeps.runner.SubstepsRunner;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SubStepsTask extends Task {
 
@@ -48,7 +42,7 @@ public class SubStepsTask extends Task {
     }
 
     private void executeInternal(final BuildFailureManager buildFailureManager,
-            final List<SubstepsExecutionConfig> executionConfigList) throws RuntimeException {
+                                 final List<SubstepsExecutionConfig> executionConfigList) throws RuntimeException {
 
         Assert.assertNotNull("executionConfigs cannot be null", executionConfigList);
         Assert.assertFalse("executionConfigs can't be empty", executionConfigList.isEmpty());
@@ -85,7 +79,7 @@ public class SubStepsTask extends Task {
     }
 
     private RootNode runExecutionConfig(final SubstepsExecutionConfig theConfig,
-            final List<SubstepExecutionFailure> failures) {
+                                        final List<SubstepExecutionFailure> failures) {
 
         final SubstepsRunner runner = ExecutionNodeRunnerFactory.createRunner();
         runner.prepareExecutionConfig(theConfig);

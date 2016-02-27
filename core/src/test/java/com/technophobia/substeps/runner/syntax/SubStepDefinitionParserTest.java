@@ -18,6 +18,17 @@
  */
 package com.technophobia.substeps.runner.syntax;
 
+import com.technophobia.substeps.model.ParentStep;
+import com.technophobia.substeps.model.PatternMap;
+import com.technophobia.substeps.model.exception.SubstepsParsingException;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import java.io.File;
+import java.util.List;
+
 import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.empty;
@@ -26,18 +37,6 @@ import static org.junit.Assert.fail;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-
-import java.io.File;
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import com.technophobia.substeps.model.ParentStep;
-import com.technophobia.substeps.model.PatternMap;
-import com.technophobia.substeps.model.exception.SubstepsParsingException;
 
 public class SubStepDefinitionParserTest {
 

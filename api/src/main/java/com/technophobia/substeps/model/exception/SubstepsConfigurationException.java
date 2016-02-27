@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -20,7 +20,6 @@ package com.technophobia.substeps.model.exception;
 
 /**
  * @author ian
- * 
  */
 public class SubstepsConfigurationException extends SubstepsException {
 

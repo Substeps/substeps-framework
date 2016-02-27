@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,13 +18,7 @@
  */
 package com.technophobia.substeps.execution;
 
-import com.technophobia.substeps.execution.node.BasicScenarioNode;
-import com.technophobia.substeps.execution.node.FeatureNode;
-import com.technophobia.substeps.execution.node.OutlineScenarioNode;
-import com.technophobia.substeps.execution.node.OutlineScenarioRowNode;
-import com.technophobia.substeps.execution.node.RootNode;
-import com.technophobia.substeps.execution.node.StepImplementationNode;
-import com.technophobia.substeps.execution.node.SubstepNode;
+import com.technophobia.substeps.execution.node.*;
 
 public interface ExecutionNodeVisitor<RETURN_TYPE> {
 

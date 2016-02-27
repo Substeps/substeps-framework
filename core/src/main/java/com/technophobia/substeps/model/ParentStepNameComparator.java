@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -22,18 +22,15 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 /**
- * 
- * 
  * @author imoore
- * 
  */
-public class ParentStepNameComparator implements Comparator<ParentStep>, Serializable  {
+public class ParentStepNameComparator implements Comparator<ParentStep>, Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -3603889012021182256L;
+     *
+     */
+    private static final long serialVersionUID = -3603889012021182256L;
 
-	/**
+    /**
      * {@inheritDoc}
      */
     public int compare(final ParentStep p1, final ParentStep p2) {

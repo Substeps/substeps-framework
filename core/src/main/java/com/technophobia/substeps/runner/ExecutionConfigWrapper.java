@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,18 +18,17 @@
  */
 package com.technophobia.substeps.runner;
 
+import com.technophobia.substeps.helper.AssertHelper;
+import com.technophobia.substeps.model.SubSteps.StepImplementations;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import com.technophobia.substeps.helper.AssertHelper;
-
-import com.technophobia.substeps.model.SubSteps.StepImplementations;
-
 /**
  * Wraps an ExecutionConfig providing extra functionality for core
- * 
+ *
  * @author rbarefield
  */
 public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
@@ -85,7 +84,7 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
     private String printParameters() {
         return "ExecutionConfig [description=" + getDescription() + ", tags=" + getTags() + ", nonFatalTags="
                 + getNonFatalTags() + ", featureFile=" + getFeatureFile() + ", subStepsFileName="
-                + getSubStepsFileName() + ", scenarioName=" + getScenarioName() +  ", strict=" + isStrict() + ", fastFailParseErrors=" + isFastFailParseErrors()
+                + getSubStepsFileName() + ", scenarioName=" + getScenarioName() + ", strict=" + isStrict() + ", fastFailParseErrors=" + isFastFailParseErrors()
                 + ", nonStrictKeywordPrecedence=" + Arrays.toString(getNonStrictKeywordPrecedence())
                 + ", stepImplementationClassNames=" + Arrays.toString(getStepImplementationClassNames())
                 + ", initialisationClass=" + Arrays.toString(getInitialisationClass()) + ", stepImplementationClasses="
@@ -150,7 +149,7 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
         }
 
         if (initialisationClassList != null) {
-            setInitialisationClasses(initialisationClassList.toArray(new Class<?>[] {}));
+            setInitialisationClasses(initialisationClassList.toArray(new Class<?>[]{}));
         }
 
         return getInitialisationClasses();

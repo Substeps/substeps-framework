@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -19,23 +19,21 @@
 
 package com.technophobia.substeps.runner;
 
-import static org.hamcrest.CoreMatchers.is;
+import com.technophobia.substeps.model.ParentStep;
+import com.technophobia.substeps.model.Step;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.technophobia.substeps.model.ParentStep;
-import com.technophobia.substeps.model.Step;
+import static org.hamcrest.CoreMatchers.is;
 
 //import static org.junit.Assert.*;
 
 /**
  * @author ian
- * 
  */
 public class ParsingTests {
     @Test

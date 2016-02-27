@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,31 +18,24 @@
  */
 package com.technophobia.substeps.runner;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Strings;
-
 import com.technophobia.substeps.helper.AssertHelper;
 import com.technophobia.substeps.model.Background;
 import com.technophobia.substeps.model.FeatureFile;
 import com.technophobia.substeps.model.Scenario;
 import com.technophobia.substeps.model.Step;
 import com.technophobia.substeps.parser.FileContents;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author ian
- * 
  */
 public class FeatureFileParser {
 
@@ -110,7 +103,7 @@ public class FeatureFileParser {
         }
     }
 
-    private String getFirstLinePattern(final String element) {
+    private static String getFirstLinePattern(final String element) {
 
         final StringBuilder buf = new StringBuilder();
         final String[] lines = element.split("\n");
@@ -124,7 +117,7 @@ public class FeatureFileParser {
     /**
      * @param ff
      */
-    private void cascadeTags(final FeatureFile ff) {
+    private static void cascadeTags(final FeatureFile ff) {
         // add any feature level tags to all scenario children
 
         if (ff != null && ff.getTags() != null && !ff.getTags().isEmpty()) {
@@ -141,7 +134,7 @@ public class FeatureFileParser {
     /**
      * @param ff
      */
-    private boolean parseFeatureDescription(final FeatureFile ff) {
+    private static boolean parseFeatureDescription(final FeatureFile ff) {
         boolean valid = true;
         final String raw = ff.getRawText();
 
@@ -316,7 +309,7 @@ public class FeatureFileParser {
      * @return
      */
     private void processScenarioDirective(final FeatureFile ff, final Set<String> currentTags,
-            final String currentBackground, final String sc, final boolean outline, final int start) {
+                                          final String currentBackground, final String sc, final boolean outline, final int start) {
         final Scenario scenario = new Scenario();
 
         scenario.setRawText(sc);
@@ -341,9 +334,9 @@ public class FeatureFileParser {
 
     /**
      * @param currentTags
-     * @param sc
+     * @param raw
      */
-    private void processTags(final Set<String> currentTags, final String raw) {
+    private static void processTags(final Set<String> currentTags, final String raw) {
         // break up the tags - TODO - this is where we will need to evaluate any
         // boolean logic of tag expressions
 
@@ -376,7 +369,7 @@ public class FeatureFileParser {
                 final String[] splitByQuotes = line.split("\"[^\"]*\"|'[^']*'");
                 // this will find parts of the string not in quotes
                 for (final String split : splitByQuotes) {
-                    if (split.indexOf("#") > 0) {
+                    if (split.contains("#") ) {
                         // hash exists not in a matching pair of quotes
                         doTrim = true;
                         break;
@@ -396,7 +389,7 @@ public class FeatureFileParser {
     }
 
     /**
-     * @param featureFile
+     * @param lines
      * @return
      */
     private String stripCommentsAndBlankLines(final List<String> lines) {
@@ -420,7 +413,7 @@ public class FeatureFileParser {
     /**
      * @param trimmed
      */
-    private void parseExamples(final int lineNumber, final String trimmed, final Scenario sc) {
+    private static void parseExamples(final int lineNumber, final String trimmed, final Scenario sc) {
         final String[] split = trimmed.split("\\|");
 
         if (sc.getExampleParameters() == null) {
@@ -432,7 +425,7 @@ public class FeatureFileParser {
 
     }
 
-    private static enum Directive {
+    private enum Directive {
         // @formatter:off
         TAGS("Tags"), FEATURE("Feature"), BACKGROUND("Background"), SCENARIO("Scenario"), SCENARIO_OUTLINE(
                 "Scenario Outline"), EXAMPLES("Examples");

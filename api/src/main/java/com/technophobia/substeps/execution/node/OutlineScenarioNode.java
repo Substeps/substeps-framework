@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,11 +18,11 @@
  */
 package com.technophobia.substeps.execution.node;
 
-import java.util.List;
-import java.util.Set;
-
 import com.google.common.collect.Lists;
 import com.technophobia.substeps.execution.ExecutionNodeVisitor;
+
+import java.util.List;
+import java.util.Set;
 
 public class OutlineScenarioNode extends ScenarioNode<OutlineScenarioRowNode> {
 
@@ -33,7 +33,7 @@ public class OutlineScenarioNode extends ScenarioNode<OutlineScenarioRowNode> {
     private final Set<String> tags;
 
     public OutlineScenarioNode(final String scenarioName, final List<OutlineScenarioRowNode> outlineRows, final Set<String> tags,
-            final int depth) {
+                               final int depth) {
         super(outlineRows);
         this.scenarioName = scenarioName;
         this.tags = tags;

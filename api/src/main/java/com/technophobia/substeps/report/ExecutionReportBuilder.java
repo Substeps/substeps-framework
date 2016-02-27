@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,13 +18,13 @@
  */
 package com.technophobia.substeps.report;
 
-import java.io.File;
-
 import com.technophobia.substeps.execution.node.IExecutionNode;
 import com.technophobia.substeps.execution.node.RootNode;
 
+import java.io.File;
+
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -44,7 +44,6 @@ import com.technophobia.substeps.execution.node.RootNode;
 
 /**
  * @author ian
- * 
  */
 public abstract class ExecutionReportBuilder {
 

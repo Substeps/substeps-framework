@@ -18,16 +18,15 @@
  */
 package com.technophobia.substeps.execution.node;
 
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.technophobia.substeps.execution.MethodExecutor;
 import com.technophobia.substeps.runner.INotificationDistributor;
 import com.technophobia.substeps.runner.SubstepExecutionFailure;
 import com.technophobia.substeps.runner.TagManager;
 import com.technophobia.substeps.runner.setupteardown.SetupAndTearDown;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 //This isn't thread safe - if we were to run features concurrently we'd need to rectify this. 
 public class RootNodeExecutionContext {
@@ -42,8 +41,8 @@ public class RootNodeExecutionContext {
     private final MethodExecutor methodExecutor;
 
     public RootNodeExecutionContext(INotificationDistributor notificationDistributor,
-            List<SubstepExecutionFailure> failures, SetupAndTearDown setupAndTeardown, TagManager nonFatalTagmanager,
-            MethodExecutor methodExecutor) {
+                                    List<SubstepExecutionFailure> failures, SetupAndTearDown setupAndTeardown, TagManager nonFatalTagmanager,
+                                    MethodExecutor methodExecutor) {
 
         this.notificationDistributor = notificationDistributor;
         this.failures = failures;
@@ -107,7 +106,7 @@ public class RootNodeExecutionContext {
 
         } else {
             // fallback position - just normal logging
-            log.info("SubstepExecutionFailure @ " + failure.getExeccutionNode().toDebugString(),  failure.getThrowableInfo().getThrowable());
+            log.info("SubstepExecutionFailure @ " + failure.getExeccutionNode().toDebugString(), failure.getThrowableInfo().getThrowable());
         }
 
     }

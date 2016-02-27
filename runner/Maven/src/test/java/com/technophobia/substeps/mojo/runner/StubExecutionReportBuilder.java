@@ -37,7 +37,7 @@ public class StubExecutionReportBuilder extends ExecutionReportBuilder {
         this.outputDirectory = file;
     }
 
-    public void setReportTitle(String title){
+    public void setReportTitle(String title) {
         this.reportTitle = title;
     }
 }

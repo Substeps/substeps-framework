@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -30,7 +30,7 @@ public class SubstepsParsingException extends SubstepsException {
     private final int lineNumber;
 
     public SubstepsParsingException(final File file, final int lineNumber, final String line, final long offset,
-            final String message) {
+                                    final String message) {
         super(message);
         this.file = file;
         this.line = line;

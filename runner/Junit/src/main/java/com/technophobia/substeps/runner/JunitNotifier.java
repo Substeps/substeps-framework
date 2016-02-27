@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,21 +18,19 @@
  */
 package com.technophobia.substeps.runner;
 
-import java.util.Map;
-
+import com.technophobia.substeps.execution.node.IExecutionNode;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.technophobia.substeps.execution.node.IExecutionNode;
+import java.util.Map;
 
 /**
  * A wrapper around the Junit notifier and any other registered test listeners
- * 
+ *
  * @author imoore
- * 
  */
 public class JunitNotifier implements IJunitNotifier {
 

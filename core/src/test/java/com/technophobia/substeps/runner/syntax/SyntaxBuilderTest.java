@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,15 +18,6 @@
  */
 package com.technophobia.substeps.runner.syntax;
 
-import static org.hamcrest.CoreMatchers.is;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.technophobia.substeps.model.ParentStep;
 import com.technophobia.substeps.model.Step;
 import com.technophobia.substeps.model.StepImplementation;
@@ -37,12 +28,17 @@ import com.technophobia.substeps.stepimplementations.DuplicateStepImplementation
 import com.technophobia.substeps.stepimplementations.MockStepImplementations;
 import com.technophobia.substeps.stepimplementations.MockStepImplementationsContainer;
 import com.technophobia.substeps.steps.TestStepImplementations;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.is;
 
 /**
- * 
- * 
  * @author imoore
- * 
  */
 public class SyntaxBuilderTest {
 

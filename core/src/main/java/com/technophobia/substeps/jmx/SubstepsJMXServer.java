@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -19,25 +19,15 @@
 
 package com.technophobia.substeps.jmx;
 
-import java.io.StringWriter;
-import java.lang.management.ManagementFactory;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.concurrent.CountDownLatch;
-
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectName;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.management.*;
+import java.lang.management.ManagementFactory;
+import java.util.concurrent.CountDownLatch;
+
 /**
  * @author ian
- * 
  */
 public class SubstepsJMXServer {
 

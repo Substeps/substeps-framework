@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,9 +18,9 @@
  */
 package com.technophobia.substeps.runner;
 
-import java.util.List;
-
 import com.technophobia.substeps.execution.node.RootNode;
+
+import java.util.List;
 
 /**
  * Common interface for Substeps runners, prepare, then run.

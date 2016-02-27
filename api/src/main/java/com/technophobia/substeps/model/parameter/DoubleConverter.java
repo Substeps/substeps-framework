@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -20,16 +20,16 @@ package com.technophobia.substeps.model.parameter;
 
 public class DoubleConverter implements Converter<Double> {
 
-	public boolean canConvert(final Class<?> cls) {
-		return cls == double.class || cls == Double.class;
-	}
+    public boolean canConvert(final Class<?> cls) {
+        return cls == double.class || cls == Double.class;
+    }
 
 
-	public Double convert(final String value) {
-		if (value == null) {
-			throw new NumberFormatException("null");
-		}
+    public Double convert(final String value) {
+        if (value == null) {
+            throw new NumberFormatException("null");
+        }
 
-		return Double.valueOf(value);
-	}
+        return Double.valueOf(value);
+    }
 }

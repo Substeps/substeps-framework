@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -29,5 +29,6 @@ public class SubstepsRuntimeException extends SubstepsException {
     public SubstepsRuntimeException(final String msg, Throwable cause) {
         super(msg, cause);
     }
+
 
 }

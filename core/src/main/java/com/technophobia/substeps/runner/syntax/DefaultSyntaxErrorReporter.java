@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,13 +18,12 @@
  */
 package com.technophobia.substeps.runner.syntax;
 
-import java.io.File;
-
+import com.technophobia.substeps.model.exception.StepImplementationException;
+import com.technophobia.substeps.model.exception.SubstepsParsingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.technophobia.substeps.model.exception.StepImplementationException;
-import com.technophobia.substeps.model.exception.SubstepsParsingException;
+import java.io.File;
 
 public class DefaultSyntaxErrorReporter implements SyntaxErrorReporter {
 
@@ -32,14 +31,14 @@ public class DefaultSyntaxErrorReporter implements SyntaxErrorReporter {
 
 
     public void reportFeatureError(final File file, final String line, final int lineNumber, final int offset,
-            final String description) throws RuntimeException {
+                                   final String description) throws RuntimeException {
         LOG.error("Error on line " + lineNumber + " of feature file " + file.getAbsolutePath() + ": " + line
                 + " - reason: " + description);
     }
 
 
     public void reportFeatureError(final File file, final String line, final int lineNumber, final int offset,
-            final String description, final RuntimeException ex) throws RuntimeException {
+                                   final String description, final RuntimeException ex) throws RuntimeException {
         LOG.error("Error on line " + lineNumber + " of feature file " + file.getAbsolutePath() + ": " + line
                 + " - reason: " + description);
         throw ex;

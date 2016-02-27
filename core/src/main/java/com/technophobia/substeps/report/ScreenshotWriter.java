@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,16 +18,15 @@
  */
 package com.technophobia.substeps.report;
 
-import java.io.File;
-import java.io.FileOutputStream;
-
+import com.technophobia.substeps.execution.AbstractExecutionNodeVisitor;
+import com.technophobia.substeps.execution.node.ExecutionNode;
+import com.technophobia.substeps.execution.node.StepImplementationNode;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.technophobia.substeps.execution.AbstractExecutionNodeVisitor;
-import com.technophobia.substeps.execution.node.ExecutionNode;
-import com.technophobia.substeps.execution.node.StepImplementationNode;
+import java.io.File;
+import java.io.FileOutputStream;
 
 public final class ScreenshotWriter extends AbstractExecutionNodeVisitor<Void> {
 
@@ -69,7 +68,7 @@ public final class ScreenshotWriter extends AbstractExecutionNodeVisitor<Void> {
 
             }
         }
-        
+
         return null;
     }
 

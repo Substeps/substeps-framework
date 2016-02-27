@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,19 +18,14 @@
  */
 package com.technophobia.substeps.runner.setupteardown;
 
-import static org.hamcrest.CoreMatchers.is;
+import com.technophobia.substeps.runner.setupteardown.fake.*;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.technophobia.substeps.runner.setupteardown.fake.BeforeAndAfterAnnotationProcessorFakeMultipleMethodsClass1;
-import com.technophobia.substeps.runner.setupteardown.fake.BeforeAndAfterAnnotationProcessorFakeMultipleMethodsClass2;
-import com.technophobia.substeps.runner.setupteardown.fake.BeforeAndAfterHierarchicalMethodsClass;
-import com.technophobia.substeps.runner.setupteardown.fake.BeforeAndAfterHierarchicalMethodsParentClass;
-import com.technophobia.substeps.runner.setupteardown.fake.BeforeAndAfterMethodsClass;
+import static org.hamcrest.CoreMatchers.is;
 
 public class BeforeAndAfterProcessorMethodExecutorTest {
 
@@ -51,7 +46,7 @@ public class BeforeAndAfterProcessorMethodExecutorTest {
     @Test
     public void canLocateBeforeAndAfterAnnotatedMethods() throws Throwable {
         final BeforeAndAfterMethods executor = new BeforeAndAfterMethods(
-                new Class<?>[] { BeforeAndAfterMethodsClass.class });
+                new Class<?>[]{BeforeAndAfterMethodsClass.class});
 
         checkMethodsAreIncluded(executor.getSetupAndTearDownMethods(MethodState.BEFORE_ALL),
                 getMethod(BeforeAndAfterMethodsClass.class, "beforeAllFeatures"));
@@ -86,7 +81,7 @@ public class BeforeAndAfterProcessorMethodExecutorTest {
     public void canLocateBeforeAndAfterAnnotatedMethodsInClassHierarchy() throws Throwable {
 
         final BeforeAndAfterMethods executor = new BeforeAndAfterMethods(
-                new Class<?>[] { BeforeAndAfterHierarchicalMethodsClass.class });
+                new Class<?>[]{BeforeAndAfterHierarchicalMethodsClass.class});
 
         checkMethodsAreIncluded(
                 executor.getSetupAndTearDownMethods(MethodState.BEFORE_ALL),
@@ -130,9 +125,9 @@ public class BeforeAndAfterProcessorMethodExecutorTest {
     public void canLocateBeforeAndAfterAnnotatedMethodsForMultipleAnnotationProcessors()
             throws Throwable {
 
-        final BeforeAndAfterMethods executor = new BeforeAndAfterMethods(new Class<?>[] {
+        final BeforeAndAfterMethods executor = new BeforeAndAfterMethods(new Class<?>[]{
                 BeforeAndAfterAnnotationProcessorFakeMultipleMethodsClass1.class,
-                BeforeAndAfterAnnotationProcessorFakeMultipleMethodsClass2.class });
+                BeforeAndAfterAnnotationProcessorFakeMultipleMethodsClass2.class});
 
         checkMethodsAreIncluded(
                 executor.getSetupAndTearDownMethods(MethodState.BEFORE_ALL),

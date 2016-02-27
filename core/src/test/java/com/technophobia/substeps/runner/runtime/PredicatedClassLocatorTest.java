@@ -18,23 +18,20 @@
  */
 package com.technophobia.substeps.runner.runtime;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.util.Iterator;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.technophobia.substeps.runner.runtime.fake.AnnotatedStepClassFake;
 import com.technophobia.substeps.runner.runtime.fake.NonAnnotatedStepClassFake;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.File;
+import java.util.Iterator;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class PredicatedClassLocatorTest {
 
@@ -54,7 +51,7 @@ public class PredicatedClassLocatorTest {
     }
 
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
     public void onlyFilesMatchingPredicateAreLocated() {
         when(predicate.apply(AnnotatedStepClassFake.class)).thenReturn(true);

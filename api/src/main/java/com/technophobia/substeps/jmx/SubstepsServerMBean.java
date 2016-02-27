@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -19,14 +19,11 @@
 
 package com.technophobia.substeps.jmx;
 
-import com.technophobia.substeps.execution.node.RootNode;
-import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
 import com.technophobia.substeps.runner.SubstepsExecutionConfig;
 import com.technophobia.substeps.runner.SubstepsRunner;
 
 /**
  * @author ian
- * 
  */
 public interface SubstepsServerMBean extends SubstepsRunner {
 

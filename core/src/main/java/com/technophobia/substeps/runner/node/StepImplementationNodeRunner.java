@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,13 +18,13 @@
  */
 package com.technophobia.substeps.runner.node;
 
-import java.lang.reflect.InvocationTargetException;
-
 import com.technophobia.substeps.execution.node.RootNodeExecutionContext;
 import com.technophobia.substeps.execution.node.StepImplementationNode;
 import com.technophobia.substeps.model.Scope;
 import com.technophobia.substeps.runner.ProvidesScreenshot;
 import com.technophobia.substeps.runner.SubstepExecutionFailure;
+
+import java.lang.reflect.InvocationTargetException;
 
 public class StepImplementationNodeRunner extends AbstractNodeRunner<StepImplementationNode, Void> {
 
@@ -72,7 +72,7 @@ public class StepImplementationNodeRunner extends AbstractNodeRunner<StepImpleme
     }
 
     private <T extends ProvidesScreenshot> byte[] getScreenshot(RootNodeExecutionContext context,
-            Class<T> screenshotClass) {
+                                                                Class<T> screenshotClass) {
 
         T screenshotTakingInstance = context.getMethodExecutor().getImplementation(screenshotClass);
         return screenshotTakingInstance.getScreenshotBytes();

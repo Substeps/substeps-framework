@@ -9,7 +9,10 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by ian on 25/02/16.
@@ -38,15 +41,12 @@ public abstract class FileBasedGlossaryPublisher implements GlossaryPublisher {
     public abstract String getDefaultFileName();
 
 
-
     private Comparator<StepDescriptor> expressionComparator = (s1, s2) -> s1.getExpression().compareTo(s2.getExpression());
 
     private String getSection(StepDescriptor stepTag) {
         boolean noTag = stepTag.getSection() == null || stepTag.getSection().isEmpty();
         return noTag ? "Miscellaneous" : stepTag.getSection();
     }
-
-
 
 
     private Map<String, Collection<StepDescriptor>> sortStepDescriptions(List<StepImplementationsDescriptor> stepimplementationDescriptors) {
@@ -92,7 +92,7 @@ public abstract class FileBasedGlossaryPublisher implements GlossaryPublisher {
                 Files.write(content, outputFile, Charset.defaultCharset());
             } else {
 
-                log.error("unable to create new file: " +outputFile.getAbsolutePath() );
+                log.error("unable to create new file: " + outputFile.getAbsolutePath());
 
             }
         } catch (final IOException e) {

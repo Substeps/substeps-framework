@@ -6,12 +6,10 @@ import org.junit.runner.Description;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-public abstract class AbstractReflectiveDescriptionBuilder extends AbstractDescriptionBuilder{
+public abstract class AbstractReflectiveDescriptionBuilder extends AbstractDescriptionBuilder {
 
     private final Logger log = LoggerFactory.getLogger(AbstractReflectiveDescriptionBuilder.class);
 

@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,20 +18,18 @@
  */
 package com.technophobia.substeps.steps;
 
-import java.util.List;
-import java.util.Map;
-
+import com.technophobia.substeps.model.SubSteps.Step;
+import com.technophobia.substeps.model.SubSteps.StepImplementations;
 import org.junit.Assert;
 import org.junit.Ignore;
 
-import com.technophobia.substeps.model.SubSteps.Step;
-import com.technophobia.substeps.model.SubSteps.StepImplementations;
+import java.util.List;
+import java.util.Map;
 
 /**
  * In here we'll have some implementations of some steps
- * 
+ *
  * @author imoore
- * 
  */
 @StepImplementations
 @Ignore
@@ -104,9 +102,9 @@ public class TestStepImplementations {
         somethingCalled = true;
         this.table = table;
     }
-    
+
     @Step("An Uncalled step implementation")
-    public void uncalled(){
+    public void uncalled() {
         Assert.fail("don't call me");
     }
 }

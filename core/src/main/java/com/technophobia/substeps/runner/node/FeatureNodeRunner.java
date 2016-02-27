@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,15 +18,10 @@
  */
 package com.technophobia.substeps.runner.node;
 
+import com.technophobia.substeps.execution.node.*;
+import com.technophobia.substeps.model.Scope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.technophobia.substeps.execution.node.BasicScenarioNode;
-import com.technophobia.substeps.execution.node.FeatureNode;
-import com.technophobia.substeps.execution.node.OutlineScenarioNode;
-import com.technophobia.substeps.execution.node.RootNodeExecutionContext;
-import com.technophobia.substeps.execution.node.ScenarioNode;
-import com.technophobia.substeps.model.Scope;
 
 public class FeatureNodeRunner extends AbstractNodeRunner<FeatureNode, Boolean> {
 

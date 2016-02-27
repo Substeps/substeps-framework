@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,12 +18,12 @@
  */
 package com.technophobia.substeps.execution.node;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 public class TestBasicScenarioNodeBuilder implements TestScenarioNodeBuilder<BasicScenarioNode> {
 
@@ -63,7 +63,7 @@ public class TestBasicScenarioNodeBuilder implements TestScenarioNodeBuilder<Bas
     }
 
     public TestBasicScenarioNodeBuilder addStepImpls(int numberOfIdenticalStepsImpls, Class<?> targetClass,
-            Method targetMethod) {
+                                                     Method targetMethod) {
 
         for (int i = 0; i < numberOfIdenticalStepsImpls; i++) {
 

@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,12 +18,12 @@
  */
 package com.technophobia.substeps.runner;
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Parameter;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Properties;
-
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * @author ricky
@@ -36,7 +36,6 @@ public class ExecutionConfig {
     /**
      * A descriptive name for the configuration, this is used in the test
      * execution report
-     * 
      */
     @Parameter
     private String description;
@@ -45,7 +44,6 @@ public class ExecutionConfig {
      * If the feature or scenario has these tags, then it will be included,
      * otherwise it won’t. multiple tags are space seperated. Tags can be
      * excluded by prefixing with
-     * 
      */
     @Parameter
     private String tags;
@@ -57,21 +55,18 @@ public class ExecutionConfig {
      * functionality, this allows the build and therefore maven releases to
      * succeed. Over the course of a project this list should be reduced as
      * confidence in the delivery grows. Format is the same for <tags>
-     * 
      */
     @Parameter
     private String nonFatalTags;
 
     /**
      * Path to the feature file, or directory containing the feature files
-     * 
      */
     @Parameter(required = true)
     private String featureFile;
 
     /**
      * Path to directory of substep files, or a single substep file
-     * 
      */
     @Parameter(required = true)
     private String subStepsFileName;
@@ -80,7 +75,6 @@ public class ExecutionConfig {
      * Defaults to true, if false, Substeps will use the
      * nonStrictKeywordPrecedence to look for alternate expressions if an exact
      * match can’t be found. Useful for porting Cucumber features.
-     * 
      */
     @Parameter(required = true, defaultValue = "true")
     private boolean strict = true;
@@ -89,7 +83,6 @@ public class ExecutionConfig {
      * If true any parse errors will fail the build immediately, rather than
      * attempting to execute as much as possible and fail those tests that can’t
      * be parsed
-     * 
      */
     @Parameter(required = true)
     private boolean fastFailParseErrors = true;
@@ -104,7 +97,6 @@ public class ExecutionConfig {
      * exact match can’t be found. eg. <param>Given</param> <param>When</param>
      * ... Then if a step was defined in a feature or substep as “When I login”,
      * but implemented as “Given I login”, the feature would parse correctly.
-     * 
      */
     @Parameter
     private String[] nonStrictKeywordPrecedence;
@@ -112,7 +104,6 @@ public class ExecutionConfig {
     /**
      * List of classes containing step implementations eg
      * <param>com.technophobia.substeps.StepImplmentations<param>
-     * 
      */
     @Parameter(required = true)
     private String[] stepImplementationClassNames;
@@ -122,7 +113,6 @@ public class ExecutionConfig {
      * <param>com.technophobia.substeps.MySetup<param>. By default the
      * initialisation classes associated with the step implementations will be
      * used.
-     * 
      */
     @Parameter
     private String[] initialisationClass;
@@ -163,7 +153,6 @@ public class ExecutionConfig {
             }
         }
     }
-
 
 
     public String getDescription() {

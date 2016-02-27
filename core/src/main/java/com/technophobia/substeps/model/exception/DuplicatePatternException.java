@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,9 +18,9 @@
  */
 package com.technophobia.substeps.model.exception;
 
-import java.io.File;
-
 import com.technophobia.substeps.model.ParentStep;
+
+import java.io.File;
 
 public class DuplicatePatternException extends SubstepsParsingException {
 
@@ -28,7 +28,7 @@ public class DuplicatePatternException extends SubstepsParsingException {
 
 
     public DuplicatePatternException(final String pattern, final ParentStep originalSource,
-            final ParentStep duplicatingSource) {
+                                     final ParentStep duplicatingSource) {
         // TODO - offset
         super(new File(duplicatingSource.getSubStepFileUri()), originalSource.getParent().getSourceLineNumber(),
                 originalSource.getParent().getLine(), duplicatingSource.getParent().getSourceStartOffset(),
@@ -38,7 +38,7 @@ public class DuplicatePatternException extends SubstepsParsingException {
 
 
     private static String messageFrom(final String pattern, final ParentStep originalSource,
-            final ParentStep duplicatingSource) {
+                                      final ParentStep duplicatingSource) {
         // TODO: is 'pattern' actually a end-user friendly word?
         return String.format("Duplicate pattern detected: Pattern [%s] is defined in %s and %s", pattern,
                 patternLocationFrom(originalSource), patternLocationFrom(duplicatingSource));

@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -25,7 +25,7 @@ public abstract class ScenarioNode<CHILD_TYPE extends IExecutionNode> extends No
 
     private static final long serialVersionUID = 1L;
 
-    public ScenarioNode(List<CHILD_TYPE> children){
+    public ScenarioNode(List<CHILD_TYPE> children) {
         super(children);
     }
 }

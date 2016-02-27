@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -31,7 +31,6 @@ import java.util.List;
 
 /**
  * @author ian
- * 
  */
 public class BuildFailureManager extends AbstractExecutionNodeVisitor<String> {
 
@@ -45,12 +44,12 @@ public class BuildFailureManager extends AbstractExecutionNodeVisitor<String> {
 
     public void addExecutionResult(RootNode rootNode) {
 
-        addFailuresToLists(rootNode, Collections.<IExecutionNode> emptyList());
+        addFailuresToLists(rootNode, Collections.<IExecutionNode>emptyList());
 
         // possible that the failure is only in the root node...
 
         if (rootNode.getResult().getFailure() != null && rootNode.getResult().getResult().isFailure() &&
-                nonCriticalFailures.isEmpty() && criticalFailures.isEmpty() ) {
+                nonCriticalFailures.isEmpty() && criticalFailures.isEmpty()) {
 
             SubstepExecutionFailure failure = rootNode.getResult().getFailure();
 //            List<IExecutionNode> path = Lists.newArrayList(parents);
@@ -58,13 +57,12 @@ public class BuildFailureManager extends AbstractExecutionNodeVisitor<String> {
 
 
             if (failure.isNonCritical()) {
-                nonCriticalFailures.add(Lists.newArrayList((IExecutionNode)rootNode));
+                nonCriticalFailures.add(Lists.newArrayList((IExecutionNode) rootNode));
             } else {
-                criticalFailures.add(Lists.newArrayList((IExecutionNode)rootNode));
+                criticalFailures.add(Lists.newArrayList((IExecutionNode) rootNode));
             }
 
         }
-
 
 
     }
@@ -122,8 +120,7 @@ public class BuildFailureManager extends AbstractExecutionNodeVisitor<String> {
 
                     addFailuresToLists(childNode, path);
                 }
-            }
-            else {
+            } else {
 
                 SubstepExecutionFailure failure = node.getResult().getFailure();
 

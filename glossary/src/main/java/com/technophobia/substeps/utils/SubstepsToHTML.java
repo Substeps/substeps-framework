@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,24 +18,22 @@
  */
 package com.technophobia.substeps.utils;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.lang.StringEscapeUtils;
-
 import com.technophobia.substeps.model.FeatureFile;
 import com.technophobia.substeps.model.Scenario;
 import com.technophobia.substeps.model.Step;
 import com.technophobia.substeps.runner.FeatureFileComparator;
 import com.technophobia.substeps.runner.FeatureFileParser;
 import com.technophobia.substeps.runner.syntax.FileUtils;
+import org.apache.commons.lang.StringEscapeUtils;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author ian
- * 
  */
 public class SubstepsToHTML {
     /**
@@ -144,7 +142,7 @@ public class SubstepsToHTML {
 
 
     private void appendKeyword(final String colour, final String keyword, final String description,
-            final StringBuilder buf) {
+                               final StringBuilder buf) {
         buf.append("<span style=\"color:").append(colour).append(";\">").append(keyword)
                 .append(":</span> ");
 

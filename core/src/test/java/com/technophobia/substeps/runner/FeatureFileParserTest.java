@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,25 +18,21 @@
  */
 package com.technophobia.substeps.runner;
 
-import static org.hamcrest.Matchers.*;
+import com.technophobia.substeps.model.FeatureFile;
+import com.technophobia.substeps.model.Scenario;
+import com.technophobia.substeps.model.Step;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.technophobia.substeps.model.FeatureFile;
-import com.technophobia.substeps.model.Scenario;
-import com.technophobia.substeps.model.Step;
+import static org.hamcrest.Matchers.*;
 
 /**
- * 
- * 
  * @author imoore
- * 
  */
 public class FeatureFileParserTest {
 

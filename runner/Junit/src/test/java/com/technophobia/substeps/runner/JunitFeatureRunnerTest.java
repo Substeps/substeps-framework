@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,34 +18,27 @@
  */
 package com.technophobia.substeps.runner;
 
-import static org.hamcrest.CoreMatchers.any;
-import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.technophobia.substeps.execution.node.IExecutionNode;
+import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
+import com.technophobia.substeps.stepimplementations.MockStepImplementations;
+import com.technophobia.substeps.steps.TestStepImplementations;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
-import com.technophobia.substeps.execution.node.IExecutionNode;
-import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
-import com.technophobia.substeps.stepimplementations.MockStepImplementations;
-import com.technophobia.substeps.steps.TestStepImplementations;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.hamcrest.CoreMatchers.any;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.*;
 
 /**
  * @author imoore
- * 
  */
 public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
 
@@ -365,7 +358,6 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
 
         verify(spy, times(1)).meth10(table);
     }
-
 
 
     @Test

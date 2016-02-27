@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -24,7 +24,7 @@ package com.technophobia.substeps.model.parameter;
  * It allows for custom converters to be defined using the @StepParameter
  * annotation, but also maintains a collection of default converters that will
  * cover the majority of cases. <br>
- * <p>
+ * <p/>
  * Possible modifications:
  * - TODO: Load converters based on naming convention.
  * - TODO: Register converters based on an annotation on the Converter
@@ -35,8 +35,8 @@ package com.technophobia.substeps.model.parameter;
 public final class ConverterFactory {
 
     // TODO: Need a better way to inject/configure this list (annotations? config file?)
-    private static final Converter<?>[] CONVERTER_LIST = { new StringConverter(), new IntegerConverter(),
-        new LongConverter(), new DoubleConverter(), new BooleanConverter(), };
+    private static final Converter<?>[] CONVERTER_LIST = {new StringConverter(), new IntegerConverter(),
+            new LongConverter(), new DoubleConverter(), new BooleanConverter(),};
 
 
     private ConverterFactory() {

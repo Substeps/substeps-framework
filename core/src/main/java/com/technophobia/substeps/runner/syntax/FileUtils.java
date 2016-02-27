@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -26,7 +26,6 @@ import java.util.List;
 
 /**
  * @author ian
- * 
  */
 // TODO replace with commons io
 @Deprecated
@@ -40,7 +39,7 @@ public class FileUtils {
                     public boolean accept(final File dir) {
                         return dir.isDirectory()
                                 || (dir.isFile() && dir.getName().endsWith(
-                                        extension));
+                                extension));
                     }
 
                 });

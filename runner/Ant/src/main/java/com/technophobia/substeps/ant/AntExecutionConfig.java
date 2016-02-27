@@ -1,12 +1,12 @@
 package com.technophobia.substeps.ant;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.common.collect.Lists;
 import com.technophobia.substeps.runner.SubstepsExecutionConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AntExecutionConfig extends SubstepsExecutionConfig {
 
@@ -59,7 +59,7 @@ public class AntExecutionConfig extends SubstepsExecutionConfig {
             classes.add(initClassFromSuper);
         }
 
-        return classes.toArray(new Class[] {});
+        return classes.toArray(new Class[]{});
     }
 
     public void addConfiguredStepImplementationClassNames(StepImplementationClassNames s) {

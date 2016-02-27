@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -24,10 +24,10 @@ import java.util.Comparator;
 import java.util.List;
 
 public class MethodComparator implements Comparator<Method>, Serializable {
-	
-	private static final long serialVersionUID = -2554981241880066335L;
 
-	private final List<Class<?>> classHierarchy;
+    private static final long serialVersionUID = -2554981241880066335L;
+
+    private final List<Class<?>> classHierarchy;
 
 
     public MethodComparator(final List<Class<?>> classHierarchy) {

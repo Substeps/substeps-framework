@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -24,22 +24,20 @@ import com.technophobia.substeps.runner.setupteardown.Annotations.BeforeAllFeatu
 
 /**
  * @author ian
- *
  */
-public class BeforeAndAfterSequencing2 extends BaseBeforeAndAfterSequencing
-{
-	public static long beforeFeaturesExecTime = 0;
+public class BeforeAndAfterSequencing2 extends BaseBeforeAndAfterSequencing {
+    public static long beforeFeaturesExecTime = 0;
 
-	public static long afterAllFeaturesExecTime = 0;
+    public static long afterAllFeaturesExecTime = 0;
 
-	@AfterAllFeatures
-	public void afterAllFeatures(){
-		afterAllFeaturesExecTime = getTimeAndSleep();
-	}
+    @AfterAllFeatures
+    public void afterAllFeatures() {
+        afterAllFeaturesExecTime = getTimeAndSleep();
+    }
 
     @BeforeAllFeatures
     public void beforeAllFeatures() {
-    	beforeFeaturesExecTime = getTimeAndSleep();
+        beforeFeaturesExecTime = getTimeAndSleep();
     }
 
 }

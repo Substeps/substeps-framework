@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,67 +18,63 @@
  */
 package com.technophobia.substeps.model.parameter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import com.technophobia.substeps.model.parameter.LongConverter;
+import static org.junit.Assert.*;
 
 public class LongConverterTest {
 
-	private LongConverter converter;
+    private LongConverter converter;
 
 
-	@Before
-	public void setUp() {
-		converter = new LongConverter();
-	}
+    @Before
+    public void setUp() {
+        converter = new LongConverter();
+    }
 
 
-	@Test
-	public void testCanConvertLong() {
-		final boolean canConvert = converter.canConvert(Long.class);
-		assertTrue(canConvert);
-	}
+    @Test
+    public void testCanConvertLong() {
+        final boolean canConvert = converter.canConvert(Long.class);
+        assertTrue(canConvert);
+    }
 
 
-	@Test
-	public void testCanConvertPrimitiveLong() {
-		final boolean canConvert = converter.canConvert(long.class);
-		assertTrue(canConvert);
-	}
+    @Test
+    public void testCanConvertPrimitiveLong() {
+        final boolean canConvert = converter.canConvert(long.class);
+        assertTrue(canConvert);
+    }
 
 
-	@Test
-	public void testCanConvertString() {
-		final boolean canConvert = converter.canConvert(String.class);
-		assertFalse(canConvert);
-	}
+    @Test
+    public void testCanConvertString() {
+        final boolean canConvert = converter.canConvert(String.class);
+        assertFalse(canConvert);
+    }
 
 
-	@Test
-	public void testConvertValidLong() {
-		final Long expected = Long.valueOf(7L);
-		final String value = "7";
+    @Test
+    public void testConvertValidLong() {
+        final Long expected = Long.valueOf(7L);
+        final String value = "7";
 
-		final Long actual = converter.convert(value);
-		assertEquals(expected, actual);
-	}
-
-
-	@Test(expected = NumberFormatException.class)
-	public void testConvertInvalidLong() {
-		final String value = "x";
-
-		converter.convert(value);
-	}
+        final Long actual = converter.convert(value);
+        assertEquals(expected, actual);
+    }
 
 
-	@Test(expected = NumberFormatException.class)
-	public void testConvertNullLong() {
-		converter.convert(null);
-	}
+    @Test(expected = NumberFormatException.class)
+    public void testConvertInvalidLong() {
+        final String value = "x";
+
+        converter.convert(value);
+    }
+
+
+    @Test(expected = NumberFormatException.class)
+    public void testConvertNullLong() {
+        converter.convert(null);
+    }
 }

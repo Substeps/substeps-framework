@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,67 +18,63 @@
  */
 package com.technophobia.substeps.model.parameter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import com.technophobia.substeps.model.parameter.IntegerConverter;
+import static org.junit.Assert.*;
 
 public class IntegerConverterTest {
 
-	private IntegerConverter converter;
+    private IntegerConverter converter;
 
 
-	@Before
-	public void setUp() {
-		converter = new IntegerConverter();
-	}
+    @Before
+    public void setUp() {
+        converter = new IntegerConverter();
+    }
 
 
-	@Test
-	public void testCanConvertInteger() {
-		final boolean canConvert = converter.canConvert(Integer.class);
-		assertTrue(canConvert);
-	}
+    @Test
+    public void testCanConvertInteger() {
+        final boolean canConvert = converter.canConvert(Integer.class);
+        assertTrue(canConvert);
+    }
 
 
-	@Test
-	public void testCanConvertInt() {
-		final boolean canConvert = converter.canConvert(int.class);
-		assertTrue(canConvert);
-	}
+    @Test
+    public void testCanConvertInt() {
+        final boolean canConvert = converter.canConvert(int.class);
+        assertTrue(canConvert);
+    }
 
 
-	@Test
-	public void testCanConvertString() {
-		final boolean canConvert = converter.canConvert(String.class);
-		assertFalse(canConvert);
-	}
+    @Test
+    public void testCanConvertString() {
+        final boolean canConvert = converter.canConvert(String.class);
+        assertFalse(canConvert);
+    }
 
 
-	@Test
-	public void testConvertValidInteger() {
-		final Integer expected = Integer.valueOf(7);
-		final String value = "7";
+    @Test
+    public void testConvertValidInteger() {
+        final Integer expected = Integer.valueOf(7);
+        final String value = "7";
 
-		final Integer actual = converter.convert(value);
-		assertEquals(expected, actual);
-	}
-
-
-	@Test(expected = NumberFormatException.class)
-	public void testConvertInvalidInteger() {
-		final String value = "x";
-
-		converter.convert(value);
-	}
+        final Integer actual = converter.convert(value);
+        assertEquals(expected, actual);
+    }
 
 
-	@Test(expected = NumberFormatException.class)
-	public void testConvertNullInteger() {
-		converter.convert(null);
-	}
+    @Test(expected = NumberFormatException.class)
+    public void testConvertInvalidInteger() {
+        final String value = "x";
+
+        converter.convert(value);
+    }
+
+
+    @Test(expected = NumberFormatException.class)
+    public void testConvertNullInteger() {
+        converter.convert(null);
+    }
 }

@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -24,16 +24,18 @@ public class StepImplementationException extends SubstepsException {
 
     private static final long serialVersionUID = 2361658683635343317L;
 
-    private final Class<?> implementingClass;
-    private final Method implementingMethod;
+    // class can't actually be serialized fully anyway
+    private transient final Class<?> implementingClass;
+    private transient final Method implementingMethod;
 
     public StepImplementationException(final Class<?> implementingClass, final Method implementingMethod,
-            final String message) {
+                                       final String message) {
         super(message);
         this.implementingClass = implementingClass;
         this.implementingMethod = implementingMethod;
     }
 
+    // only called by fake classes...
     public Class<?> getImplementingClass() {
         return implementingClass;
     }

@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -26,10 +26,8 @@ import java.lang.annotation.Target;
 
 /**
  * @author ian
- *
  */
-public interface Annotations
-{
+public interface Annotations {
 
 
     @Retention(RetentionPolicy.RUNTIME)

@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,12 +18,12 @@
  */
 package com.technophobia.substeps.model;
 
+import com.google.common.base.Strings;
+import org.apache.commons.lang.StringUtils;
+
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
-
-import com.google.common.base.Strings;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * a map of regex patterns to other things.
@@ -44,7 +44,7 @@ public class PatternMap<V> {
 
     /**
      * Adds a new pattern to the map.
-     * <p>
+     * <p/>
      * Users of this class <em>must</em> check if the pattern has already been added
      * by using {@link containsPattern} to avoid IllegalStateException in the event that
      * the pattern has already been added to the map.

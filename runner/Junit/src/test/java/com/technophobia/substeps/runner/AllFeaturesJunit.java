@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,19 +18,16 @@
  */
 package com.technophobia.substeps.runner;
 
-import org.junit.runner.RunWith;
-
 import com.technophobia.substeps.runner.JunitFeatureRunner.SubStepsConfiguration;
 import com.technophobia.substeps.stepimplementations.MockStepImplementations;
+import org.junit.runner.RunWith;
 
 /**
- * 
  * @author imoore
- * 
  */
 
 // @Ignore("this is only for local dev, not to actually run as a test!")
-@SubStepsConfiguration(featureFile = "./target/core-tests/features/allFeatures.feature", subStepsFile = "./target/core-tests/substeps/allFeatures.substeps", stepImplementations = { MockStepImplementations.class })
+@SubStepsConfiguration(featureFile = "./target/core-tests/features/allFeatures.feature", subStepsFile = "./target/core-tests/substeps/allFeatures.substeps", stepImplementations = {MockStepImplementations.class})
 @RunWith(JunitFeatureRunner.class)
 public class AllFeaturesJunit {
 

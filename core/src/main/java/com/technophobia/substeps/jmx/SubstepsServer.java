@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -19,6 +19,20 @@
 
 package com.technophobia.substeps.jmx;
 
+import com.technophobia.substeps.execution.ExecutionNodeResult;
+import com.technophobia.substeps.execution.ExecutionResult;
+import com.technophobia.substeps.execution.node.FeatureNode;
+import com.technophobia.substeps.execution.node.IExecutionNode;
+import com.technophobia.substeps.execution.node.RootNode;
+import com.technophobia.substeps.runner.ExecutionNodeRunner;
+import com.technophobia.substeps.runner.IExecutionListener;
+import com.technophobia.substeps.runner.SubstepExecutionFailure;
+import com.technophobia.substeps.runner.SubstepsExecutionConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.management.Notification;
+import javax.management.NotificationBroadcasterSupport;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -26,27 +40,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import javax.management.Notification;
-import javax.management.NotificationBroadcasterSupport;
-import javax.management.NotificationListener;
-
-import com.technophobia.substeps.execution.ExecutionNodeResult;
-import com.technophobia.substeps.execution.ExecutionResult;
-import com.technophobia.substeps.execution.node.FeatureNode;
-import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.technophobia.substeps.execution.node.IExecutionNode;
-import com.technophobia.substeps.execution.node.RootNode;
-import com.technophobia.substeps.runner.ExecutionNodeRunner;
-import com.technophobia.substeps.runner.IExecutionListener;
-import com.technophobia.substeps.runner.SubstepExecutionFailure;
-import com.technophobia.substeps.runner.SubstepsExecutionConfig;
-
 /**
  * @author ian
- * 
  */
 public class SubstepsServer extends NotificationBroadcasterSupport implements SubstepsServerMBean, IExecutionListener {
 
@@ -55,7 +50,7 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
     private ExecutionNodeRunner nodeRunner = null;
     private final CountDownLatch shutdownSignal;
 
-    public byte[] prepareExecutionConfigAsBytes(final SubstepsExecutionConfig theConfig){
+    public byte[] prepareExecutionConfigAsBytes(final SubstepsExecutionConfig theConfig) {
 
         RootNode rtn = null;
         try {
@@ -65,7 +60,7 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
 //        catch (SubstepsConfigurationException e){
 //
 //        }
-        catch(Exception e){
+        catch (Exception e) {
             log.error("Error preparing ExecutionConfig", e);
 
             List<FeatureNode> empty = Collections.emptyList();
@@ -94,8 +89,7 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
         } catch (IOException e) {
             log.error("IOException writing bytes", e);
 
-        }
-        finally{
+        } finally {
             try {
                 bos.close();
             } catch (IOException e) {
@@ -106,7 +100,7 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
         return rtnBytes;
     }
 
-    public byte[] runAsBytes(){
+    public byte[] runAsBytes() {
         RootNode rtn = run();
         return getBytes(rtn);
     }

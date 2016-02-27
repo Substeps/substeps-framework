@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,30 +18,28 @@
  */
 package com.technophobia.substeps.runner;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
-
 /**
- * 
  * Responsible for determining the running order of initialisation classes.
- * 
+ * <p/>
  * To do this this class builds a dependency tree of initialisation classes, as
  * it adds a new initialisation class to the tree it ensures it is not at the
  * same time a parent and child of another node. Such a condition is equivalent
  * to a class which must be executed both before and after another.
- * 
+ * <p/>
  * Once this graph is fully built it is converted into a list by traversing the
  * graph only adding nodes whose parents have already been added, it keeps doing
  * this until all nodes have been added.
- * 
+ *
  * @author rbarefield
  */
 public class InitialisationClassSorter {

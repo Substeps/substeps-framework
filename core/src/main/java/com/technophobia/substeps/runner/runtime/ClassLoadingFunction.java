@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,15 +18,14 @@
  */
 package com.technophobia.substeps.runner.runtime;
 
+import com.google.common.base.Function;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 public class ClassLoadingFunction implements Function<File, Class<?>> {
 
@@ -38,7 +37,7 @@ public class ClassLoadingFunction implements Function<File, Class<?>> {
 
 
     public ClassLoadingFunction(final String classesDirectory) {
-        this(new URLClassLoader(new URL[] { toDirectoryURL(classesDirectory) }), classesDirectory);
+        this(new URLClassLoader(new URL[]{toDirectoryURL(classesDirectory)}), classesDirectory);
     }
 
 

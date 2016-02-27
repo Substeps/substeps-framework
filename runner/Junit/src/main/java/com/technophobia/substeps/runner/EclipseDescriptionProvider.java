@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,31 +18,21 @@
  */
 package com.technophobia.substeps.runner;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.technophobia.substeps.execution.node.IExecutionNode;
+import com.technophobia.substeps.execution.node.NodeWithChildren;
 import com.technophobia.substeps.model.Configuration;
 import com.technophobia.substeps.runner.description.DescriptionBuilder;
 import com.technophobia.substeps.runner.description.DescriptorStatus;
 import com.technophobia.substeps.runner.description.JunitVersionedDescriptionBuilder;
-import org.junit.Assert;
 import org.junit.runner.Description;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.technophobia.substeps.execution.node.IExecutionNode;
-import com.technophobia.substeps.execution.node.NodeWithChildren;
-import com.technophobia.substeps.report.ExecutionReportBuilder;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author ian
- * 
  */
 public class EclipseDescriptionProvider implements DescriptionProvider {
 
@@ -65,8 +55,8 @@ public class EclipseDescriptionProvider implements DescriptionProvider {
 
         final DescriptorStatus status = new DescriptorStatus();
 
-        if (rootNode instanceof NodeWithChildren &&  ((NodeWithChildren<?>)rootNode).hasChildren()) {
-            for (final IExecutionNode child : ((NodeWithChildren<?>)rootNode).getChildren()) {
+        if (rootNode instanceof NodeWithChildren && ((NodeWithChildren<?>) rootNode).hasChildren()) {
+            for (final IExecutionNode child : ((NodeWithChildren<?>) rootNode).getChildren()) {
                 rootDescription.addChild(buildDescription(child, descriptionMap, status));
             }
         }
@@ -75,7 +65,7 @@ public class EclipseDescriptionProvider implements DescriptionProvider {
     }
 
     private Description buildDescription(final IExecutionNode node, final Map<Long, Description> descriptionMap,
-            final DescriptorStatus status) {
+                                         final DescriptorStatus status) {
         final Description des = buildDescription(node, status);
 
         if (node instanceof NodeWithChildren) {

@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,15 +18,11 @@
  */
 package com.technophobia.substeps.runner;
 
-import java.io.BufferedReader;
+import org.apache.maven.plugin.logging.Log;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.apache.maven.plugin.logging.Log;
 
 class InputStreamConsumer implements Runnable {
 
@@ -35,7 +31,7 @@ class InputStreamConsumer implements Runnable {
     private final InputStream stderr;
 
 
-    public InputStreamConsumer(final InputStream stderr, final Log logger){
+    public InputStreamConsumer(final InputStream stderr, final Log logger) {
 
         this.logger = logger;
         this.stderr = stderr;
@@ -56,7 +52,7 @@ class InputStreamConsumer implements Runnable {
 
 
     /**
-     * 
+     *
      */
     public void closeStreams() {
         closeQuietly(this.stderr);
@@ -76,17 +72,16 @@ class InputStreamConsumer implements Runnable {
 
             int c;
             StringBuilder buf = new StringBuilder();
-            while ((c = this.stderr.read()) != -1){
+            while ((c = this.stderr.read()) != -1) {
 
                 String s = String.valueOf((char) c);
 
-                if ((char)c == '\n'){
+                if ((char) c == '\n') {
                     line = buf.toString();
 
                     buf = new StringBuilder();
                     logger.info("*\t" + line);
-                }
-                else {
+                } else {
                     buf.append(s);
                 }
             }

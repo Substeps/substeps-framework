@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,13 +18,13 @@
  */
 package com.technophobia.substeps.execution.node;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 public class TestSubstepNodeBuilder implements TestStepNodeBuilder<SubstepNode> {
 
@@ -65,11 +65,11 @@ public class TestSubstepNodeBuilder implements TestStepNodeBuilder<SubstepNode> 
 
             stepNodes.add(builder.build());
         }
-        return built = new SubstepNode(stepNodes, Collections.<String> emptySet(), depth);
+        return built = new SubstepNode(stepNodes, Collections.<String>emptySet(), depth);
     }
 
     public TestSubstepNodeBuilder addStepImpls(int numberOfIdenticalStepsImpls, Class<?> targetClass,
-            Method targetMethod) {
+                                               Method targetMethod) {
 
         for (int i = 0; i < numberOfIdenticalStepsImpls; i++) {
 

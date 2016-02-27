@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -20,12 +20,12 @@ package com.technophobia.substeps.model.parameter;
 
 public class LongConverter implements Converter<Long> {
 
-	public boolean canConvert(final Class<?> cls) {
-		return cls == long.class || cls == Long.class;
-	}
+    public boolean canConvert(final Class<?> cls) {
+        return cls == long.class || cls == Long.class;
+    }
 
 
-	public Long convert(final String value) {
-		return Long.valueOf(value);
-	}
+    public Long convert(final String value) {
+        return Long.valueOf(value);
+    }
 }

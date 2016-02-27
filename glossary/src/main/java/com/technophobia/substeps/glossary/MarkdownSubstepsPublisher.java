@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -19,21 +19,19 @@
 package com.technophobia.substeps.glossary;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * @author ian
- * 
  */
-public class MarkdownSubstepsPublisher extends FileBasedGlossaryPublisher  implements GlossaryPublisher {
+public class MarkdownSubstepsPublisher extends FileBasedGlossaryPublisher implements GlossaryPublisher {
 
     @Override
-    public String getDefaultFileName(){
+    public String getDefaultFileName() {
         return "stepimplementations.md";
     }
 

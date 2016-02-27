@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,13 +18,13 @@
  */
 package com.technophobia.substeps.runner.runtime;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-
 import com.technophobia.substeps.runner.JunitFeatureRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 public class DefinableFeatureRunner extends JunitFeatureRunner {
 
@@ -33,7 +33,6 @@ public class DefinableFeatureRunner extends JunitFeatureRunner {
     public DefinableFeatureRunner() {
         super();
     }
-
 
 
     public DefinableFeatureRunner(final Class<?> clazz) {

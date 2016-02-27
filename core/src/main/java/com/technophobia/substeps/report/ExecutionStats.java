@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,28 +18,15 @@
  */
 package com.technophobia.substeps.report;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.common.collect.Sets;
 import com.technophobia.substeps.execution.AbstractExecutionNodeVisitor;
-import com.technophobia.substeps.execution.node.BasicScenarioNode;
-import com.technophobia.substeps.execution.node.FeatureNode;
-import com.technophobia.substeps.execution.node.OutlineScenarioNode;
-import com.technophobia.substeps.execution.node.OutlineScenarioRowNode;
-import com.technophobia.substeps.execution.node.RootNode;
-import com.technophobia.substeps.execution.node.ScenarioNode;
-import com.technophobia.substeps.execution.node.StepNode;
+import com.technophobia.substeps.execution.node.*;
+
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * @author ian
- * 
  */
 public class ExecutionStats extends AbstractExecutionNodeVisitor<Void> {
 

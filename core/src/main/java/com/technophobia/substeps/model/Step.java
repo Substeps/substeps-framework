@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,13 +18,13 @@
  */
 package com.technophobia.substeps.model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Step {
 
@@ -62,6 +62,7 @@ public class Step {
 
 
     private boolean isSubstep;
+
     /**
      * @return the sourceStartOffset
      */
@@ -70,8 +71,7 @@ public class Step {
     }
 
     /**
-     * @param sourceStartOffset
-     *            the sourceStartOffset to set
+     * @param sourceStartOffset the sourceStartOffset to set
      */
     public void setSourceStartOffset(final int sourceStartOffset) {
         this.sourceStartOffset = sourceStartOffset;
@@ -101,7 +101,7 @@ public class Step {
 
     // preferred ctor
     public Step(final String theLine, final boolean isSubstep, final File source, final int lineNumber,
-            final int sourceStartOffset) {
+                final int sourceStartOffset) {
         if (theLine == null || theLine.length() == 0) {
             throw new IllegalArgumentException("null or empty args");
         }
@@ -202,7 +202,6 @@ public class Step {
     }
 
     /**
-     *
      * @return returns the regex pattern string including the capture groups
      */
     public String getPattern() {

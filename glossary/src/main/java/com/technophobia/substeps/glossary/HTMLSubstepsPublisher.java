@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,23 +18,20 @@
  */
 package com.technophobia.substeps.glossary;
 
-import java.io.File;
-import java.util.*;
-import java.util.Map.Entry;
-
 import org.apache.commons.lang.StringEscapeUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * @author ian
- * 
  */
 public class HTMLSubstepsPublisher extends FileBasedGlossaryPublisher implements GlossaryPublisher {
 
     @Override
-    public String getDefaultFileName(){
+    public String getDefaultFileName() {
         return "stepimplementations.html";
     }
 
@@ -42,7 +39,7 @@ public class HTMLSubstepsPublisher extends FileBasedGlossaryPublisher implements
      * @param sectionSorted
      */
     @Override
-    public  String buildFileContents(final Map<String, Collection<StepDescriptor>> sectionSorted) {
+    public String buildFileContents(final Map<String, Collection<StepDescriptor>> sectionSorted) {
         final StringBuilder buf = new StringBuilder();
 
         buf.append("<html><head></head><body> <table border=\"1\">\n<tr><th>Keyword</th> <th>Example</th> <th>Description</th></tr>\n");

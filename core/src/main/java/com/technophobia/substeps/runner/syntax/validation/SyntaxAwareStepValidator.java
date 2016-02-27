@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,17 +18,11 @@
  */
 package com.technophobia.substeps.runner.syntax.validation;
 
+import com.technophobia.substeps.model.*;
+import com.technophobia.substeps.runner.syntax.SyntaxErrorReporter;
+
 import java.io.File;
 import java.util.List;
-
-import com.technophobia.substeps.model.FeatureFile;
-import com.technophobia.substeps.model.ParentStep;
-import com.technophobia.substeps.model.PatternMap;
-import com.technophobia.substeps.model.Scenario;
-import com.technophobia.substeps.model.Step;
-import com.technophobia.substeps.model.StepImplementation;
-import com.technophobia.substeps.model.Syntax;
-import com.technophobia.substeps.runner.syntax.SyntaxErrorReporter;
 
 public class SyntaxAwareStepValidator implements StepValidator {
 
@@ -63,7 +57,7 @@ public class SyntaxAwareStepValidator implements StepValidator {
 
 
     protected void validate(final Scenario scenario, final File sourceFile,
-            final SyntaxErrorReporter syntaxErrorReporter) {
+                            final SyntaxErrorReporter syntaxErrorReporter) {
         final List<Step> steps = scenario.getSteps();
         if (steps != null) {
             for (final Step step : steps) {

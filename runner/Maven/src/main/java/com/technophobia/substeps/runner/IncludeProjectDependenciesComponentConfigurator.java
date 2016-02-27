@@ -25,16 +25,14 @@ import java.util.List;
 /**
  * A custom ComponentConfigurator which adds the project's runtime classpath
  * elements to the
- * 
+ *
  * @author Brian Jackson
- * @since Aug 1, 2008 3:04:17 PM
- * 
- * @plexus.component 
- *                   role="org.codehaus.plexus.component.configurator.ComponentConfigurator"
- *                   role-hint="include-project-dependencies"
+ * @plexus.component role="org.codehaus.plexus.component.configurator.ComponentConfigurator"
+ * role-hint="include-project-dependencies"
  * @plexus.requirement role=
- *                     "org.codehaus.plexus.component.configurator.converters.lookup.ConverterLookup"
- *                     role-hint="default"
+ * "org.codehaus.plexus.component.configurator.converters.lookup.ConverterLookup"
+ * role-hint="default"
+ * @since Aug 1, 2008 3:04:17 PM
  */
 public class IncludeProjectDependenciesComponentConfigurator extends
         AbstractComponentConfigurator {
@@ -65,10 +63,10 @@ public class IncludeProjectDependenciesComponentConfigurator extends
 
     @Override
     public void configureComponent(final Object component,
-            final PlexusConfiguration configuration,
-            final ExpressionEvaluator expressionEvaluator,
-            final ClassRealm containerRealm,
-            final ConfigurationListener listener)
+                                   final PlexusConfiguration configuration,
+                                   final ExpressionEvaluator expressionEvaluator,
+                                   final ClassRealm containerRealm,
+                                   final ConfigurationListener listener)
             throws ComponentConfigurationException {
 
         addProjectDependenciesToClassRealm(expressionEvaluator, containerRealm);

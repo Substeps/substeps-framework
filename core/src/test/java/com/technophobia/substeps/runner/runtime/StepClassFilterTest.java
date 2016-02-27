@@ -18,15 +18,14 @@
  */
 package com.technophobia.substeps.runner.runtime;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.google.common.base.Predicate;
 import com.technophobia.substeps.runner.runtime.fake.AnnotatedStepClassFake;
 import com.technophobia.substeps.runner.runtime.fake.NonAnnotatedStepClassFake;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class StepClassFilterTest {
 

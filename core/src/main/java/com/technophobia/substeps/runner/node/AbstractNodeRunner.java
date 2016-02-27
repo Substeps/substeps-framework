@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,19 +18,19 @@
  */
 package com.technophobia.substeps.runner.node;
 
-import java.util.List;
-
-import com.technophobia.substeps.execution.ExecutionResult;
-import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.technophobia.substeps.execution.AbstractExecutionNodeVisitor;
+import com.technophobia.substeps.execution.ExecutionResult;
 import com.technophobia.substeps.execution.node.IExecutionNode;
 import com.technophobia.substeps.execution.node.RootNodeExecutionContext;
 import com.technophobia.substeps.model.Scope;
+import com.technophobia.substeps.model.exception.SubstepsException;
+import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
 import com.technophobia.substeps.runner.ExecutionContext;
 import com.technophobia.substeps.runner.SubstepExecutionFailure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public abstract class AbstractNodeRunner<NODE_TYPE extends IExecutionNode, VISITOR_RETURN_TYPE> extends
         AbstractExecutionNodeVisitor<VISITOR_RETURN_TYPE> {
@@ -51,7 +51,7 @@ public abstract class AbstractNodeRunner<NODE_TYPE extends IExecutionNode, VISIT
             } catch (final Exception e) {
 
                 log.trace("Exception caught in {}, rethrowing...", AbstractNodeRunner.class.getSimpleName(), e);
-                throw new RuntimeException(e);
+                throw new SubstepsException(e);
 
             } finally {
 
@@ -64,10 +64,7 @@ public abstract class AbstractNodeRunner<NODE_TYPE extends IExecutionNode, VISIT
 
     private boolean beforeExecute(final NODE_TYPE node, final RootNodeExecutionContext context) {
 
-        boolean shouldContinue = true;
-
-//        node.getResult().setStarted();
-
+        boolean shouldContinue;
 
         if (node.hasError()) {
 
@@ -127,15 +124,9 @@ public abstract class AbstractNodeRunner<NODE_TYPE extends IExecutionNode, VISIT
 
             final List<SubstepExecutionFailure> failures = context.getFailures();
 
-//            if (log.isDebugEnabled()) {
-//
-//                log.debug("node failures");
-//            }
-
             // it is possible to get here, without having got any failures - initialization exception for example
 
             final Throwable lastException;
-            boolean nonCritical = false;
             if (!failures.isEmpty()) {
 
                 final SubstepExecutionFailure lastFailure = failures.get(failures.size() - 1);
@@ -145,21 +136,13 @@ public abstract class AbstractNodeRunner<NODE_TYPE extends IExecutionNode, VISIT
                 if (node.getResult().getResult() == ExecutionResult.RUNNING) {
                     node.getResult().setFailure(lastFailure);
                 }
-                nonCritical = lastFailure.isNonCritical();
-            }
-            else {
+            } else {
                 lastException = new SubstepsRuntimeException("Error throw during startup, initialisation issue ?");
                 lastException.fillInStackTrace();
-                SubstepExecutionFailure sef = new SubstepExecutionFailure(lastException, node, ExecutionResult.FAILED);
+                new SubstepExecutionFailure(lastException, node, ExecutionResult.FAILED);
             }
 
-
-            // TODO should this have been set earlier...?
-
-//            SubstepExecutionFailure sef = new SubstepExecutionFailure(lastException, node, ExecutionResult.FAILED);
-//            sef.setNonCritical(nonCritical);
             context.getNotificationDistributor().onNodeFailed(node, lastException);
-
         }
     }
 
@@ -178,7 +161,7 @@ public abstract class AbstractNodeRunner<NODE_TYPE extends IExecutionNode, VISIT
     }
 
     protected boolean addExpectedChildrenFailureIfNoChildren(final NODE_TYPE node,
-            final List<? extends IExecutionNode> children, final RootNodeExecutionContext context) {
+                                                             final List<? extends IExecutionNode> children, final RootNodeExecutionContext context) {
 
         final boolean hasChildren = children != null && !children.isEmpty();
         if (!hasChildren) {

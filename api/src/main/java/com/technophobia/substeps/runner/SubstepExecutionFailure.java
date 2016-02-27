@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -19,12 +19,11 @@
 
 package com.technophobia.substeps.runner;
 
-import java.io.Serializable;
-
 import com.google.common.base.Function;
 import com.technophobia.substeps.execution.ExecutionResult;
 import com.technophobia.substeps.execution.node.IExecutionNode;
-import com.technophobia.substeps.execution.node.RootNode;
+
+import java.io.Serializable;
 
 /**
  * Represents the failure of an execution - could be a step method, or a setup method, may or may not be critical
