@@ -142,27 +142,30 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
         return connector;
     }
 
-
+    @Override
     public RootNode prepareExecutionConfig(final SubstepsExecutionConfig cfg) {
 
         return this.mbean.prepareExecutionConfig(cfg);
-
     }
 
+    @Override
     public List<SubstepExecutionFailure> getFailures() {
 
         return this.mbean.getFailures();
     }
 
+    @Override
     public RootNode run() {
 
         return this.mbean.run();
     }
 
+    @Override
     public void addNotifier(final IExecutionListener listener) {
 
         this.mbean.addNotifier(listener);
     }
+
 
     public boolean shutdown() {
 
@@ -180,7 +183,7 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
         return successfulShutdown;
     }
 
-    //    @Override
+    @Override
     public void handleNotification(Notification notification, Object handback) {
 
 
@@ -189,7 +192,8 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
 
             ExecutionNodeResult result = getFromBytes(rawBytes);
 
-            this.log.debug("received a JMX event msg: " + notification.getMessage() + " seq: " + notification.getSequenceNumber() + " exec result node id: " + result.getExecutionNodeId());
+            this.log.debug("received a JMX event msg: " + notification.getMessage() +
+                    " seq: " + notification.getSequenceNumber() + " exec result node id: " + result.getExecutionNodeId());
 
             //        notificiationHandler.handleNotification(result);
         } else if (notification.getType().compareTo("ExecConfigComplete") == 0) {

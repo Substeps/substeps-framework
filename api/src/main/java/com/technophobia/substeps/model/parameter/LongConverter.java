@@ -20,11 +20,12 @@ package com.technophobia.substeps.model.parameter;
 
 public class LongConverter implements Converter<Long> {
 
+    @Override
     public boolean canConvert(final Class<?> cls) {
         return cls == long.class || cls == Long.class;
     }
 
-
+    @Override
     public Long convert(final String value) {
         return Long.valueOf(value);
     }

@@ -20,11 +20,12 @@ package com.technophobia.substeps.model.parameter;
 
 public class DoubleConverter implements Converter<Double> {
 
+    @Override
     public boolean canConvert(final Class<?> cls) {
         return cls == double.class || cls == Double.class;
     }
 
-
+    @Override
     public Double convert(final String value) {
         if (value == null) {
             throw new NumberFormatException("null");

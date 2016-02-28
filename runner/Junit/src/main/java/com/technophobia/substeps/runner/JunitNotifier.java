@@ -92,6 +92,7 @@ public class JunitNotifier implements IJunitNotifier {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void pleaseStop() {
         junitRunNotifier.pleaseStop();
     }
@@ -99,6 +100,7 @@ public class JunitNotifier implements IJunitNotifier {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setJunitRunNotifier(final RunNotifier junitNotifier) {
         junitRunNotifier = junitNotifier;
     }
@@ -106,6 +108,7 @@ public class JunitNotifier implements IJunitNotifier {
     /**
      * @param descriptionMap
      */
+    @Override
     public void setDescriptionMap(final Map<Long, Description> descriptionMap) {
         this.descriptionMap = descriptionMap;
     }
@@ -117,7 +120,7 @@ public class JunitNotifier implements IJunitNotifier {
      * com.technophobia.substeps.runner.AbstractBaseNotifier#handleNotifyNodeFailed
      * (com.technophobia.substeps.execution.ExecutionNode, java.lang.Throwable)
      */
-
+    @Override
     public void onNodeFailed(final IExecutionNode node, final Throwable cause) {
 
         final Description description = descriptionMap.get(Long.valueOf(node.getId()));
@@ -132,7 +135,7 @@ public class JunitNotifier implements IJunitNotifier {
      * com.technophobia.substeps.runner.AbstractBaseNotifier#handleNotifyNodeStarted
      * (com.technophobia.substeps.execution.ExecutionNode)
      */
-
+    @Override
     public void onNodeStarted(final IExecutionNode node) {
 
         final Description description = descriptionMap.get(Long.valueOf(node.getId()));
@@ -151,7 +154,7 @@ public class JunitNotifier implements IJunitNotifier {
      * handleNotifyNodeFinished
      * (com.technophobia.substeps.execution.ExecutionNode)
      */
-
+    @Override
     public void onNodeFinished(final IExecutionNode node) {
 
         final Description description = descriptionMap.get(Long.valueOf(node.getId()));
@@ -166,7 +169,7 @@ public class JunitNotifier implements IJunitNotifier {
      * com.technophobia.substeps.runner.AbstractBaseNotifier#handleNotifyNodeIgnored
      * (com.technophobia.substeps.execution.ExecutionNode)
      */
-
+    @Override
     public void onNodeIgnored(final IExecutionNode node) {
 
         final Description description = descriptionMap.get(Long.valueOf(node.getId()));

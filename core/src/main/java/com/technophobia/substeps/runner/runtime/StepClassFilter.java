@@ -30,7 +30,7 @@ public class StepClassFilter implements Predicate<Class<?>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(StepClassFilter.class);
 
-
+    @Override
     public boolean apply(final Class<?> clazz) {
         LOG.debug("Checking if " + clazz.getName() + " has step methods");
         try {

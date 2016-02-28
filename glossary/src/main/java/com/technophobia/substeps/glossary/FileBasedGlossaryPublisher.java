@@ -27,6 +27,7 @@ public abstract class FileBasedGlossaryPublisher implements GlossaryPublisher {
     private File outputFile;
 
 
+    @Override
     public void publish(final List<StepImplementationsDescriptor> stepimplementationDescriptors) {
 
         final Map<String, Collection<StepDescriptor>> sectionSorted = sortStepDescriptions(stepimplementationDescriptors);

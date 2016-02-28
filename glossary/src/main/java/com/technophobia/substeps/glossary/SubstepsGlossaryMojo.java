@@ -151,7 +151,7 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
         return fullpath;
     }
 
-
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         final HashSet<String> loadedClasses = new HashSet<String>();

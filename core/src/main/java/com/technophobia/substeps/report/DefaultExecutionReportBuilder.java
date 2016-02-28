@@ -23,6 +23,7 @@ import com.technophobia.substeps.execution.ExecutionResult;
 import com.technophobia.substeps.execution.node.ExecutionNode;
 import com.technophobia.substeps.execution.node.RootNode;
 import com.technophobia.substeps.helper.AssertHelper;
+import com.technophobia.substeps.model.exception.SubstepsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -263,15 +264,15 @@ public class DefaultExecutionReportBuilder extends ExecutionReportBuilder {
             velocityEngine.getTemplate("templates/" + vm).merge(vCtx, writer);
 
         } catch (final ResourceNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new SubstepsException(e);
         } catch (final ParseErrorException e) {
-            throw new RuntimeException(e);
+            throw new SubstepsException(e);
         } catch (final MethodInvocationException e) {
-            throw new RuntimeException(e);
+            throw new SubstepsException(e);
         } catch (final IOException e) {
-            throw new RuntimeException(e);
+            throw new SubstepsException(e);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw new SubstepsException(e);
         } finally {
             try {
                 if (writer != null) {
@@ -292,7 +293,7 @@ public class DefaultExecutionReportBuilder extends ExecutionReportBuilder {
 
             FileUtils.copyDirectory(new File(originUrl.getPath()), destination);
         } else {
-            throw new RuntimeException("URLConnection[" + urlConnection.getClass().getSimpleName()
+            throw new SubstepsException("URLConnection[" + urlConnection.getClass().getSimpleName()
                     + "] is not a recognized/implemented connection type.");
         }
     }

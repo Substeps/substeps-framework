@@ -38,6 +38,7 @@ public class PredicatedClassLocator implements ClassLocator {
         this.classLoader = classLoader;
     }
 
+    @Override
     public Iterator<Class<?>> fromPath(final String path) {
         final File directory = new File(path);
         final Iterator<File> files = FileUtils.iterateFiles(directory,

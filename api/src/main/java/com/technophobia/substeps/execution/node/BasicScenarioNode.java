@@ -90,6 +90,7 @@ public class BasicScenarioNode extends ScenarioNode<StepNode> {
         return scenarioName;
     }
 
+    @Override
     public Set<String> getTags() {
         return tags;
     }

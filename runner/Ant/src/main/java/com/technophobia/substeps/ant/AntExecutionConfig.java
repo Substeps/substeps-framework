@@ -5,6 +5,7 @@ import com.technophobia.substeps.runner.SubstepsExecutionConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class AntExecutionConfig extends SubstepsExecutionConfig {
 
     private String outputDirectory = "";
 
-    private final Logger log = LoggerFactory.getLogger(AntExecutionConfig.class);
+    private static final Logger log = LoggerFactory.getLogger(AntExecutionConfig.class);
 
 
     @Override
@@ -82,7 +83,9 @@ public class AntExecutionConfig extends SubstepsExecutionConfig {
         this.outputDirectory = outputDirectory;
     }
 
-    public static class ListOfClasses {
+    public static class ListOfClasses implements Serializable{
+
+        private static final long serialVersionUID = 1L;
 
         private List<Param> params = new ArrayList<Param>();
 
@@ -95,15 +98,21 @@ public class AntExecutionConfig extends SubstepsExecutionConfig {
         }
     }
 
-    public static class StepImplementationClassNames extends ListOfClasses {
+    public static class StepImplementationClassNames extends ListOfClasses implements Serializable{
         //
+        private static final long serialVersionUID = 1L;
+
     }
 
-    public static class InitialisationClass extends ListOfClasses {
+    public static class InitialisationClass extends ListOfClasses implements Serializable{
         //
+        private static final long serialVersionUID = 1L;
+
     }
 
-    public static class Param {
+    public static class Param implements Serializable{
+
+        private static final long serialVersionUID = 1L;
 
         private String value;
 

@@ -68,6 +68,7 @@ public class OutlineScenarioNode extends ScenarioNode<OutlineScenarioRowNode> {
         return "Scenario #: " + scenarioName;
     }
 
+    @Override
     public Set<String> getTags() {
         return tags;
     }

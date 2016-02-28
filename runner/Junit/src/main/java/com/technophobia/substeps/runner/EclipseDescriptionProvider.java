@@ -46,6 +46,7 @@ public class EclipseDescriptionProvider implements DescriptionProvider {
         Configuration.INSTANCE.addDefaultProperty(STEP_DEPTH_KEY, Integer.valueOf(5));
     }
 
+    @Override
     public Map<Long, Description> buildDescriptionMap(final IExecutionNode rootNode, final Class<?> classContainingTheTests) {
         final Description rootDescription = Description.createSuiteDescription(classContainingTheTests);
 

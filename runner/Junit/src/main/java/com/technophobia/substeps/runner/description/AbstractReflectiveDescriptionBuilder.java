@@ -13,6 +13,7 @@ public abstract class AbstractReflectiveDescriptionBuilder extends AbstractDescr
 
     private final Logger log = LoggerFactory.getLogger(AbstractReflectiveDescriptionBuilder.class);
 
+    @Override
     public Description descriptionFor(IExecutionNode node, DescriptorStatus status) {
         Description newInstance = null;
 

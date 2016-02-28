@@ -20,11 +20,12 @@ package com.technophobia.substeps.model.parameter;
 
 public class BooleanConverter implements Converter<Boolean> {
 
+    @Override
     public boolean canConvert(final Class<?> cls) {
         return cls == boolean.class || cls == Boolean.class;
     }
 
-
+    @Override
     public Boolean convert(final String value) {
         return Boolean.valueOf(value);
     }

@@ -34,15 +34,16 @@ public class SubstepExecutionFailure implements Serializable {
 
     public static final Function<SubstepExecutionFailure, Long> GET_NODE_ID = new Function<SubstepExecutionFailure, Long>() {
 
+        @Override
         public Long apply(final SubstepExecutionFailure failure) {
-            return failure.getExeccutionNode() == null ? null : failure.getExeccutionNode().getId();
+            return failure == null || failure.getExeccutionNode() == null ? null : failure.getExeccutionNode().getId();
         }
 
     };
 
     private static final long serialVersionUID = 4981517213059529046L;
 
-    private transient final Throwable cause;
+    private final transient Throwable cause;
     private IExecutionNode executionNode;
     private boolean setupOrTearDown = false;
     private boolean nonCritical = false;
@@ -102,6 +103,13 @@ public class SubstepExecutionFailure implements Serializable {
      */
     public SubstepExecutionFailure(final Throwable cause, final IExecutionNode node, final ExecutionResult result) {
         this(cause, node);
+        node.getResult().setResult(result);
+    }
+
+    public static void setResult(final Throwable cause, final IExecutionNode node, final ExecutionResult result) {
+        final SubstepExecutionFailure sef = new SubstepExecutionFailure(cause);
+        sef.executionNode = node;
+        sef.executionNode.getResult().setFailure(sef);
         node.getResult().setResult(result);
     }
 

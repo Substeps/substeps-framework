@@ -20,11 +20,12 @@ package com.technophobia.substeps.model.parameter;
 
 public class IntegerConverter implements Converter<Integer> {
 
+    @Override
     public boolean canConvert(final Class<?> cls) {
         return cls == int.class || cls == Integer.class;
     }
 
-
+    @Override
     public Integer convert(final String value) {
         return Integer.valueOf(value);
     }

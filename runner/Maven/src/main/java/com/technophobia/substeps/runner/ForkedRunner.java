@@ -106,6 +106,7 @@ public class ForkedRunner implements MojoRunner {
         this.substepsJmxClient.init(this.jmxPort);
     }
 
+    @Override
     public void shutdown() {
 
         this.substepsJmxClient.shutdown();
@@ -311,22 +312,26 @@ public class ForkedRunner implements MojoRunner {
         stepImplementationArtifactJars.add(path);
     }
 
+    @Override
     public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
 
         return this.substepsJmxClient.prepareExecutionConfig(theConfig);
     }
 
+    @Override
     public RootNode run() {
 
         this.log.info("Running substeps tests in forked jvm");
         return this.substepsJmxClient.run();
     }
 
+    @Override
     public List<SubstepExecutionFailure> getFailures() {
 
         return this.substepsJmxClient.getFailures();
     }
 
+    @Override
     public void addNotifier(final IExecutionListener listener) {
 
         this.substepsJmxClient.addNotifier(listener);

@@ -13,6 +13,7 @@ public class JunitVersionedDescriptionBuilder implements DescriptionBuilder {
 
     private DescriptionBuilder descriptionBuilder = null;
 
+    @Override
     public Description descriptionFor(IExecutionNode executionNode, DescriptorStatus descriptorStatus) {
         if (descriptionBuilder == null) {
             descriptionBuilder = initialiseDescriptionBuilder();

@@ -52,6 +52,7 @@ public abstract class ExecutionLogger implements IExecutionListener {
      * com.technophobia.substeps.runner.INotifier#notifyNodeFailed(com.technophobia
      * .substeps.execution.node.IExecutionNode, java.lang.Throwable)
      */
+    @Override
     public void onNodeFailed(final IExecutionNode node, final Throwable t) {
         // TODO do something with the exception
 
@@ -75,6 +76,7 @@ public abstract class ExecutionLogger implements IExecutionListener {
      * @see com.technophobia.substeps.runner.INotifier#notifyNodeFinished(com.
      * technophobia.substeps.execution.node.IExecutionNode)
      */
+    @Override
     public void onNodeFinished(final IExecutionNode node) {
 
         if (node.equals(this.theLastNode)) {
@@ -99,6 +101,7 @@ public abstract class ExecutionLogger implements IExecutionListener {
      * com.technophobia.substeps.runner.INotifier#notifyNodeIgnored(com.technophobia
      * .substeps.execution.node.IExecutionNode)
      */
+    @Override
     public void onNodeIgnored(final IExecutionNode node) {
         printSkipped(format(node));
 
@@ -111,6 +114,7 @@ public abstract class ExecutionLogger implements IExecutionListener {
      * com.technophobia.substeps.runner.INotifier#notifyNodeStarted(com.technophobia
      * .substeps.execution.node.IExecutionNode)
      */
+    @Override
     public void onNodeStarted(final IExecutionNode node) {
 
         if (!node.equals(this.theLastNode)) {

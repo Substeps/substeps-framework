@@ -72,6 +72,7 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
     /**
      * @return the depth
      */
+    @Override
     public int getDepth() {
         return this.depth;
     }
@@ -80,6 +81,7 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
     /**
      * @param depth the depth to set
      */
+    @Override
     public void setDepth(final int depth) {
         this.depth = depth;
     }
@@ -96,6 +98,7 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
     /**
      * @return the line
      */
+    @Override
     public String getLine() {
         return this.line;
     }
@@ -104,6 +107,7 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
     /**
      * @param line the line to set
      */
+    @Override
     public void setLine(final String line) {
         this.line = line;
     }
@@ -113,7 +117,7 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
         return Long.valueOf(this.id);
     }
 
-
+    @Override
     public void setParent(final IExecutionNode parent) {
         this.parent = parent;
     }
@@ -122,6 +126,7 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
     /**
      * @return The parent of this node
      */
+    @Override
     public IExecutionNode getParent() {
         return parent;
     }
@@ -130,6 +135,7 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
     /**
      * @return the result
      */
+    @Override
     public ExecutionNodeResult getResult() {
         return this.result;
     }
@@ -138,49 +144,53 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
     /**
      * @return the filename
      */
+    @Override
     public String getFilename() {
         return new File(getFileUri()).getName();
     }
 
-
+    @Override
     public String getFileUri() {
 
         return this.fileUri != null ? this.fileUri : "";
     }
 
-
+    @Override
     public void setFileUri(final String fileUri) {
         this.fileUri = fileUri;
     }
 
-
+    @Override
     public int getLineNumber() {
         return this.lineNumber;
     }
 
-
+    @Override
     public void setLineNumber(final int lineNumber) {
         this.lineNumber = lineNumber;
     }
 
 
+    @Override
     public boolean hasError() {
         return result.getResult() == ExecutionResult.FAILED || result.getResult() == ExecutionResult.PARSE_FAILURE;
     }
 
-
+    @Override
     public boolean hasPassed() {
         return this.result.getResult() == ExecutionResult.PASSED;
     }
 
-
+    @Override
     public abstract String getDescription();
 
+    @Override
     public abstract <RETURN_TYPE> RETURN_TYPE dispatch(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor);
 
+    @Override
     public abstract <RETURN_TYPE> List<RETURN_TYPE> accept(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor);
 
-
+    @Override
     public String toDebugString() {
         String debugString = Strings.repeat("\t", getDepth());
         debugString +=

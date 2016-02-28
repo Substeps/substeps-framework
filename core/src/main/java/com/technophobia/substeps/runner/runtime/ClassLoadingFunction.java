@@ -46,7 +46,7 @@ public class ClassLoadingFunction implements Function<File, Class<?>> {
         this.classesDirectory = classesDirectory;
     }
 
-
+    @Override
     public Class<?> apply(final File file) {
         log.debug("About to try and load class " + file.getAbsolutePath());
         try {

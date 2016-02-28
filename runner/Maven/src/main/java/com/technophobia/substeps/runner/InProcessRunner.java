@@ -33,24 +33,29 @@ public class InProcessRunner implements MojoRunner {
         this.log = log;
     }
 
+    @Override
     public RootNode run() {
         log.info("Running substeps tests in process");
         return executionNodeRunner.run();
     }
 
+    @Override
     public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
 
         return executionNodeRunner.prepareExecutionConfig(theConfig);
     }
 
+    @Override
     public List<SubstepExecutionFailure> getFailures() {
         return executionNodeRunner.getFailures();
     }
 
+    @Override
     public void addNotifier(final IExecutionListener listener) {
         executionNodeRunner.addNotifier(listener);
     }
 
+    @Override
     public void shutdown() {
         // nop
     }

@@ -38,6 +38,7 @@ public class MethodComparator implements Comparator<Method>, Serializable {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int compare(final Method m1, final Method m2) {
         int rtn = 0;
         final int m1Idx = classHierarchy.indexOf(m1.getDeclaringClass());

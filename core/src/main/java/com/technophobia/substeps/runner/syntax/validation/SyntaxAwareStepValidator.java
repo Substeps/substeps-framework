@@ -35,7 +35,7 @@ public class SyntaxAwareStepValidator implements StepValidator {
         this.stepImplMap = createStepImplMap();
     }
 
-
+    @Override
     public void validateFeatureFile(final FeatureFile featureFile, final SyntaxErrorReporter syntaxErrorReporter) {
         final List<Scenario> scenarios = featureFile.getScenarios();
         if (scenarios != null) {
@@ -45,7 +45,7 @@ public class SyntaxAwareStepValidator implements StepValidator {
         }
     }
 
-
+    @Override
     public void validateSubstep(final ParentStep substep, final SyntaxErrorReporter syntaxErrorReporter) {
         final List<Step> steps = substep.getSteps();
         if (steps != null) {

@@ -62,6 +62,7 @@ public class SubstepNode extends NodeWithChildren<StepNode> implements StepNode 
         return getLine();
     }
 
+    @Override
     public Set<String> getTags() {
         return tags;
     }

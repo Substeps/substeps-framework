@@ -139,7 +139,7 @@ public abstract class AbstractNodeRunner<NODE_TYPE extends IExecutionNode, VISIT
             } else {
                 lastException = new SubstepsRuntimeException("Error throw during startup, initialisation issue ?");
                 lastException.fillInStackTrace();
-                new SubstepExecutionFailure(lastException, node, ExecutionResult.FAILED);
+                SubstepExecutionFailure.setResult(lastException, node, ExecutionResult.FAILED);
             }
 
             context.getNotificationDistributor().onNodeFailed(node, lastException);

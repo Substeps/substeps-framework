@@ -208,6 +208,7 @@ public class ExecutionStats extends AbstractExecutionNodeVisitor<Void> {
          * 
          * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
          */
+        @Override
         public int compare(final TestCounterSet t1, final TestCounterSet t2) {
             // not sure which way around this is!!
             return t1.getScenarioStepStats().getFailed() - t2.getScenarioStepStats().getFailed();

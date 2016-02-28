@@ -70,6 +70,7 @@ public class OutlineScenarioRowNode extends NodeWithChildren<BasicScenarioNode> 
         return rowIndex + " " + getChildren().get(0).getScenarioName() + ":";
     }
 
+    @Override
     public Set<String> getTags() {
         return tags;
     }

@@ -73,22 +73,19 @@ public class RootNodeRunner extends AbstractNodeRunner<RootNode, Void> {
 
         } else {
 
-            final List<SubstepExecutionFailure> failures = context.getFailures();
-
             if (log.isDebugEnabled()) {
 
                 log.debug("node failures");
             }
 
             // have a look at the constituent features
-            List<FeatureNode> featureNodes = node.getChildren();
             boolean rootNodeStateSet = false;
             for (FeatureNode featureNode : node.getChildren()) {
 
                 if (featureNode.getResult().getResult() == ExecutionResult.FAILED && !featureNode.getResult().getFailure().isNonCritical()) {
                     // we've got one valid feature failure, fail the root node
                     SubstepsRuntimeException e = new SubstepsRuntimeException("At least one critical Feature failed");
-                    SubstepExecutionFailure sef = new SubstepExecutionFailure(e, node, ExecutionResult.FAILED);
+                    SubstepExecutionFailure.setResult(e, node, ExecutionResult.FAILED);
 
                     context.getNotificationDistributor().onNodeFailed(node, e);
                     rootNodeStateSet = true;
@@ -101,28 +98,6 @@ public class RootNodeRunner extends AbstractNodeRunner<RootNode, Void> {
                 node.getResult().setFinished();
                 context.getNotificationDistributor().onNodeFinished(node);
             }
-
-
-//            final Throwable lastException;
-//            boolean nonCritical = false;
-//            if (!failures.isEmpty()) {
-//
-//                final SubstepExecutionFailure lastFailure = failures.get(failures.size() - 1);
-//                // just notify on the last one in..?
-//                lastException = lastFailure.getCause();
-//                node.getResult().setScreenshot(lastFailure.getScreenshot());
-//                nonCritical = lastFailure.isNonCritical();
-//            }
-//            else {
-//                lastException = new SubstepsRuntimeException("Error throw during startup, initialisation issue ?");
-//                lastException.fillInStackTrace();
-//                SubstepExecutionFailure sef = new SubstepExecutionFailure(lastException, node, ExecutionResult.FAILED);
-//            }
-
-
-//            SubstepExecutionFailure sef = new SubstepExecutionFailure(lastException, node, ExecutionResult.FAILED);
-//            sef.setNonCritical(nonCritical);
-//            context.getNotificationDistributor().onNodeFailed(node, lastException);
 
         }
     }

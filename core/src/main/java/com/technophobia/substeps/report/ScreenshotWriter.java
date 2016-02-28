@@ -47,6 +47,7 @@ public final class ScreenshotWriter extends AbstractExecutionNodeVisitor<Void> {
         this.directoryForScreenshots = directoryForScreenshots;
     }
 
+    @Override
     public Void visit(StepImplementationNode executionNode) {
 
         if (executionNode.getResult() != null) {

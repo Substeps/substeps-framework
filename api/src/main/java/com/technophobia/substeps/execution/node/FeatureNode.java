@@ -67,6 +67,7 @@ public class FeatureNode extends NodeWithChildren<ScenarioNode<?>> implements Ta
         return feature.getName();
     }
 
+    @Override
     public Set<String> getTags() {
         return tags;
     }

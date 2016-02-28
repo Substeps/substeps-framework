@@ -33,6 +33,7 @@ public class ParentStepNameComparator implements Comparator<ParentStep>, Seriali
     /**
      * {@inheritDoc}
      */
+    @Override
     public int compare(final ParentStep p1, final ParentStep p2) {
         return p1.getParent().getLine().compareTo(p2.getParent().getLine());
     }

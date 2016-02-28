@@ -53,22 +53,6 @@ public class SubstepsJMXServer {
 
         this.log.trace("starting jmx server");
 
-//        URLClassLoader classloader = (URLClassLoader)ClassLoader.getSystemClassLoader();
-//
-//        URL[]  urls = classloader.getURLs();
-//
-//        StringBuilder buf = new StringBuilder();
-//        for (URL u : urls){
-//            buf.append(u.getFile()).append("\n");
-//        }
-//
-//        System.out.println("Started SubstepsJMXServer with command: " + System.getProperty("sun.java.command") + " and classpath:\n" + buf.toString());
-//
-//        System.out.println("SubstepsJMXServer system props");
-//
-//
-//        System.getProperties().list(System.out);
-
         System.out.println("starting substeps server");
 
         final SubstepsServer mBeanImpl = new SubstepsServer(this.shutdownSignal);
@@ -90,7 +74,6 @@ public class SubstepsJMXServer {
 
             boolean rpt = true;
             while (rpt) {
-//            while (this.shutdownSignal.getCount() > 0) {
                 try {
                     // ** NB. this can't be a log statement as it can be turned
                     // off

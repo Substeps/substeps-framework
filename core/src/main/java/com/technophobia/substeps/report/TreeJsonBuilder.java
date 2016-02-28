@@ -43,7 +43,7 @@ public final class TreeJsonBuilder extends AbstractExecutionNodeVisitor<JsonObje
     private static Map<ExecutionResult, String> resultToImageMap = new HashMap<ExecutionResult, String>();
 
     private static final Predicate<ExecutionNode> NODE_HAS_ERROR = new Predicate<ExecutionNode>() {
-
+        @Override
         public boolean apply(ExecutionNode node) {
             return node.hasError();
         }

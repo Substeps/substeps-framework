@@ -33,7 +33,7 @@ public class FeatureFileComparator implements Comparator<FeatureFile>, Serializa
 	 * 
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
-
+    @Override
     public int compare(final FeatureFile ff1, final FeatureFile ff2) {
         if (ff1 != null && ff2 != null) {
             return ff1.getName().compareTo(ff2.getName());
