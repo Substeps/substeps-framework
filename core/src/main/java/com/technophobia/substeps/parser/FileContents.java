@@ -124,8 +124,7 @@ public class FileContents {
     // 1st character of the line, it was usually returning the following line
     public int getSourceLineNumberForOffset(final int offset) {
 
-        int lineNumber = -1;
-        lineNumber = 0;
+        int lineNumber = 0;
         for (; lineNumber < this.lineStartOffsets.length - 1; lineNumber++) {
 
             if (this.lineStartOffsets[lineNumber + 1] > offset) {

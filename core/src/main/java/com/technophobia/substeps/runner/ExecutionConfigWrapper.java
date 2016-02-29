@@ -20,6 +20,8 @@ package com.technophobia.substeps.runner;
 
 import com.technophobia.substeps.helper.AssertHelper;
 import com.technophobia.substeps.model.SubSteps.StepImplementations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +37,8 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
 
     private static final long serialVersionUID = -6096151962497826502L;
 
+    private static final Logger log = LoggerFactory.getLogger(ExecutionConfigWrapper.class);
+
     public ExecutionConfigWrapper(final SubstepsExecutionConfig executionConfig) {
 
         super(executionConfig);
@@ -48,10 +52,7 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
 
         if (getSystemProperties() != null) {
 
-            // TODO - don't want to serialise the logger - read resolve ?
-
-            // log.debug
-            System.out.println("Configuring system properties [" + getSystemProperties().size() + "] for execution");
+            log.debug("Configuring system properties [" + getSystemProperties().size() + "] for execution");
             final Properties existing = System.getProperties();
             getSystemProperties().putAll(existing);
             System.setProperties(getSystemProperties());
@@ -59,8 +60,7 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
 
         determineInitialisationClasses();
 
-        // log.debug
-        System.out.println(printParameters());
+        log.debug(printParameters());
     }
 
     private List<Class<?>> getClassesFromConfig(final String[] config) {
@@ -123,8 +123,6 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
 
         List<Class<?>> initialisationClassList = null;
         if (getStepImplementationClasses() != null) {
-
-            initialisationClassList = new ArrayList<Class<?>>();
 
             final InitialisationClassSorter orderer = new InitialisationClassSorter();
 

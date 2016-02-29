@@ -29,6 +29,9 @@ import java.util.Map;
  */
 public class StepImplementationUtils {
 
+    private StepImplementationUtils(){
+        // uninstantiable
+    }
     /**
      * Converts a comma separated list of attributes into a map with their
      * corresponding values. Double quoted values have the quotes removed. A

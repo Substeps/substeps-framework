@@ -36,7 +36,6 @@ import java.util.Map;
  */
 public class EclipseDescriptionProvider implements DescriptionProvider {
 
-    private final Logger log = LoggerFactory.getLogger(EclipseDescriptionProvider.class);
 
     private final DescriptionBuilder descriptionBuilder = new JunitVersionedDescriptionBuilder();
 

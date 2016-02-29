@@ -40,7 +40,7 @@ public class MethodComparator implements Comparator<Method>, Serializable {
      */
     @Override
     public int compare(final Method m1, final Method m2) {
-        int rtn = 0;
+        int rtn ;
         final int m1Idx = classHierarchy.indexOf(m1.getDeclaringClass());
 
         final int m2Idx = classHierarchy.indexOf(m2.getDeclaringClass());

@@ -32,6 +32,9 @@ import java.lang.annotation.Target;
  */
 public abstract class SubSteps {
 
+    private SubSteps(){
+        // uninstantiable
+    }
     /**
      * annotation to denote a class containing @Step implementations
      */

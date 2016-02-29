@@ -25,6 +25,8 @@ import com.technophobia.substeps.runner.FeatureFileComparator;
 import com.technophobia.substeps.runner.FeatureFileParser;
 import com.technophobia.substeps.runner.syntax.FileUtils;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -36,6 +38,9 @@ import java.util.Set;
  * @author ian
  */
 public class SubstepsToHTML {
+
+    private static final Logger log = LoggerFactory.getLogger(SubstepsToHTML.class);
+
     /**
      * @param args
      */
@@ -44,13 +49,12 @@ public class SubstepsToHTML {
         // args featureFile=xxxxx substeps=xxxxx
 
         final String featureFile = "/path to feature";
-        final String substepsFile = "";
 
         final SubstepsToHTML converter = new SubstepsToHTML();
 
         final String html = converter.toHTML(featureFile);
 
-        System.out.println(html);
+        log.debug("\n\n" + html);
     }
 
 

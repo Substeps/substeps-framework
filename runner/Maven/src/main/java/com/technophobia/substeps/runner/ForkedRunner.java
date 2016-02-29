@@ -44,8 +44,6 @@ import java.util.Set;
 
 public class ForkedRunner implements MojoRunner {
 
-    private static final int START_TIMEOUT_SECONDS = 30;
-
     private final Log log;
 
     private Process forkedJVMProcess = null;

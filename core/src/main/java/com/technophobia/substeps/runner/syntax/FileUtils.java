@@ -30,6 +30,11 @@ import java.util.List;
 // TODO replace with commons io
 @Deprecated
 public class FileUtils {
+
+    private FileUtils(){
+        // uninstantiable
+    }
+
     public static List<File> getFiles(final File fFile, final String extension) {
 
         final List<File> files = new ArrayList<File>();

@@ -251,6 +251,9 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
      */
     private void loadStepTagsFromJar(final JarFile jarFileForClass,
                                      final List<StepImplementationsDescriptor> classStepTags, final Set<String> loadedClasses) {
+
+        // TODO - change this to load from the json version
+
         final ZipEntry entry = jarFileForClass
                 .getEntry(XMLSubstepsGlossarySerializer.XML_FILE_NAME);
 

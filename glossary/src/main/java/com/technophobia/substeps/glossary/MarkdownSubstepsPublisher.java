@@ -19,6 +19,8 @@
 package com.technophobia.substeps.glossary;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Map;
@@ -29,6 +31,8 @@ import java.util.Set;
  * @author ian
  */
 public class MarkdownSubstepsPublisher extends FileBasedGlossaryPublisher implements GlossaryPublisher {
+
+    private static final Logger log = LoggerFactory.getLogger(MarkdownSubstepsPublisher.class);
 
     @Override
     public String getDefaultFileName() {
@@ -58,15 +62,9 @@ public class MarkdownSubstepsPublisher extends FileBasedGlossaryPublisher implem
 
     private void buildStepTagRows(final StringBuilder buf, final Collection<StepDescriptor> infos) {
 
-//        Collections.sort(infos, new Comparator<StepDescriptor>() {
-//            public int compare(final StepDescriptor s1, final StepDescriptor s2) {
-//                return s1.getExpression().compareTo(s2.getExpression());
-//            }
-//        });
-
         for (final StepDescriptor info : infos) {
 
-            System.out.println("info non escaped: " + info.getExpression() + "\n\tescaped:\n"
+            log.debug("info non escaped: " + info.getExpression() + "\n\tescaped:\n"
                     + StringEscapeUtils.escapeHtml(info.getExpression()));
 
 

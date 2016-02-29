@@ -51,15 +51,13 @@ public class SubstepsJMXServer {
 
     private void run() {
 
-        this.log.trace("starting jmx server");
-
-        System.out.println("starting substeps server");
+        log.trace("starting jmx server");
 
         final SubstepsServer mBeanImpl = new SubstepsServer(this.shutdownSignal);
 
         final MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
 
-        System.out.println("got mbean server");
+        log.trace("got mbean server");
 
         try {
 
@@ -67,8 +65,7 @@ public class SubstepsJMXServer {
 
             mbs.registerMBean(mBeanImpl, name);
 
-            this.log.trace("bean registered");
-            System.out.println("mbean registered");
+            log.trace("bean registered");
 
             // TODO use notifications instead of parsing the log file
 
