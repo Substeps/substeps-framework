@@ -33,6 +33,7 @@ com.technophobia.substeps releases
 
 Useful Links
 ------------
+ * [New Substeps docs !](http://substeps.github.io/)
  * [Original Substeps documentation](http://substeps.g2g3.digital) - http://substeps.g2g3.digital
  * [Substeps Google group](https://groups.google.com/forum/?hl=en-GB#!forum/substeps) - https://groups.google.com/forum/?hl=en-GB#!forum/substeps
  
