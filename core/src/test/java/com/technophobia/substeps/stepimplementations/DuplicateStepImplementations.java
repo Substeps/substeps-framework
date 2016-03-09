@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -22,10 +22,7 @@ import com.technophobia.substeps.model.SubSteps.Step;
 import com.technophobia.substeps.model.SubSteps.StepImplementations;
 
 /**
- * 
- * 
  * @author imoore
- * 
  */
 @StepImplementations
 public class DuplicateStepImplementations {

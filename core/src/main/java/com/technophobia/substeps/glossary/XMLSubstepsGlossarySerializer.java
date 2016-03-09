@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,19 +18,18 @@
  */
 package com.technophobia.substeps.glossary;
 
+import com.thoughtworks.xstream.XStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.thoughtworks.xstream.XStream;
-
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *

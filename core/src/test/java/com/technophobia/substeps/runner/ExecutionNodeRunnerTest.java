@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,12 +18,23 @@
  */
 package com.technophobia.substeps.runner;
 
-import static org.hamcrest.CoreMatchers.any;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.technophobia.substeps.execution.ExecutionResult;
+import com.technophobia.substeps.execution.Feature;
+import com.technophobia.substeps.execution.ImplementationCache;
+import com.technophobia.substeps.execution.node.*;
+import com.technophobia.substeps.model.Util;
+import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
+import com.technophobia.substeps.model.exception.UnimplementedStepException;
+import com.technophobia.substeps.runner.setupteardown.Annotations.BeforeAllFeatures;
+import com.technophobia.substeps.runner.setupteardown.SetupAndTearDown;
+import com.technophobia.substeps.stepimplementations.MockStepImplementations;
+import com.technophobia.substeps.steps.TestStepImplementations;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -31,38 +42,21 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Matcher;
 
-import com.google.common.collect.ImmutableSet;
-import com.technophobia.substeps.execution.node.*;
-import com.technophobia.substeps.model.Syntax;
-import com.technophobia.substeps.model.Util;
-import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
-import com.technophobia.substeps.runner.syntax.SyntaxBuilder;
-import com.technophobia.substeps.stepimplementations.MockStepImplementations;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import com.google.common.collect.Lists;
-import com.technophobia.substeps.execution.ExecutionResult;
-import com.technophobia.substeps.execution.Feature;
-import com.technophobia.substeps.execution.ImplementationCache;
-import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
-import com.technophobia.substeps.model.exception.UnimplementedStepException;
-import com.technophobia.substeps.runner.setupteardown.Annotations.BeforeAllFeatures;
-import com.technophobia.substeps.runner.setupteardown.SetupAndTearDown;
-import com.technophobia.substeps.steps.TestStepImplementations;
+import static org.hamcrest.CoreMatchers.any;
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 /**
  * @author ian
- * 
  */
 public class ExecutionNodeRunnerTest {
 
     private ExecutionNodeRunner runner = null;
 
     @Before
-    public void setup(){
+    public void setup() {
         runner = new ExecutionNodeRunner();
     }
 
@@ -221,8 +215,8 @@ public class ExecutionNodeRunnerTest {
      * @return
      */
     private RootNode runExecutionTest(final String feature, final String tags, final String substeps,
-            final IExecutionListener notifier, final Class<?>[] initialisationClasses,
-            final List<SubstepExecutionFailure> failures, final List<Class<?>> stepImplementationClasses) {
+                                      final IExecutionListener notifier, final Class<?>[] initialisationClasses,
+                                      final List<SubstepExecutionFailure> failures, final List<Class<?>> stepImplementationClasses) {
         final SubstepsExecutionConfig executionConfig = new SubstepsExecutionConfig();
 
         Assert.assertTrue(failures.isEmpty());
@@ -251,7 +245,7 @@ public class ExecutionNodeRunnerTest {
                                                 final String substeps,
                                                 final Class<?>[] initialisationClasses,
                                                 final List<Class<?>> stepImplementationClasses,
-                                                boolean isStrict, String[] keywordPrecedence){
+                                                boolean isStrict, String[] keywordPrecedence) {
 
         final SubstepsExecutionConfig executionConfig = new SubstepsExecutionConfig();
 
@@ -276,7 +270,7 @@ public class ExecutionNodeRunnerTest {
 
     private RootNode runExecutionTest(final IExecutionListener notifier,
                                       final SubstepsExecutionConfig executionConfig,
-                                      final List<SubstepExecutionFailure> failures){
+                                      final List<SubstepExecutionFailure> failures) {
         runner.addNotifier(notifier);
 
         runner.prepareExecutionConfig(executionConfig);
@@ -291,8 +285,8 @@ public class ExecutionNodeRunnerTest {
 
     }
 
-  private RootNode runExecutionTest(final String feature, final String tags, final String substeps,
-        final IExecutionListener notifier, final List<SubstepExecutionFailure> failures) {
+    private RootNode runExecutionTest(final String feature, final String tags, final String substeps,
+                                      final IExecutionListener notifier, final List<SubstepExecutionFailure> failures) {
 
         final List<Class<?>> stepImplementationClasses = new ArrayList<Class<?>>();
         stepImplementationClasses.add(TestStepImplementations.class);
@@ -344,13 +338,13 @@ public class ExecutionNodeRunnerTest {
 
         final ExecutionNodeRunner runner = new ExecutionNodeRunner();
 
-        final RootNode node = new RootNode("Description", Collections.<FeatureNode> emptyList());
+        final RootNode node = new RootNode("Description", Collections.<FeatureNode>emptyList());
 
         final INotificationDistributor notificationDistributor = getPrivateField(runner, "notificationDistributor");
         final SetupAndTearDown setupAndTearDown = mock(SetupAndTearDown.class);
 
         final RootNodeExecutionContext nodeExecutionContext = new RootNodeExecutionContext(notificationDistributor,
-                Lists.<SubstepExecutionFailure> newArrayList(), setupAndTearDown, null, new ImplementationCache());
+                Lists.<SubstepExecutionFailure>newArrayList(), setupAndTearDown, null, new ImplementationCache());
 
         setPrivateField(runner, "rootNode", node);
         setPrivateField(runner, "nodeExecutionContext", nodeExecutionContext);
@@ -362,7 +356,7 @@ public class ExecutionNodeRunnerTest {
         final List<SubstepExecutionFailure> failures = runner.getFailures();
 
         verify(mockNotifer, times(1)).onNodeFailed(argThat(is(node)), argThat(any(IllegalStateException.class)));
-       // verify(mockNotifer, times(1)).onNodeFailed(argThat(is(node)), argThat(any(SubstepsRuntimeException.class)));
+        // verify(mockNotifer, times(1)).onNodeFailed(argThat(is(node)), argThat(any(SubstepsRuntimeException.class)));
 
         Assert.assertFalse("expecting some failures", failures.isEmpty());
 
@@ -373,9 +367,9 @@ public class ExecutionNodeRunnerTest {
     public void testScenarioOutlineFailsWithNoExamples() {
 
         final OutlineScenarioNode outlineNode = new OutlineScenarioNode("scenarioName",
-                Collections.<OutlineScenarioRowNode> emptyList(), Collections.<String> emptySet(), 2);
+                Collections.<OutlineScenarioRowNode>emptyList(), Collections.<String>emptySet(), 2);
         final FeatureNode featureNode = new FeatureNode(new Feature("test feature", "file"),
-                Collections.<ScenarioNode<?>> singletonList(outlineNode), Collections.<String> emptySet());
+                Collections.<ScenarioNode<?>>singletonList(outlineNode), Collections.<String>emptySet());
         final ExecutionNode rootNode = new RootNode("Description", Collections.singletonList(featureNode));
 
         final ExecutionNodeRunner runner = new ExecutionNodeRunner();
@@ -383,7 +377,7 @@ public class ExecutionNodeRunnerTest {
         final INotificationDistributor notificationDistributor = getPrivateField(runner, "notificationDistributor");
         final SetupAndTearDown setupAndTearDown = mock(SetupAndTearDown.class);
         final RootNodeExecutionContext nodeExecutionContext = new RootNodeExecutionContext(notificationDistributor,
-                Lists.<SubstepExecutionFailure> newArrayList(), setupAndTearDown, null, new ImplementationCache());
+                Lists.<SubstepExecutionFailure>newArrayList(), setupAndTearDown, null, new ImplementationCache());
 
         setPrivateField(runner, "rootNode", rootNode);
         setPrivateField(runner, "nodeExecutionContext", nodeExecutionContext);
@@ -476,7 +470,7 @@ public class ExecutionNodeRunnerTest {
         final INotificationDistributor notificationDistributor = getPrivateField(runner, "notificationDistributor");
         final SetupAndTearDown setupAndTearDown = mock(SetupAndTearDown.class);
         final RootNodeExecutionContext nodeExecutionContext = new RootNodeExecutionContext(notificationDistributor,
-                Lists.<SubstepExecutionFailure> newArrayList(), setupAndTearDown, null, new ImplementationCache());
+                Lists.<SubstepExecutionFailure>newArrayList(), setupAndTearDown, null, new ImplementationCache());
 
         setPrivateField(runner, "rootNode", rootNode);
         setPrivateField(runner, "nodeExecutionContext", nodeExecutionContext);
@@ -543,14 +537,14 @@ public class ExecutionNodeRunnerTest {
 
         final RootNode rootNode = rootNodeBuilder.build();
 
-        final Class<?>[] setupClasses = new Class[] { this.getClass() };
+        final Class<?>[] setupClasses = new Class[]{this.getClass()};
         final SetupAndTearDown setupAndTearDown = new SetupAndTearDown(setupClasses, new ImplementationCache());
 
         final ExecutionNodeRunner runner = new ExecutionNodeRunner();
 
         final INotificationDistributor notificationDistributor = getPrivateField(runner, "notificationDistributor");
         final RootNodeExecutionContext nodeExecutionContext = new RootNodeExecutionContext(notificationDistributor,
-                Lists.<SubstepExecutionFailure> newArrayList(), setupAndTearDown, null, new ImplementationCache());
+                Lists.<SubstepExecutionFailure>newArrayList(), setupAndTearDown, null, new ImplementationCache());
 
         setPrivateField(runner, "rootNode", rootNode);
         setPrivateField(runner, "nodeExecutionContext", nodeExecutionContext);
@@ -599,7 +593,7 @@ public class ExecutionNodeRunnerTest {
 
 
     @Test
-    public void testParametersSubstitutionWhenNotStrictOK(){
+    public void testParametersSubstitutionWhenNotStrictOK() {
         String tags = "outline-scenario-with-params-pass";
 
         final MockStepImplementations stepImpls = new MockStepImplementations();
@@ -612,7 +606,7 @@ public class ExecutionNodeRunnerTest {
     }
 
     @Test
-    public void testParametersSubstitutionWhenNotStrictFail(){
+    public void testParametersSubstitutionWhenNotStrictFail() {
         String tags = "outline-scenario-with-params-fail";
         final MockStepImplementations stepImpls = new MockStepImplementations();
         final MockStepImplementations spy = spy(stepImpls);
@@ -643,7 +637,6 @@ public class ExecutionNodeRunnerTest {
         SubstepsExecutionConfig cfg = buildConfig(feature, tags, substeps, null, stepImplementationClasses, false, new String[]{"Given", "And"});
 
 
-
         final RootNode rootNode = runExecutionTest(notifier, cfg, failures);
 
         Assert.assertThat(rootNode.getResult().getResult(), is(ExecutionResult.PASSED));
@@ -654,10 +647,10 @@ public class ExecutionNodeRunnerTest {
         //verify(spy, times(1)).meth13("sub");
 
         // TODO - this isn't working
-       //verify(spy, times(1)).meth13("table no sub"); // this one works
+        //verify(spy, times(1)).meth13("table no sub"); // this one works
 //       verify(spy, times(1)).meth13("table sub");  // being passed through as " "
 
-      //  verify(spy, times(1)).meth13("no params");
+        //  verify(spy, times(1)).meth13("no params");
 
     }
 
@@ -689,13 +682,12 @@ public class ExecutionNodeRunnerTest {
     }
 
 
-
     @Test
-    public void testArgSubstituion(){
+    public void testArgSubstituion() {
 
 
         final String srcString1 = "Given a substep that takes one parameter \"src1\"";
-        final String srcString2 ="And a substep that takes one parameter \"src2\"";
+        final String srcString2 = "And a substep that takes one parameter \"src2\"";
         final String patternString = "Given a substep that takes one parameter \"([^\"]*)\"";
         final String[] keywordPrecedence = new String[]{"Given", "And"};
         String[] args1 = Util.getArgs(patternString, srcString1, keywordPrecedence);
@@ -788,7 +780,7 @@ public class ExecutionNodeRunnerTest {
         // three features, a scenario each, 1 fails (crit), 1 fails(non crit), 1 pass. mixup the ordering
 
         String[] critNonCritPass = {"scenario crit fail", "scenario non crit fail", "scenario pass"};
-        String[] nonCritCritPass = {"scenario non crit fail", "scenario crit fail",  "scenario pass"};
+        String[] nonCritCritPass = {"scenario non crit fail", "scenario crit fail", "scenario pass"};
         String[] passCritNonCrit = {"scenario pass", "scenario crit fail", "scenario non crit fail"};
 
 
@@ -805,7 +797,7 @@ public class ExecutionNodeRunnerTest {
 
             final TestRootNodeBuilder rootNodeBuilder = new TestRootNodeBuilder();
 
-         //   featureBuilder.addTags("toRun", "canFail");
+            //   featureBuilder.addTags("toRun", "canFail");
 
             TestBasicScenarioNodeBuilder scenario1Builder = null;
             TestBasicScenarioNodeBuilder scenario2Builder = null;
@@ -815,9 +807,9 @@ public class ExecutionNodeRunnerTest {
             TestFeatureNodeBuilder f2Builder = null;
             TestFeatureNodeBuilder f3Builder = null;
 
-            for (String scenarioName: ordering) {
+            for (String scenarioName : ordering) {
 
-                if(scenarioName.equals("scenario crit fail")) {
+                if (scenarioName.equals("scenario crit fail")) {
 
                     f1Builder = rootNodeBuilder.addFeature(new Feature("crit fail feature", "file"));
 
@@ -826,7 +818,7 @@ public class ExecutionNodeRunnerTest {
                     scenario1Builder.addStepImpl(getClass(), nonFailMethod).addStepImpl(getClass(), failMethod).addStepImpl(getClass(), nonFailMethod);
                 }
 
-                if(scenarioName.equals("scenario non crit fail")) {
+                if (scenarioName.equals("scenario non crit fail")) {
 
                     f2Builder = rootNodeBuilder.addFeature(new Feature("non crit fail feature", "file"));
                     f2Builder.addTags("canFail");
@@ -836,7 +828,7 @@ public class ExecutionNodeRunnerTest {
                     scenario2Builder.addTags(ImmutableSet.of("toRun", "canFail"));
                 }
 
-                if(scenarioName.equals("scenario pass")) {
+                if (scenarioName.equals("scenario pass")) {
                     f3Builder = rootNodeBuilder.addFeature(new Feature("pass feature", "file"));
 
                     scenario3Builder = f3Builder.addBasicScenario("scenario pass");
@@ -870,11 +862,11 @@ public class ExecutionNodeRunnerTest {
 
             Field criticalFailuresField = BuildFailureManager.class.getDeclaredField("criticalFailures");
             criticalFailuresField.setAccessible(true);
-            List<List<IExecutionNode>> criticalFailures = (List<List<IExecutionNode>>)criticalFailuresField.get(bfm);
+            List<List<IExecutionNode>> criticalFailures = (List<List<IExecutionNode>>) criticalFailuresField.get(bfm);
 
             Field nonCriticalFailuresField = BuildFailureManager.class.getDeclaredField("nonCriticalFailures");
             nonCriticalFailuresField.setAccessible(true);
-            List<List<IExecutionNode>> nonCriticalFailures = (List<List<IExecutionNode>>)nonCriticalFailuresField.get(bfm);
+            List<List<IExecutionNode>> nonCriticalFailures = (List<List<IExecutionNode>>) nonCriticalFailuresField.get(bfm);
 
 
             bfm.addExecutionResult(rootNode);
@@ -949,7 +941,6 @@ public class ExecutionNodeRunnerTest {
         final IExecutionListener notifier = mock(IExecutionListener.class);
 
         final List<SubstepExecutionFailure> failures = new ArrayList<SubstepExecutionFailure>();
-
 
 
         final List<Class<?>> stepImplementationClasses = new ArrayList<Class<?>>();

@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps Maven Runner.
  *
@@ -18,28 +18,22 @@
  */
 package com.technophobia.substeps.mojo.runner;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
-
-import junit.framework.Assert;
-
-import org.junit.Ignore;
-import org.junit.Test;
-
 import com.technophobia.substeps.execution.node.ExecutionNode;
 import com.technophobia.substeps.execution.node.RootNode;
 import com.technophobia.substeps.runner.BuildFailureManager;
 import com.technophobia.substeps.runner.ExecutionConfig;
 import com.technophobia.substeps.runner.SubstepsRunnerMojo;
+import junit.framework.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
- * 
- * 
- * 
  * @author imoore
- * 
  */
 public class SubstepsRunnerMojoTest {
 

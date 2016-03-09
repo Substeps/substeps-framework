@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,12 +18,11 @@
  */
 package com.technophobia.substeps.model.exception;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
+import com.technophobia.substeps.model.StepImplementation;
 import org.junit.Test;
 
-import com.technophobia.substeps.model.StepImplementation;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class DuplicateStepImplementationExceptionTest {
 

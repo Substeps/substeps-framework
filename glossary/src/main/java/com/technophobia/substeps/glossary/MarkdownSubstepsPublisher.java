@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,89 +18,38 @@
  */
 package com.technophobia.substeps.glossary;
 
-import com.google.common.io.Files;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * @author ian
- * 
  */
-public class MarkdownSubstepsPublisher implements GlossaryPublisher {
+public class MarkdownSubstepsPublisher extends FileBasedGlossaryPublisher implements GlossaryPublisher {
 
-    /**
-     * @parameter default-value = stepimplementations.md
-     */
-    private File outputFile;
+    private static final Logger log = LoggerFactory.getLogger(MarkdownSubstepsPublisher.class);
 
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.technophobia.substeps.runner.GlossaryPublisher#publish(java.util.
-     * List)
-     */
-    public void publish(final List<StepImplementationsDescriptor> stepimplementationDescriptors) {
-        final Map<String, List<StepDescriptor>> sectionSorted = new TreeMap<String, List<StepDescriptor>>();
-
-        for (final StepImplementationsDescriptor descriptor : stepimplementationDescriptors) {
-
-            for (final StepDescriptor stepTag : descriptor.getExpressions()) {
-
-                String section = stepTag.getSection();
-                if (section == null || section.isEmpty()) {
-                    section = "Miscellaneous";
-                }
-
-                List<StepDescriptor> subList = sectionSorted.get(section);
-
-                if (subList == null) {
-                    subList = new ArrayList<StepDescriptor>();
-                    sectionSorted.put(section, subList);
-                }
-                subList.add(stepTag);
-            }
-        }
-
-        final String md = buildMarkdown(sectionSorted);
-
-        outputFile.delete();
-
-        // write out
-        try {
-            if (outputFile.createNewFile()) {
-                Files.write(md, outputFile, Charset.defaultCharset());
-            } else {
-                // TODO
-            }
-        } catch (final IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    @Override
+    public String getDefaultFileName() {
+        return "stepimplementations.md";
     }
 
 
     /**
      * @param sectionSorted
      */
-    private String buildMarkdown(final Map<String, List<StepDescriptor>> sectionSorted) {
+    @Override
+    public String buildFileContents(final Map<String, Collection<StepDescriptor>> sectionSorted) {
         final StringBuilder buf = new StringBuilder();
 
-//        buf.append("<html><head></head><body> <table border=\"1\">\n<tr><th>Keyword</th> <th>Example</th> <th>Description</th></tr>\n");
+        final Set<Entry<String, Collection<StepDescriptor>>> entrySet = sectionSorted.entrySet();
 
-        // buf.append(String.format(TRAC_TABLE_FORMAT, "'''Keyword'''",
-        // "'''Example'''", "'''Description'''"))
-        // .append("\n");
-
-        final Set<Entry<String, List<StepDescriptor>>> entrySet = sectionSorted.entrySet();
-
-        for (final Entry<String, List<StepDescriptor>> e : entrySet) {
+        for (final Entry<String, Collection<StepDescriptor>> e : entrySet) {
             buf.append(String.format(TABLE_ROW_SECTION_FORMAT, e.getKey())).append("\n");
 
             buildStepTagRows(buf, e.getValue());
@@ -111,17 +60,11 @@ public class MarkdownSubstepsPublisher implements GlossaryPublisher {
     }
 
 
-    private void buildStepTagRows(final StringBuilder buf, final List<StepDescriptor> infos) {
-
-        Collections.sort(infos, new Comparator<StepDescriptor>() {
-            public int compare(final StepDescriptor s1, final StepDescriptor s2) {
-                return s1.getExpression().compareTo(s2.getExpression());
-            }
-        });
+    private void buildStepTagRows(final StringBuilder buf, final Collection<StepDescriptor> infos) {
 
         for (final StepDescriptor info : infos) {
 
-            System.out.println("info non escaped: " + info.getExpression() + "\n\tescaped:\n"
+            log.debug("info non escaped: " + info.getExpression() + "\n\tescaped:\n"
                     + StringEscapeUtils.escapeHtml(info.getExpression()));
 
 

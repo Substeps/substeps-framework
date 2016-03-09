@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,11 +18,11 @@
  */
 package com.technophobia.substeps.report;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import com.technophobia.substeps.execution.ExecutionNodeResult;
 import com.technophobia.substeps.execution.node.IExecutionNode;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * @author ian

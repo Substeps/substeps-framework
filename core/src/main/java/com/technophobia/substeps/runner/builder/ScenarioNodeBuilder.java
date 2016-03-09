@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,28 +18,22 @@
  */
 package com.technophobia.substeps.runner.builder;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import com.technophobia.substeps.execution.ExecutionResult;
-import com.technophobia.substeps.runner.SubstepExecutionFailure;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.technophobia.substeps.execution.node.BasicScenarioNode;
-import com.technophobia.substeps.execution.node.OutlineScenarioNode;
-import com.technophobia.substeps.execution.node.OutlineScenarioRowNode;
-import com.technophobia.substeps.execution.node.ScenarioNode;
-import com.technophobia.substeps.execution.node.StepNode;
-import com.technophobia.substeps.execution.node.SubstepNode;
+import com.technophobia.substeps.execution.ExecutionResult;
+import com.technophobia.substeps.execution.node.*;
 import com.technophobia.substeps.model.ExampleParameter;
 import com.technophobia.substeps.model.Scenario;
 import com.technophobia.substeps.model.Step;
 import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
+import com.technophobia.substeps.runner.SubstepExecutionFailure;
 import com.technophobia.substeps.runner.TestParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class ScenarioNodeBuilder {
 
@@ -81,22 +75,22 @@ public class ScenarioNodeBuilder {
 
                 scenarioNode = buildBasicScenarioNode(scenario, null, inheritedTags, depth);
             }
-        } catch (final Throwable t) {
+        } catch (final Exception e) {
 
             // something has gone wrong parsing this scenario, no point
             // running it so mark it as failed now
             if (log.isDebugEnabled()) {
-                log.debug("Failed to parse " + scenario.getDescription() + ", creating dummy node", t);
+                log.debug("Failed to parse " + scenario.getDescription() + ", creating dummy node", e);
             }
-            scenarioNode = new BasicScenarioNode(scenario.getDescription(), null, Collections.<StepNode> emptyList(),
-                    Collections.<String> emptySet(), depth);
+            scenarioNode = new BasicScenarioNode(scenario.getDescription(), null, Collections.<StepNode>emptyList(),
+                    Collections.<String>emptySet(), depth);
 
-            new SubstepExecutionFailure(t, scenarioNode, ExecutionResult.PARSE_FAILURE);
-//            scenarioNode.getResult().setFailedToParse(t);
+            // ctor has side effects... eeeurgh!
+            new SubstepExecutionFailure(e, scenarioNode, ExecutionResult.PARSE_FAILURE);
 
             if (parameters.isFailParseErrorsImmediately()) {
 
-                throw new SubstepsConfigurationException(t);
+                throw new SubstepsConfigurationException(e);
             }
         }
 
@@ -126,7 +120,7 @@ public class ScenarioNodeBuilder {
     }
 
     public BasicScenarioNode buildBasicScenarioNode(final Scenario scenario, final ExampleParameter scenarioParameters,
-            Set<String> inheritedTags, int depth) {
+                                                    Set<String> inheritedTags, int depth) {
 
         Set<String> allTags = Sets.newHashSet();
         allTags.addAll(inheritedTags);

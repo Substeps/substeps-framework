@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -54,6 +54,7 @@ public class ForkedProcessCloser implements Runnable {
         return this.thread;
     }
 
+    @Override
     public void run() {
 
         log.warn("Substeps forked process shutdown hook triggered, process may not have completed cleanly");
@@ -67,7 +68,7 @@ public class ForkedProcessCloser implements Runnable {
 
             GracefullShutdownRunner gracefullShutdownRunner = new GracefullShutdownRunner();
             Thread gracefullShutdownThread = new Thread(gracefullShutdownRunner);
-            gracefullShutdownThread.run();
+            gracefullShutdownThread.start();
 
             try {
 
@@ -93,9 +94,10 @@ public class ForkedProcessCloser implements Runnable {
 
         private boolean shutdown = false;
 
+        @Override
         public void run() {
 
-            ForkedProcessCloser.this.log.info("Attempting to shutdown remote substep server via jmx");
+            log.info("Attempting to shutdown remote substep server via jmx");
 
             try {
 
@@ -106,7 +108,7 @@ public class ForkedProcessCloser implements Runnable {
                 }
             } catch (Exception e) {
 
-                ForkedProcessCloser.this.log.info("Failed to shutdown the server gracefully");
+                log.info("Failed to shutdown the server gracefully", e);
             }
 
         }

@@ -13,8 +13,9 @@ public class JunitVersionedDescriptionBuilder implements DescriptionBuilder {
 
     private DescriptionBuilder descriptionBuilder = null;
 
+    @Override
     public Description descriptionFor(IExecutionNode executionNode, DescriptorStatus descriptorStatus) {
-        if(descriptionBuilder == null){
+        if (descriptionBuilder == null) {
             descriptionBuilder = initialiseDescriptionBuilder();
         }
         return descriptionBuilder.descriptionFor(executionNode, descriptorStatus);
@@ -22,7 +23,7 @@ public class JunitVersionedDescriptionBuilder implements DescriptionBuilder {
 
     private DescriptionBuilder initialiseDescriptionBuilder() {
         log.debug("Creating DescriptionBuilder");
-        if(isJunit411()){
+        if (isJunit411()) {
             log.debug("Creating a Junit411DescriptionBuilder");
             return new Junit411DescriptionBuilder();
         }
@@ -30,13 +31,13 @@ public class JunitVersionedDescriptionBuilder implements DescriptionBuilder {
         return new JunitLegacyDescriptionBuilder();
     }
 
-    private boolean isJunit411(){
+    private boolean isJunit411() {
         try {
             Description.class.getMethod("createTestDescription", String.class, String.class, Serializable.class);
             log.debug("Junit 4.11 is on the classpath");
             return true;
         } catch (NoSuchMethodException e) {
-            log.debug("Junit 4.11 is not on the classpath");
+            log.debug("Junit 4.11 is not on the classpath", e);
             return false;
         }
     }

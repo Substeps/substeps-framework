@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,22 +18,22 @@
  */
 package com.technophobia.substeps.runner.runtime;
 
+import com.technophobia.substeps.runner.JunitFeatureRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import com.technophobia.substeps.runner.JunitFeatureRunner;
-
 public class DefinableFeatureRunner extends JunitFeatureRunner {
+
+    private final Logger log = LoggerFactory.getLogger(DefinableFeatureRunner.class);
 
     public DefinableFeatureRunner() {
         super();
     }
 
-
-    // public DefinableFeatureRunner(final IJunitNotifier notifier) {
-    // super(notifier);
-    // }
 
     public DefinableFeatureRunner(final Class<?> clazz) {
         super();
@@ -64,6 +64,7 @@ public class DefinableFeatureRunner extends JunitFeatureRunner {
             return Class.forName(beforeAndAfterProcessor);
         } catch (final ClassNotFoundException e) {
             // Class doesn't exist - for now, leave it
+            log.warn("beforeAndAfterProcessor class doesn't exist", e);
             return null;
         }
     }

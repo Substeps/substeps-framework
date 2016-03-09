@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,19 +18,13 @@
  */
 package com.technophobia.substeps.runner.setupteardown;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.collect.Maps;
 
+import java.lang.reflect.Method;
+import java.util.*;
+
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -84,7 +78,7 @@ public class BeforeAndAfterMethods {
 
     protected List<Method> methodsForState(final MethodState methodState) {
         return methodMap.containsKey(methodState) ? methodMap.get(methodState) : Collections
-                .<Method> emptyList();
+                .<Method>emptyList();
     }
 
 
@@ -134,20 +128,32 @@ public class BeforeAndAfterMethods {
     private void sortMethodLists(final List<Class<?>> classHierarchy) {
         final Comparator<Method> methodComparator = new MethodComparator(classHierarchy);
 
-        for (final MethodState methodState : methodMap.keySet()) {
-            final List<Method> methodsForState = methodMap.get(methodState);
-            sortMethodList(methodsForState, methodComparator);
+
+        for (final Map.Entry<MethodState, List<Method>> e : methodMap.entrySet()) {
+
+            sortMethodList(e.getValue(), methodComparator);
 
             // Execute after tests in reverse order
-            if (!methodState.isBeforeTest()) {
-                Collections.reverse(methodsForState);
+            if (!e.getKey().isBeforeTest()) {
+                Collections.reverse(e.getValue());
             }
+
         }
+
+//        for (final MethodState methodState : methodMap.keySet()) {
+//            final List<Method> methodsForState = methodMap.get(methodState);
+//            sortMethodList(methodsForState, methodComparator);
+//
+//            // Execute after tests in reverse order
+//            if (!methodState.isBeforeTest()) {
+//                Collections.reverse(methodsForState);
+//            }
+//        }
     }
 
 
     private void sortMethodList(final List<Method> methodsList,
-            final Comparator<Method> methodComparator) {
+                                final Comparator<Method> methodComparator) {
         Collections.sort(methodsList, methodComparator);
     }
 

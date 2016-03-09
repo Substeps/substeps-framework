@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,21 +18,23 @@
  */
 package com.technophobia.substeps.model;
 
+import com.technophobia.substeps.model.parameter.Converter;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.technophobia.substeps.model.parameter.Converter;
-
 /**
  * Class to hold various annotation definitions
- * 
+ *
  * @author imoore
- * 
  */
 public abstract class SubSteps {
 
+    private SubSteps(){
+        // uninstantiable
+    }
     /**
      * annotation to denote a class containing @Step implementations
      */
@@ -40,7 +42,7 @@ public abstract class SubSteps {
     @Target(ElementType.TYPE)
     public static @interface StepImplementations {
         // no op
-    	Class<?>[] requiredInitialisationClasses() default {};
+        Class<?>[] requiredInitialisationClasses() default {};
     }
 
     /**

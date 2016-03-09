@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,10 +18,10 @@
  */
 package com.technophobia.substeps.runner.syntax;
 
-import java.io.File;
-
 import com.technophobia.substeps.model.exception.StepImplementationException;
 import com.technophobia.substeps.model.exception.SubstepsParsingException;
+
+import java.io.File;
 
 public interface SyntaxErrorReporter {
 

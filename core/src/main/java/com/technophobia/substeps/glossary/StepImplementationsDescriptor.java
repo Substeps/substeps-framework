@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -24,38 +24,34 @@ import java.util.List;
 
 /**
  * @author ian
- *
  */
-public class StepImplementationsDescriptor
-{
+public class StepImplementationsDescriptor {
 
-	private final List<StepDescriptor> expressions;
-	private final String className;
-	
-	public StepImplementationsDescriptor(final String className){
-		this.className = className;
-		this.expressions = new ArrayList<StepDescriptor>();	
-	}
-	
-	public void addStepTags (final StepDescriptor stepTag){
-		this.expressions.add(stepTag);
-	}
+    private final List<StepDescriptor> expressions;
+    private final String className;
 
-	/**
-	 * @return the expressions
-	 */
-	public List<StepDescriptor> getExpressions()
-	{
-		return expressions;
-	}
+    public StepImplementationsDescriptor(final String className) {
+        this.className = className;
+        this.expressions = new ArrayList<StepDescriptor>();
+    }
 
-	/**
-	 * @return the className
-	 */
-	public String getClassName()
-	{
-		return className;
-	}
-	
-	
+    public void addStepTags(final StepDescriptor stepTag) {
+        this.expressions.add(stepTag);
+    }
+
+    /**
+     * @return the expressions
+     */
+    public List<StepDescriptor> getExpressions() {
+        return expressions;
+    }
+
+    /**
+     * @return the className
+     */
+    public String getClassName() {
+        return className;
+    }
+
+
 }

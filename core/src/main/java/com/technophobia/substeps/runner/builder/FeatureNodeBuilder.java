@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,13 +18,6 @@
  */
 package com.technophobia.substeps.runner.builder;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.collect.Lists;
 import com.technophobia.substeps.execution.Feature;
 import com.technophobia.substeps.execution.node.FeatureNode;
@@ -32,6 +25,12 @@ import com.technophobia.substeps.execution.node.ScenarioNode;
 import com.technophobia.substeps.model.FeatureFile;
 import com.technophobia.substeps.model.Scenario;
 import com.technophobia.substeps.runner.TestParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class FeatureNodeBuilder {
 
@@ -65,7 +64,7 @@ public class FeatureNodeBuilder {
 
         List<ScenarioNode<?>> scenarioNodes = Lists.newArrayListWithExpectedSize(featureFile.getScenarios().size());
 
-        Set<String> tags = featureFile.getTags() != null ? featureFile.getTags() : Collections.<String> emptySet();
+        Set<String> tags = featureFile.getTags() != null ? featureFile.getTags() : Collections.<String>emptySet();
 
         for (final Scenario scenario : featureFile.getScenarios()) {
 

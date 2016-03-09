@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -19,24 +19,22 @@
 
 package com.technophobia.substeps.report;
 
-import java.util.Collections;
-
+import com.technophobia.substeps.execution.node.FeatureNode;
+import com.technophobia.substeps.execution.node.RootNode;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.technophobia.substeps.execution.node.FeatureNode;
-import com.technophobia.substeps.execution.node.RootNode;
+import java.util.Collections;
 
 /**
  * @author ian
- * 
  */
 public class ReportDataTest {
 
     @Ignore("work in progress")
     @Test
     public void testCounts() {
-        final RootNode root = new RootNode("Description", Collections.<FeatureNode> emptyList());
+        final RootNode root = new RootNode("Description", Collections.<FeatureNode>emptyList());
 
         final ReportData data = new ReportData();
         data.addRootExecutionNode(root);

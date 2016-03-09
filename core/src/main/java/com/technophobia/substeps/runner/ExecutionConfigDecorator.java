@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -23,9 +23,8 @@ import java.util.Properties;
 
 /**
  * Allows ExecutionConfigs to be decorated
- * 
+ *
  * @author rbarefield
- * 
  */
 abstract class ExecutionConfigDecorator {// extends SubstepsExecutionConfig {
 
@@ -37,7 +36,9 @@ abstract class ExecutionConfigDecorator {// extends SubstepsExecutionConfig {
         this.decoratedConfig = executionConfig;
     }
 
-    public String getScenarioName(){return decoratedConfig.getScenarioName();}
+    public String getScenarioName() {
+        return decoratedConfig.getScenarioName();
+    }
 
     // @Override
     public String getDescription() {

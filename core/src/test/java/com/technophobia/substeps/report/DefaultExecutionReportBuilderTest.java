@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,6 +18,19 @@
  */
 package com.technophobia.substeps.report;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.gson.*;
+import com.technophobia.substeps.execution.Feature;
+import com.technophobia.substeps.execution.node.*;
+import org.apache.log4j.Logger;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -30,33 +43,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
-import com.technophobia.substeps.execution.Feature;
-import com.technophobia.substeps.execution.node.BasicScenarioNode;
-import com.technophobia.substeps.execution.node.ExecutionNode;
-import com.technophobia.substeps.execution.node.FeatureNode;
-import com.technophobia.substeps.execution.node.RootNode;
-import com.technophobia.substeps.execution.node.ScenarioNode;
-import com.technophobia.substeps.execution.node.StepImplementationNode;
-import com.technophobia.substeps.execution.node.StepNode;
-
 /**
  * @author ian
- * 
  */
 public class DefaultExecutionReportBuilderTest {
 
@@ -122,8 +110,8 @@ public class DefaultExecutionReportBuilderTest {
 
         final Feature feature = new Feature(name, fileName);
         final FeatureNode featureNode = new FeatureNode(feature,
-                Collections.<ScenarioNode<?>> singletonList(createScenario(SCENARIO_NAME)),
-                Collections.<String> emptySet());
+                Collections.<ScenarioNode<?>>singletonList(createScenario(SCENARIO_NAME)),
+                Collections.<String>emptySet());
         featureNodes.add(featureNode);
 
         return featureNode;
@@ -132,7 +120,7 @@ public class DefaultExecutionReportBuilderTest {
     private BasicScenarioNode createScenario(String scenarioName) {
 
         BasicScenarioNode scenarioNode = new BasicScenarioNode(scenarioName, null, createSteps(),
-                Collections.<String> emptySet(), 2);
+                Collections.<String>emptySet(), 2);
         scenarioNodes.add(scenarioNode);
         return scenarioNode;
     }
@@ -160,7 +148,7 @@ public class DefaultExecutionReportBuilderTest {
     private StepImplementationNode createStep(Class<?> stepClass, Method stepMethod, String stepLine) {
 
         final StepImplementationNode stepNode = new StepImplementationNode(stepClass, stepMethod,
-                Collections.<String> emptySet(), 3);
+                Collections.<String>emptySet(), 3);
         stepNode.getResult().setStarted();
         stepNodes.add(stepNode);
         stepNode.setLine(stepLine);

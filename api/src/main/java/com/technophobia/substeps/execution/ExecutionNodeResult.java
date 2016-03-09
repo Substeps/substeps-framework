@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -19,10 +19,10 @@
 
 package com.technophobia.substeps.execution;
 
+import com.technophobia.substeps.runner.SubstepExecutionFailure;
+
 import java.io.Serializable;
 import java.util.EnumSet;
-
-import com.technophobia.substeps.runner.SubstepExecutionFailure;
 
 public class ExecutionNodeResult implements Serializable {
 
@@ -53,8 +53,7 @@ public class ExecutionNodeResult implements Serializable {
     }
 
     /**
-     * @param result
-     *            the result to set
+     * @param result the result to set
      */
     public void setResult(final ExecutionResult result) {
         this.result = result;
@@ -68,15 +67,14 @@ public class ExecutionNodeResult implements Serializable {
     }
 
     /**
-     * @param failureStackTrace
-     *            the failureStackTrace to set
+     * @param failureStackTrace the failureStackTrace to set
      */
     public void setThrown(final Throwable failureStackTrace) {
         thrown = failureStackTrace;
     }
 
     /**
-     * 
+     *
      */
     public void setFinished() {
         result = ExecutionResult.PASSED;
@@ -84,7 +82,7 @@ public class ExecutionNodeResult implements Serializable {
     }
 
     /**
-     * 
+     *
      */
     public void setStarted() {
         result = ExecutionResult.RUNNING;

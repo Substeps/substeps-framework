@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,33 +18,27 @@
  */
 package com.technophobia.substeps.report;
 
+import com.technophobia.substeps.execution.Feature;
+import com.technophobia.substeps.execution.node.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.technophobia.substeps.execution.Feature;
-import com.technophobia.substeps.execution.node.TestBasicScenarioNodeBuilder;
-import com.technophobia.substeps.execution.node.TestFeatureNodeBuilder;
-import com.technophobia.substeps.execution.node.TestOutlineScenarioNodeBuilder;
-import com.technophobia.substeps.execution.node.TestOutlineScenarioRowNodeBuilder;
-import com.technophobia.substeps.execution.node.TestRootNodeBuilder;
-import com.technophobia.substeps.execution.node.TestSubstepNodeBuilder;
-
 /**
  * <pre>
- * 
+ *
  * Given the following substep configuration
- * 
+ *
  * where SS = SubstepNode
  *       SI = StepImplementationNode
- * 
- * 
+ *
+ *
  *                            SS - SI
  *                            /    /
  *                          *SS - SS - SI
  *                          /
  *            *BasicScenarioA - *SS - SI
- *            /                   \    
+ *            /                   \
  *      *Feature1                  SI
  *            \
  *            *BasicScenarioB - *SS - SI
@@ -53,12 +47,12 @@ import com.technophobia.substeps.execution.node.TestSubstepNodeBuilder;
  *                                                   SI
  *                                                  /
  *                                               *SS - SI
- *                                              /   
+ *                                              /
  *                                BasicScenarioC - *SS - SI   SI
- *                                /                          / 
+ *                                /                          /
  *                             Row1                       *SS - SI
  *                            /                           /
- *             *ScenarioOutline1 - Row2 - BasicScenarioC  - *SS - SI 
+ *             *ScenarioOutline1 - Row2 - BasicScenarioC  - *SS - SI
  *             /
  *      *Feature2
  *             \
@@ -67,19 +61,18 @@ import com.technophobia.substeps.execution.node.TestSubstepNodeBuilder;
  *                           Row2
  *                              \
  *                               BasicScenarioD - *SI
- * 
+ *
  * The starred nodes should contribute to the counts.
- * 
+ *
  * Therefore we have
- * 
+ *
  * 2  features
  * 4  scenarios
  * 10 scenario steps
- * 
+ *
  * </pre>
- * 
+ *
  * @author rbarefield
- * 
  */
 public class ExecutionStatsTest {
 

@@ -1,17 +1,14 @@
 package com.technophobia.substeps.runner.description;
 
-import com.technophobia.substeps.execution.node.FeatureNode;
 import com.technophobia.substeps.execution.node.IExecutionNode;
-import com.technophobia.substeps.execution.node.RootNode;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;
 
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.*;
 import static org.junit.Assert.assertThat;
-
-import java.util.Collections;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class Junit411DescriptionBuilderTest {
 
@@ -19,12 +16,12 @@ public class Junit411DescriptionBuilderTest {
 
 
     @Before
-    public void initialise(){
+    public void initialise() {
         this.descriptionBuilder = new Junit411DescriptionBuilder();
     }
 
     @Test
-    public void canCreateDescription(){
+    public void canCreateDescription() {
 
         final IExecutionNode node = mock(IExecutionNode.class);
         when(node.getDepth()).thenReturn(2);

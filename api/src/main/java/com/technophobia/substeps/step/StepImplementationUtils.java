@@ -24,20 +24,21 @@ import java.util.Map;
 /**
  * A utility class for helper methods for various methods used in a number of
  * step implementations
- * 
+ *
  * @author imoore
- * 
  */
 public class StepImplementationUtils {
 
+    private StepImplementationUtils(){
+        // uninstantiable
+    }
     /**
      * Converts a comma separated list of attributes into a map with their
      * corresponding values. Double quoted values have the quotes removed. A
      * typical use case is a step that takes a series of attributes contained
      * within angle brackets eg [COLOUR="red", name="bob", age=26]
-     * 
-     * @param attributes
-     *            the comma separated attributes
+     *
+     * @param attributes the comma separated attributes
      * @return the atrribue values mapped by their key
      */
     public static Map<String, String> convertToMap(final String attributes) {

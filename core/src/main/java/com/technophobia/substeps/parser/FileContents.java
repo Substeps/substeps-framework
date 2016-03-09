@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,15 +18,15 @@
  */
 package com.technophobia.substeps.parser;
 
+import com.google.common.io.Files;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import com.google.common.io.Files;
-
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -124,8 +124,7 @@ public class FileContents {
     // 1st character of the line, it was usually returning the following line
     public int getSourceLineNumberForOffset(final int offset) {
 
-        int lineNumber = -1;
-        lineNumber = 0;
+        int lineNumber = 0;
         for (; lineNumber < this.lineStartOffsets.length - 1; lineNumber++) {
 
             if (this.lineStartOffsets[lineNumber + 1] > offset) {

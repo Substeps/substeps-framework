@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,14 +18,14 @@
  */
 package com.technophobia.substeps.runner.syntax.validation.fake;
 
+import com.technophobia.substeps.model.exception.StepImplementationException;
+import com.technophobia.substeps.model.exception.SubstepsParsingException;
+import com.technophobia.substeps.runner.syntax.SyntaxErrorReporter;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import com.technophobia.substeps.model.exception.StepImplementationException;
-import com.technophobia.substeps.model.exception.SubstepsParsingException;
-import com.technophobia.substeps.runner.syntax.SyntaxErrorReporter;
 
 public class FakeSyntaxErrorReporter implements SyntaxErrorReporter {
 
@@ -40,13 +40,13 @@ public class FakeSyntaxErrorReporter implements SyntaxErrorReporter {
 
 
     public void reportFeatureError(final File file, final String line, final int lineNumber, final int offset,
-            final String description) throws RuntimeException {
+                                   final String description) throws RuntimeException {
         syntaxErrors.add(new SyntaxErrorData(true, file, line, lineNumber, description));
     }
 
 
     public void reportFeatureError(final File file, final String line, final int lineNumber, final int offset,
-            final String description, final RuntimeException ex) throws RuntimeException {
+                                   final String description, final RuntimeException ex) throws RuntimeException {
         syntaxErrors.add(new SyntaxErrorData(true, file, line, lineNumber, description));
     }
 
@@ -83,7 +83,7 @@ public class FakeSyntaxErrorReporter implements SyntaxErrorReporter {
 
 
         public SyntaxErrorData(final boolean isFeature, final File file, final String line, final int lineNumber,
-                final String description) {
+                               final String description) {
             this.isFeature = isFeature;
             this.file = file;
             this.line = line;

@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps Maven Runner.
  *
@@ -18,8 +18,8 @@
  */
 package com.technophobia.substeps.runner;
 
-import java.util.List;
-
+import com.technophobia.substeps.execution.node.RootNode;
+import com.technophobia.substeps.report.ExecutionReportBuilder;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -33,16 +33,14 @@ import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 
-import com.technophobia.substeps.execution.node.RootNode;
-import com.technophobia.substeps.report.ExecutionReportBuilder;
+import java.util.List;
 
 /**
  * Mojo to run a number SubStep features, each contained within any number of
  * executionConfigs, encapsulating the required config and setup and tear down
  * details
- * 
  */
-@Mojo( name = "run-features",
+@Mojo(name = "run-features",
         defaultPhase = LifecyclePhase.INTEGRATION_TEST,
         requiresDependencyResolution = ResolutionScope.TEST,
         requiresProject = true,
@@ -51,9 +49,7 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
 
     /**
-     * 
      * See <a href="./executionConfig.html">ExecutionConfig</a>
-     * 
      */
 
     @Parameter
@@ -61,7 +57,6 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
     /**
      * The execution report builder you wish to use
-     * 
      */
     @Parameter
     private final ExecutionReportBuilder executionReportBuilder = null;
@@ -70,12 +65,11 @@ public class SubstepsRunnerMojo extends AbstractMojo {
      * When running in forked mode, a port is required to communicate between
      * maven and substeps, to set explicitly use -DjmxPort=9999
      */
-    @Parameter( defaultValue = "9999" )
+    @Parameter(defaultValue = "9999")
     private Integer jmxPort;
 
     /**
      * A space delimited string of vm arguments to pass to the forked jvm
-     * 
      */
     @Parameter
 
@@ -84,23 +78,21 @@ public class SubstepsRunnerMojo extends AbstractMojo {
     /**
      * if true a jvm will be spawned to run substeps otherwise substeps will
      * execute within the same jvm as maven
-     * 
      */
-    @Parameter( property = "runTestsInForkedVM", defaultValue = "false" )
+    @Parameter(property = "runTestsInForkedVM", defaultValue = "false")
 
     private boolean runTestsInForkedVM = false;
 
     /**
      * List of classes containing step implementations e.g.
      * <param>com.technophobia.substeps.StepImplmentations<param>
-     * 
      */
     @Parameter
     private List<String> stepImplementationArtifacts;
 
     /**
      */
-    @Parameter(defaultValue = "${project}", readonly = true )
+    @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
     private final BuildFailureManager buildFailureManager = new BuildFailureManager();
@@ -127,24 +119,24 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
     /**
      */
-    @Parameter(  defaultValue = "${localRepository}" )
+    @Parameter(defaultValue = "${localRepository}")
 
     private org.apache.maven.artifact.repository.ArtifactRepository localRepository;
 
     /**
      */
-    @Parameter(  defaultValue = "${project.remoteArtifactRepositories}" )
+    @Parameter(defaultValue = "${project.remoteArtifactRepositories}")
 
     private List remoteRepositories;
 
     /**
      */
-    @Parameter(  defaultValue = "${plugin.artifacts}" )
+    @Parameter(defaultValue = "${plugin.artifacts}")
 
     private List<Artifact> pluginDependencies;
 
     /**
-//     * at component
+     * //     * at component
      */
     @Component
     private ArtifactMetadataSource artifactMetadataSource;
@@ -212,11 +204,11 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
                 runExecutionConfig(executionConfig);
             }
-        } catch (final Throwable t) {
+        } catch (final Exception e) {
 
             // to cater for any odd exceptions thrown out.. at least this way
             // jvm shouldn't just die, unless it was going to die anyway
-            throw new MojoExecutionException("Unhandled exception: " + t.getMessage(), t);
+            throw new MojoExecutionException("Unhandled exception: " + e.getMessage(), e);
         }
     }
 
@@ -247,7 +239,6 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
 
     /**
-     *
      * @throws MojoFailureException
      */
     private void processBuildData() throws MojoFailureException {

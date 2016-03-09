@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,7 +18,9 @@
  */
 package com.technophobia.substeps.runner;
 
-import static org.hamcrest.CoreMatchers.is;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.runner.Description;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -26,16 +28,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.runner.Description;
+import static org.hamcrest.CoreMatchers.is;
 
 
 /**
- * 
- * 
  * @author imoore
- * 
  */
 public abstract class BaseJunitFeatureRunnerTest implements TestCallback {
     protected TestNotifier testNotifier = null;
@@ -155,8 +152,8 @@ public abstract class BaseJunitFeatureRunnerTest implements TestCallback {
 
 
     /**
-	 * 
-	 */
+     *
+     */
     private void assertNotificationState() {
         final Description current = testNotifier.getCurrentlyRunning();
 
@@ -226,7 +223,7 @@ public abstract class BaseJunitFeatureRunnerTest implements TestCallback {
          * @param failed
          */
         public DescriptionSnapshot(final String[] started, final String[] finished,
-                final String[] failed) {
+                                   final String[] failed) {
             super();
             this.started = started;
             this.finished = finished;

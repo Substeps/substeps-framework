@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -21,9 +21,7 @@ package com.technophobia.substeps.runner;
 import com.google.common.base.Supplier;
 
 /**
- * 
  * Supplier interface which allows the the T being supplied to be replaced
- *
  */
 public interface MutableSupplier<T> extends Supplier<T> {
 

@@ -17,13 +17,13 @@ public class JunitLegacyDescriptionBuilderTest {
 
 
     @Before
-    public void initialise(){
+    public void initialise() {
         this.descriptionBuilder = new JunitLegacyDescriptionBuilder();
     }
 
     @Test
     @Ignore("This currently won't run, as the legacy description builder uses reflection to invoke a constructor that doesn't exist in junit 4.11")
-    public void canCreateDescription(){
+    public void canCreateDescription() {
 
         final IExecutionNode node = mock(IExecutionNode.class);
         when(node.getDepth()).thenReturn(2);

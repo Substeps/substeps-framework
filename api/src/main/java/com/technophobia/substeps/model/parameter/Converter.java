@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -26,8 +26,8 @@ package com.technophobia.substeps.model.parameter;
  */
 public interface Converter<T> {
 
-	boolean canConvert(Class<?> cls);
+    boolean canConvert(Class<?> cls);
 
-	T convert(String value);
+    T convert(String value);
 
 }

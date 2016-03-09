@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -25,7 +25,7 @@ public class DuplicateStepImplementationException extends StepImplementationExce
     private static final long serialVersionUID = 6851509341143564326L;
 
     public DuplicateStepImplementationException(final String pattern, final StepImplementation originalSource,
-            final StepImplementation duplicatingSource) {
+                                                final StepImplementation duplicatingSource) {
 
         super(duplicatingSource.getImplementedIn(), duplicatingSource.getMethod(), String.format(
                 "Duplicate step implementation detected: Pattern [%s] is implemented in %s and %s", pattern,

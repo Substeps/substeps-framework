@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -75,7 +75,7 @@ public class ParentStep {
         final HashMap<String, String> map = new HashMap<String, String>();
 
         final String[] paramValues = Util.getArgs(this.parent.getPattern(),
-            step.getLine(), null);
+                step.getLine(), null);
 
         if (paramValues != null) {
             for (int i = 0; i < paramValues.length; i++) {
@@ -83,7 +83,7 @@ public class ParentStep {
             }
         }
         this.paramValueMap = new ExampleParameter(step.getSourceLineNumber(),
-            map);
+                map);
     }
 
 
@@ -98,7 +98,7 @@ public class ParentStep {
         log.debug("initialiseParamValues with line: " + line);
 
         final String[] paramValues = Util.getArgs(this.parent.getPattern(),
-            line, keywordPrecedence);
+                line, keywordPrecedence);
 
         if (paramValues != null) {
 
@@ -112,7 +112,7 @@ public class ParentStep {
                     log.debug("break");
                 }
                 log.debug("putting value: " + paramValues[i] +
-                    " under key: " + key + " i " + i);
+                        " under key: " + key + " i " + i);
 
                 map.put(this.parent.getParamNames().get(i), paramValues[i]);
             }
@@ -138,7 +138,7 @@ public class ParentStep {
 
     public ParentStep cloneWithAltLine(final String altLine) {
         final ParentStep clone = new ParentStep(
-            this.parent.cloneWithAlternativeLine(altLine));
+                this.parent.cloneWithAlternativeLine(altLine));
         // clone.initialiseParamValues(clone.parent.getParameterLine());
 
         clone.substeps = this.substeps;

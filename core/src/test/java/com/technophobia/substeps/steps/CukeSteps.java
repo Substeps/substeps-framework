@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -23,9 +23,8 @@ import com.technophobia.substeps.model.SubSteps.StepImplementations;
 
 /**
  * In here we'll have some cuke implementations of some methods
- * 
+ *
  * @author imoore
- * 
  */
 @StepImplementations
 public class CukeSteps {

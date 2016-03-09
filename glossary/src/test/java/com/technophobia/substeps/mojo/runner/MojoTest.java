@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,16 +18,14 @@
  */
 package com.technophobia.substeps.mojo.runner;
 
-import java.io.File;
-
+import com.technophobia.substeps.glossary.SubstepsGlossaryMojo;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.junit.Ignore;
 
-import com.technophobia.substeps.glossary.SubstepsGlossaryMojo;
+import java.io.File;
 
 /**
  * @author ian
- * 
  */
 @Ignore
 public class MojoTest extends AbstractMojoTestCase {
@@ -35,7 +33,7 @@ public class MojoTest extends AbstractMojoTestCase {
      * @see junit.framework.TestCase#setUp()
      */
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
 
         // required for mojo lookups to work
         super.setUp();

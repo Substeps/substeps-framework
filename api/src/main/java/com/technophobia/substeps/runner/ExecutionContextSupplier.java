@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -26,16 +26,16 @@ import com.technophobia.substeps.model.Scope;
  * allowing the T being supplied to be replaced with another T, typically in
  * setup or tear down scenarios and a T that holds state across test scenarios
  * such as a database connection, results etc
- * 
+ * <p/>
  * Typical usage:
- * 
+ * <p/>
  * <pre>
  * private static final MutableSupplier&lt;MyContext&gt; myContextSupplier = new ExecutionContextSupplier&lt;MyContext&gt;(
  *             Scope.SCENARIO, "my_context_key");
- *             
+ *
  *    // in test setup
  *    myContextSupplier.set(new MyContext());
- *    
+ *
  *    // to use the context
  *    myContextSupplier.get()
  * </pre>
@@ -48,11 +48,9 @@ public class ExecutionContextSupplier<T> implements MutableSupplier<T> {
 
     /**
      * Construct the supplier with the given scope and key
-     * 
-     * @param scope
-     *            the scope in which instances of &lt;T&gt; will be cached
-     * @param key
-     *            the key under which the &lt;T&gt; will be cached
+     *
+     * @param scope the scope in which instances of &lt;T&gt; will be cached
+     * @param key   the key under which the &lt;T&gt; will be cached
      */
     public ExecutionContextSupplier(final Scope scope, final String key) {
         this.scope = scope;
@@ -64,6 +62,7 @@ public class ExecutionContextSupplier<T> implements MutableSupplier<T> {
      * retrieve the cached instance of the &lt;T&gt;
      */
     @SuppressWarnings("unchecked")
+    @Override
     public T get() {
         return (T) ExecutionContext.get(this.scope, this.key);
     }
@@ -72,6 +71,7 @@ public class ExecutionContextSupplier<T> implements MutableSupplier<T> {
     /**
      * sets the &lt;T&gt; in the desired scope
      */
+    @Override
     public void set(final T t) {
         ExecutionContext.put(this.scope, this.key, t);
     }

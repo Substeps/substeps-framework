@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,12 +18,12 @@
  */
 package com.technophobia.substeps.execution.node;
 
-import java.util.List;
-import java.util.Set;
-
 import com.google.common.collect.Lists;
 import com.technophobia.substeps.execution.ExecutionNodeVisitor;
 import com.technophobia.substeps.execution.Feature;
+
+import java.util.List;
+import java.util.Set;
 
 public class FeatureNode extends NodeWithChildren<ScenarioNode<?>> implements TaggedNode {
 
@@ -67,6 +67,7 @@ public class FeatureNode extends NodeWithChildren<ScenarioNode<?>> implements Ta
         return feature.getName();
     }
 
+    @Override
     public Set<String> getTags() {
         return tags;
     }

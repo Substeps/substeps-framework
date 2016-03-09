@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -26,14 +26,12 @@ import com.technophobia.substeps.execution.node.TestBasicScenarioNodeBuilder;
 import com.technophobia.substeps.execution.node.TestFeatureNodeBuilder;
 import com.technophobia.substeps.execution.node.TestRootNodeBuilder;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
 
 /**
  * @author ian
- * 
  */
 public class BuildFailureManagerTest {
 
@@ -48,7 +46,7 @@ public class BuildFailureManagerTest {
     }
 
 
-    private RootNode getCriticalErrorNodeTree(){
+    private RootNode getCriticalErrorNodeTree() {
         Method nonFailMethod = null;
         Method failMethod = null;
         try {
@@ -78,7 +76,7 @@ public class BuildFailureManagerTest {
         SubstepExecutionFailure scenarioFailure = new SubstepExecutionFailure(rootFail, scenarioNodeBuilder.getBuilt(), ExecutionResult.FAILED);
 
         scenarioNodeBuilder.getBuilt().getChildren().get(0).setLine("stepNode1");
-        SubstepExecutionFailure  stepFail = new SubstepExecutionFailure(rootFail, scenarioNodeBuilder.getBuilt().getChildren().get(0), ExecutionResult.FAILED);
+        SubstepExecutionFailure stepFail = new SubstepExecutionFailure(rootFail, scenarioNodeBuilder.getBuilt().getChildren().get(0), ExecutionResult.FAILED);
 
         scenarioNodeBuilder.getBuilt().getChildren().get(1).setLine("stepNode2");
         new SubstepExecutionFailure(rootFail, scenarioNodeBuilder.getBuilt().getChildren().get(1), ExecutionResult.NOT_RUN);
@@ -124,7 +122,7 @@ public class BuildFailureManagerTest {
         scenarioFailure.setNonCritical(true);
 
         scenarioNodeBuilder.getBuilt().getChildren().get(0).setLine("stepNode1");
-        SubstepExecutionFailure  stepFail = new SubstepExecutionFailure(rootFail, scenarioNodeBuilder.getBuilt().getChildren().get(0), ExecutionResult.FAILED);
+        SubstepExecutionFailure stepFail = new SubstepExecutionFailure(rootFail, scenarioNodeBuilder.getBuilt().getChildren().get(0), ExecutionResult.FAILED);
         stepFail.setNonCritical(true);
 
         scenarioNodeBuilder.getBuilt().getChildren().get(1).setLine("stepNode2");
@@ -137,7 +135,7 @@ public class BuildFailureManagerTest {
     }
 
 
-    private RootNode getBeforesErrorNodeTree(){
+    private RootNode getBeforesErrorNodeTree() {
         Method nonFailMethod = null;
         Method failMethod = null;
         try {
@@ -183,9 +181,7 @@ public class BuildFailureManagerTest {
     }
 
 
-
-
-//    @Ignore("is this a valid failure or is it test data related")
+    //    @Ignore("is this a valid failure or is it test data related")
     @Test
     public void testNonCriticalFailures2() {
 
@@ -227,7 +223,6 @@ public class BuildFailureManagerTest {
         Assert.assertTrue(bfm.testSuiteFailed());
 
     }
-
 
 
 }

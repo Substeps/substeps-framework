@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,69 +18,65 @@
  */
 package com.technophobia.substeps.model.parameter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import com.technophobia.substeps.model.parameter.BooleanConverter;
+import static org.junit.Assert.*;
 
 public class BooleanConverterTest {
 
-	private BooleanConverter converter;
+    private BooleanConverter converter;
 
 
-	@Before
-	public void setUp() {
-		converter = new BooleanConverter();
-	}
+    @Before
+    public void setUp() {
+        converter = new BooleanConverter();
+    }
 
 
-	@Test
-	public void testCanConvertBoolean() {
-		final boolean canConvert = converter.canConvert(Boolean.class);
-		assertTrue(canConvert);
-	}
+    @Test
+    public void testCanConvertBoolean() {
+        final boolean canConvert = converter.canConvert(Boolean.class);
+        assertTrue(canConvert);
+    }
 
 
-	@Test
-	public void testCanConvertPrimitiveBoolean() {
-		final boolean canConvert = converter.canConvert(boolean.class);
-		assertTrue(canConvert);
-	}
+    @Test
+    public void testCanConvertPrimitiveBoolean() {
+        final boolean canConvert = converter.canConvert(boolean.class);
+        assertTrue(canConvert);
+    }
 
 
-	@Test
-	public void testCanConvertString() {
-		final boolean canConvert = converter.canConvert(String.class);
-		assertFalse(canConvert);
-	}
+    @Test
+    public void testCanConvertString() {
+        final boolean canConvert = converter.canConvert(String.class);
+        assertFalse(canConvert);
+    }
 
 
-	@Test
-	public void testConvertValidBoolean() {
-		final Boolean expected = Boolean.TRUE;
-		final String value = "true";
+    @Test
+    public void testConvertValidBoolean() {
+        final Boolean expected = Boolean.TRUE;
+        final String value = "true";
 
-		final Boolean actual = converter.convert(value);
-		assertEquals(expected, actual);
-	}
-
-
-	@Test
-	public void testConvertInvalidBoolean() {
-		final String value = "x";
-
-		final Boolean actual = converter.convert(value);
-		assertEquals(Boolean.FALSE, actual);
-	}
+        final Boolean actual = converter.convert(value);
+        assertEquals(expected, actual);
+    }
 
 
-	@Test
-	public void testConvertNullBoolean() {
-		final Boolean actual = converter.convert(null);
-		assertEquals(Boolean.FALSE, actual);
-	}
+    @Test
+    public void testConvertInvalidBoolean() {
+        final String value = "x";
+
+        final Boolean actual = converter.convert(value);
+        assertEquals(Boolean.FALSE, actual);
+    }
+
+
+    @Test
+    public void testConvertNullBoolean() {
+        final Boolean actual = converter.convert(null);
+        assertEquals(Boolean.FALSE, actual);
+    }
 }

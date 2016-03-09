@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,62 +18,63 @@
  */
 package com.technophobia.substeps.runner;
 
+import com.technophobia.substeps.model.Scope;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import com.technophobia.substeps.model.Scope;
 
 /**
  * Singleton class holding state a various scopes for the duration of execution,
  * state will be cleared at appropriate points through execution
- * 
+ *
  * @author imoore
- * 
  */
 public final class ExecutionContext {
 
-	private static final ThreadLocal<ExecutionContext> executionContextThreadLocal = new ThreadLocal<ExecutionContext>() {
-		@Override
-		protected ExecutionContext initialValue() {
-			return new ExecutionContext();
-		};
-	};
+    private static final ThreadLocal<ExecutionContext> executionContextThreadLocal = new ThreadLocal<ExecutionContext>() {
+        @Override
+        protected ExecutionContext initialValue() {
+            return new ExecutionContext();
+        }
 
-	private ExecutionContext() {
-		scopedData = new HashMap<Scope, Map<String, Object>>();
-	}
+        ;
+    };
 
-	private Map<Scope, Map<String, Object>> scopedData = null;
+    private ExecutionContext() {
+        scopedData = new HashMap<Scope, Map<String, Object>>();
+    }
 
-	public static void put(final Scope scope, final String key, final Object value) {
-		executionContextThreadLocal.get().putInternal(scope, key, value);
-	}
+    private Map<Scope, Map<String, Object>> scopedData = null;
 
-	public static Object get(final Scope scope, final String key) {
-		return executionContextThreadLocal.get().getInternal(scope, key);
-	}
+    public static void put(final Scope scope, final String key, final Object value) {
+        executionContextThreadLocal.get().putInternal(scope, key, value);
+    }
 
-	private void putInternal(final Scope scope, final String key, final Object value) {
-		// NB. this is not currently synchronised
+    public static Object get(final Scope scope, final String key) {
+        return executionContextThreadLocal.get().getInternal(scope, key);
+    }
 
-		Map<String, Object> map = scopedData.get(scope);
-		if (map == null) {
-			map = new HashMap<String, Object>();
-			scopedData.put(scope, map);
-		}
-		map.put(key, value);
-	}
+    private void putInternal(final Scope scope, final String key, final Object value) {
+        // NB. this is not currently synchronised
 
-	private Object getInternal(final Scope scope, final String key) {
-		Object rtn = null;
-		final Map<String, Object> map = scopedData.get(scope);
-		if (map != null) {
-			rtn = map.get(key);
-		}
-		return rtn;
-	}
+        Map<String, Object> map = scopedData.get(scope);
+        if (map == null) {
+            map = new HashMap<String, Object>();
+            scopedData.put(scope, map);
+        }
+        map.put(key, value);
+    }
 
-	public static void clear(final Scope scope) {
-		executionContextThreadLocal.get().scopedData.remove(scope);
-	}
+    private Object getInternal(final Scope scope, final String key) {
+        Object rtn = null;
+        final Map<String, Object> map = scopedData.get(scope);
+        if (map != null) {
+            rtn = map.get(key);
+        }
+        return rtn;
+    }
+
+    public static void clear(final Scope scope) {
+        executionContextThreadLocal.get().scopedData.remove(scope);
+    }
 }

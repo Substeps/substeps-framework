@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,17 +18,12 @@
  */
 package com.technophobia.substeps.runner.node;
 
-import java.util.Iterator;
-
+import com.technophobia.substeps.execution.node.*;
+import com.technophobia.substeps.model.Scope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.technophobia.substeps.execution.node.BasicScenarioNode;
-import com.technophobia.substeps.execution.node.RootNodeExecutionContext;
-import com.technophobia.substeps.execution.node.StepImplementationNode;
-import com.technophobia.substeps.execution.node.StepNode;
-import com.technophobia.substeps.execution.node.SubstepNode;
-import com.technophobia.substeps.model.Scope;
+import java.util.Iterator;
 
 public class BasicScenarioNodeRunner extends AbstractNodeRunner<BasicScenarioNode, Boolean> {
 

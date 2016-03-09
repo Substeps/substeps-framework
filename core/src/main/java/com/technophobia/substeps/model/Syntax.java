@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,20 +18,6 @@
  */
 package com.technophobia.substeps.model;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.regex.PatternSyntaxException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.technophobia.substeps.model.exception.DuplicateStepImplementationException;
@@ -39,6 +25,13 @@ import com.technophobia.substeps.model.exception.StepImplementationException;
 import com.technophobia.substeps.model.exception.UnimplementedStepException;
 import com.technophobia.substeps.runner.syntax.DefaultSyntaxErrorReporter;
 import com.technophobia.substeps.runner.syntax.SyntaxErrorReporter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * @author imoore
@@ -148,8 +141,8 @@ public class Syntax {
                 patternMap.put(pattern, impl);
             } catch (final PatternSyntaxException e) {
 
-                Syntax.log.warn("Invalid step implementation pattern: " + e.getMessage() + "\n" + impl.getClass() + "."
-                    + impl.getMethod() + " will not be added to the syntax");
+                log.warn("Invalid step implementation pattern: " + e.getMessage() + "\n" + impl.getClass() + "."
+                        + impl.getMethod() + " will not be added to the syntax");
             }
 
         } else {
@@ -159,7 +152,7 @@ public class Syntax {
             if (!implAlreadyGot.getMethod().equals(impl.getMethod())) {
 
                 final StepImplementationException ex = new DuplicateStepImplementationException(pattern,
-                    patternMap.getValueForPattern(pattern), impl);
+                        patternMap.getValueForPattern(pattern), impl);
                 this.syntaxErrorReporter.reportStepImplError(ex);
                 if (this.failOnDuplicateStepImplementations) {
                     throw ex;
@@ -178,7 +171,7 @@ public class Syntax {
 
         if (!strict && (this.nonStrictKeywordPrecedence == null || this.nonStrictKeywordPrecedence.length == 0)) {
             throw new IllegalArgumentException(
-                "Please provide a keyword precedence in parameter nonStrictKeywordPrecedence to use when running in non strict mode");
+                    "Please provide a keyword precedence in parameter nonStrictKeywordPrecedence to use when running in non strict mode");
         }
     }
 
@@ -189,24 +182,24 @@ public class Syntax {
 
 
     public List<StepImplementation> getStepImplementations(final String keyword, final String parameterLine,
-        final File source, final int lineNumber) {
+                                                           final File source, final int lineNumber) {
         return getStepImplementationsInternal(keyword, parameterLine, false, source, lineNumber);
     }
 
 
     public List<StepImplementation> checkForStepImplementations(final String keyword, final String parameterLine,
-        final File source, final int lineNumber) {
+                                                                final File source, final int lineNumber) {
         return getStepImplementationsInternal(keyword, parameterLine, true, source, lineNumber);
     }
 
 
     private List<StepImplementation> getStepImplementationsInternal(final String keyword, final String parameterLine,
-        final boolean okNotTofindAnything, final File source, final int lineNumber) {
+                                                                    final boolean okNotTofindAnything, final File source, final int lineNumber) {
         List<StepImplementation> list = getStrictStepimplementation(keyword, parameterLine, okNotTofindAnything,
-            source, lineNumber);
+                source, lineNumber);
 
         if (!this.strict
-            && ((list == null && okNotTofindAnything) || (!okNotTofindAnything && list != null && list.isEmpty()))) {
+                && ((list == null && okNotTofindAnything) || (!okNotTofindAnything && list != null && list.isEmpty()))) {
             // look for an alternative, iterate through the
             // nonStrictKeywordPrecedence until we get what we want
 
@@ -214,11 +207,11 @@ public class Syntax {
                 // don't use the same keyword again
                 if (altKeyword.compareToIgnoreCase(keyword) != 0) {
                     final List<StepImplementation> altStepImplementations = getStrictStepimplementation(altKeyword,
-                        parameterLine.replaceFirst(keyword, altKeyword), okNotTofindAnything, source, lineNumber);
+                            parameterLine.replaceFirst(keyword, altKeyword), okNotTofindAnything, source, lineNumber);
                     if (altStepImplementations != null && !altStepImplementations.isEmpty()) {
                         // found an alternative, bail immediately
                         list = new ArrayList<StepImplementation>(Collections2.transform(altStepImplementations,
-                            new CloneStepImplementationsWithNewKeywordFunction(keyword)));
+                                new CloneStepImplementationsWithNewKeywordFunction(keyword)));
                         break;
                     }
                 }
@@ -236,7 +229,7 @@ public class Syntax {
 
 
     private List<StepImplementation> getStrictStepimplementation(final String keyword, final String parameterLine,
-        final boolean okNotTofindAnything, final File source, final int lineNumber) {
+                                                                 final boolean okNotTofindAnything, final File source, final int lineNumber) {
 
         List<StepImplementation> list = null;
 
@@ -253,18 +246,18 @@ public class Syntax {
 
 
     private static final class CloneStepImplementationsWithNewKeywordFunction implements
-        Function<StepImplementation, StepImplementation> {
+            Function<StepImplementation, StepImplementation> {
 
         private final String keyword;
-
 
         public CloneStepImplementationsWithNewKeywordFunction(final String keyword) {
             this.keyword = keyword;
         }
 
-
+        @Override
         public StepImplementation apply(final StepImplementation stepImplementation) {
-            return stepImplementation.cloneWithKeyword(this.keyword);
+
+            return stepImplementation != null ? stepImplementation.cloneWithKeyword(this.keyword) : null;
         }
     }
 
@@ -289,7 +282,7 @@ public class Syntax {
 
         final List<StepImplementation> uncalled = new ArrayList<StepImplementation>();
         final Set<Entry<StepImplementation, List<StepImplementationUsage>>> entrySet = stepImplementationsUsageMap
-            .entrySet();
+                .entrySet();
 
         for (final Entry<StepImplementation, List<StepImplementationUsage>> e : entrySet) {
 

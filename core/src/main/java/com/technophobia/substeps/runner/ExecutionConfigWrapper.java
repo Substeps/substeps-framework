@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,23 +18,26 @@
  */
 package com.technophobia.substeps.runner;
 
+import com.technophobia.substeps.helper.AssertHelper;
+import com.technophobia.substeps.model.SubSteps.StepImplementations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import com.technophobia.substeps.helper.AssertHelper;
-
-import com.technophobia.substeps.model.SubSteps.StepImplementations;
-
 /**
  * Wraps an ExecutionConfig providing extra functionality for core
- * 
+ *
  * @author rbarefield
  */
 public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
 
     private static final long serialVersionUID = -6096151962497826502L;
+
+    private static final Logger log = LoggerFactory.getLogger(ExecutionConfigWrapper.class);
 
     public ExecutionConfigWrapper(final SubstepsExecutionConfig executionConfig) {
 
@@ -49,10 +52,7 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
 
         if (getSystemProperties() != null) {
 
-            // TODO - don't want to serialise the logger - read resolve ?
-
-            // log.debug
-            System.out.println("Configuring system properties [" + getSystemProperties().size() + "] for execution");
+            log.debug("Configuring system properties [" + getSystemProperties().size() + "] for execution");
             final Properties existing = System.getProperties();
             getSystemProperties().putAll(existing);
             System.setProperties(getSystemProperties());
@@ -60,8 +60,7 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
 
         determineInitialisationClasses();
 
-        // log.debug
-        System.out.println(printParameters());
+        log.debug(printParameters());
     }
 
     private List<Class<?>> getClassesFromConfig(final String[] config) {
@@ -76,7 +75,7 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
                 stepImplementationClassList.add(implClass);
 
             } catch (final ClassNotFoundException e) {
-                AssertHelper.fail("ClassNotFoundException: " + e.getMessage());
+                throw new AssertionError(e);
             }
         }
         return stepImplementationClassList;
@@ -85,7 +84,7 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
     private String printParameters() {
         return "ExecutionConfig [description=" + getDescription() + ", tags=" + getTags() + ", nonFatalTags="
                 + getNonFatalTags() + ", featureFile=" + getFeatureFile() + ", subStepsFileName="
-                + getSubStepsFileName() + ", scenarioName=" + getScenarioName() +  ", strict=" + isStrict() + ", fastFailParseErrors=" + isFastFailParseErrors()
+                + getSubStepsFileName() + ", scenarioName=" + getScenarioName() + ", strict=" + isStrict() + ", fastFailParseErrors=" + isFastFailParseErrors()
                 + ", nonStrictKeywordPrecedence=" + Arrays.toString(getNonStrictKeywordPrecedence())
                 + ", stepImplementationClassNames=" + Arrays.toString(getStepImplementationClassNames())
                 + ", initialisationClass=" + Arrays.toString(getInitialisationClass()) + ", stepImplementationClasses="
@@ -112,7 +111,7 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
                     }
 
                 } catch (final ClassNotFoundException e) {
-                    AssertHelper.fail("ClassNotFoundException: " + e.getMessage());
+                    throw new AssertionError(e);
                 }
             }
         }
@@ -124,8 +123,6 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
 
         List<Class<?>> initialisationClassList = null;
         if (getStepImplementationClasses() != null) {
-
-            initialisationClassList = new ArrayList<Class<?>>();
 
             final InitialisationClassSorter orderer = new InitialisationClassSorter();
 
@@ -150,7 +147,7 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
         }
 
         if (initialisationClassList != null) {
-            setInitialisationClasses(initialisationClassList.toArray(new Class<?>[] {}));
+            setInitialisationClasses(initialisationClassList.toArray(new Class<?>[]{}));
         }
 
         return getInitialisationClasses();

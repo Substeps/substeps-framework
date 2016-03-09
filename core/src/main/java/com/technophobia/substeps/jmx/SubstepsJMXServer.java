@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -19,25 +19,15 @@
 
 package com.technophobia.substeps.jmx;
 
-import java.io.StringWriter;
-import java.lang.management.ManagementFactory;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.concurrent.CountDownLatch;
-
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectName;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.management.*;
+import java.lang.management.ManagementFactory;
+import java.util.concurrent.CountDownLatch;
+
 /**
  * @author ian
- * 
  */
 public class SubstepsJMXServer {
 
@@ -61,31 +51,13 @@ public class SubstepsJMXServer {
 
     private void run() {
 
-        this.log.trace("starting jmx server");
-
-//        URLClassLoader classloader = (URLClassLoader)ClassLoader.getSystemClassLoader();
-//
-//        URL[]  urls = classloader.getURLs();
-//
-//        StringBuilder buf = new StringBuilder();
-//        for (URL u : urls){
-//            buf.append(u.getFile()).append("\n");
-//        }
-//
-//        System.out.println("Started SubstepsJMXServer with command: " + System.getProperty("sun.java.command") + " and classpath:\n" + buf.toString());
-//
-//        System.out.println("SubstepsJMXServer system props");
-//
-//
-//        System.getProperties().list(System.out);
-
-        System.out.println("starting substeps server");
+        log.trace("starting jmx server");
 
         final SubstepsServer mBeanImpl = new SubstepsServer(this.shutdownSignal);
 
         final MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
 
-        System.out.println("got mbean server");
+        log.trace("got mbean server");
 
         try {
 
@@ -93,14 +65,12 @@ public class SubstepsJMXServer {
 
             mbs.registerMBean(mBeanImpl, name);
 
-            this.log.trace("bean registered");
-            System.out.println("mbean registered");
+            log.trace("bean registered");
 
             // TODO use notifications instead of parsing the log file
 
             boolean rpt = true;
             while (rpt) {
-//            while (this.shutdownSignal.getCount() > 0) {
                 try {
                     // ** NB. this can't be a log statement as it can be turned
                     // off
@@ -112,8 +82,7 @@ public class SubstepsJMXServer {
                     this.log.debug("shutdown notification received");
 
                 } catch (final InterruptedException e) {
-
-                    e.printStackTrace();
+                    log.error("InterruptedException", e);
                 }
             }
 

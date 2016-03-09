@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -178,7 +178,6 @@ public class SubstepsExecutionConfig implements Serializable {
     public void setScenarioName(String scenarioName) {
         this.scenarioName = scenarioName;
     }
-
 
 
     public String printParameters() {

@@ -8,7 +8,7 @@ public class AssertHelper {
     private AssertHelper() {
     }
 
-    public static void fail(final String message) {
+    public static void fail(final Object message) {
         if (message == null) {
             throw new AssertionError();
         }

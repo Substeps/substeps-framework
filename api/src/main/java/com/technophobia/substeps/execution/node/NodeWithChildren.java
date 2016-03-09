@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,10 +18,10 @@
  */
 package com.technophobia.substeps.execution.node;
 
-import java.util.List;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+
+import java.util.List;
 
 public abstract class NodeWithChildren<CHILD_TYPE extends IExecutionNode> extends ExecutionNode {
 
@@ -29,7 +29,7 @@ public abstract class NodeWithChildren<CHILD_TYPE extends IExecutionNode> extend
 
     private final List<CHILD_TYPE> children;
 
-    public NodeWithChildren(List<CHILD_TYPE> children){
+    public NodeWithChildren(List<CHILD_TYPE> children) {
         this.children = children;
 
         attachParentTo(children);
@@ -39,7 +39,7 @@ public abstract class NodeWithChildren<CHILD_TYPE extends IExecutionNode> extend
         return children != null && !children.isEmpty();
     }
 
-    public List<CHILD_TYPE> getChildren(){
+    public List<CHILD_TYPE> getChildren() {
         return children;
     }
 
@@ -61,7 +61,7 @@ public abstract class NodeWithChildren<CHILD_TYPE extends IExecutionNode> extend
     }
 
     private void attachParentTo(List<CHILD_TYPE> children) {
-        for (CHILD_TYPE child : children){
+        for (CHILD_TYPE child : children) {
             child.setParent(this);
         }
     }

@@ -1,10 +1,13 @@
 package com.technophobia.substeps.ant;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.common.collect.Lists;
 import com.technophobia.substeps.runner.SubstepsExecutionConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AntExecutionConfig extends SubstepsExecutionConfig {
 
@@ -14,6 +17,9 @@ public class AntExecutionConfig extends SubstepsExecutionConfig {
     private List<InitialisationClass> initialisationClasses = new ArrayList<InitialisationClass>();
 
     private String outputDirectory = "";
+
+    private static final Logger log = LoggerFactory.getLogger(AntExecutionConfig.class);
+
 
     @Override
     public List<Class<?>> getStepImplementationClasses() {
@@ -27,7 +33,7 @@ public class AntExecutionConfig extends SubstepsExecutionConfig {
                 classes.add(loader.loadClass(clazz.toString()));
             }
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            log.error("ClassNotFoundException", e);
         }
         return classes;
     }
@@ -46,7 +52,7 @@ public class AntExecutionConfig extends SubstepsExecutionConfig {
                     classes.add(loader.loadClass(clazz.toString()));
                 }
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                log.error("ClassNotFoundException", e);
             }
         }
 
@@ -54,7 +60,7 @@ public class AntExecutionConfig extends SubstepsExecutionConfig {
             classes.add(initClassFromSuper);
         }
 
-        return classes.toArray(new Class[] {});
+        return classes.toArray(new Class[]{});
     }
 
     public void addConfiguredStepImplementationClassNames(StepImplementationClassNames s) {
@@ -77,7 +83,9 @@ public class AntExecutionConfig extends SubstepsExecutionConfig {
         this.outputDirectory = outputDirectory;
     }
 
-    public static class ListOfClasses {
+    public static class ListOfClasses implements Serializable{
+
+        private static final long serialVersionUID = 1L;
 
         private List<Param> params = new ArrayList<Param>();
 
@@ -90,15 +98,21 @@ public class AntExecutionConfig extends SubstepsExecutionConfig {
         }
     }
 
-    public static class StepImplementationClassNames extends ListOfClasses {
+    public static class StepImplementationClassNames extends ListOfClasses implements Serializable{
         //
+        private static final long serialVersionUID = 1L;
+
     }
 
-    public static class InitialisationClass extends ListOfClasses {
+    public static class InitialisationClass extends ListOfClasses implements Serializable{
         //
+        private static final long serialVersionUID = 1L;
+
     }
 
-    public static class Param {
+    public static class Param implements Serializable{
+
+        private static final long serialVersionUID = 1L;
 
         private String value;
 

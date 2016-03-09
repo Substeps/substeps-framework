@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,20 +18,17 @@
  */
 package com.technophobia.substeps.scanner;
 
-import static org.hamcrest.CoreMatchers.is;
-
-import java.util.List;
-
+import com.technophobia.substeps.model.SubSteps;
+import com.technophobia.substeps.stepimplementations.MockStepImplementations;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.technophobia.substeps.model.SubSteps;
-import com.technophobia.substeps.stepimplementations.MockStepImplementations;
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.is;
 
 /**
- * 
  * @author imoore
- * 
  */
 public class ClasspathScannerTest {
 

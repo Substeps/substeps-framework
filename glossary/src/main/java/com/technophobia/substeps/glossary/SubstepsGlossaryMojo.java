@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,19 +18,10 @@
  */
 package com.technophobia.substeps.glossary;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-
+import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.sun.tools.javadoc.Main;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -43,13 +34,21 @@ import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.io.Files;
-import com.sun.tools.javadoc.Main;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 /**
  * A Maven plugin to generate a json representation of the step implementations in this library.  That json is then used in verious plugins and IDE's etc.
  */
-@Mojo( name = "generate-docs",
+@Mojo(name = "generate-docs",
         defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
         requiresDependencyResolution = ResolutionScope.TEST,
         requiresProject = true,
@@ -60,7 +59,6 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
 
     /**
      * Location of the file.
-     * 
      */
     @Parameter(defaultValue = "${project.build.outputDirectory}", required = true)
     private File outputDirectory;
@@ -112,16 +110,16 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
 
             CustomDoclet.setExpressionList(classStepTagList);
 
-            final String[] args = { "-doclet", "com.technophobia.substeps.glossary.CustomDoclet",
+            final String[] args = {"-doclet", "com.technophobia.substeps.glossary.CustomDoclet",
                     // "-docletpath",
                     // "/home/ian/projects/webdriverbdd-utils/target/classes",
                     // // path to this jar ?
                     "-sourcepath", sourceRoot, // "./src/main/java", // path to
-                                               // the step impls / classpath ?
+                    // the step impls / classpath ?
                     path // javadocStr
-                         // //"/home/ian/projects/github/substeps-webdriver/src/main/java/com/technophobia/webdriver/substeps/impl/AssertionWebDriverSubStepImplementations.java"
+                    // //"/home/ian/projects/github/substeps-webdriver/src/main/java/com/technophobia/webdriver/substeps/impl/AssertionWebDriverSubStepImplementations.java"
             }; // list of step impls to have a butcher sat
-               // "/home/ian/projects/github/substeps-webdriver/src/main/java/com/technophobia/webdriver/substeps/impl/AssertionWebDriverSubStepImplementations.java"
+            // "/home/ian/projects/github/substeps-webdriver/src/main/java/com/technophobia/webdriver/substeps/impl/AssertionWebDriverSubStepImplementations.java"
 
             Main.execute(args);
 
@@ -132,9 +130,8 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
 
 
     /**
-     * @param classToDocument
-     *            = fqn of a class, dotted syntax
-     * @param dir the directory of the source
+     * @param classToDocument = fqn of a class, dotted syntax
+     * @param dir             the directory of the source
      * @return
      */
     private String resolveClassToPath(final String classToDocument, final String dir) {
@@ -154,7 +151,7 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
         return fullpath;
     }
 
-
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         final HashSet<String> loadedClasses = new HashSet<String>();
@@ -207,7 +204,6 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
 
     /**
      * @param classStepTags
-     *
      */
     private void saveJsonFile(final List<StepImplementationsDescriptor> classStepTags) {
 
@@ -220,7 +216,6 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
 
     /**
      * @param classStepTags
-     * 
      */
     private void saveXMLFile(final List<StepImplementationsDescriptor> classStepTags) {
         // got them all now serialize
@@ -255,7 +250,10 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
      * @param loadedClasses
      */
     private void loadStepTagsFromJar(final JarFile jarFileForClass,
-            final List<StepImplementationsDescriptor> classStepTags, final Set<String> loadedClasses) {
+                                     final List<StepImplementationsDescriptor> classStepTags, final Set<String> loadedClasses) {
+
+        // TODO - change this to load from the json version
+
         final ZipEntry entry = jarFileForClass
                 .getEntry(XMLSubstepsGlossarySerializer.XML_FILE_NAME);
 
@@ -298,8 +296,7 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
                         break;
                     }
                 } catch (final IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    log.error("IO Exception opening jar file", e);
                 }
             }
         }

@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,15 +18,9 @@
  */
 package com.technophobia.substeps.runner;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.technophobia.substeps.execution.node.RootNode;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -42,13 +36,13 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import com.technophobia.substeps.execution.node.RootNode;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class ForkedRunner implements MojoRunner {
-
-    private static final int START_TIMEOUT_SECONDS = 30;
 
     private final Log log;
 
@@ -81,10 +75,10 @@ public class ForkedRunner implements MojoRunner {
     private final InputStreamConsumer consumer;
 
     ForkedRunner(final Log log, final int jmxPort, final String vmArgs, final List<String> testClasspathElements,
-            final List<String> stepImplementationArtifacts, final ArtifactResolver artifactResolver,
-            final ArtifactFactory artifactFactory, final MavenProjectBuilder mavenProjectBuilder,
-            final ArtifactRepository localRepository, final List<ArtifactRepository> remoteRepositories,
-            final ArtifactMetadataSource artifactMetadataSource) throws MojoExecutionException {
+                 final List<String> stepImplementationArtifacts, final ArtifactResolver artifactResolver,
+                 final ArtifactFactory artifactFactory, final MavenProjectBuilder mavenProjectBuilder,
+                 final ArtifactRepository localRepository, final List<ArtifactRepository> remoteRepositories,
+                 final ArtifactMetadataSource artifactMetadataSource) throws MojoExecutionException {
 
         this.log = log;
         this.jmxPort = jmxPort;
@@ -110,6 +104,7 @@ public class ForkedRunner implements MojoRunner {
         this.substepsJmxClient.init(this.jmxPort);
     }
 
+    @Override
     public void shutdown() {
 
         this.substepsJmxClient.shutdown();
@@ -132,7 +127,7 @@ public class ForkedRunner implements MojoRunner {
 
             } catch (final InterruptedException e) {
                 // not sure what we can do at this point...
-                e.printStackTrace();
+                log.error("InterruptedException waiting for shutdown", e);
             }
         }
 
@@ -143,9 +138,6 @@ public class ForkedRunner implements MojoRunner {
     private InputStreamConsumer startMBeanJVM() throws MojoExecutionException {
         // launch the jvm process that will contain the Substeps MBean Server
         // build up the class path based on this projects classpath
-
-//        final CountDownLatch processStarted = new CountDownLatch(1);
-//        final AtomicBoolean processStartedOk = new AtomicBoolean(false);
 
         InputStreamConsumer localConsumer = null;
 
@@ -165,31 +157,14 @@ public class ForkedRunner implements MojoRunner {
             this.shutdownHook = ForkedProcessCloser.addHook(this.substepsJmxClient, this.forkedJVMProcess, this.log);
 
             localConsumer = new InputStreamConsumer(this.forkedJVMProcess.getInputStream(), this.log);
-//            , processStarted,
-//                    processStartedOk);
 
             final Thread t = new Thread(this.consumer);
             t.start();
 
         } catch (final IOException e) {
-
-            e.printStackTrace();
+            log.error("IOException starting", e);
         }
 
-//        boolean exceptionThrown = false;
-//        try {
-//            this.log.info("waiting for process to start...");
-//            processStarted.await(START_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-//
-//            if (!processStartedOk.get()) {
-//                exceptionThrown = true;
-//                throw new MojoExecutionException("Unable to launch VM process");
-//            }
-//
-//        } catch (final InterruptedException e) {
-//
-//            e.printStackTrace();
-//        }
         this.log.info("process started");
 
         return localConsumer;
@@ -335,22 +310,26 @@ public class ForkedRunner implements MojoRunner {
         stepImplementationArtifactJars.add(path);
     }
 
+    @Override
     public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
 
         return this.substepsJmxClient.prepareExecutionConfig(theConfig);
     }
 
+    @Override
     public RootNode run() {
 
         this.log.info("Running substeps tests in forked jvm");
         return this.substepsJmxClient.run();
     }
 
+    @Override
     public List<SubstepExecutionFailure> getFailures() {
 
         return this.substepsJmxClient.getFailures();
     }
 
+    @Override
     public void addNotifier(final IExecutionListener listener) {
 
         this.substepsJmxClient.addNotifier(listener);

@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -19,10 +19,7 @@
 
 package com.technophobia.substeps.model;
 
-import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
-
+import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
 import org.apache.commons.configuration.CombinedConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -30,7 +27,9 @@ import org.apache.commons.configuration.tree.OverrideCombiner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author ian
@@ -42,7 +41,7 @@ public enum Configuration {
     private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
 
     private final CombinedConfiguration combinedConfig = new CombinedConfiguration(
-        new OverrideCombiner());
+            new OverrideCombiner());
 
 
     private Configuration() {
@@ -62,7 +61,7 @@ public enum Configuration {
 
             try {
                 final PropertiesConfiguration customProps = new PropertiesConfiguration(
-                    customPropsUrl);
+                        customPropsUrl);
                 combinedConfig.addConfiguration(customProps, "customProps");
 
             } catch (final ConfigurationException e) {
@@ -112,7 +111,7 @@ public enum Configuration {
             buf.append("In config: ").append(configurationName).append("\n");
 
             final org.apache.commons.configuration.Configuration cfg = combinedConfig
-                .getConfiguration(configurationName);
+                    .getConfiguration(configurationName);
 
             final Iterator<String> keys = cfg.getKeys();
 

@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,6 +18,14 @@
  */
 package com.technophobia.substeps.runner;
 
+import com.google.common.base.Strings;
+import com.technophobia.substeps.execution.node.IExecutionNode;
+import org.junit.Assert;
+import org.junit.runner.Description;
+import org.junit.runner.notification.RunNotifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -25,15 +33,6 @@ import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.runner.Description;
-import org.junit.runner.notification.RunNotifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
-import com.technophobia.substeps.execution.node.IExecutionNode;
 
 public class JunitFeatureRunner extends org.junit.runner.Runner {
 
@@ -111,7 +110,7 @@ public class JunitFeatureRunner extends org.junit.runner.Runner {
 
     /**
      * init method used by tests TODO check usage - init classes
-     * 
+     *
      * @param reportedClass
      * @param stepImplementationClasses
      * @param featureFile
@@ -119,17 +118,17 @@ public class JunitFeatureRunner extends org.junit.runner.Runner {
      * @param subStepsFile
      */
     public final void init(final Class<?> reportedClass, final List<Class<?>> stepImplementationClasses,
-            final String featureFile, final String tags, final String subStepsFile,
-            final Class<?>[] beforeAndAfterImplementations) {
+                           final String featureFile, final String tags, final String subStepsFile,
+                           final Class<?>[] beforeAndAfterImplementations) {
         init(reportedClass, stepImplementationClasses, featureFile, tags, subStepsFile, true, null,
                 EclipseDescriptionProvider.class, beforeAndAfterImplementations);
     }
 
     public final void init(final Class<?> reportedClass, final List<Class<?>> stepImplementationClasses,
-            final String featureFile, final String tags, final String subStepsFileName, final boolean strict,
-            final String[] nonStrictKeywordPrecedence,
-            final Class<? extends DescriptionProvider> descriptionProviderClass,
-            final Class<?>[] beforeAndAfterImplementations) {
+                           final String featureFile, final String tags, final String subStepsFileName, final boolean strict,
+                           final String[] nonStrictKeywordPrecedence,
+                           final Class<? extends DescriptionProvider> descriptionProviderClass,
+                           final Class<?>[] beforeAndAfterImplementations) {
 
         try {
             descriptionProvider = descriptionProviderClass.newInstance();

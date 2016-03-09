@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,27 +18,27 @@
  */
 package com.technophobia.substeps.runner;
 
+import com.technophobia.substeps.model.FeatureFile;
+
 import java.io.Serializable;
 import java.util.Comparator;
-
-import com.technophobia.substeps.model.FeatureFile;
 
 
 public class FeatureFileComparator implements Comparator<FeatureFile>, Serializable {
 
-	private static final long serialVersionUID = -8032832302837878628L;
+    private static final long serialVersionUID = -8032832302837878628L;
 
 	/*
-	 * (non-Javadoc)
+     * (non-Javadoc)
 	 * 
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
-	
-	public int compare(final FeatureFile ff1, final FeatureFile ff2) {
-		if (ff1 != null && ff2 != null) {
-			return ff1.getName().compareTo(ff2.getName());
-		} else {
-			return -1;
-		}
-	}
+    @Override
+    public int compare(final FeatureFile ff1, final FeatureFile ff2) {
+        if (ff1 != null && ff2 != null) {
+            return ff1.getName().compareTo(ff2.getName());
+        } else {
+            return -1;
+        }
+    }
 }

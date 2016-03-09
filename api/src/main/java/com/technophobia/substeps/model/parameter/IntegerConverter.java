@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -20,12 +20,13 @@ package com.technophobia.substeps.model.parameter;
 
 public class IntegerConverter implements Converter<Integer> {
 
-	public boolean canConvert(final Class<?> cls) {
-		return cls == int.class || cls == Integer.class;
-	}
+    @Override
+    public boolean canConvert(final Class<?> cls) {
+        return cls == int.class || cls == Integer.class;
+    }
 
-
-	public Integer convert(final String value) {
-		return Integer.valueOf(value);
-	}
+    @Override
+    public Integer convert(final String value) {
+        return Integer.valueOf(value);
+    }
 }

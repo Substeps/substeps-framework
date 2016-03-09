@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,28 +18,24 @@
  */
 package com.technophobia.substeps.runner.setupteardown;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.technophobia.substeps.execution.ImplementationCache;
 import com.technophobia.substeps.runner.setupteardown.fake.BeforeAndAfterSequencing1;
 import com.technophobia.substeps.runner.setupteardown.fake.BeforeAndAfterSequencing2;
 import com.technophobia.substeps.runner.setupteardown.fake.BeforeAndAfterSequencing3;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * 
- * 
  * @author imoore
- * 
  */
 public class SetupAndTearDownTest {
 
     @Test
     public void testOrderingOfSetupAndTearDown() {
 
-        final SetupAndTearDown setupAndTearDown = new SetupAndTearDown(new Class<?>[] {
+        final SetupAndTearDown setupAndTearDown = new SetupAndTearDown(new Class<?>[]{
                 BeforeAndAfterSequencing3.class, BeforeAndAfterSequencing2.class,
-                BeforeAndAfterSequencing1.class }, new ImplementationCache());
+                BeforeAndAfterSequencing1.class}, new ImplementationCache());
 
         try {
             setupAndTearDown.runBeforeAll();

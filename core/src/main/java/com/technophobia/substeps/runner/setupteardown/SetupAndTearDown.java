@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,15 +18,14 @@
  */
 package com.technophobia.substeps.runner.setupteardown;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
+import com.technophobia.substeps.execution.MethodExecutor;
+import com.technophobia.substeps.model.Scope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import com.technophobia.substeps.execution.MethodExecutor;
-import com.technophobia.substeps.model.Scope;
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * Class to encapsulate setup and tear down methods and the ordering of them

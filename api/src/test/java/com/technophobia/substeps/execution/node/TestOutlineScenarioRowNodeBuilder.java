@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,9 +18,9 @@
  */
 package com.technophobia.substeps.execution.node;
 
-import java.util.Set;
-
 import com.google.common.collect.Sets;
+
+import java.util.Set;
 
 public class TestOutlineScenarioRowNodeBuilder {
 

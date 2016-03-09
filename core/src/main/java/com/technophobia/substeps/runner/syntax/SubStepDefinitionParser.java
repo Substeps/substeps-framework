@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,14 +18,6 @@
  */
 package com.technophobia.substeps.runner.syntax;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Strings;
 import com.technophobia.substeps.model.ParentStep;
 import com.technophobia.substeps.model.PatternMap;
@@ -33,15 +25,21 @@ import com.technophobia.substeps.model.Step;
 import com.technophobia.substeps.model.exception.DuplicatePatternException;
 import com.technophobia.substeps.parser.FileContents;
 import com.technophobia.substeps.runner.FeatureFileParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * @author ian
- * 
+ *         <p/>
  *         TODO: failOnDuplicateSubsteps is used inconsistently between
  *         processDirective and parseSubStepFile. It's also being interpreted as
  *         'fail-fast' when it was intended to mean
  *         parse-and-(run|don't-run)-on-error.
- * 
  */
 public class SubStepDefinitionParser {
 

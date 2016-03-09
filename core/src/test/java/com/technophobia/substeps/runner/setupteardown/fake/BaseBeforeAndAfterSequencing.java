@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -21,20 +21,17 @@ package com.technophobia.substeps.runner.setupteardown.fake;
 
 /**
  * @author ian
- *
  */
-public abstract class BaseBeforeAndAfterSequencing
-{
-	protected long getTimeAndSleep(){
-		
-		long time = System.currentTimeMillis();
-		try		{
-			Thread.sleep(10);
-		}
-		catch (InterruptedException e){
-			e.printStackTrace();
-		}
-		return time;
-	}
+public abstract class BaseBeforeAndAfterSequencing {
+    protected long getTimeAndSleep() {
+
+        long time = System.currentTimeMillis();
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return time;
+    }
 
 }

@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,11 +18,10 @@
  */
 package com.technophobia.substeps.runner;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.google.common.collect.Lists;
 import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class InitialisationClassssSorterTest {
 
@@ -65,7 +64,7 @@ public class InitialisationClassssSorterTest {
 
         orderer.addOrderedInitialisationClasses(A.class, B.class, X.class, C.class);
 
-        Assert.assertEquals(Lists.<Class<?>> newArrayList(A.class, B.class, X.class, C.class), orderer.getOrderedList());
+        Assert.assertEquals(Lists.<Class<?>>newArrayList(A.class, B.class, X.class, C.class), orderer.getOrderedList());
 
     }
 

@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -19,33 +19,30 @@
 
 package com.technophobia.substeps.runner;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.List;
-import java.util.Map;
+import com.technophobia.substeps.execution.ExecutionNodeResult;
+import com.technophobia.substeps.execution.node.RootNode;
+import com.technophobia.substeps.jmx.SubstepsServerMBean;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.*;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import javax.naming.ServiceUnavailableException;
-
-import com.technophobia.substeps.execution.ExecutionNodeResult;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.technophobia.substeps.execution.node.RootNode;
-import com.technophobia.substeps.jmx.SubstepsServerMBean;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author ian
- * 
  */
 public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
 
-    Logger log = LoggerFactory.getLogger(SubstepsJMXClient.class);
+    private static Logger log = LoggerFactory.getLogger(SubstepsJMXClient.class);
     private SubstepsServerMBean mbean;
 
     private JMXConnector cntor = null;
@@ -82,7 +79,7 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
 
             throw new MojoExecutionException("Failed to connect to substeps server", e);
 
-        }  catch (final MalformedObjectNameException e) {
+        } catch (final MalformedObjectNameException e) {
 
             throw new MojoExecutionException("Failed to connect to substeps server", e);
         }
@@ -93,14 +90,14 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
         boolean added = false;
         int tries = 0;
 
-        while (!added || tries < 3){
+        while (!added || tries < 3) {
 
             try {
                 tries++;
                 mbsc.addNotificationListener(objectName, this, null, null);
                 added = true;
             } catch (InstanceNotFoundException e) {
-                log.debug("adding notification InstanceNotFoundException");
+                log.debug("adding notification InstanceNotFoundException", e);
             }
         }
     }
@@ -113,19 +110,18 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
 
         long timeout = System.currentTimeMillis() + (JMX_CLIENT_TIMEOUT_SECS * 1000);
 
-        while (connector == null && System.currentTimeMillis() < timeout ) {
+        while (connector == null && System.currentTimeMillis() < timeout) {
 
             try {
                 log.debug("trying to connect to: " + serviceURL);
                 connector = JMXConnectorFactory.connect(serviceURL, environment);
 
                 log.debug("connected");
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
 
                 log.debug("e.getCause(): " + e.getCause().getClass());
 
-                if (! (e.getCause() instanceof ServiceUnavailableException)){
+                if (!(e.getCause() instanceof ServiceUnavailableException)) {
                     log.error("not a ServiceUnavailableException", e);
                     break;
                 }
@@ -134,11 +130,11 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e1) {
-                    log.debug("InterruptedException:",  e1);
+                    log.debug("InterruptedException:", e1);
                 }
             }
         }
-        if (connector == null){
+        if (connector == null) {
 
             log.error("failed to get the JMXConnector in time");
         }
@@ -146,28 +142,30 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
         return connector;
     }
 
-
-
+    @Override
     public RootNode prepareExecutionConfig(final SubstepsExecutionConfig cfg) {
 
         return this.mbean.prepareExecutionConfig(cfg);
-
     }
 
+    @Override
     public List<SubstepExecutionFailure> getFailures() {
 
         return this.mbean.getFailures();
     }
 
+    @Override
     public RootNode run() {
 
         return this.mbean.run();
     }
 
+    @Override
     public void addNotifier(final IExecutionListener listener) {
 
         this.mbean.addNotifier(listener);
     }
+
 
     public boolean shutdown() {
 
@@ -179,29 +177,28 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
 
         } catch (final RuntimeException re) {
 
-            this.log.debug("Unable to connect to server to shutdown, it may have already closed");
+            this.log.debug("Unable to connect to server to shutdown, it may have already closed", re);
 
         }
         return successfulShutdown;
     }
 
-//    @Override
+    @Override
     public void handleNotification(Notification notification, Object handback) {
 
 
-        if (notification.getType().compareTo("ExNode")==0) {
-            byte[] rawBytes = (byte[])notification.getUserData();
+        if (notification.getType().compareTo("ExNode") == 0) {
+            byte[] rawBytes = (byte[]) notification.getUserData();
 
             ExecutionNodeResult result = getFromBytes(rawBytes);
 
-            this.log.debug("received a JMX event msg: " + notification.getMessage() + " seq: " + notification.getSequenceNumber() + " exec result node id: " + result.getExecutionNodeId());
+            this.log.debug("received a JMX event msg: " + notification.getMessage() +
+                    " seq: " + notification.getSequenceNumber() + " exec result node id: " + result.getExecutionNodeId());
 
-    //        notificiationHandler.handleNotification(result);
-        }
-        else if (notification.getType().compareTo("ExecConfigComplete")==0) {
-    //        notificiationHandler.handleCompleteMessage();
-        }
-        else {
+            //        notificiationHandler.handleNotification(result);
+        } else if (notification.getType().compareTo("ExecConfigComplete") == 0) {
+            //        notificiationHandler.handleCompleteMessage();
+        } else {
             log.error("unknown notificaion type");
         }
     }
@@ -212,18 +209,19 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
         ObjectInputStream ois = null;
         try {
             ois = new ObjectInputStream(bis);
-            rn = (T)ois.readObject();
+            rn = (T) ois.readObject();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("IOException reading object input stream", e);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        finally{
+
+            log.error("ClassNotFoundException", e);
+
+        } finally {
             try {
                 bis.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("IOException closing object input stream", e);
             }
         }
         return rn;

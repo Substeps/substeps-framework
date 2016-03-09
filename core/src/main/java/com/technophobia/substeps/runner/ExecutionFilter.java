@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -24,11 +24,11 @@ import com.technophobia.substeps.model.Scenario;
 
 /**
  * Works out what scenarios and features to run or skip
- * @author ian
  *
+ * @author ian
  */
-public interface ExecutionFilter
-{
-	boolean isRunnable(final Scenario scenario);
-	boolean isRunnable(final FeatureFile feature);
+public interface ExecutionFilter {
+    boolean isRunnable(final Scenario scenario);
+
+    boolean isRunnable(final FeatureFile feature);
 }

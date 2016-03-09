@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,17 +18,6 @@
  */
 package com.technophobia.substeps.runner.syntax.validation;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.technophobia.substeps.model.FeatureFile;
 import com.technophobia.substeps.model.ParentStep;
 import com.technophobia.substeps.model.PatternMap;
@@ -40,6 +29,16 @@ import com.technophobia.substeps.runner.syntax.SyntaxBuilder;
 import com.technophobia.substeps.runner.syntax.validation.fake.FakeSyntaxErrorReporter;
 import com.technophobia.substeps.runner.syntax.validation.fake.FakeSyntaxErrorReporter.SyntaxErrorData;
 import com.technophobia.substeps.stepimplementations.MockStepImplementations;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertTrue;
 
 public class SyntaxAwareStepValidatorTest {
 
@@ -134,7 +133,7 @@ public class SyntaxAwareStepValidatorTest {
 
 
     private StepValidator createStepValidatorWithSubsteps(final String substepsFilename,
-            final Class<?>... stepImplClasses) {
+                                                          final Class<?>... stepImplClasses) {
         final Syntax syntax = SyntaxBuilder.buildSyntax(Arrays.asList(stepImplClasses),
                 createSubstepsFile(substepsFilename), true, new String[0], new ClassAnalyser(), true,
                 this.syntaxErrorReporter);

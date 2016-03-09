@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,21 +18,19 @@
  */
 package com.technophobia.substeps.model;
 
+import com.technophobia.substeps.model.parameter.Converter;
+import com.technophobia.substeps.model.parameter.ConverterFactory;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.technophobia.substeps.model.parameter.Converter;
-import com.technophobia.substeps.model.parameter.ConverterFactory;
-
 /**
  * @author ian
- * 
  */
 public final class Util {
     private static final Logger log = LoggerFactory.getLogger(Util.class);
@@ -55,9 +53,9 @@ public final class Util {
         ArrayList<String> argsList = null;
 
         String patternCopy = new String(patternString);
-        if (keywordPrecedence != null && StringUtils.startsWithAny(patternString, keywordPrecedence)){
+        if (keywordPrecedence != null && StringUtils.startsWithAny(patternString, keywordPrecedence)) {
             //
-            for (String s : keywordPrecedence){
+            for (String s : keywordPrecedence) {
 
 
                 patternCopy = StringUtils.removeStart(patternCopy, s);
@@ -110,7 +108,7 @@ public final class Util {
 
 
     public static List<Object> getArgs(final String patternString, final String sourceString,
-            final Class<?>[] parameterTypes, final Class<? extends Converter<?>>[] converterTypes) {
+                                       final Class<?>[] parameterTypes, final Class<? extends Converter<?>>[] converterTypes) {
 
         log.debug("Util getArgs List<Object> with pattern: " + patternString + " and sourceStr: "
                 + sourceString);
@@ -147,7 +145,7 @@ public final class Util {
 
 
     private static Object getObjectArg(final String stringArgument, final Class<?> desiredType,
-            final Class<? extends Converter<?>> converter) {
+                                       final Class<? extends Converter<?>> converter) {
         return ConverterFactory.convert(stringArgument, desiredType, converter);
     }
 

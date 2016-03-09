@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,6 +18,16 @@
  */
 package com.technophobia.substeps.report;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.io.Files;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.technophobia.substeps.execution.AbstractExecutionNodeVisitor;
+import com.technophobia.substeps.execution.ExecutionResult;
+import com.technophobia.substeps.execution.node.*;
+import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -26,20 +36,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.io.Files;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.technophobia.substeps.execution.AbstractExecutionNodeVisitor;
-import com.technophobia.substeps.execution.ExecutionResult;
-import com.technophobia.substeps.execution.node.ExecutionNode;
-import com.technophobia.substeps.execution.node.IExecutionNode;
-import com.technophobia.substeps.execution.node.NodeWithChildren;
-import com.technophobia.substeps.execution.node.RootNode;
-import com.technophobia.substeps.execution.node.StepImplementationNode;
-import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
-
 public final class TreeJsonBuilder extends AbstractExecutionNodeVisitor<JsonObject> {
 
     private final ReportData reportData;
@@ -47,7 +43,7 @@ public final class TreeJsonBuilder extends AbstractExecutionNodeVisitor<JsonObje
     private static Map<ExecutionResult, String> resultToImageMap = new HashMap<ExecutionResult, String>();
 
     private static final Predicate<ExecutionNode> NODE_HAS_ERROR = new Predicate<ExecutionNode>() {
-
+        @Override
         public boolean apply(ExecutionNode node) {
             return node.hasError();
         }
@@ -88,7 +84,7 @@ public final class TreeJsonBuilder extends AbstractExecutionNodeVisitor<JsonObje
 
         } catch (IOException e) {
 
-            throw new SubstepsRuntimeException("Failed writing to detail json file");
+            throw new SubstepsRuntimeException("Failed writing to detail json file", e);
 
         } finally {
 
@@ -97,7 +93,7 @@ public final class TreeJsonBuilder extends AbstractExecutionNodeVisitor<JsonObje
                     writer.flush();
                     writer.close();
                 } catch (IOException e) {
-                    throw new SubstepsRuntimeException("Failed writing to detail json file");
+                    throw new SubstepsRuntimeException("Failed writing to detail json file", e);
                 }
             }
 

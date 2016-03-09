@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,19 +18,18 @@
  */
 package com.technophobia.substeps.runner;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.technophobia.substeps.helper.AssertHelper;
 import com.technophobia.substeps.model.FeatureFile;
 import com.technophobia.substeps.model.Scenario;
 import com.technophobia.substeps.model.Syntax;
 import com.technophobia.substeps.runner.syntax.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author ian
@@ -52,7 +51,7 @@ public class TestParameters {
 
 
     public TestParameters(final TagManager tagManager, final Syntax syntax, final String featureFile,
-        final String scenarioName) {
+                          final String scenarioName) {
         this.tagManager = tagManager;
         this.syntax = syntax;
         this.featureFile = featureFile;
@@ -104,7 +103,7 @@ public class TestParameters {
     public boolean isRunnable(final Scenario scenario) {
 
         return (this.scenarioName != null && this.scenarioName.equals(scenario.getDescription())) ||
-            (this.scenarioName == null && tagManager.acceptTaggedScenario(scenario.getTags()));
+                (this.scenarioName == null && tagManager.acceptTaggedScenario(scenario.getTags()));
 
     }
 

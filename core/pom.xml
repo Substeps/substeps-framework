@@ -10,7 +10,7 @@
 
     <artifactId>substeps-core</artifactId>
 
-    <name>SubSteps Core</name>
+    <name>Substeps Core</name>
 
     <dependencies>
         <dependency>

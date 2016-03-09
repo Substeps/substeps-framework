@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,14 +18,13 @@
  */
 package com.technophobia.substeps.runner;
 
-import java.util.Map;
-
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
+import java.util.Map;
+
 /**
  * @author ian
- * 
  */
 public interface IJunitNotifier extends IExecutionListener {
 
@@ -40,7 +39,7 @@ public interface IJunitNotifier extends IExecutionListener {
     void setDescriptionMap(Map<Long, Description> descriptionMap);
 
     /**
-     * 
+     *
      */
     void pleaseStop();
 }

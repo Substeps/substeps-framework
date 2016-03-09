@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -26,21 +26,26 @@ import java.util.List;
 
 /**
  * @author ian
- * 
  */
 // TODO replace with commons io
 @Deprecated
 public class FileUtils {
+
+    private FileUtils(){
+        // uninstantiable
+    }
+
     public static List<File> getFiles(final File fFile, final String extension) {
 
         final List<File> files = new ArrayList<File>();
         if (fFile.exists()) {
             if (fFile.isDirectory()) {
                 final File[] children = fFile.listFiles(new FileFilter() {
+                    @Override
                     public boolean accept(final File dir) {
                         return dir.isDirectory()
                                 || (dir.isFile() && dir.getName().endsWith(
-                                        extension));
+                                extension));
                     }
 
                 });

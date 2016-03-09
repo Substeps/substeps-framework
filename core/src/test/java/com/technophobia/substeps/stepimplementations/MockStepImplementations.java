@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,23 +18,20 @@
  */
 package com.technophobia.substeps.stepimplementations;
 
-import java.util.List;
-import java.util.Map;
-
-import junit.framework.Assert;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.technophobia.substeps.model.SubSteps.Step;
 import com.technophobia.substeps.model.SubSteps.StepImplementations;
 import com.technophobia.substeps.runner.TestCallback;
+import junit.framework.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * A Step implementation that will capture the number of times called
- * 
+ *
  * @author imoore
- * 
  */
 @StepImplementations
 public class MockStepImplementations {
@@ -186,7 +183,7 @@ public class MockStepImplementations {
     }
 
     @Step("Step with a variable \"([^\"]*)\"")
-    public void meth13(String var){
+    public void meth13(String var) {
         log.debug("meth13: " + var);
         doCallback("step-with-a-variable " + var);
     }

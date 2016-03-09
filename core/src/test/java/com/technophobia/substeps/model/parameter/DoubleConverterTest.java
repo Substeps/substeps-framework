@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,68 +18,64 @@
  */
 package com.technophobia.substeps.model.parameter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import com.technophobia.substeps.model.parameter.DoubleConverter;
+import static org.junit.Assert.*;
 
 public class DoubleConverterTest {
 
 
-	private DoubleConverter converter;
+    private DoubleConverter converter;
 
 
-	@Before
-	public void setUp() {
-		converter = new DoubleConverter();
-	}
+    @Before
+    public void setUp() {
+        converter = new DoubleConverter();
+    }
 
 
-	@Test
-	public void testCanConvertDouble() {
-		final boolean canConvert = converter.canConvert(Double.class);
-		assertTrue(canConvert);
-	}
+    @Test
+    public void testCanConvertDouble() {
+        final boolean canConvert = converter.canConvert(Double.class);
+        assertTrue(canConvert);
+    }
 
 
-	@Test
-	public void testCanConvertPrimitiveDouble() {
-		final boolean canConvert = converter.canConvert(double.class);
-		assertTrue(canConvert);
-	}
+    @Test
+    public void testCanConvertPrimitiveDouble() {
+        final boolean canConvert = converter.canConvert(double.class);
+        assertTrue(canConvert);
+    }
 
 
-	@Test
-	public void testCanConvertString() {
-		final boolean canConvert = converter.canConvert(String.class);
-		assertFalse(canConvert);
-	}
+    @Test
+    public void testCanConvertString() {
+        final boolean canConvert = converter.canConvert(String.class);
+        assertFalse(canConvert);
+    }
 
 
-	@Test
-	public void testConvertValidDouble() {
-		final Double expected = Double.valueOf(7.90d);
-		final String value = "7.90";
+    @Test
+    public void testConvertValidDouble() {
+        final Double expected = Double.valueOf(7.90d);
+        final String value = "7.90";
 
-		final Double actual = converter.convert(value);
-		assertEquals(expected, actual);
-	}
-
-
-	@Test(expected = NumberFormatException.class)
-	public void testConvertInvalidDouble() {
-		final String value = "x";
-
-		converter.convert(value);
-	}
+        final Double actual = converter.convert(value);
+        assertEquals(expected, actual);
+    }
 
 
-	@Test(expected = NumberFormatException.class)
-	public void testConvertNullDouble() {
-		converter.convert(null);
-	}
+    @Test(expected = NumberFormatException.class)
+    public void testConvertInvalidDouble() {
+        final String value = "x";
+
+        converter.convert(value);
+    }
+
+
+    @Test(expected = NumberFormatException.class)
+    public void testConvertNullDouble() {
+        converter.convert(null);
+    }
 }

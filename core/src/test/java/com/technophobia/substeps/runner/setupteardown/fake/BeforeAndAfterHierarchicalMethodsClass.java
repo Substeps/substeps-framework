@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,12 +18,7 @@
  */
 package com.technophobia.substeps.runner.setupteardown.fake;
 
-import com.technophobia.substeps.runner.setupteardown.Annotations.AfterAllFeatures;
-import com.technophobia.substeps.runner.setupteardown.Annotations.AfterEveryFeature;
-import com.technophobia.substeps.runner.setupteardown.Annotations.AfterEveryScenario;
-import com.technophobia.substeps.runner.setupteardown.Annotations.BeforeAllFeatures;
-import com.technophobia.substeps.runner.setupteardown.Annotations.BeforeEveryFeature;
-import com.technophobia.substeps.runner.setupteardown.Annotations.BeforeEveryScenario;
+import com.technophobia.substeps.runner.setupteardown.Annotations.*;
 
 
 public class BeforeAndAfterHierarchicalMethodsClass extends BeforeAndAfterHierarchicalMethodsParentClass {

@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -20,10 +20,9 @@ package com.technophobia.substeps.model;
 
 /**
  * An enum that represents the scope of variables / current execution
- * 
+ *
  * @author imoore
- * 
  */
 public enum Scope {
-	SUITE, FEATURE, SCENARIO, SCENARIO_BACKGROUND, SCENARIO_OUTLINE, SCENARIO_OUTLINE_ROW, STEP;
+    SUITE, FEATURE, SCENARIO, SCENARIO_BACKGROUND, SCENARIO_OUTLINE, SCENARIO_OUTLINE_ROW, STEP;
 }

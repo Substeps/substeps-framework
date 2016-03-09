@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -20,7 +20,6 @@ package com.technophobia.substeps.glossary;
 
 /**
  * @author ian
- * 
  */
 public class StepDescriptor {
     private String expression;
@@ -41,8 +40,7 @@ public class StepDescriptor {
 
 
     /**
-     * @param example
-     *            the example to set
+     * @param example the example to set
      */
     public void setExample(final String example) {
         this.example = example;
@@ -58,8 +56,7 @@ public class StepDescriptor {
 
 
     /**
-     * @param section
-     *            the section to set
+     * @param section the section to set
      */
     public void setSection(final String section) {
         this.section = section;
@@ -75,8 +72,7 @@ public class StepDescriptor {
 
 
     /**
-     * @param description
-     *            the description to set
+     * @param description the description to set
      */
     public void setDescription(final String description) {
         this.description = description;
@@ -92,8 +88,7 @@ public class StepDescriptor {
 
 
     /**
-     * @param expression
-     *            the expression to set
+     * @param expression the expression to set
      */
     public void setExpression(final String expression) {
         this.expression = expression;

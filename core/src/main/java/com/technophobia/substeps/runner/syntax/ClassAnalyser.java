@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,13 +18,13 @@
  */
 package com.technophobia.substeps.runner.syntax;
 
-import java.lang.reflect.Method;
-
 import com.technophobia.substeps.helper.AssertHelper;
 import com.technophobia.substeps.model.StepImplementation;
 import com.technophobia.substeps.model.SubSteps.AdditionalStepImplementations;
 import com.technophobia.substeps.model.SubSteps.Step;
 import com.technophobia.substeps.model.Syntax;
+
+import java.lang.reflect.Method;
 
 public class ClassAnalyser {
 
@@ -56,7 +56,7 @@ public class ClassAnalyser {
 
             final StepImplementation impl = StepImplementation.parse(stepValue, loadedClass, m);
             AssertHelper.assertNotNull("unable to resolve the keyword / method for: " + stepValue + " in class: "
-                + loadedClass, impl);
+                    + loadedClass, impl);
 
             syntax.addStepImplementation(impl);
         }
@@ -115,7 +115,7 @@ public class ClassAnalyser {
      * @param syntaxErrorReporter
      */
     private void analyseAdditionalStepImplementations(final Class<?> loadedClass, final Syntax syntax,
-        final Class<?>[] additionalStepImplementationClasses) {
+                                                      final Class<?>[] additionalStepImplementationClasses) {
         for (final Class<?> stepImplClass : additionalStepImplementationClasses) {
             analyseClass(stepImplClass, syntax);
         }

@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -18,17 +18,16 @@
  */
 package com.technophobia.substeps.report;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.technophobia.substeps.execution.AbstractExecutionNodeVisitor;
 import com.technophobia.substeps.execution.node.ExecutionNode;
 import com.technophobia.substeps.execution.node.IExecutionNode;
 import com.technophobia.substeps.execution.node.RootNode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author ian
- * 
  */
 class ReportData {
 
@@ -44,7 +43,7 @@ class ReportData {
     private List<IExecutionNode> flattenTree(final IExecutionNode node) {
 
         return node.accept(new AbstractExecutionNodeVisitor<IExecutionNode>() {
-            
+
             @Override
             public IExecutionNode visit(IExecutionNode node) {
                 return node;

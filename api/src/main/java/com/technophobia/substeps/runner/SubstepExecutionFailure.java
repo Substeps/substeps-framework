@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -19,12 +19,11 @@
 
 package com.technophobia.substeps.runner;
 
-import java.io.Serializable;
-
 import com.google.common.base.Function;
 import com.technophobia.substeps.execution.ExecutionResult;
 import com.technophobia.substeps.execution.node.IExecutionNode;
-import com.technophobia.substeps.execution.node.RootNode;
+
+import java.io.Serializable;
 
 /**
  * Represents the failure of an execution - could be a step method, or a setup method, may or may not be critical
@@ -35,15 +34,16 @@ public class SubstepExecutionFailure implements Serializable {
 
     public static final Function<SubstepExecutionFailure, Long> GET_NODE_ID = new Function<SubstepExecutionFailure, Long>() {
 
+        @Override
         public Long apply(final SubstepExecutionFailure failure) {
-            return failure.getExeccutionNode() == null ? null : failure.getExeccutionNode().getId();
+            return failure == null || failure.getExeccutionNode() == null ? null : failure.getExeccutionNode().getId();
         }
 
     };
 
     private static final long serialVersionUID = 4981517213059529046L;
 
-    private transient final Throwable cause;
+    private final transient Throwable cause;
     private IExecutionNode executionNode;
     private boolean setupOrTearDown = false;
     private boolean nonCritical = false;
@@ -103,6 +103,13 @@ public class SubstepExecutionFailure implements Serializable {
      */
     public SubstepExecutionFailure(final Throwable cause, final IExecutionNode node, final ExecutionResult result) {
         this(cause, node);
+        node.getResult().setResult(result);
+    }
+
+    public static void setResult(final Throwable cause, final IExecutionNode node, final ExecutionResult result) {
+        final SubstepExecutionFailure sef = new SubstepExecutionFailure(cause);
+        sef.executionNode = node;
+        sef.executionNode.getResult().setFailure(sef);
         node.getResult().setResult(result);
     }
 

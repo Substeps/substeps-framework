@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *  Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -20,12 +20,13 @@ package com.technophobia.substeps.model.parameter;
 
 public class BooleanConverter implements Converter<Boolean> {
 
-	public boolean canConvert(final Class<?> cls) {
-		return cls == boolean.class || cls == Boolean.class;
-	}
+    @Override
+    public boolean canConvert(final Class<?> cls) {
+        return cls == boolean.class || cls == Boolean.class;
+    }
 
-
-	public Boolean convert(final String value) {
-		return Boolean.valueOf(value);
-	}
+    @Override
+    public Boolean convert(final String value) {
+        return Boolean.valueOf(value);
+    }
 }
