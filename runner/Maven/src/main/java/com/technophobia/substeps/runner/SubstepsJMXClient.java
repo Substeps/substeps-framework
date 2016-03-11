@@ -22,9 +22,11 @@ package com.technophobia.substeps.runner;
 import com.technophobia.substeps.execution.ExecutionNodeResult;
 import com.technophobia.substeps.execution.node.RootNode;
 import com.technophobia.substeps.jmx.SubstepsServerMBean;
+import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.substeps.execution.ExecutionNodeResultNotificationHandler;
 
 import javax.management.*;
 import javax.management.remote.JMXConnector;
@@ -34,6 +36,7 @@ import javax.naming.ServiceUnavailableException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -43,12 +46,22 @@ import java.util.Map;
 public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
 
     private static Logger log = LoggerFactory.getLogger(SubstepsJMXClient.class);
+    private static final int JMX_CLIENT_TIMEOUT_SECS = 10;
     private SubstepsServerMBean mbean;
 
     private JMXConnector cntor = null;
     private MBeanServerConnection mbsc = null;
 
-    private static final int JMX_CLIENT_TIMEOUT_SECS = 10;
+    public void setNotificiationHandler(ExecutionNodeResultNotificationHandler notificiationHandler) {
+        this.notificiationHandler = notificiationHandler;
+    }
+
+    private ExecutionNodeResultNotificationHandler notificiationHandler = null;
+
+    public byte[] runAsBytes() {
+
+        return this.mbean.runAsBytes();
+    }
 
 
     public void init(final int portNumber) throws MojoExecutionException {
@@ -65,8 +78,10 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
             // Create the JMXCconnectorServer
             this.cntor = getConnector(serviceURL, environment);
 
-            // Obtain a "stub" for the remote MBeanServer
-            mbsc = this.cntor.getMBeanServerConnection();
+            if (this.cntor != null){
+
+                // Obtain a "stub" for the remote MBeanServer
+                mbsc = this.cntor.getMBeanServerConnection();
 
             final ObjectName objectName = new ObjectName(SubstepsServerMBean.SUBSTEPS_JMX_MBEAN_NAME);
             this.mbean = MBeanServerInvocationHandler.newProxyInstance(mbsc, objectName, SubstepsServerMBean.class,
@@ -74,6 +89,7 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
 
             addNotificationListener(objectName);
 
+			}
 
         } catch (final IOException e) {
 
@@ -142,13 +158,35 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
         return connector;
     }
 
-    @Override
-    public RootNode prepareExecutionConfig(final SubstepsExecutionConfig cfg) {
+    public byte[] prepareExecutionConfigAsBytes(final SubstepsExecutionConfig cfg) {
 
-        return this.mbean.prepareExecutionConfig(cfg);
+        try {
+            return this.mbean.prepareExecutionConfigAsBytes(cfg);
+        }
+        catch (SubstepsConfigurationException ex){
+            log.error("Failed to init tests: " + ex.getMessage());
+            return null;
+        }
     }
 
     @Override
+    public RootNode prepareExecutionConfig(final SubstepsExecutionConfig cfg) {
+
+        try {
+            final ObjectName objectName = new ObjectName(SubstepsServerMBean.SUBSTEPS_JMX_MBEAN_NAME);
+            Object  rootNode = mbsc.invoke(objectName,
+                    "prepareExecutionConfig",
+                    new Object[]{cfg},
+                    new String[]{SubstepsExecutionConfig.class.getName()});
+            return (RootNode)rootNode;
+
+        } catch (Exception e) {
+            log.error("Exception thrown preparing exectionConfig", e);
+        }
+        return null;
+    }
+
+	@Override
     public List<SubstepExecutionFailure> getFailures() {
 
         return this.mbean.getFailures();
@@ -171,9 +209,10 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
 
         boolean successfulShutdown = false;
         try {
-
-            this.mbean.shutdown();
-            successfulShutdown = true;
+            if (this.mbean != null) {
+                this.mbean.shutdown();
+            }
+                successfulShutdown = true;
 
         } catch (final RuntimeException re) {
 
@@ -192,12 +231,12 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
 
             ExecutionNodeResult result = getFromBytes(rawBytes);
 
-            this.log.debug("received a JMX event msg: " + notification.getMessage() +
+            this.log.trace("received a JMX event msg: " + notification.getMessage() +
                     " seq: " + notification.getSequenceNumber() + " exec result node id: " + result.getExecutionNodeId());
 
-            //        notificiationHandler.handleNotification(result);
+                    notificiationHandler.handleNotification(result);
         } else if (notification.getType().compareTo("ExecConfigComplete") == 0) {
-            //        notificiationHandler.handleCompleteMessage();
+                    notificiationHandler.handleCompleteMessage();
         } else {
             log.error("unknown notificaion type");
         }
@@ -206,7 +245,7 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
     protected static <T> T getFromBytes(byte[] bytes) {
         T rn = null;
         ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-        ObjectInputStream ois = null;
+        ObjectInputStream ois;
         try {
             ois = new ObjectInputStream(bis);
             rn = (T) ois.readObject();

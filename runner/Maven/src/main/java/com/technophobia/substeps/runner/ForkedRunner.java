@@ -20,6 +20,7 @@ package com.technophobia.substeps.runner;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.technophobia.substeps.execution.ExecutionNodeResult;
 import com.technophobia.substeps.execution.node.RootNode;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -35,14 +36,18 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
+import org.substeps.execution.ExecutionNodeResultNotificationHandler;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 
-public class ForkedRunner implements MojoRunner {
+public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotificationHandler {
 
     private final Log log;
 
@@ -74,6 +79,9 @@ public class ForkedRunner implements MojoRunner {
 
     private final InputStreamConsumer consumer;
 
+    private final CountDownLatch countDownLatch = new CountDownLatch(1);
+
+
     ForkedRunner(final Log log, final int jmxPort, final String vmArgs, final List<String> testClasspathElements,
                  final List<String> stepImplementationArtifacts, final ArtifactResolver artifactResolver,
                  final ArtifactFactory artifactFactory, final MavenProjectBuilder mavenProjectBuilder,
@@ -93,6 +101,8 @@ public class ForkedRunner implements MojoRunner {
         this.artifactMetadataSource = artifactMetadataSource;
 
         this.substepsJmxClient = new SubstepsJMXClient();
+
+        this.substepsJmxClient.setNotificiationHandler(this);
 
         this.consumer = startMBeanJVM();
 
@@ -158,7 +168,7 @@ public class ForkedRunner implements MojoRunner {
 
             localConsumer = new InputStreamConsumer(this.forkedJVMProcess.getInputStream(), this.log);
 
-            final Thread t = new Thread(this.consumer);
+            final Thread t = new Thread(localConsumer);
             t.start();
 
         } catch (final IOException e) {
@@ -310,17 +320,58 @@ public class ForkedRunner implements MojoRunner {
         stepImplementationArtifactJars.add(path);
     }
 
+
+    protected static RootNode getRootNodeFromBytes(byte[] bytes) {
+        RootNode rn = null;
+        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(bis);
+            rn = (RootNode)ois.readObject();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        finally{
+            try {
+                bis.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return rn;
+    }
+
+
     @Override
     public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
 
-        return this.substepsJmxClient.prepareExecutionConfig(theConfig);
+        byte[] bytes = substepsJmxClient.prepareExecutionConfigAsBytes(theConfig);
+
+        RootNode rn = getRootNodeFromBytes(bytes);
+
+        return rn;//this.substepsJmxClient.prepareExecutionConfig(theConfig);
     }
 
     @Override
     public RootNode run() {
 
         this.log.info("Running substeps tests in forked jvm");
-        return this.substepsJmxClient.run();
+        //return this.substepsJmxClient.run();
+
+        RootNode resultNode = getRootNodeFromBytes(substepsJmxClient.runAsBytes());
+
+        // lets wait for any notifications
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            if (countDownLatch.getCount() > 0) {
+                log.error("premature interupted ex waiting for complete notification");
+            }
+        }
+        return  resultNode;
     }
 
     @Override
@@ -335,4 +386,13 @@ public class ForkedRunner implements MojoRunner {
         this.substepsJmxClient.addNotifier(listener);
     }
 
+    @Override
+    public void handleNotification(ExecutionNodeResult result) {
+
+    }
+
+    @Override
+    public void handleCompleteMessage() {
+        countDownLatch.countDown();
+    }
 }
