@@ -36,7 +36,7 @@ public abstract class ExecutionLogger implements IExecutionListener {
 
     public abstract void printStarted(String msg);
 
-    private final String indentString = "  ";
+    private final static String indentString = "  ";
 
     private String format(final IExecutionNode node) {
 

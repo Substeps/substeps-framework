@@ -72,8 +72,10 @@ public class ExecutionNodeRunner implements SubstepsRunner {
     @Override
     public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
 
-        final ExecutionConfigWrapper config = new ExecutionConfigWrapper(theConfig);
-        config.initProperties();
+        final ExecutionConfigWrapper configWrapper = new ExecutionConfigWrapper(theConfig);
+        configWrapper.initProperties();
+
+        SubstepsExecutionConfig config = configWrapper.getExecutionConfig();
 
         final String dryRunProperty = System.getProperty(DRY_RUN_KEY);
         final boolean dryRun = dryRunProperty != null && Boolean.parseBoolean(dryRunProperty);
@@ -118,7 +120,7 @@ public class ExecutionNodeRunner implements SubstepsRunner {
 
         // add any listeners (including the step execution logger)
 
-        final List<Class<? extends IExecutionListener>> executionListenerClasses = config.getExecutionListenerClasses();
+        final List<Class<? extends IExecutionListener>> executionListenerClasses = configWrapper.getExecutionListenerClasses();
 
         for (final Class<? extends IExecutionListener> listener : executionListenerClasses) {
 

@@ -20,6 +20,7 @@ package com.technophobia.substeps.runner;
 
 import com.technophobia.substeps.model.Scope;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public final class ExecutionContext {
     };
 
     private ExecutionContext() {
-        scopedData = new HashMap<Scope, Map<String, Object>>();
+        scopedData = new EnumMap<>(Scope.class);
     }
 
     private Map<Scope, Map<String, Object>> scopedData = null;

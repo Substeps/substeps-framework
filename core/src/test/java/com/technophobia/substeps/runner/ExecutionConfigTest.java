@@ -122,7 +122,9 @@ public class ExecutionConfigTest {
     @Test
     public void testDeterminInitialisationClasses() {
 
-        final ExecutionConfigWrapper config = new ExecutionConfigWrapper(new SubstepsExecutionConfig());
+        SubstepsExecutionConfig config = new SubstepsExecutionConfig();
+
+        final ExecutionConfigWrapper configWrapper = new ExecutionConfigWrapper(config);
 
         final List<Class<?>> stepImplClasses = new ArrayList<Class<?>>();
 
@@ -133,7 +135,7 @@ public class ExecutionConfigTest {
 
         config.setStepImplementationClasses(stepImplClasses);
 
-        final List<Class<?>> initialisationClasses = Arrays.asList(config.determineInitialisationClasses());
+        final List<Class<?>> initialisationClasses = Arrays.asList(configWrapper.determineInitialisationClasses());
 
         Assert.assertThat(initialisationClasses.size(), is(5));
 
@@ -155,7 +157,9 @@ public class ExecutionConfigTest {
     @Test(expected = SubstepsConfigurationException.class)
     public void testIncompatibleDeterminInitialisationClasses() {
 
-        final ExecutionConfigWrapper config = new ExecutionConfigWrapper(new SubstepsExecutionConfig());
+        SubstepsExecutionConfig config = new SubstepsExecutionConfig();
+
+        final ExecutionConfigWrapper configWrapper = new ExecutionConfigWrapper(config);
 
         final List<Class<?>> stepImplClasses = new ArrayList<Class<?>>();
 
@@ -168,7 +172,7 @@ public class ExecutionConfigTest {
         config.setStepImplementationClasses(stepImplClasses);
 
         try {
-            config.determineInitialisationClasses();
+            configWrapper.determineInitialisationClasses();
 
         } catch (final SubstepsConfigurationException exception) {
 
@@ -181,7 +185,9 @@ public class ExecutionConfigTest {
     @Test
     public void testDeterminInitialisationClasses2() {
 
-        final ExecutionConfigWrapper config = new ExecutionConfigWrapper(new SubstepsExecutionConfig());
+        SubstepsExecutionConfig config = new SubstepsExecutionConfig();
+
+        final ExecutionConfigWrapper configWrapper = new ExecutionConfigWrapper(config);
 
         final List<Class<?>> stepImplClasses = new ArrayList<Class<?>>();
 
@@ -191,7 +197,7 @@ public class ExecutionConfigTest {
 
         config.setStepImplementationClasses(stepImplClasses);
 
-        final Class<?>[] initialisationClasses = config.determineInitialisationClasses();
+        final Class<?>[] initialisationClasses = configWrapper.determineInitialisationClasses();
 
         Assert.assertThat(initialisationClasses.length, is(3));
 
@@ -220,7 +226,9 @@ public class ExecutionConfigTest {
     @Test
     public void testDermineClassesForTPCLA223() {
 
-        final ExecutionConfigWrapper config = new ExecutionConfigWrapper(new SubstepsExecutionConfig());
+        SubstepsExecutionConfig config = new SubstepsExecutionConfig();
+
+        final ExecutionConfigWrapper configWrapper = new ExecutionConfigWrapper(config);
 
         final List<Class<?>> stepImplClasses = new ArrayList<Class<?>>();
 
@@ -230,7 +238,7 @@ public class ExecutionConfigTest {
 
         config.setStepImplementationClasses(stepImplClasses);
 
-        final List<Class<?>> initialisationClasses = Arrays.asList(config.determineInitialisationClasses());
+        final List<Class<?>> initialisationClasses = Arrays.asList(configWrapper.determineInitialisationClasses());
 
         Assert.assertThat(initialisationClasses.size(), is(6));
 
@@ -247,7 +255,9 @@ public class ExecutionConfigTest {
     @Test(expected = SubstepsConfigurationException.class)
     public void testDetermineClassesForInvalidLoop() {
 
-        final ExecutionConfigWrapper config = new ExecutionConfigWrapper(new SubstepsExecutionConfig());
+        SubstepsExecutionConfig config = new SubstepsExecutionConfig();
+
+        final ExecutionConfigWrapper configWrapper = new ExecutionConfigWrapper(config);
 
         final List<Class<?>> stepImplClasses = new ArrayList<Class<?>>();
 
@@ -258,7 +268,7 @@ public class ExecutionConfigTest {
         config.setStepImplementationClasses(stepImplClasses);
 
         try {
-            config.determineInitialisationClasses();
+            configWrapper.determineInitialisationClasses();
         } catch (final SubstepsConfigurationException sce) {
 
             Assert.assertEquals(THE_ORDER_IS_INVALID_AS + InitClass1.class.getName() + MUST_COME_BEFORE_AND_AFTER

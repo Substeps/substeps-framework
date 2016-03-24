@@ -34,6 +34,7 @@ import java.util.List;
  */
 public class SetupAndTearDown {
 
+    public static final String CLASS_NAME = "className";
     private final Logger log = LoggerFactory.getLogger(SetupAndTearDown.class);
 
     private String loggingConfigName = null;
@@ -42,6 +43,12 @@ public class SetupAndTearDown {
 
     private final BeforeAndAfterMethods beforeAndAfterMethods;
 
+    public SetupAndTearDown(final Class<?>[] classes, final MethodExecutor methodExecutor) {
+
+        this.beforeAndAfterMethods = new BeforeAndAfterMethods(classes);
+        this.methodExecutor = methodExecutor;
+        this.methodExecutor.addImplementationClasses(classes);
+    }
 
     public String getLoggingConfigName() {
         return this.loggingConfigName;
@@ -53,12 +60,6 @@ public class SetupAndTearDown {
     }
 
 
-    public SetupAndTearDown(final Class<?>[] classes, final MethodExecutor methodExecutor) {
-
-        this.beforeAndAfterMethods = new BeforeAndAfterMethods(classes);
-        this.methodExecutor = methodExecutor;
-        this.methodExecutor.addImplementationClasses(classes);
-    }
 
 
     public void runBeforeAll() throws Throwable {
@@ -109,16 +110,16 @@ public class SetupAndTearDown {
 
         if (this.loggingConfigName == null) {
 
-            MDC.put("className", "SubSteps");
+            MDC.put(CLASS_NAME, "SubSteps");
             this.log.info("no logging config name supplied, defaulting to Substeps");
         } else {
-            MDC.put("className", this.loggingConfigName);
+            MDC.put(CLASS_NAME, this.loggingConfigName);
         }
     }
 
 
     private void removeLoggingConfig() {
-        MDC.remove("className");
+        MDC.remove(CLASS_NAME);
     }
 
 

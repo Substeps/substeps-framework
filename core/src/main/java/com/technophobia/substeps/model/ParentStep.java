@@ -108,9 +108,6 @@ public class ParentStep {
 
                 String key = this.parent.getParamNames().get(i);
 
-                if (key.equals("value1")) {
-                    log.debug("break");
-                }
                 log.debug("putting value: " + paramValues[i] +
                         " under key: " + key + " i " + i);
 
@@ -139,7 +136,6 @@ public class ParentStep {
     public ParentStep cloneWithAltLine(final String altLine) {
         final ParentStep clone = new ParentStep(
                 this.parent.cloneWithAlternativeLine(altLine));
-        // clone.initialiseParamValues(clone.parent.getParameterLine());
 
         clone.substeps = this.substeps;
         clone.paramValueMap = this.paramValueMap;

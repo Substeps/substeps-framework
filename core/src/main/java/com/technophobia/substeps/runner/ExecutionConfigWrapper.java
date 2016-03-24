@@ -33,29 +33,32 @@ import java.util.Properties;
  *
  * @author rbarefield
  */
-public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
-
-    private static final long serialVersionUID = -6096151962497826502L;
+public class ExecutionConfigWrapper {
 
     private static final Logger log = LoggerFactory.getLogger(ExecutionConfigWrapper.class);
 
-    public ExecutionConfigWrapper(final SubstepsExecutionConfig executionConfig) {
+    private final SubstepsExecutionConfig executionConfig;
 
-        super(executionConfig);
+    public ExecutionConfigWrapper(final SubstepsExecutionConfig executionConfig) {
+        this.executionConfig = executionConfig;
+    }
+
+    public SubstepsExecutionConfig getExecutionConfig(){
+        return executionConfig;
     }
 
     public void initProperties() {
 
-        if (getStepImplementationClasses() == null) {
-            setStepImplementationClasses(getClassesFromConfig(getStepImplementationClassNames()));
+        if (executionConfig.getStepImplementationClasses() == null) {
+            executionConfig.setStepImplementationClasses(getClassesFromConfig(executionConfig.getStepImplementationClassNames()));
         }
 
-        if (getSystemProperties() != null) {
+        if (executionConfig.getSystemProperties() != null) {
 
-            log.debug("Configuring system properties [" + getSystemProperties().size() + "] for execution");
+            log.debug("Configuring system properties [" + executionConfig.getSystemProperties().size() + "] for execution");
             final Properties existing = System.getProperties();
-            getSystemProperties().putAll(existing);
-            System.setProperties(getSystemProperties());
+            executionConfig.getSystemProperties().putAll(existing);
+            System.setProperties(executionConfig.getSystemProperties());
         }
 
         determineInitialisationClasses();
@@ -82,22 +85,14 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
     }
 
     private String printParameters() {
-        return "ExecutionConfig [description=" + getDescription() + ", tags=" + getTags() + ", nonFatalTags="
-                + getNonFatalTags() + ", featureFile=" + getFeatureFile() + ", subStepsFileName="
-                + getSubStepsFileName() + ", scenarioName=" + getScenarioName() + ", strict=" + isStrict() + ", fastFailParseErrors=" + isFastFailParseErrors()
-                + ", nonStrictKeywordPrecedence=" + Arrays.toString(getNonStrictKeywordPrecedence())
-                + ", stepImplementationClassNames=" + Arrays.toString(getStepImplementationClassNames())
-                + ", initialisationClass=" + Arrays.toString(getInitialisationClass()) + ", stepImplementationClasses="
-                + getStepImplementationClasses() + ", initialisationClasses="
-                + Arrays.toString(getInitialisationClasses()) + ", executionListeners="
-                + Arrays.toString(getExecutionListeners()) + "]";
+        return "ExecutionConfig [cfg: " + executionConfig.printParameters() + "]";
     }
 
     public List<Class<? extends IExecutionListener>> getExecutionListenerClasses() {
 
         final List<Class<? extends IExecutionListener>> notifierClassList = new ArrayList<Class<? extends IExecutionListener>>();
 
-        final String[] classList = getExecutionListeners();
+        final String[] classList = executionConfig.getExecutionListeners();
         if (classList != null) {
             for (final String className : classList) {
 
@@ -122,11 +117,11 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
     public Class<?>[] determineInitialisationClasses() {
 
         List<Class<?>> initialisationClassList = null;
-        if (getStepImplementationClasses() != null) {
+        if (executionConfig.getStepImplementationClasses() != null) {
 
             final InitialisationClassSorter orderer = new InitialisationClassSorter();
 
-            for (final Class<?> c : getStepImplementationClasses()) {
+            for (final Class<?> c : executionConfig.getStepImplementationClasses()) {
 
                 final StepImplementations annotation = c.getAnnotation(StepImplementations.class);
 
@@ -142,14 +137,14 @@ public class ExecutionConfigWrapper extends ExecutionConfigDecorator {
 
             initialisationClassList = orderer.getOrderedList();
         }
-        if (initialisationClassList == null && getInitialisationClass() != null) {
-            initialisationClassList = getClassesFromConfig(getInitialisationClass());
+        if (initialisationClassList == null && executionConfig.getInitialisationClass() != null) {
+            initialisationClassList = getClassesFromConfig(executionConfig.getInitialisationClass());
         }
 
         if (initialisationClassList != null) {
-            setInitialisationClasses(initialisationClassList.toArray(new Class<?>[]{}));
+            executionConfig.setInitialisationClasses(initialisationClassList.toArray(new Class<?>[]{}));
         }
 
-        return getInitialisationClasses();
+        return executionConfig.getInitialisationClasses();
     }
 }

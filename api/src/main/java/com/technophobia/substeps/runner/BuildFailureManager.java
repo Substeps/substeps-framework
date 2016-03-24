@@ -52,9 +52,6 @@ public class BuildFailureManager extends AbstractExecutionNodeVisitor<String> {
                 nonCriticalFailures.isEmpty() && criticalFailures.isEmpty()) {
 
             SubstepExecutionFailure failure = rootNode.getResult().getFailure();
-//            List<IExecutionNode> path = Lists.newArrayList(parents);
-//            path.add(node);
-
 
             if (failure.isNonCritical()) {
                 nonCriticalFailures.add(Lists.newArrayList((IExecutionNode) rootNode));
@@ -83,8 +80,6 @@ public class BuildFailureManager extends AbstractExecutionNodeVisitor<String> {
                 IExecutionNode lastNode = failurePath.get(failurePath.size() - 1);
 
                 ThrowableInfo throwableInfo = lastNode.getResult().getFailure().getThrowableInfo();
-
-                //Throwable throwable = lastNode.getResult().getFailure().getCause();
 
                 if (throwableInfo != null && throwableInfo.getMessage() != null) {
 
@@ -144,10 +139,10 @@ public class BuildFailureManager extends AbstractExecutionNodeVisitor<String> {
     }
 
     public boolean testSuiteSomeFailures() {
-        return (testSuiteFailed()) || (this.nonCriticalFailures != null && !this.nonCriticalFailures.isEmpty());
+        return testSuiteFailed() || this.nonCriticalFailures != null && !this.nonCriticalFailures.isEmpty();
     }
 
     public boolean testSuiteFailed() {
-        return (this.criticalFailures != null && !this.criticalFailures.isEmpty());
+        return this.criticalFailures != null && !this.criticalFailures.isEmpty();
     }
 }
