@@ -641,6 +641,13 @@ public class ExecutionNodeRunnerTest {
 
         Assert.assertThat(rootNode.getResult().getResult(), is(ExecutionResult.PASSED));
 
+        if (!tags.contains("scenario-with-params-fail")) {
+
+            // this test method called in s several contexts, the above tag calls a different set of scenarios altogether
+            OutlineScenarioNode osn = (OutlineScenarioNode) rootNode.getChildren().get(0).getChildren().get(0);
+
+            Assert.assertThat(osn.getChildren().get(0).getChildren().get(0).getScenarioName(), is("scenario with table failing iter 1"));
+        }
 
         // TODO - not working either ! no sub twice
         //verify(spy, times(1)).meth13("no sub");
