@@ -93,7 +93,7 @@ public final class DetailedJsonBuilder extends AbstractExecutionNodeVisitor<Json
     @Override
     public JsonObject visit(NodeWithChildren<?> node) {
 
-        return createBasicDetailsWithChildDetails(node.getClass().getSimpleName().toString(), node, node.getChildren());
+        return createBasicDetailsWithChildDetails(node.getClass().getSimpleName(), node, node.getChildren());
     }
 
     @Override

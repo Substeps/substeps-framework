@@ -27,7 +27,7 @@ public class ForkedProcessCloser implements Runnable {
     private Thread thread;
     private Log log;
 
-    private static final long GRACEFULL_SHUTDOWN_TIMEOUT_MILLIS = 2 * 1000;
+    private static final long GRACEFULL_SHUTDOWN_TIMEOUT_MILLIS = 2 * 1000L;
 
     public static ForkedProcessCloser addHook(SubstepsJMXClient client, Process forkedJvm, Log log) {
 

@@ -50,9 +50,6 @@ public class FeatureFile extends RootFeature {
         this.name = name;
     }
 
-    public FeatureFile() {
-    }
-
 
     public String getName() {
 

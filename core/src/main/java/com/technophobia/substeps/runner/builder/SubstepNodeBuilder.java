@@ -375,7 +375,7 @@ public class SubstepNodeBuilder {
         return result;
     }
 
-    public String substitutePlaceholders(final String stepParameter, final Map<String, String> parentArguments) {
+    public static String substitutePlaceholders(final String stepParameter, final Map<String, String> parentArguments) {
         // is there anything to replace?
 
         log.trace("substitutePlaceholders stepParameter: " + stepParameter);

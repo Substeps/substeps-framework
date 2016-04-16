@@ -41,9 +41,6 @@ public class Step {
     // the whole original line, eg Given blah blah
     private final String line;
 
-    // the remainder of the line, eg blah blah
-    // private final String param;
-
     // a string that can be manipulated for variable substituion
     private String parameterLine;
 
@@ -276,11 +273,8 @@ public class Step {
     }
 
     public Step cloneWithAlternativeLine(final String alt) {
-//        final Step step = new Step(alt, this.pattern != null, this.source, this.sourceLineNumber,
-//                this.sourceStartOffset);
         final Step step = new Step(alt, this.isSubstep, this.source, this.sourceLineNumber,
                 this.sourceStartOffset);
-
 
         step.inlineTable = this.inlineTable;
 

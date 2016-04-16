@@ -72,10 +72,8 @@ public class SubstepsJMXServer {
             boolean rpt = true;
             while (rpt) {
                 try {
-                    // ** NB. this can't be a log statement as it can be turned
-                    // off
-                    System.out.println("awaiting the shutdown notification...");
-                    // ** see above
+
+                    log.debug("awaiting the shutdown notification...");
 
                     this.shutdownSignal.await();
                     rpt = false;

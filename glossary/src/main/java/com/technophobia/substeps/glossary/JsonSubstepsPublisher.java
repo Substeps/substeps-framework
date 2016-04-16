@@ -23,48 +23,11 @@ public class JsonSubstepsPublisher extends FileBasedGlossaryPublisher implements
     public String getDefaultFileName() {
         return "stepimplementations.json";
     }
-//    /**
-//     * @parameter default-value =
-//     */
-//    private File outputFile;
-//    public void publish(final List<StepImplementationsDescriptor> stepimplementationDescriptors) {
-//        TreeMultimap<String, StepDescriptor> sections = TreeMultimap.create(Ordering.natural(), expressionComparator);
-//
-//        for (final StepImplementationsDescriptor descriptor : stepimplementationDescriptors) {
-//            for (final StepDescriptor step : descriptor.getExpressions()) {
-//                sections.put(getSection(step), step);
-//            }
-//        }
-//
-//        NavigableMap<String, Collection<StepDescriptor>> stringCollectionNavigableMap = sections.asMap();
-//
-//        writeToFile(gson.toJson(sections.asMap()));
-//    }
-
-//    private String getSection(StepDescriptor stepTag) {
-//        boolean noTag = stepTag.getSection() == null || stepTag.getSection().isEmpty();
-//        return noTag ? "Miscellaneous" : stepTag.getSection();
-//    }
 
     @Override
     public String buildFileContents(final Map<String, Collection<StepDescriptor>> sectionSorted) {
         Gson gson = new GsonBuilder().create();
         return gson.toJson(sectionSorted);
     }
-
-//    private void writeToFile(final String html) {
-//        try {
-//            outputFile.delete();
-//
-//            if (outputFile.createNewFile()) {
-//                Files.write(html, outputFile, Charset.defaultCharset());
-//            } else {
-//                throw new IOException("Couldn't create file: " + outputFile.getAbsolutePath());
-//            }
-//
-//        } catch (final IOException e) {
-//            throw new RuntimeException("Problem writing out file: " + outputFile.getAbsolutePath(), e);
-//        }
-//    }
 
 }

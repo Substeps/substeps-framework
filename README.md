@@ -15,6 +15,12 @@ Requirements
 ------------
  * Java 8
 
+
+1.0.2
+-----
+* Added capability for outline descriptions to contain parameter placeholders that can be populated from the example tables, each iteration of the outline potentially then being named something different.
+
+
 1.0.0
 -----
 * Forked from G2G3.Digital as no longer being maintained.  Group renamed to org.substeps and version number reset to 1.0

@@ -30,7 +30,6 @@ public class StepImplementationUsage {
     private final File source;
     private final int lineNumber;
 
-
     public StepImplementationUsage(final String parameterLine, final File source, final int lineNumber) {
         this.parameterLine = parameterLine;
         this.source = source;

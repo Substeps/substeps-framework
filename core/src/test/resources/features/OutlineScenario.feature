@@ -10,23 +10,23 @@ Scenario: Direct scenario
 
 Tags: outline-scenario-with-params-fail
 
-Scenario Outline: scenario with table working
+Scenario Outline: scenario with table working <iteration>
    #Given a substep that takes one parameter "<value2>"
    And a substep that takes one parameter "<value1>"
 
   Examples:
-    |value1 | value2 |
-    |table sub    | table no sub   |
+    |iteration |value1 | value2 |
+    | iter 1   |table sub    | table no sub   |
 
 Tags: outline-scenario-with-params-pass
 
-Scenario Outline: scenario with table failing
+Scenario Outline: scenario with table failing <iteration>
      Given a substep that takes one parameter "<value2>"
     #And a substep that takes one parameter "<value1>"
 
     Examples:
-      |value1 | value2 |
-      |table sub    | table no sub   |
+      |iteration |value1 | value2 |
+      | iter 1   |table sub    | table no sub   |
 
 
 #  And another substep that takes the other parameter "direct"

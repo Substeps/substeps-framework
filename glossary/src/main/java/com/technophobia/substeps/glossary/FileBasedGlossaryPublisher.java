@@ -3,6 +3,8 @@ package com.technophobia.substeps.glossary;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.TreeMultimap;
 import com.google.common.io.Files;
+import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,32 +62,14 @@ public abstract class FileBasedGlossaryPublisher implements GlossaryPublisher {
             }
         }
 
-//        final Map<String, List<StepDescriptor>> sectionSorted = new TreeMap<String, List<StepDescriptor>>();
-//
-//        for (final StepImplementationsDescriptor descriptor : stepimplementationDescriptors) {
-//
-//            for (final StepDescriptor stepTag : descriptor.getExpressions()) {
-//
-//                String section = stepTag.getSection();
-//                if (section == null || section.isEmpty()) {
-//                    section = "Miscellaneous";
-//                }
-//
-//                List<StepDescriptor> subList = sectionSorted.get(section);
-//
-//                if (subList == null) {
-//                    subList = new ArrayList<StepDescriptor>();
-//                    sectionSorted.put(section, subList);
-//                }
-//                subList.add(stepTag);
-//            }
-//        }
         return sections.asMap();
     }
 
 
     private void writeOutputFile(String content, File outputFile) {
-        outputFile.delete();
+        if (outputFile.exists() && !outputFile.delete()){
+            throw new SubstepsRuntimeException("failed to delete output file: " + outputFile.getAbsolutePath());
+        }
 
         // write out
         try {
