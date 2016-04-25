@@ -27,6 +27,7 @@ import com.technophobia.substeps.runner.description.JunitVersionedDescriptionBui
 import org.junit.runner.Description;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.substeps.runner.CoreSubstepsPropertiesConfiguration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,11 +40,6 @@ public class EclipseDescriptionProvider implements DescriptionProvider {
 
     private final DescriptionBuilder descriptionBuilder = new JunitVersionedDescriptionBuilder();
 
-    private static final String STEP_DEPTH_KEY = "step.depth.description";
-
-    static {
-        Configuration.INSTANCE.addDefaultProperty(STEP_DEPTH_KEY, Integer.valueOf(5));
-    }
 
     @Override
     public Map<Long, Description> buildDescriptionMap(final IExecutionNode rootNode, final Class<?> classContainingTheTests) {
@@ -72,7 +68,7 @@ public class EclipseDescriptionProvider implements DescriptionProvider {
 
             NodeWithChildren<?> nodeWithChildren = (NodeWithChildren<?>) node;
 
-            if (nodeWithChildren.hasChildren() && nodeWithChildren.getDepth() < Configuration.INSTANCE.getInt(STEP_DEPTH_KEY)) {
+            if (nodeWithChildren.hasChildren() && nodeWithChildren.getDepth() < CoreSubstepsPropertiesConfiguration.INSTANCE.getStepDepthForDescription()) {
 
                 for (final IExecutionNode child : nodeWithChildren.getChildren()) {
 
