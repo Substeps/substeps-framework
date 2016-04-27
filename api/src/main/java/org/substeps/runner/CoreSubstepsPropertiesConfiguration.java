@@ -32,6 +32,7 @@ public enum CoreSubstepsPropertiesConfiguration implements CoreSubstepsConfigura
 
     private final int stepDepthForDescription;
 
+    private final boolean logUncalledAndUnusedStepImpls;
 
 
     private CoreSubstepsPropertiesConfiguration() {
@@ -46,11 +47,17 @@ public enum CoreSubstepsPropertiesConfiguration implements CoreSubstepsConfigura
 
         stepDepthForDescription = Configuration.INSTANCE.getInt("step.depth.description");
 
+        logUncalledAndUnusedStepImpls = Configuration.INSTANCE.getBoolean("log.unused.uncalled");
+
         LOG.info("Using core properties:\n" + Configuration.INSTANCE.getConfigurationInfo());
     }
 
 
     public int getStepDepthForDescription() {
         return stepDepthForDescription;
+    }
+
+    public boolean isLogUncalledAndUnusedStepImpls() {
+        return logUncalledAndUnusedStepImpls;
     }
 }

@@ -31,6 +31,7 @@ import com.technophobia.substeps.runner.setupteardown.SetupAndTearDown;
 import com.technophobia.substeps.runner.syntax.SyntaxBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.substeps.report.ReportingUtil;
 
 import java.io.File;
 import java.util.*;
@@ -60,8 +61,10 @@ public class ExecutionNodeRunner implements SubstepsRunner {
 
     private List<SubstepExecutionFailure> failures;
 
+    private final ReportingUtil reportingUtil = new ReportingUtil(new File("target"));
+
     // map of nodes to each of the parents, where this node is used
-    final Map<ExecutionNodeUsage, List<ExecutionNodeUsage>> callerHierarchy = new HashMap<ExecutionNodeUsage, List<ExecutionNodeUsage>>();
+    private final Map<ExecutionNodeUsage, List<ExecutionNodeUsage>> callerHierarchy = new HashMap<ExecutionNodeUsage, List<ExecutionNodeUsage>>();
 
     @Override
     public void addNotifier(final IExecutionListener notifier) {
@@ -134,7 +137,6 @@ public class ExecutionNodeRunner implements SubstepsRunner {
             }
         }
 
-        // TODO - put a switch in here, only really relevant to headless builds running a full suite..
         processUncalledAndUnused(syntax);
 
         ExecutionContext.put(Scope.SUITE, INotificationDistributor.NOTIFIER_DISTRIBUTOR_KEY,
@@ -153,15 +155,8 @@ public class ExecutionNodeRunner implements SubstepsRunner {
      */
     private void processUncalledAndUnused(final Syntax syntax) {
         final List<StepImplementation> uncalledStepImplementations = syntax.getUncalledStepImplementations();
-        if (!uncalledStepImplementations.isEmpty()) {
-            final StringBuilder buf = new StringBuilder();
-            buf.append("** Uncalled Step implementations in scope, this is suspect if these implementations are in your projects domain:\n\n");
-            for (final StepImplementation s : uncalledStepImplementations) {
-                buf.append(s.getMethod()).append("\n");
-            }
-            buf.append("\n");
-            log.info(buf.toString());
-        }
+
+        reportingUtil.writeUncalledStepImpls(uncalledStepImplementations);
 
         buildCallHierarchy();
 
@@ -176,7 +171,7 @@ public class ExecutionNodeRunner implements SubstepsRunner {
 
         final Set<ExecutionNodeUsage> calledExecutionNodes = callerHierarchy.keySet();
 
-        final StringBuilder buf = new StringBuilder();
+        List<Step> uncalledSubstepDefs = new ArrayList<>();
 
         for (final ParentStep p : syntax.getSortedRootSubSteps()) {
 
@@ -185,18 +180,10 @@ public class ExecutionNodeRunner implements SubstepsRunner {
             final Step parent = p.getParent();
 
             if (thereIsNotAStepThatMatchesThisPattern(parent.getPattern(), calledExecutionNodes)) {
-                buf.append("\t")
-                        .append(parent.getLine())
-                        .append(" @ ")
-                        .append(parent.getSource().getName())
-                        .append(":")
-                        .append(parent.getSourceLineNumber())
-                        .append("\n");
+                uncalledSubstepDefs.add(parent);
             }
         }
-        if (buf.length() > 0) {
-            log.warn("** Substep definitions not called in current substep execution scope...\n\n" + buf.toString());
-        }
+        reportingUtil.writeUncalledStepDefs(uncalledSubstepDefs);
     }
 
     private boolean thereIsNotAStepThatMatchesThisPattern(final String stepPattern, final Set<ExecutionNodeUsage> calledExecutionNodes) {

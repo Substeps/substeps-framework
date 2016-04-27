@@ -21,7 +21,8 @@ Requirements
 1.0.2
 -----
 * Added capability for outline descriptions to contain parameter placeholders that can be populated from the example tables, each iteration of the outline potentially then being named something different.
-
+* Default core config
+* Uncalled and Unused step impls written to json file rather than logs, overridable via a config property
 
 1.0.0
 -----
