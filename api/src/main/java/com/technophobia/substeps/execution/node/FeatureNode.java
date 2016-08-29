@@ -20,6 +20,7 @@ package com.technophobia.substeps.execution.node;
 
 import com.google.common.collect.Lists;
 import com.technophobia.substeps.execution.ExecutionNodeVisitor;
+import com.technophobia.substeps.execution.ExecutionResult;
 import com.technophobia.substeps.execution.Feature;
 
 import java.util.List;
@@ -72,4 +73,29 @@ public class FeatureNode extends NodeWithChildren<ScenarioNode<?>> implements Ta
         return tags;
     }
 
+    public static boolean hasCriticalFailure(ExecutionNode node) {
+        boolean rtn = false;
+
+        if (node.getResult().getResult() == ExecutionResult.CHILD_FAILED){
+            // there is a failure at a parent level, is the cause critical ?
+            // any child nodes with failures that are critical ?
+
+            if (node instanceof NodeWithChildren){
+                List<ExecutionNode> children = ((NodeWithChildren) node).getChildren();
+
+                for (ExecutionNode child : children){
+                   rtn = hasCriticalFailure(child);
+                    if (rtn){
+                        break;
+                    }
+                }
+            }
+
+        }
+        else if (node.getResult().getResult() == ExecutionResult.FAILED) {
+            // real failure, is it critical ?
+            rtn = !node.getResult().getFailure().isNonCritical();
+        }
+        return rtn;
+    }
 }

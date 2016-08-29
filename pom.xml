@@ -130,17 +130,12 @@
         <mockito.version>2.0.2-beta</mockito.version>
 
         <jacoco.version>0.7.6.201602180812</jacoco.version>
-<!--
-        <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-        <sonar.phase>verify</sonar.phase>
--->
+
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 
-<!--
-        <sonar.jacoco.jar>${project.basedir}/jacoco/jacocoagent.jar</sonar.jacoco.jar>
--->
         <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
-
+        <scala.version>2.11.7</scala.version>
+        <scala-test.version>2.2.6</scala-test.version>
         <!-- Configuration to enable SCM access via Travis-CI -->
         <project.scm.id>scm.credentials</project.scm.id>
     </properties>
@@ -285,6 +280,27 @@
                 <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
+
+
+            <!-- SCALA -->
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-library</artifactId>
+                <version>${scala.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-reflect</artifactId>
+                <version>${scala.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.scalatest</groupId>
+                <artifactId>scalatest_2.11</artifactId>
+                <version>${scala-test.version}</version>
+                <scope>test</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -353,6 +369,82 @@
 
         <pluginManagement>
             <plugins>
+
+                <plugin>
+                    <groupId>net.alchim31.maven</groupId>
+                    <artifactId>scala-maven-plugin</artifactId>
+                    <version>3.2.2</version>
+                    <executions>
+
+                        <!-- Run scala compiler in the process-resources phase, so that dependencies on scala classes can be
+                            resolved later in the (Java) compile phase -->
+                        <execution>
+                            <id>scala-compile-first</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>add-source</goal>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+
+                        <!-- Run scala compiler in the process-test-resources phase, so that dependencies on scala classes can
+                            be resolved later in the (Java) test-compile phase -->
+                        <execution>
+                            <id>scala-test-compile</id>
+                            <phase>process-test-resources</phase>
+                            <goals>
+                                <goal>testCompile</goal>
+                            </goals>
+                        </execution>
+
+                    </executions>
+                    <configuration>
+                        <sourceDir>src/main/scala</sourceDir>
+                        <jvmArgs>
+                            <jvmArg>-Xms64m</jvmArg>
+                            <jvmArg>-Xmx1024m</jvmArg>
+                        </jvmArgs>
+                        <scalaVersion>${scala.version}</scalaVersion>
+                        <!-- <args> <arg>-make:transitive</arg> <arg>dependenfile</arg> <arg>${project.build.directory}/.scala_dependencies</arg>
+                            </args> -->
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.10</version>
+
+                    <executions>
+                        <execution>
+                            <id>add-scala-source-folder</id>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>add-source</goal>
+                            </goals>
+                            <configuration>
+                                <sources>
+                                    <source>/src/main/scala</source>
+                                </sources>
+                            </configuration>
+                        </execution>
+
+                        <execution>
+                            <id>add-scala-test-folder</id>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>add-test-source</goal>
+                            </goals>
+                            <configuration>
+                                <sources>
+                                    <source>/src/test/scala</source>
+                                </sources>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+
                 <!-- Basic & Version Configuration -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -471,6 +563,9 @@
                     <artifactId>maven-plugin-plugin</artifactId>
                     <version>3.4</version>
                 </plugin>
+
+
+
             </plugins>
         </pluginManagement>
     </build>

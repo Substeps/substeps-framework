@@ -1,0 +1,40 @@
+{
+  "nodeType":"FeatureNode",
+  "filename":"outline_feature_file.feature",
+  "result":"CHILD_FAILED",
+  "id":63,
+  "executionDurationMillis":25,
+  "description":"an outline feature",
+  "scenarios":[
+    {
+      "nodeId":48,
+      "filename":"a_basic_scenario_outline_one_results.json",
+      "result":"PASSED",
+      "tags":[
+        "scenario-level-tag",
+        "feature-level-tag"
+      ]
+    },
+    {
+      "nodeId":54,
+      "filename":"a_basic_scenario_outline_two_results.json",
+      "result":"PASSED",
+      "tags":[
+        "scenario-level-tag",
+        "feature-level-tag"
+      ]
+    },
+    {
+      "nodeId":60,
+      "filename":"a_basic_scenario_outline_three_results.json",
+      "result":"CHILD_FAILED",
+      "tags":[
+        "scenario-level-tag",
+        "feature-level-tag"
+      ]
+    }
+  ],
+  "tags":[
+    "feature-level-tag"
+  ]
+}

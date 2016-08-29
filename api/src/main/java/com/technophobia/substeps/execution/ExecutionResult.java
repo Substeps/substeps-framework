@@ -24,7 +24,7 @@ package com.technophobia.substeps.execution;
  */
 public enum ExecutionResult {
     IGNORED(false), NOT_INCLUDED(false), NOT_RUN(false), RUNNING(false), PASSED(false), FAILED(true), NON_CRITICAL_FAILURE(false), PARSE_FAILURE(true),
-    SETUP_TEARDOWN_FAILURE(true);
+    SETUP_TEARDOWN_FAILURE(true), CHILD_FAILED(true);
     // NON_CRITICAL_FAILURE is for when there is a failure but the config allows
     // this to fail without failing the build
 

@@ -1,0 +1,287 @@
+var treeData = {
+  "state": "open",
+  "children": [{
+    "data": {
+      "title": "null",
+      "attr": {
+        "id": "64"
+      },
+      "icon": "img/FAILED.png"
+    },
+    "state": "open",
+    "children": [{
+      "data": {
+        "title": "a simple feature",
+        "attr": {
+          "id": "43"
+        },
+        "icon": null
+      },
+      "children": [{
+        "data": {
+          "title": "A basic passing scenario",
+          "attr": {
+            "id": "36"
+          },
+          "icon": "img/PASSED.png"
+        },
+        "children": [{
+          "data": {
+            "title": "PassingStepImpl",
+            "attr": {
+              "id": "33"
+            },
+            "icon": "img/PASSED.png"
+          }
+        }, {
+          "data": {
+            "title": "PassingSubstepDef",
+            "attr": {
+              "id": "35"
+            },
+            "icon": "img/PASSED.png"
+          },
+          "children": [{
+            "data": {
+              "title": "AnotherPassingStepImpl",
+              "attr": {
+                "id": "34"
+              },
+              "icon": "img/PASSED.png"
+            }
+          }]
+        }]
+      }, {
+        "data": {
+          "title": "A basic failing scenario",
+          "attr": {
+            "id": "42"
+          },
+          "icon": null
+        },
+        "children": [{
+          "data": {
+            "title": "PassingSubstepDef",
+            "attr": {
+              "id": "38"
+            },
+            "icon": "img/PASSED.png"
+          },
+          "children": [{
+            "data": {
+              "title": "AnotherPassingStepImpl",
+              "attr": {
+                "id": "37"
+              },
+              "icon": "img/PASSED.png"
+            }
+          }]
+        }, {
+          "data": {
+            "title": "FailingSubstepDef",
+            "attr": {
+              "id": "40"
+            },
+            "icon": null
+          },
+          "children": [{
+            "data": {
+              "title": "GenerateFailure",
+              "attr": {
+                "id": "39"
+              },
+              "icon": "img/FAILED.png"
+            }
+          }]
+        }, {
+          "data": {
+            "title": "NotRun",
+            "attr": {
+              "id": "41"
+            },
+            "icon": "img/NOT_RUN.png"
+          }
+        }]
+      }]
+    }, {
+      "data": {
+        "title": "an outline feature",
+        "attr": {
+          "id": "63"
+        },
+        "icon": null
+      },
+      "children": [{
+        "data": {
+          "title": "Scenario #: a basic scenario outline <iteration>",
+          "attr": {
+            "id": "62"
+          },
+          "icon": null
+        },
+        "children": [{
+          "data": {
+            "title": "0 a basic scenario outline one:",
+            "attr": {
+              "id": "49"
+            },
+            "icon": "img/PASSED.png"
+          },
+          "children": [{
+            "data": {
+              "title": "a basic scenario outline one",
+              "attr": {
+                "id": "48"
+              },
+              "icon": "img/PASSED.png"
+            },
+            "children": [{
+              "data": {
+                "title": "PassingStepImpl",
+                "attr": {
+                  "id": "44"
+                },
+                "icon": "img/PASSED.png"
+              }
+            }, {
+              "data": {
+                "title": "PassingSubstepDef",
+                "attr": {
+                  "id": "46"
+                },
+                "icon": "img/PASSED.png"
+              },
+              "children": [{
+                "data": {
+                  "title": "AnotherPassingStepImpl",
+                  "attr": {
+                    "id": "45"
+                  },
+                  "icon": "img/PASSED.png"
+                }
+              }]
+            }, {
+              "data": {
+                "title": "PassingStepImpl with param 1",
+                "attr": {
+                  "id": "47"
+                },
+                "icon": "img/PASSED.png"
+              }
+            }]
+          }]
+        }, {
+          "data": {
+            "title": "1 a basic scenario outline two:",
+            "attr": {
+              "id": "55"
+            },
+            "icon": "img/PASSED.png"
+          },
+          "children": [{
+            "data": {
+              "title": "a basic scenario outline two",
+              "attr": {
+                "id": "54"
+              },
+              "icon": "img/PASSED.png"
+            },
+            "children": [{
+              "data": {
+                "title": "PassingStepImpl",
+                "attr": {
+                  "id": "50"
+                },
+                "icon": "img/PASSED.png"
+              }
+            }, {
+              "data": {
+                "title": "PassingSubstepDef",
+                "attr": {
+                  "id": "52"
+                },
+                "icon": "img/PASSED.png"
+              },
+              "children": [{
+                "data": {
+                  "title": "AnotherPassingStepImpl",
+                  "attr": {
+                    "id": "51"
+                  },
+                  "icon": "img/PASSED.png"
+                }
+              }]
+            }, {
+              "data": {
+                "title": "PassingStepImpl with param 2",
+                "attr": {
+                  "id": "53"
+                },
+                "icon": "img/PASSED.png"
+              }
+            }]
+          }]
+        }, {
+          "data": {
+            "title": "2 a basic scenario outline three:",
+            "attr": {
+              "id": "61"
+            },
+            "icon": null
+          },
+          "children": [{
+            "data": {
+              "title": "a basic scenario outline three",
+              "attr": {
+                "id": "60"
+              },
+              "icon": null
+            },
+            "children": [{
+              "data": {
+                "title": "PassingStepImpl",
+                "attr": {
+                  "id": "56"
+                },
+                "icon": "img/PASSED.png"
+              }
+            }, {
+              "data": {
+                "title": "PassingSubstepDef",
+                "attr": {
+                  "id": "58"
+                },
+                "icon": "img/PASSED.png"
+              },
+              "children": [{
+                "data": {
+                  "title": "AnotherPassingStepImpl",
+                  "attr": {
+                    "id": "57"
+                  },
+                  "icon": "img/PASSED.png"
+                }
+              }]
+            }, {
+              "data": {
+                "title": "PassingStepImpl with fail",
+                "attr": {
+                  "id": "59"
+                },
+                "icon": "img/FAILED.png"
+              }
+            }]
+          }]
+        }]
+      }]
+    }]
+  }],
+  "data": {
+    "title": "Substeps tests",
+    "attr": {
+      "id": "0"
+    },
+    "icon": "img/FAILED.png",
+    "state": "open"
+  }
+}

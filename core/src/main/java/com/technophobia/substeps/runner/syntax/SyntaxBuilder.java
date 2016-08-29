@@ -18,6 +18,8 @@
  */
 package com.technophobia.substeps.runner.syntax;
 
+import com.technophobia.substeps.model.ParentStep;
+import com.technophobia.substeps.model.PatternMap;
 import com.technophobia.substeps.model.SubSteps;
 import com.technophobia.substeps.model.Syntax;
 import com.technophobia.substeps.scanner.ClasspathScanner;
@@ -84,6 +86,22 @@ public final class SyntaxBuilder {
                     syntaxErrorReporter);
             syntax.setSubStepsMap(subStepParser.loadSubSteps(subStepsFile));
         }
+
+        return syntax;
+    }
+
+    public static Syntax buildSyntax(final List<Class<?>> stepImplementationClasses, final PatternMap<ParentStep> loadedSubSteps) {
+
+        final Syntax syntax = new Syntax(new DefaultSyntaxErrorReporter());
+
+        syntax.setSubStepsMap(loadedSubSteps);
+
+        final ClassAnalyser classAnalyser = new ClassAnalyser();
+        for (final Class<?> implClass : stepImplementationClasses) {
+            classAnalyser.analyseClass(implClass, syntax);
+        }
+
+        syntax.setStrict(true, null);
 
         return syntax;
     }

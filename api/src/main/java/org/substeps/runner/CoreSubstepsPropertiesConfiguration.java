@@ -34,6 +34,10 @@ public enum CoreSubstepsPropertiesConfiguration implements CoreSubstepsConfigura
 
     private final boolean logUncalledAndUnusedStepImpls;
 
+    private final boolean prettyPrintReportData;
+
+    private final String reportDataBaseDir;
+
 
     private CoreSubstepsPropertiesConfiguration() {
 
@@ -49,15 +53,30 @@ public enum CoreSubstepsPropertiesConfiguration implements CoreSubstepsConfigura
 
         logUncalledAndUnusedStepImpls = Configuration.INSTANCE.getBoolean("log.unused.uncalled");
 
+        prettyPrintReportData = Configuration.INSTANCE.getBoolean("report.data.pretty.print");
+
+        reportDataBaseDir = Configuration.INSTANCE.getString("report.data.base.dir");
+
+
         LOG.info("Using core properties:\n" + Configuration.INSTANCE.getConfigurationInfo());
     }
 
-
+    @Override
     public int getStepDepthForDescription() {
         return stepDepthForDescription;
     }
 
+    @Override
     public boolean isLogUncalledAndUnusedStepImpls() {
         return logUncalledAndUnusedStepImpls;
+    }
+
+    @Override
+    public boolean isPrettyPrintReportData() {
+        return prettyPrintReportData;
+    }
+
+    public String getReportDataBaseDir() {
+        return reportDataBaseDir;
     }
 }

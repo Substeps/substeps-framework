@@ -1,0 +1,47 @@
+{
+  "nodeType":"BasicScenarioNode",
+  "filename":"simple_feature_file.feature",
+  "result":"PASSED",
+  "id":36,
+  "executionDurationMillis":4,
+  "description":"A basic passing scenario",
+  "children":[
+    {
+      "nodeType":"Step",
+      "filename":"simple_feature_file.feature",
+      "result":"PASSED",
+      "id":33,
+      "executionDurationMillis":4,
+      "description":"PassingStepImpl",
+      "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.passingStepImpl()",
+      "children":[
+        
+      ]
+    },
+    {
+      "nodeType":"SubstepNode",
+      "filename":"temp_substep_def.substeps",
+      "result":"PASSED",
+      "id":35,
+      "executionDurationMillis":0,
+      "description":"PassingSubstepDef",
+      "children":[
+        {
+          "nodeType":"Step",
+          "filename":"temp_substep_def.substeps",
+          "result":"PASSED",
+          "id":34,
+          "executionDurationMillis":0,
+          "description":"AnotherPassingStepImpl",
+          "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.anotherPassingStepImpl()",
+          "children":[
+            
+          ]
+        }
+      ]
+    }
+  ],
+  "tags":[
+    "feature-level-tag"
+  ]
+}

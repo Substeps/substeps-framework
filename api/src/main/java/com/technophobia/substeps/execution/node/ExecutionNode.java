@@ -195,7 +195,7 @@ public abstract class ExecutionNode implements Serializable, IExecutionNode {
     public String toDebugString() {
         String debugString = Strings.repeat("\t", getDepth());
         debugString +=
-                "id: " + getId() + ", type: " + getClass().getSimpleName() + ", description: " + getDescription();
+                "id: " + getId() + ", type: " + getClass().getSimpleName() + ":" + getResult().getResult() + ", description: " + getDescription();
         return debugString;
     }
 
