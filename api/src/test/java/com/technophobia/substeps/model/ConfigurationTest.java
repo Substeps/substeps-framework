@@ -19,11 +19,9 @@
 
 package com.technophobia.substeps.model;
 
-import com.google.gson.Gson;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.lang.reflect.Method;
 import java.net.URL;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -55,18 +53,4 @@ public class ConfigurationTest {
         Assert.assertNull(Configuration.INSTANCE.getString("non-existant"));
     }
 
-    @Test
-    public void testStepImplJson() throws Exception{
-
-        Method m = this.getClass().getMethod("aTest", String.class);
-        StepImplementation s = new StepImplementation(this.getClass(), "keyword", "value string", m);
-
-        Gson gson = new Gson();
-
-        System.out.println(m.toString());
-    }
-
-    public void aTest(String x){
-
-    }
 }
