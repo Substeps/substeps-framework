@@ -67,7 +67,7 @@ public enum Configuration {
             }
         }
     }
-    
+
 
     /**
      * Implementors of substep libraries should call this with default
