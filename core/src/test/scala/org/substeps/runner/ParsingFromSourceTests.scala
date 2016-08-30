@@ -400,6 +400,9 @@ Scenario: inline table
 
     // failing scenario
 
+    // some extra debug in here to work out what's going on
+    println("got feature results files in dir: " + featureDir.getAbsolutePath + " files: " + featureResults.mkString(","))
+
     val failingScenario = featureResults.find(s => s.getName.contains("failing_scenario"))
 
     failingScenario shouldBe defined
