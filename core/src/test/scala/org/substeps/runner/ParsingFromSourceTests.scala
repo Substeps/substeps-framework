@@ -26,6 +26,7 @@ import scala.collection.JavaConverters._
 import org.json4s._
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization.{read, write}
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
@@ -37,6 +38,7 @@ class ParsingFromSourceTests extends FlatSpec with ShouldMatchers {
 
   val UTF8 = Charset.forName("UTF-8")
 
+  private val log = LoggerFactory.getLogger(classOf[ParsingFromSourceTests])
 
   // TODO - this fails
   "feature file parsing" should "work from string source" in {
@@ -277,13 +279,13 @@ Scenario: inline table
     class StepImpls () extends ProvidesScreenshot {
 
       @SubSteps.Step("PassingStepImpl")
-      def passingStepImpl() = println("pass")
+      def passingStepImpl() = log.debug("pass")
 
       @SubSteps.Step("AnotherPassingStepImpl")
-      def anotherPassingStepImpl() = println("pass")
+      def anotherPassingStepImpl() = log.debug("pass")
 
       @SubSteps.Step("NotRun")
-      def notRun() = println("not run")
+      def notRun() = log.debug("not run")
 
       @SubSteps.Step("GenerateFailure")
       def generateFailure() = throw new IllegalStateException("something went wrong")
@@ -325,7 +327,7 @@ Scenario: inline table
     // building the tree can throw critical failures if exceptions are found
     val rootNode = nodeTreeBuilder.buildExecutionNodeTree("test description")
 
-    println("rootNode 1:\n" + rootNode.toDebugString)
+    log.debug("rootNode 1:\n" + rootNode.toDebugString)
 
     val executionCollector = new ExecutionResultsCollector("target", true)
     val runner = new ExecutionNodeRunner(executionCollector)
@@ -337,7 +339,7 @@ Scenario: inline table
 
     val rootNode2 = runner.prepareExecutionConfig(new ExecutionConfigWrapper(executionConfig), syntax, parameters, setupAndTearDown, methodExecutorToUse, null)
 
-    println("rootNode 2:\n" + rootNode2.toDebugString)
+    log.debug("rootNode 2:\n" + rootNode2.toDebugString)
 
     val finalRootNode = runner.run()
 
@@ -401,7 +403,7 @@ Scenario: inline table
     // failing scenario
 
     // some extra debug in here to work out what's going on
-    println("got feature results files in dir: " + featureDir.getAbsolutePath + " files: " + featureResults.mkString(","))
+    log.debug("got feature results files in dir: " + featureDir.getAbsolutePath + " files: " + featureResults.mkString(","))
 
     val failingScenario = featureResults.find(s => s.getName.contains("failing_scenario"))
 
