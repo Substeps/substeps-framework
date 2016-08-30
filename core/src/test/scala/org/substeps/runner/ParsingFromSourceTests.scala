@@ -405,7 +405,7 @@ Scenario: inline table
     // some extra debug in here to work out what's going on
     log.debug("got feature results files in dir: " + featureDir.getAbsolutePath + " files: " + featureResults.mkString(","))
 
-    val failingScenario = featureResults.find(s => s.getName.contains("failing_scenario"))
+    val failingScenario = featureResults.find(s => s.getName.contains("failing_scenario_results.json"))
 
     failingScenario shouldBe defined
 
