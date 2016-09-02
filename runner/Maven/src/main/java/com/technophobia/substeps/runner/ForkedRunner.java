@@ -145,6 +145,11 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
 
     }
 
+//    @Override
+//    public File getRootExecutionDataDirectory() {
+//        return null;
+//    }
+
     private InputStreamConsumer startMBeanJVM() throws MojoExecutionException {
         // launch the jvm process that will contain the Substeps MBean Server
         // build up the class path based on this projects classpath

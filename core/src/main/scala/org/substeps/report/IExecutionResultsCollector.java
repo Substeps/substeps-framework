@@ -10,4 +10,6 @@ import java.io.File;
  */
 public interface IExecutionResultsCollector extends IExecutionListener {
     void initOutputDirectories(RootNode rootNode);
+
+    File getRootExecutionDataDirectory();
 }

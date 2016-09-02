@@ -329,8 +329,11 @@ Scenario: inline table
 
     log.debug("rootNode 1:\n" + rootNode.toDebugString)
 
-    val executionCollector = new ExecutionResultsCollector("target", true)
-    val runner = new ExecutionNodeRunner(executionCollector)
+    val executionCollector = new ExecutionResultsCollector(ExecutionResultsCollector.getBaseDir(new File("target")), true)
+    val runner = new ExecutionNodeRunner()
+
+
+    runner.addNotifier(executionCollector)
 
     val methodExecutorToUse = new ImplementationCache()
 
@@ -338,6 +341,8 @@ Scenario: inline table
 
 
     val rootNode2 = runner.prepareExecutionConfig(new ExecutionConfigWrapper(executionConfig), syntax, parameters, setupAndTearDown, methodExecutorToUse, null)
+
+    executionCollector.initOutputDirectories(rootNode2)
 
     log.debug("rootNode 2:\n" + rootNode2.toDebugString)
 

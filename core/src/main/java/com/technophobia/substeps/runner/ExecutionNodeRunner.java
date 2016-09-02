@@ -29,6 +29,7 @@ import com.technophobia.substeps.runner.builder.ExecutionNodeTreeBuilder;
 import com.technophobia.substeps.runner.node.RootNodeRunner;
 import com.technophobia.substeps.runner.setupteardown.SetupAndTearDown;
 import com.technophobia.substeps.runner.syntax.SyntaxBuilder;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.substeps.report.ExecutionResultsCollector;
@@ -37,6 +38,8 @@ import org.substeps.report.ReportingUtil;
 import org.substeps.runner.CoreSubstepsPropertiesConfiguration;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -69,14 +72,24 @@ public class ExecutionNodeRunner implements SubstepsRunner {
     // map of nodes to each of the parents, where this node is used
     private final Map<ExecutionNodeUsage, List<ExecutionNodeUsage>> callerHierarchy = new HashMap<ExecutionNodeUsage, List<ExecutionNodeUsage>>();
 
-    private final IExecutionResultsCollector executionResultsCollector;
+//    private final IExecutionResultsCollector executionResultsCollector;
 
-    public ExecutionNodeRunner(){
-        this(new ExecutionResultsCollector(CoreSubstepsPropertiesConfiguration.INSTANCE.getReportDataBaseDir(), CoreSubstepsPropertiesConfiguration.INSTANCE.isPrettyPrintReportData()));
-    }
-    public ExecutionNodeRunner(IExecutionResultsCollector executionResultsCollector ){
-        this.executionResultsCollector = executionResultsCollector;
-    }
+//    public ExecutionNodeRunner(){
+//
+//        this(new ExecutionResultsCollector(CoreSubstepsPropertiesConfiguration.INSTANCE.getReportDataBaseDir(),
+//                LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYYMMdd_HHmm_ss_SSS")),
+//                CoreSubstepsPropertiesConfiguration.INSTANCE.isPrettyPrintReportData()));
+//    }
+//    // called in tests
+//    public ExecutionNodeRunner(IExecutionResultsCollector executionResultsCollector ){
+//        this.executionResultsCollector = executionResultsCollector;
+//    }
+//
+//
+//
+//    public File getRootExecutionDataDirectory() {
+//        return this.executionResultsCollector.getRootExecutionDataDirectory();
+//    }
 
     @Override
     public void addNotifier(final IExecutionListener notifier) {
@@ -182,7 +195,7 @@ public class ExecutionNodeRunner implements SubstepsRunner {
         final List<Class<? extends IExecutionListener>> executionListenerClasses = configWrapper.getExecutionListenerClasses();
 
         // TODO - pass the base dir in or get from config
-        executionResultsCollector.initOutputDirectories(this.rootNode);
+//        executionResultsCollector.initOutputDirectories(this.rootNode);
 
         for (final Class<? extends IExecutionListener> listener : executionListenerClasses) {
 
@@ -196,7 +209,7 @@ public class ExecutionNodeRunner implements SubstepsRunner {
             }
         }
 
-        this.notificationDistributor.addListener(executionResultsCollector);
+//        this.notificationDistributor.addListener(executionResultsCollector);
     }
 
     /**

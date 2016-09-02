@@ -61,7 +61,8 @@ public class ExecutionNodeRunnerTest {
     public void setup() {
         IExecutionResultsCollector mockCollector = Mockito.mock(IExecutionResultsCollector.class);
 
-        runner = new ExecutionNodeRunner(mockCollector);
+        runner = new ExecutionNodeRunner();
+        runner.addNotifier(mockCollector);
     }
 
     @Test

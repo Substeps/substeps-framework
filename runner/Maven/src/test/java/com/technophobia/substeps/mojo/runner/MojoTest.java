@@ -22,6 +22,7 @@ import com.technophobia.substeps.report.ExecutionReportBuilder;
 import com.technophobia.substeps.runner.ExecutionConfig;
 import com.technophobia.substeps.runner.SubstepsRunnerMojo;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.junit.Assert;
 
 import java.io.File;
@@ -43,7 +44,11 @@ public class MojoTest extends AbstractMojoTestCase {
         File testPom = new File(getBasedir(),
                 "src/test/resources/sample-pom.xml");
 
-        final SubstepsRunnerMojo mojo = (SubstepsRunnerMojo) lookupMojo("run-features", testPom);
+        Assert.assertNotNull(testPom);
+        Assert.assertTrue(testPom.exists());
+
+        PlexusConfiguration pluginConfiguration = this.extractPluginConfiguration("substeps-maven-plugin", testPom);
+        final SubstepsRunnerMojo mojo = (SubstepsRunnerMojo)lookupMojo("org.substeps", "substeps-maven-plugin", "1.0.2-IM-SNAPSHOT", "run-features", pluginConfiguration);
 
         Assert.assertNotNull("expecting a mojo", mojo);
 

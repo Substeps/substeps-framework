@@ -241,11 +241,13 @@ class ReportBuilder (outputDir : File) extends ReportFrameTemplate {
 
     implicit val formats = Serialization.formats(NoTypeHints)
 
-    val resultsFileOption: Option[RootNodeSummary] =
-    srcDir.listFiles().toList.find(f => f.getName == "results.json").map(resultsFile => {
-      read[RootNodeSummary](Files.toString(resultsFile, Charset.defaultCharset()))
-    })
+    val resultsFileOption: Option[RootNodeSummary] = {
 
+      val files = srcDir.listFiles().toList
+      files.find(f => f.getName == "results.json").map(resultsFile => {
+        read[RootNodeSummary](Files.toString(resultsFile, Charset.defaultCharset()))
+      })
+    }
     val featureSummaries =
 
       resultsFileOption match {

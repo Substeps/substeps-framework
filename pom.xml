@@ -4,7 +4,7 @@
 
     <groupId>org.substeps</groupId>
     <artifactId>substeps-framework</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.2-IM-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Substeps Framework</name>
@@ -118,6 +118,7 @@
     </modules>
 
     <properties>
+        <substeps.version>1.0.2-IM-SNAPSHOT</substeps.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
 

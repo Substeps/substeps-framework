@@ -25,29 +25,28 @@ import scala.collection.mutable
 /**
   * Created by ian on 05/05/16.
   */
-class ExecutionResultsCollector(baseDir: String, pretty : Boolean = false) extends  IExecutionResultsCollector{
+object ExecutionResultsCollector{
+  def getBaseDir(rootDir : File) = {
+    new File( rootDir, "substeps-results_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYYMMdd_HHmm_ss_SSS")))
+  }
+}
+
+class ExecutionResultsCollector(baseDir: File,  pretty : Boolean = false) extends  IExecutionResultsCollector{
 
   private val log: Logger = LoggerFactory.getLogger(classOf[ExecutionResultsCollector])
 
-  val now: LocalDateTime = LocalDateTime.now
-  val root: String = "substeps-results_" + now.format(DateTimeFormatter.ofPattern("YYYYMMddHHmm"))
+  log.debug("collecting data into " + baseDir.getAbsolutePath)
+//  val rootDir = new File(baseDir, "substeps-results_" +timestamp)
 
-  val rootDir = {
-    var dir = new File(baseDir, root)
-    var idx = 0;
-    while (dir.exists()){
-      dir = new File(baseDir, root + "-" + idx)
-      idx += 1
+  if (!baseDir.exists()){
+    if (!baseDir.mkdir()){
+      throw new SubstepsRuntimeException("Failed to create root execution results dir")
     }
-    dir
+
   }
+  def getRootExecutionDataDirectory = baseDir
 
-
-  if (!rootDir.mkdir()){
-    throw new SubstepsRuntimeException("Failed to create root execution results dir")
-  }
-
-  def getRootReportsDir = rootDir
+  def getRootReportsDir = baseDir
 
   val UTF8 = Charset.forName("UTF-8")
 
@@ -96,7 +95,7 @@ class ExecutionResultsCollector(baseDir: String, pretty : Boolean = false) exten
       }
       case rootNode : RootNode => {
         log.debug("root node failed")
-        val summaryFile = new File(rootDir, "results.json")
+        val summaryFile = new File(baseDir, "results.json")
 
         Files.write(generateJson(rootNode), summaryFile, UTF8)
 
@@ -347,11 +346,11 @@ class ExecutionResultsCollector(baseDir: String, pretty : Boolean = false) exten
 
           val path = fullPath.subpath(fullPath.getNameCount -2, fullPath.getNameCount)
 
-          new File(rootDir, path.toString.replace(File.pathSeparator, "_") + ".results")
+          new File(baseDir, path.toString.replace(File.pathSeparator, "_") + ".results")
 
       }
       else {
-        new File(rootDir, featureNode.getFilename + ".results")
+        new File(baseDir, featureNode.getFilename + ".results")
 
       }
 

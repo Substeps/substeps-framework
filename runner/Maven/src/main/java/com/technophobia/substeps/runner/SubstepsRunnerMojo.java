@@ -230,6 +230,8 @@ public class SubstepsRunnerMojo extends AbstractMojo {
     }
 
 
+
+
     private void addToReport(final RootNode rootNode) {
 
         if (this.executionReportBuilder != null) {
@@ -244,8 +246,11 @@ public class SubstepsRunnerMojo extends AbstractMojo {
     private void processBuildData() throws MojoFailureException {
 
         if (this.executionReportBuilder != null) {
+            this.getLog().debug("Using old mechanism for building Substeps execution reports");
             this.executionReportBuilder.buildReport();
         }
+
+
 
         if (this.buildFailureManager.testSuiteFailed()) {
 

@@ -40,7 +40,8 @@ public class DryRunTest {
 
         IExecutionResultsCollector mockCollector = Mockito.mock(IExecutionResultsCollector.class);
 
-        runner = new ExecutionNodeRunner(mockCollector);
+        runner = new ExecutionNodeRunner();
+        runner.addNotifier(mockCollector);
 
         TestInitialisationClass.reset();
         TestStepImplementations.somethingCalled = false;
