@@ -28,6 +28,7 @@ Requirements
 * Split up the Maven runner into two, one to run, the other to build the report in the verify phase
 * Maven runner mojo doesn't throw a build failed exception, just adds as a result - allows the report to be built and subsequent tear down phases to run
 
+
 1.0.0
 -----
 * Forked from G2G3.Digital as no longer being maintained.  Group renamed to org.substeps and version number reset to 1.0
