@@ -4,7 +4,7 @@
 
     <groupId>org.substeps</groupId>
     <artifactId>substeps-framework</artifactId>
-    <version>1.0.2-IM-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Substeps Framework</name>

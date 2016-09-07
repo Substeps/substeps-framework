@@ -49,7 +49,7 @@ public class SubstepsRunnerMojoConfigTest extends AbstractMojoTestCase {
         Assert.assertTrue(testPom.exists());
 
         PlexusConfiguration pluginConfiguration = this.extractPluginConfiguration("substeps-maven-plugin", testPom);
-        final SubstepsRunnerMojo mojo = (SubstepsRunnerMojo)lookupMojo("org.substeps", "substeps-maven-plugin", "1.0.2-IM-SNAPSHOT", "run-features", pluginConfiguration);
+        final SubstepsRunnerMojo mojo = (SubstepsRunnerMojo)lookupMojo("org.substeps", "substeps-maven-plugin", "1.0.2-SNAPSHOT", "run-features", pluginConfiguration);
 
         Assert.assertNotNull("expecting a mojo", mojo);
 
@@ -89,7 +89,7 @@ public class SubstepsRunnerMojoConfigTest extends AbstractMojoTestCase {
         Assert.assertThat( ((FakeExecutionReportBuilder) mojo.getExecutionResultsCollector()).getDataDir(), is(new File("/home/somewhere")));
 
 
-        SubstepsReportBuilderMojo mojo2 = (SubstepsReportBuilderMojo)lookupMojo("org.substeps", "substeps-maven-plugin", "1.0.2-IM-SNAPSHOT", "build-report", pluginConfiguration);
+        SubstepsReportBuilderMojo mojo2 = (SubstepsReportBuilderMojo)lookupMojo("org.substeps", "substeps-maven-plugin", "1.0.2-SNAPSHOT", "build-report", pluginConfiguration);
 
         Assert.assertNotNull("expecting another mojo", mojo2);
 
