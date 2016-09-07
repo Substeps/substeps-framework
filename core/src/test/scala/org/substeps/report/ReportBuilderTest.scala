@@ -26,7 +26,8 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
     val now: LocalDateTime = LocalDateTime.now
 
     val outputDir = new File("target/substeps-report_" + now.format(DateTimeFormatter.ofPattern("YYYYMMddHHmm")))
-    val reportBuilder = new ReportBuilder(outputDir)
+    val reportBuilder = new ReportBuilder
+    reportBuilder.reportDir = outputDir
 
     val model = reportBuilder.readModel(new File("src/test/resources/sample-results-data"))
 
@@ -50,8 +51,8 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
 
     val outputDir = new File("target/substeps-report_" + now.format(DateTimeFormatter.ofPattern("YYYYMMddHHmm")))
 
-    val reportBuilder = new ReportBuilder(outputDir)
-
+    val reportBuilder = new ReportBuilder
+    reportBuilder.reportDir = outputDir
 
 
     reportBuilder.buildFromDirectory(new File("src/test/resources/sample-results-data"))

@@ -32,6 +32,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
+import org.substeps.report.IExecutionResultsCollector;
 
 import java.util.List;
 
@@ -45,21 +46,10 @@ import java.util.List;
         requiresDependencyResolution = ResolutionScope.TEST,
         requiresProject = true,
         configurator = "include-project-dependencies")
-public class SubstepsRunnerMojo extends AbstractMojo {
+public class SubstepsRunnerMojo extends BaseSubstepsMojo {
 
 
-    /**
-     * See <a href="./executionConfig.html">ExecutionConfig</a>
-     */
 
-    @Parameter
-    private List<ExecutionConfig> executionConfigs;
-
-    /**
-     * The execution report builder you wish to use
-     */
-    @Parameter
-    private final ExecutionReportBuilder executionReportBuilder = null;
 
     /**
      * When running in forked mode, a port is required to communicate between
@@ -72,28 +62,9 @@ public class SubstepsRunnerMojo extends AbstractMojo {
      * A space delimited string of vm arguments to pass to the forked jvm
      */
     @Parameter
-
     private String vmArgs = null;
 
-    /**
-     * if true a jvm will be spawned to run substeps otherwise substeps will
-     * execute within the same jvm as maven
-     */
-    @Parameter(property = "runTestsInForkedVM", defaultValue = "false")
 
-    private boolean runTestsInForkedVM = false;
-
-    /**
-     * List of classes containing step implementations e.g.
-     * <param>com.technophobia.substeps.StepImplmentations<param>
-     */
-    @Parameter
-    private List<String> stepImplementationArtifacts;
-
-    /**
-     */
-    @Parameter(defaultValue = "${project}", readonly = true)
-    private MavenProject project;
 
     private final BuildFailureManager buildFailureManager = new BuildFailureManager();
 
@@ -146,8 +117,6 @@ public class SubstepsRunnerMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
-//        assertCompatibleCoreVersion();
-
         ensureValidConfiguration();
 
         this.runner = this.runTestsInForkedVM ? createForkedRunner() : createInProcessRunner();
@@ -158,14 +127,6 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
         this.runner.shutdown();
     }
-
-
-//    private void assertCompatibleCoreVersion() throws MojoExecutionException {
-//
-//        CoreVersionChecker.assertCompatibleVersion(getLog(), this.artifactFactory, this.artifactResolver,
-//                this.remoteRepositories, this.localRepository, this.mavenProjectBuilder, this.project,
-//                this.pluginDependencies);
-//    }
 
 
     private ForkedRunner createForkedRunner() throws MojoExecutionException {
@@ -215,7 +176,11 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
     private void runExecutionConfig(final ExecutionConfig theConfig) throws MojoExecutionException {
 
-        this.runner.prepareExecutionConfig(theConfig.asSubstepsExecutionConfig());
+        final RootNode iniitalRootNode = this.runner.prepareExecutionConfig(theConfig.asSubstepsExecutionConfig());
+
+        this.executionResultsCollector.initOutputDirectories(iniitalRootNode);
+
+        this.runner.addNotifier(this.executionResultsCollector);
 
         final RootNode rootNode = this.runner.run();
 
@@ -224,7 +189,10 @@ public class SubstepsRunnerMojo extends AbstractMojo {
             rootNode.setLine(theConfig.getDescription());
         }
 
-        addToReport(rootNode);
+
+
+       addToLegacyReport(rootNode);
+
 
         this.buildFailureManager.addExecutionResult(rootNode);
     }
@@ -232,9 +200,14 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
 
 
-    private void addToReport(final RootNode rootNode) {
+    private void addToLegacyReport(final RootNode rootNode) {
 
-        if (this.executionReportBuilder != null) {
+        if (reportBuilder == null && this.executionReportBuilder != null) {
+
+            getLog().warn("\nExecutionReportBuilder is deprecated, replace with:\n\t<reportBuilder implementation=\"org.substeps.report.ReportBuilder\">\n" +
+                    "\t\t<reportDir>${project.build.directory}/substeps_report</reportDir>\n" +
+                    "\t</reportBuilder>\n");
+
             this.executionReportBuilder.addRootExecutionNode(rootNode);
         }
     }
@@ -245,17 +218,18 @@ public class SubstepsRunnerMojo extends AbstractMojo {
      */
     private void processBuildData() throws MojoFailureException {
 
-        if (this.executionReportBuilder != null) {
-            this.getLog().debug("Using old mechanism for building Substeps execution reports");
+        if (reportBuilder == null && this.executionReportBuilder != null) {
             this.executionReportBuilder.buildReport();
         }
 
 
-
         if (this.buildFailureManager.testSuiteFailed()) {
 
-            throw new MojoFailureException("Substep Execution failed:\n"
-                    + this.buildFailureManager.getBuildFailureInfo());
+            this.session.getResult().addException(new MojoFailureException("Substep Execution failed:\n"
+                    + this.buildFailureManager.getBuildFailureInfo()));
+
+            // actually throwing an exception results in the build terminating immediately
+            // - not really desireable as it stops the report from being built in the verify phase
 
         } else if (!this.buildFailureManager.testSuiteCompletelyPassed()) {
             // print out the failure string (but won't include any failures)
@@ -281,17 +255,6 @@ public class SubstepsRunnerMojo extends AbstractMojo {
     }
 
 
-    public List<ExecutionConfig> getExecutionConfigs() {
-        return executionConfigs;
-    }
-
-    public void setExecutionConfigs(List<ExecutionConfig> executionConfigs) {
-        this.executionConfigs = executionConfigs;
-    }
-
-    public ExecutionReportBuilder getExecutionReportBuilder() {
-        return executionReportBuilder;
-    }
 
     public Integer getJmxPort() {
         return jmxPort;
@@ -309,21 +272,7 @@ public class SubstepsRunnerMojo extends AbstractMojo {
         this.vmArgs = vmArgs;
     }
 
-    public boolean isRunTestsInForkedVM() {
-        return runTestsInForkedVM;
-    }
 
-    public void setRunTestsInForkedVM(boolean runTestsInForkedVM) {
-        this.runTestsInForkedVM = runTestsInForkedVM;
-    }
-
-    public List<String> getStepImplementationArtifacts() {
-        return stepImplementationArtifacts;
-    }
-
-    public void setStepImplementationArtifacts(List<String> stepImplementationArtifacts) {
-        this.stepImplementationArtifacts = stepImplementationArtifacts;
-    }
 
     public MavenProject getProject() {
         return project;

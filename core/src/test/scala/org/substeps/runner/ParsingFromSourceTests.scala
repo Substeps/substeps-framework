@@ -329,7 +329,11 @@ Scenario: inline table
 
     log.debug("rootNode 1:\n" + rootNode.toDebugString)
 
-    val executionCollector = new ExecutionResultsCollector(ExecutionResultsCollector.getBaseDir(new File("target")), true)
+    val executionCollector = new ExecutionResultsCollector
+    val dataDir = ExecutionResultsCollector.getBaseDir(new File("target"))
+    executionCollector.setDataDir(dataDir)
+    executionCollector.setPretty(true)
+
     val runner = new ExecutionNodeRunner()
 
 
@@ -349,10 +353,10 @@ Scenario: inline table
     val finalRootNode = runner.run()
 
     // what are we expecting now:
-    val rootDir = executionCollector.getRootReportsDir
-    rootDir.exists() should be (true)
+//    val rootDir = executionCollector.getRootReportsDir
+    dataDir.exists() should be (true)
 
-    val featureDirs = rootDir.listFiles().toList.filter(f => f.isDirectory)
+    val featureDirs = dataDir.listFiles().toList.filter(f => f.isDirectory)
 
     featureDirs.size should be (2)
 
@@ -375,7 +379,7 @@ Scenario: inline table
 
     }
 
-    val resultSummaryFile = rootDir.listFiles().toList.filter(f => f.isFile)
+    val resultSummaryFile = dataDir.listFiles().toList.filter(f => f.isFile)
 
     resultSummaryFile.size should be (1)
 

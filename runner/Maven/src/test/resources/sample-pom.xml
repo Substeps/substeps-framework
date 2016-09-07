@@ -3,18 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.substeps</groupId>
 	<artifactId>mojo-sample</artifactId>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0.2-IM-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 	<name>pom sample</name>
 	<description>a sample pom for testing the mojo</description>
-
-<!--
-    <properties>
-        <substeps.version>1.0.2-IM-SNAPSHOT</substeps.version>
-
-    </properties>
--->
 
 	<licenses>
 		<license>
@@ -56,7 +49,7 @@
             <plugin>
                 <groupId>org.substeps</groupId>
                 <artifactId>substeps-maven-plugin</artifactId>
-                <version>1.0.2-SNAPSHOT</version>
+                <version>1.0.2-IM-SNAPSHOT</version>
 
                 <executions>
                     <execution>
@@ -65,15 +58,24 @@
                         <goals>
                             <goal>run-features</goal>
                         </goals>
-                        <configuration>
+                        <!--<configuration>-->
 
-                            <!-- not actually in the runner yet!
-                            <jvmArgs>
-                                <jvmArg>-javaagent:${sonar.jacoco.jar}=destfile=${sonar.jacoco.itReportPath},includes=com.technophobia.substeps.*</jvmArg>
-                            </jvmArgs> -->
+                            <!--&lt;!&ndash; not actually in the runner yet!-->
+                            <!--<jvmArgs>-->
+                                <!--<jvmArg>-javaagent:${sonar.jacoco.jar}=destfile=${sonar.jacoco.itReportPath},includes=com.technophobia.substeps.*</jvmArg>-->
+                            <!--</jvmArgs> &ndash;&gt;-->
 
-                        </configuration>
+                        <!--</configuration>-->
                     </execution>
+
+                    <execution>
+                        <id>Build SubSteps Report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>build-report</goal>
+                        </goals>
+                    </execution>
+
                 </executions>
 
                 <configuration>
@@ -109,6 +111,13 @@
                         <outputDirectory>/some/folder</outputDirectory>
                         <reportTitle>sample pom - report title</reportTitle>
                     </executionReportBuilder>
+
+                    <executionResultsCollector implementation="com.technophobia.substeps.mojo.runner.FakeExecutionReportBuilder">
+                        <dataDir>/home/somewhere</dataDir>
+                        <pretty>false</pretty>
+                    </executionResultsCollector>
+
+                    <reportBuilder implementation="com.technophobia.substeps.mojo.runner.FakeReportBuilder"/>
 
                 </configuration>
                 <dependencies>
