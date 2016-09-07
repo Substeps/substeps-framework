@@ -6,10 +6,13 @@ import java.nio.charset.Charset
 import com.google.common.io.Files
 import com.technophobia.substeps.execution.ExecutionResult
 import com.technophobia.substeps.report.{DefaultExecutionReportBuilder, DetailedJsonBuilder}
+import org.apache.commons.lang3.StringEscapeUtils
 import org.json4s._
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization._
 import org.slf4j.{Logger, LoggerFactory}
+
+import scala.beans.BeanProperty
 
 
 object ReportBuilder {
@@ -53,7 +56,11 @@ object ReportBuilder {
 /**
   * Created by ian on 30/06/16.
   */
-class ReportBuilder (outputDir : File) extends ReportFrameTemplate {
+class ReportBuilder extends IReportBuilder with ReportFrameTemplate {
+
+  @BeanProperty
+  var reportDir : File = new File(".")
+
 
   private val log: Logger = LoggerFactory.getLogger(classOf[ReportBuilder])
 
@@ -193,7 +200,7 @@ class ReportBuilder (outputDir : File) extends ReportFrameTemplate {
 
   def buildFromDirectory(sourceDataDir: File): Unit = {
 
-    outputDir.mkdir()
+    reportDir.mkdir()
 
     val detailData = createFile( "detail_data.js")
 
@@ -207,7 +214,7 @@ class ReportBuilder (outputDir : File) extends ReportFrameTemplate {
 
     val reportFrameHTML = createFile( "report_frame.html")
 
-    
+
     val stats : ExecutionStats = buildExecutionStats(srcData)
 
     val reportFrameHtml = buildReportFrame("title", "dateTime", stats)
@@ -228,11 +235,11 @@ class ReportBuilder (outputDir : File) extends ReportFrameTemplate {
 
     val defaultBuilder = new DefaultExecutionReportBuilder
 
-    defaultBuilder.copyStaticResources(outputDir)
+    defaultBuilder.copyStaticResources(reportDir)
   }
 
   def createFile(name : String) = {
-    val f = new File(outputDir, name)
+    val f = new File(reportDir, name)
     f.createNewFile()
     f
   }
@@ -395,8 +402,10 @@ class ReportBuilder (outputDir : File) extends ReportFrameTemplate {
 
     writer.append(s"""detail[${f.id}]={"nodetype":"FeatureNode","filename":"${f.filename}","result":"${f.result}","id":${f.id},
        |"runningDurationMillis":${f.executionDurationMillis.getOrElse(-1)},"runningDurationString":"${f.executionDurationMillis.getOrElse(-1)} milliseconds",
-       |"description":"${f.description}",
+       |"description":"${StringEscapeUtils.escapeEcmaScript(f.description)}",
        |"children":[""".stripMargin.replaceAll("\n", ""))
+
+
 
     val children =
     f.scenarios.map(sc => {
@@ -421,17 +430,17 @@ class ReportBuilder (outputDir : File) extends ReportFrameTemplate {
 
     writer.append(s"""detail[${nodeDetail.id}]={"nodetype":"${nodeDetail.nodeType}","filename":"${nodeDetail.filename}","result":"${nodeDetail.result}","id":${nodeDetail.id},
     |"runningDurationMillis":${nodeDetail.executionDurationMillis.getOrElse(-1)},
-    |"runningDurationString":"${nodeDetail.executionDurationMillis.getOrElse("n/a")} milliseconds","description":"${nodeDetail.description}",""".stripMargin.replaceAll("\n", ""))
+    |"runningDurationString":"${nodeDetail.executionDurationMillis.getOrElse("n/a")} milliseconds","description":"${StringEscapeUtils.escapeEcmaScript(nodeDetail.description)}",""".stripMargin.replaceAll("\n", ""))
 
 
-    nodeDetail.exceptionMessage.map(s => writer.append(s""""emessage":"${s}",""") )
+    nodeDetail.exceptionMessage.map(s => writer.append(s""""emessage":"${StringEscapeUtils.escapeEcmaScript(s)}",""") )
     nodeDetail.screenshot.map(s => writer.append(s"""screenshot:"${s}",""") )
     nodeDetail.stackTrace.map(s => writer.append(s"""stacktrace:[${s.mkString("\"", "\",\n\"", "\"")}],"""))
 
     writer.append(s""""children":[""")
 
     writer.append(nodeDetail.children.map(n => {
-      s"""{"result":"${n.result}","description":"${n.description}"}"""
+      s"""{"result":"${n.result}","description":"${StringEscapeUtils.escapeEcmaScript(n.description)}"}"""
     }).mkString(","))
 
     writer.append("]};\n")
@@ -456,7 +465,7 @@ class ReportBuilder (outputDir : File) extends ReportFrameTemplate {
 
       val fs = featureSummaries.find(fs => fs.id == f.nodeId).get
 
-      s"""{"result":"${f.result}","description":"${fs.description}"}"""
+      s"""{"result":"${f.result}","description":"${StringEscapeUtils.escapeEcmaScript(fs.description)}"}"""
     }).mkString(","))
 
     writer.append("]};\n")

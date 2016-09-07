@@ -13,7 +13,7 @@ case object Counters {
 
   def build(total : Int, run: Int, passed: Int, failed: Int, skipped: Int) = {
 
-    println(s"$total : Int, $run: Int, $passed: Int, $failed: Int, $skipped: Int")
+//    println(s"$total : Int, $run: Int, $passed: Int, $failed: Int, $skipped: Int")
 
     new Counters(total, run, passed, failed, skipped,
       pc(passed, total),

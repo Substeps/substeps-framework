@@ -24,7 +24,9 @@ Requirements
 * Default core config
 * Uncalled and Unused step impls written to json file rather than logs, overridable via a config property
 * Added scala into the mix
-* Execution now generates number of data files, report now generated from those files. 
+* Execution now generates number of data files, report now generated from those files.
+* Split up the Maven runner into two, one to run, the other to build the report in the verify phase
+* Maven runner mojo doesn't throw a build failed exception, just adds as a result - allows the report to be built and subsequent tear down phases to run
 
 1.0.0
 -----

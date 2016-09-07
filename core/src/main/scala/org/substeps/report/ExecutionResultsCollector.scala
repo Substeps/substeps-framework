@@ -31,22 +31,24 @@ object ExecutionResultsCollector{
   }
 }
 
-class ExecutionResultsCollector(baseDir: File,  pretty : Boolean = false) extends  IExecutionResultsCollector{
+
+// TODO - remove the ctor params to allow injection from Maven via setter... eurgh  builder instead ?  when to init ?
+class ExecutionResultsCollector extends  IExecutionResultsCollector{
 
   private val log: Logger = LoggerFactory.getLogger(classOf[ExecutionResultsCollector])
 
-  log.debug("collecting data into " + baseDir.getAbsolutePath)
 //  val rootDir = new File(baseDir, "substeps-results_" +timestamp)
 
-  if (!baseDir.exists()){
-    if (!baseDir.mkdir()){
-      throw new SubstepsRuntimeException("Failed to create root execution results dir")
-    }
+  var dataDir: File = new File(".")
+  var pretty : Boolean = false
 
-  }
-  def getRootExecutionDataDirectory = baseDir
+  def getDataDir = dataDir
 
-  def getRootReportsDir = baseDir
+
+
+  def setDataDir(dir : File) = this.dataDir = dir
+  def setPretty(pretty : Boolean) = this.pretty = pretty
+
 
   val UTF8 = Charset.forName("UTF-8")
 
@@ -95,7 +97,7 @@ class ExecutionResultsCollector(baseDir: File,  pretty : Boolean = false) extend
       }
       case rootNode : RootNode => {
         log.debug("root node failed")
-        val summaryFile = new File(baseDir, "results.json")
+        val summaryFile = new File(dataDir, "results.json")
 
         Files.write(generateJson(rootNode), summaryFile, UTF8)
 
@@ -162,7 +164,7 @@ class ExecutionResultsCollector(baseDir: File,  pretty : Boolean = false) extend
       }
       case rootNode : RootNode => {
         log.debug("root node finished")
-        val summaryFile = new File(baseDir, "results.json")
+        val summaryFile = new File(dataDir, "results.json")
 
         Files.write(generateJson(rootNode), summaryFile, UTF8)
 
@@ -317,6 +319,15 @@ class ExecutionResultsCollector(baseDir: File,  pretty : Boolean = false) extend
 
   def initOutputDirectories(rootNode: RootNode) {
 
+    if (!dataDir.exists()){
+      if (!dataDir.mkdir()){
+        throw new SubstepsRuntimeException("Failed to create root execution results dir")
+      }
+    }
+
+    log.debug("collecting data into " + dataDir.getAbsolutePath)
+
+
     // create subdirs for each feature
 
     val featureNodes = rootNode.getChildren.asScala
@@ -346,11 +357,11 @@ class ExecutionResultsCollector(baseDir: File,  pretty : Boolean = false) extend
 
           val path = fullPath.subpath(fullPath.getNameCount -2, fullPath.getNameCount)
 
-          new File(baseDir, path.toString.replace(File.pathSeparator, "_") + ".results")
+          new File(dataDir, path.toString.replace(File.pathSeparator, "_") + ".results")
 
       }
       else {
-        new File(baseDir, featureNode.getFilename + ".results")
+        new File(dataDir, featureNode.getFilename + ".results")
 
       }
 

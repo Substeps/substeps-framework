@@ -11,5 +11,8 @@ import java.io.File;
 public interface IExecutionResultsCollector extends IExecutionListener {
     void initOutputDirectories(RootNode rootNode);
 
-    File getRootExecutionDataDirectory();
+    void setDataDir(File dataDir);
+    void setPretty(boolean pretty);
+
+    File getDataDir();
 }
