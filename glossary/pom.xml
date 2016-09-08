@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.substeps</groupId>
         <artifactId>substeps-framework</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>substeps-glossary-builder</artifactId>
