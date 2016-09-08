@@ -44,7 +44,7 @@ public class BuildFailureManager extends AbstractExecutionNodeVisitor<String> {
 
     public void addExecutionResult(RootNode rootNode) {
 
-        addFailuresToLists(rootNode, Collections.<IExecutionNode>emptyList());
+        addFailuresToLists(rootNode, Collections.emptyList());
 
         // possible that the failure is only in the root node...
 
@@ -106,7 +106,7 @@ public class BuildFailureManager extends AbstractExecutionNodeVisitor<String> {
         List<IExecutionNode> path = Lists.newArrayList(parents);
         path.add(node);
 
-        if (node.getResult().getFailure() != null && node.getResult().getResult().isFailure()) {
+        if (node.getResult().getResult().isFailure()) { // nodes in a state of child_failed won't have the actual failure : node.getResult().getFailure()
 
             // child first
             if (node instanceof NodeWithChildren<?>) {

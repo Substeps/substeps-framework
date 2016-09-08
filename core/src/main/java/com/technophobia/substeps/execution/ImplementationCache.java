@@ -67,13 +67,38 @@ public class ImplementationCache implements MethodExecutor {
         }
     }
 
+
+    /**
+     * constructs a class with zero args constructor.  If the class is an inner class, traverse up the hierarchy instantiate the enclosing classes
+     * @param clazz the class to be constructed
+     * @return
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws InvocationTargetException
+     */
+    private Object instantiateClass(final Class<?> clazz) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+
+        Class<?> enclosingClass = clazz.getEnclosingClass();
+
+        if (clazz.getConstructors()[0].getParameterCount() > 0 && enclosingClass != null){
+
+            Object value = instantiateClass(enclosingClass);
+            return clazz.getConstructors()[0].newInstance(value);
+        }
+        else {
+            return clazz.newInstance();
+        }
+    }
+
     private Object instantiate(final Class<?> implementationClass) {
 
         try {
-            return implementationClass.newInstance();
+            return instantiateClass(implementationClass);
         } catch (final InstantiationException ex) {
             throw new IllegalStateException("Could not create instance of " + implementationClass, ex);
         } catch (final IllegalAccessException ex) {
+            throw new IllegalStateException("Could not create instance of " + implementationClass, ex);
+        } catch (InvocationTargetException ex) {
             throw new IllegalStateException("Could not create instance of " + implementationClass, ex);
         }
     }

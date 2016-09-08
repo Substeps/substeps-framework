@@ -8,6 +8,8 @@ jdk:
 script:
   - travis/build.sh
 
+after_failure:
+  - cat **/target/surefire-reports/*.txt
 # mvn deploy --settings travis/settings.xml
 
 #deploy:

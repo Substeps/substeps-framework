@@ -52,4 +52,5 @@ public class ConfigurationTest {
 
         Assert.assertNull(Configuration.INSTANCE.getString("non-existant"));
     }
+
 }

@@ -20,8 +20,10 @@ package com.technophobia.substeps.mojo.runner;
 
 import com.technophobia.substeps.report.ExecutionReportBuilder;
 import com.technophobia.substeps.runner.ExecutionConfig;
+import com.technophobia.substeps.runner.SubstepsReportBuilderMojo;
 import com.technophobia.substeps.runner.SubstepsRunnerMojo;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.junit.Assert;
 
 import java.io.File;
@@ -31,7 +33,7 @@ import static org.hamcrest.Matchers.*;
 /**
  * @author ian
  */
-public class MojoTest extends AbstractMojoTestCase {
+public class SubstepsRunnerMojoConfigTest extends AbstractMojoTestCase {
 
     public void setUp() throws Exception {
         // required for mojo lookups to work
@@ -43,7 +45,11 @@ public class MojoTest extends AbstractMojoTestCase {
         File testPom = new File(getBasedir(),
                 "src/test/resources/sample-pom.xml");
 
-        final SubstepsRunnerMojo mojo = (SubstepsRunnerMojo) lookupMojo("run-features", testPom);
+        Assert.assertNotNull(testPom);
+        Assert.assertTrue(testPom.exists());
+
+        PlexusConfiguration pluginConfiguration = this.extractPluginConfiguration("substeps-maven-plugin", testPom);
+        final SubstepsRunnerMojo mojo = (SubstepsRunnerMojo)lookupMojo("org.substeps", "substeps-maven-plugin", "1.0.2-SNAPSHOT", "run-features", pluginConfiguration);
 
         Assert.assertNotNull("expecting a mojo", mojo);
 
@@ -75,5 +81,25 @@ public class MojoTest extends AbstractMojoTestCase {
         Assert.assertThat(stub.getOutputDirectory(), is(new File("/some/folder")));
 
         Assert.assertThat(mojo.isRunTestsInForkedVM(), is(false));
+
+        Assert.assertThat((FakeExecutionReportBuilder) mojo.getExecutionResultsCollector(), isA(FakeExecutionReportBuilder.class));
+
+        Assert.assertThat( ((FakeExecutionReportBuilder) mojo.getExecutionResultsCollector()).isPretty(), is(false));
+
+        Assert.assertThat( ((FakeExecutionReportBuilder) mojo.getExecutionResultsCollector()).getDataDir(), is(new File("/home/somewhere")));
+
+
+        SubstepsReportBuilderMojo mojo2 = (SubstepsReportBuilderMojo)lookupMojo("org.substeps", "substeps-maven-plugin", "1.0.2-SNAPSHOT", "build-report", pluginConfiguration);
+
+        Assert.assertNotNull("expecting another mojo", mojo2);
+
+        Assert.assertThat((FakeExecutionReportBuilder) mojo2.getExecutionResultsCollector(), isA(FakeExecutionReportBuilder.class));
+
+        Assert.assertThat( ((FakeExecutionReportBuilder) mojo2.getExecutionResultsCollector()).isPretty(), is(false));
+
+        Assert.assertThat( ((FakeExecutionReportBuilder) mojo2.getExecutionResultsCollector()).getDataDir(), is(new File("/home/somewhere")));
+
+        Assert.assertThat((FakeReportBuilder) mojo2.getReportBuilder(), isA(FakeReportBuilder.class));
+
     }
 }

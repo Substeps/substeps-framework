@@ -1,0 +1,30 @@
+{
+  "nodeType":"FeatureNode",
+  "filename":"simple_feature_file.feature",
+  "result":"CHILD_FAILED",
+  "id":43,
+  "executionDurationMillis":450,
+  "description":"a simple feature",
+  "scenarios":[
+    {
+      "nodeId":36,
+      "filename":"A_basic_passing_scenario_results.json",
+      "result":"PASSED",
+      "tags":[
+        "feature-level-tag"
+      ]
+    },
+    {
+      "nodeId":42,
+      "filename":"A_basic_failing_scenario_results.json",
+      "result":"CHILD_FAILED",
+      "tags":[
+        "scenario-level-tag",
+        "feature-level-tag"
+      ]
+    }
+  ],
+  "tags":[
+    "feature-level-tag"
+  ]
+}

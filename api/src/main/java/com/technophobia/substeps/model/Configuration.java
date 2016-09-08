@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author ian
@@ -43,13 +44,9 @@ public enum Configuration {
     private final CombinedConfiguration combinedConfig = new CombinedConfiguration(
             new OverrideCombiner());
 
-
     private Configuration() {
-
         initialise();
-
     }
-
 
     private void initialise() {
 

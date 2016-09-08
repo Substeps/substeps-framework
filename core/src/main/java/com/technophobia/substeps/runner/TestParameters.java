@@ -58,6 +58,14 @@ public class TestParameters {
         this.scenarioName = scenarioName;
     }
 
+    public TestParameters(final TagManager tagManager, final Syntax syntax, final List<FeatureFile> featureFileList) {
+        this.tagManager = tagManager;
+        this.syntax = syntax;
+        this.featureFileList = featureFileList;
+        featureFile = null;
+        scenarioName = null;
+    }
+
 
     public void init() {
         init(true);

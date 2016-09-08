@@ -134,7 +134,17 @@ public abstract class AbstractNodeRunner<NODE_TYPE extends IExecutionNode, VISIT
                 lastException = lastFailure.getCause();
                 node.getResult().setScreenshot(lastFailure.getScreenshot());
                 if (node.getResult().getResult() == ExecutionResult.RUNNING) {
-                    node.getResult().setFailure(lastFailure);
+
+                    if (lastFailure.getExeccutionNode() == node) {
+                        node.getResult().setFailure(lastFailure);
+                    }
+                    else {
+                        // it's a child node that's failed - no need to copy the details
+                        node.getResult().setChildFailure(lastFailure);
+                    }
+                }
+                else {
+                    log.debug("node not running, not setting...");
                 }
             } else {
                 lastException = new SubstepsRuntimeException("Error throw during startup, initialisation issue ?");

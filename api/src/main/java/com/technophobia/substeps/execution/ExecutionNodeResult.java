@@ -115,14 +115,28 @@ public class ExecutionNodeResult implements Serializable {
         this.screenshot = screenshot;
     }
 
+    public void setChildFailure(SubstepExecutionFailure substepExecutionFailure) {
+
+        recordComplete();
+        // this is to prevent a failure from overwriting a parse or setup / tear down failure
+        EnumSet<ExecutionResult> excluded = EnumSet.of(ExecutionResult.PARSE_FAILURE, ExecutionResult.SETUP_TEARDOWN_FAILURE);
+
+        if (!excluded.contains(this.result)) {
+            this.result = ExecutionResult.CHILD_FAILED;
+        }
+
+    }
+
     public void setFailure(SubstepExecutionFailure substepExecutionFailure) {
 
+        recordComplete();
         // this is to prevent a failure from overwriting a parse or setup / tear down failure
         EnumSet<ExecutionResult> excluded = EnumSet.of(ExecutionResult.PARSE_FAILURE, ExecutionResult.SETUP_TEARDOWN_FAILURE);
 
         if (!excluded.contains(this.result)) {
             this.result = ExecutionResult.FAILED;
         }
+
         this.substepExecutionFailure = substepExecutionFailure;
     }
 

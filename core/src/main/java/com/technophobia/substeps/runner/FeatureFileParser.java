@@ -43,7 +43,7 @@ public class FeatureFileParser {
 
     private static Map<String, Directive> directiveMap = new HashMap<String, Directive>();
 
-    private FileContents currentFileContents = null;
+//    private FileContents currentFileContents = null;
 
     private static final Pattern DIRECTIVE_PATTERN = Pattern.compile("([\\w ]*):");
 
@@ -52,25 +52,31 @@ public class FeatureFileParser {
         // if invalid, discarded..
 
         // rest our current set of lines
-        this.currentFileContents = null;
+        //this.currentFileContents = null;
 
-        final FeatureFile ff = new FeatureFile();
-        ff.setSourceFile(featureFile);
 
         AssertHelper.assertTrue("Feature file: " + featureFile.getAbsolutePath() + " does not exist!", featureFile.exists());
 
-        readFeatureFile(featureFile);
+        FileContents currentFileContents = FileContents.fromFile(featureFile);
 
-        final String deCommented = stripCommentsAndBlankLines(this.currentFileContents.getLines());
+        return getFeatureFile(currentFileContents);
 
-        chunkUpFeatureFile(deCommented, ff);
+    }
+
+    public FeatureFile getFeatureFile(FileContents fileContents) {
+        final FeatureFile ff = new FeatureFile();
+        ff.setSourceFile(fileContents.getFile());
+
+        final String deCommented = stripCommentsAndBlankLines(fileContents.getLines());
+
+        chunkUpFeatureFile(deCommented, ff, fileContents);
 
         if (parseFeatureDescription(ff)) {
             // now we're in chunks, time to process each scenario..
             if (ff.getScenarios() != null) {
 
                 for (final Scenario sc : ff.getScenarios()) {
-                    buildScenario(sc, featureFile);
+                    buildScenario(sc, fileContents);
 
                 }
 
@@ -78,30 +84,27 @@ public class FeatureFileParser {
 
                 return ff;
             } else {
-                this.log.debug("discarding feature " + featureFile.getName() + "as no scenarios");
+                this.log.debug("discarding feature " + fileContents.getFile().getName() + "as no scenarios");
                 return null;
             }
         } else {
-            this.log.debug("discarding feature " + featureFile.getName() + "as no feature description");
+            this.log.debug("discarding feature " + fileContents.getFile().getName() + "as no feature description");
             return null;
         }
-
     }
 
-    /**
-     * @param featureFile
-     */
-    private void readFeatureFile(final File featureFile) {
-
-        this.currentFileContents = new FileContents();
-
-        try {
-            this.currentFileContents.readFile(featureFile);
-
-        } catch (final IOException e) {
-            this.log.error("failed to load feature file: " + e.getMessage(), e);
-        }
-    }
+//    private FileContents readFeatureFile(final File featureFile) {
+//
+//        FileContents currentFileContents = new FileContents();
+//
+//        try {
+//            currentFileContents.readFile(featureFile);
+//
+//        } catch (final IOException e) {
+//            this.log.error("failed to load feature file: " + e.getMessage(), e);
+//        }
+//        return currentFileContents;
+//    }
 
     private static String getFirstLinePattern(final String element) {
 
@@ -164,7 +167,7 @@ public class FeatureFileParser {
     /**
      * @param sc
      */
-    private void buildScenario(final Scenario sc, final File file) {
+    private void buildScenario(final Scenario sc, FileContents fileContents) {
 
         final String raw = sc.getRawText();
 
@@ -174,7 +177,7 @@ public class FeatureFileParser {
 
         int lastOffset = sc.getSourceStartOffset();
 
-        sc.setSourceStartLineNumber(this.currentFileContents.getSourceLineNumberForOffset(lastOffset));
+        sc.setSourceStartLineNumber(fileContents.getSourceLineNumberForOffset(lastOffset));
 
         for (int i = 0; i < lines.length; i++) {
             final String line = lines[i];
@@ -183,9 +186,9 @@ public class FeatureFileParser {
             // we progress through the lines, that way we can take into account
             // duplicates
 
-            final int lineNumber = this.currentFileContents.getSourceLineNumber(line, lastOffset);
+            final int lineNumber = fileContents.getSourceLineNumber(line, lastOffset);
 
-            lastOffset = this.currentFileContents.getEndOfLineOffset(lineNumber);
+            lastOffset = fileContents.getEndOfLineOffset(lineNumber);
 
             if (i == 0) {
                 // first line, description is everything after the :
@@ -208,7 +211,7 @@ public class FeatureFileParser {
                     }
 
                 } else {
-                    sc.addStep(new Step(line, file, lineNumber, this.currentFileContents
+                    sc.addStep(new Step(line, fileContents.getFile(), lineNumber, fileContents
                             .getSourceStartOffsetForLineIndex(lineNumber)));
                 }
             }
@@ -219,7 +222,7 @@ public class FeatureFileParser {
      * @param fileContents
      * @param ff
      */
-    private void chunkUpFeatureFile(final String fileContents, final FeatureFile ff) {
+    private void chunkUpFeatureFile(final String fileContents, final FeatureFile ff, FileContents currentFileContents) {
         // get the feature name / description
         // split the feature file up
 
@@ -273,7 +276,7 @@ public class FeatureFileParser {
                                 final Pattern finderPattern = Pattern.compile(firstLinePattern);
 
                                 final Matcher matcher = finderPattern
-                                        .matcher(this.currentFileContents.getFullContent());
+                                        .matcher(currentFileContents.getFullContent());
                                 int start = -1;
 
                                 if (matcher.find()) {
@@ -283,7 +286,7 @@ public class FeatureFileParser {
                                 }
 
                                 processScenarioDirective(ff, currentTags, currentBackground, element,
-                                        directive == Directive.SCENARIO_OUTLINE, start);
+                                        directive == Directive.SCENARIO_OUTLINE, start, currentFileContents);
 
                                 currentTags = null;
                                 break;
@@ -309,7 +312,7 @@ public class FeatureFileParser {
      * @return
      */
     private void processScenarioDirective(final FeatureFile ff, final Set<String> currentTags,
-                                          final String currentBackground, final String sc, final boolean outline, final int start) {
+                                          final String currentBackground, final String sc, final boolean outline, final int start, FileContents currentFileContents) {
         final Scenario scenario = new Scenario();
 
         scenario.setRawText(sc);
@@ -321,14 +324,14 @@ public class FeatureFileParser {
 
         if (currentBackground != null) {
 
-            final int backgroundLineNumberIdx = backgroundLineNumber();
+            final int backgroundLineNumberIdx = backgroundLineNumber(currentFileContents);
 
             scenario.setBackground(new Background(backgroundLineNumberIdx, currentBackground, ff.getSourceFile()));
 
         }
     }
 
-    private int backgroundLineNumber() {
+    private int backgroundLineNumber(FileContents currentFileContents) {
         return Math.max(currentFileContents.getFirstLineNumberStartingWith("Background:"), 0);
     }
 

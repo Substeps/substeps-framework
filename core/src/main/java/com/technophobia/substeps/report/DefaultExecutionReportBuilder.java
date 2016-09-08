@@ -212,13 +212,13 @@ public class DefaultExecutionReportBuilder extends ExecutionReportBuilder {
      * @param reportDir
      * @throws IOException
      */
-    private void copyStaticResources(final File reportDir) throws URISyntaxException, IOException {
+    public void copyStaticResources(final File reportDir) throws URISyntaxException, IOException {
 
-        this.log.debug("Copying static resources to: " + reportDir.getAbsolutePath());
+        this.log.debug("Copying old_static resources to: " + reportDir.getAbsolutePath());
 
         final URL staticURL = getClass().getResource("/static");
         if (staticURL == null) {
-            throw new IllegalStateException("Failed to copy static resources for report.  URL for resources is null.");
+            throw new IllegalStateException("Failed to copy old_static resources for report.  URL for resources is null.");
         }
 
         copyResourcesRecursively(staticURL, reportDir);
