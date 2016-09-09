@@ -17,6 +17,10 @@ Requirements
 ------------
  * Java 8
 
+1.0.4
+-----
+* Added a checkbox to the report to optionally hide skipped steps
+
 
 1.0.3
 -----

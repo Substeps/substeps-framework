@@ -38,7 +38,17 @@ trait ReportFrameTemplate {
        |    }
        |}
        |
- |
+ | function hideNotRun(chkBox){
+ |    var result = document.evaluate('//li[a/i[contains(@style, "NOT_RUN")]]', document.documentElement, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
+ |    for (var i = 0; i < result.snapshotLength; i++) {
+ |        if (chkBox.checked) {
+ |            result.snapshotItem(i).style.display = 'none'
+       |        }
+       |        else {
+       |            result.snapshotItem(i).style.display = 'block'
+       |        }
+       |    }
+       |}
  |
  |//-->
        |
@@ -146,6 +156,10 @@ trait ReportFrameTemplate {
  |        <header>
        |            <h2>Test details</h2>
        |        </header>
+       |    <div>
+       |        <input type="checkbox" onclick="javascript:hideNotRun(this)"/>Hide not run
+       |    </div>
+       |
        |
        |    <noscript>
        |        <h3>Please enable Javascript to view Test details</h3>
