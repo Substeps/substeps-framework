@@ -78,3 +78,38 @@ tr.error_row td{
 .table-striped tbody tr:nth-child(2n+1).error_row td, .table-striped tbody tr:nth-child(2n+1).error_row th {
     background-color: #FFB7B7;
 }
+
+i.jstree-icon.jstree-themeicon.PASSED.jstree-themeicon-custom
+{
+    background-image: url("../img/PASSED.png");
+    background-size: auto;
+    background-position: center center;
+}
+
+i.jstree-icon.jstree-themeicon.CHILD_FAILED.jstree-themeicon-custom
+{
+    background-image: url("../img/CHILD_FAILED.png");
+    background-size: auto;
+    background-position: center center;
+}
+
+i.jstree-icon.jstree-themeicon.FAILED.jstree-themeicon-custom
+{
+    background-image: url("../img/FAILED.png");
+    background-size: auto;
+    background-position: center center;
+}
+
+i.jstree-icon.jstree-themeicon.NOT_RUN.jstree-themeicon-custom
+{
+    background-image: url("../img/NOT_RUN.png");
+    background-size: auto;
+    background-position: center center;
+}
+
+i.jstree-icon.jstree-themeicon.PARSE_FAILURE.jstree-themeicon-custom
+{
+    background-image: url("../img/PARSE_FAILURE.png");
+    background-size: auto;
+    background-position: center center;
+}

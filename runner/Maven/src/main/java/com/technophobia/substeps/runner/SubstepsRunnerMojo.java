@@ -48,9 +48,6 @@ import java.util.List;
         configurator = "include-project-dependencies")
 public class SubstepsRunnerMojo extends BaseSubstepsMojo {
 
-
-
-
     /**
      * When running in forked mode, a port is required to communicate between
      * maven and substeps, to set explicitly use -DjmxPort=9999

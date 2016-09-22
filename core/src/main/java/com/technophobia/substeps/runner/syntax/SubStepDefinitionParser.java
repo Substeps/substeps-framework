@@ -53,8 +53,6 @@ public class SubStepDefinitionParser {
 
     private final SyntaxErrorReporter syntaxErrorReporter;
 
-    //private FileContents currentFileContents;
-
     public SubStepDefinitionParser(final SyntaxErrorReporter syntaxErrorReporter) {
         this(true, syntaxErrorReporter);
     }

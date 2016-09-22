@@ -32,12 +32,9 @@ object ExecutionResultsCollector{
 }
 
 
-// TODO - remove the ctor params to allow injection from Maven via setter... eurgh  builder instead ?  when to init ?
 class ExecutionResultsCollector extends  IExecutionResultsCollector{
 
   private val log: Logger = LoggerFactory.getLogger(classOf[ExecutionResultsCollector])
-
-//  val rootDir = new File(baseDir, "substeps-results_" +timestamp)
 
   var dataDir: File = new File(".")
   var pretty : Boolean = false
@@ -169,6 +166,13 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector{
         Files.write(generateJson(rootNode), summaryFile, UTF8)
 
       }
+      case stepImplNode : StepImplementationNode => {
+        log.debug("stepImpl Node finished")
+
+
+
+        stepImplNode.getParent
+      }
       case _ => log.debug("other node finished")
     }
 
@@ -282,29 +286,26 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector{
       case _ => None
     }
 
+    // TODO - add this into the node detail..
 
 
       val data =
       if (!result.getResult.isFailure) {
 
-        NodeDetail.withChildrenNodeDetail("BasicScenarioNode", scenarioNode.getParent.getFilename, scenarioNode.getResult.getResult.name(), scenarioNode.getId.toInt,
-          Option(result.getRunningDuration), scenarioNode.getDescription, None, children.toList, tags )
+        NodeDetail.basicScenarioNodeNotInError(scenarioNode, children.toList, tags)
+
       }
       else {
 
         if (result.getResult == ExecutionResult.CHILD_FAILED){
 
-          NodeDetail.withChildrenNodeDetail("BasicScenarioNode", scenarioNode.getParent.getFilename, scenarioNode.getResult.getResult.name(), scenarioNode.getId.toInt,
-            Option(result.getRunningDuration), scenarioNode.getDescription, None, children.toList, tags )
+          NodeDetail.basicScenarioNodeNotInError(scenarioNode, children.toList, tags)
 
         }
         else {
 
-          val stackTrace = result.getFailure.getCause.getStackTrace.toList.map(elem => elem.toString)
+          NodeDetail.basicScenarioNodeInError(scenarioNode, children.toList, tags)
 
-          NodeDetail.inErrorwithChildrenNodeDetail("BasicScenarioNode", scenarioNode.getParent.getFilename, scenarioNode.getResult.getResult.name(), scenarioNode.getId.toInt,
-            Option(result.getRunningDuration), scenarioNode.getDescription, None, children.toList,
-            Some(result.getFailure.getCause.getMessage), Some(stackTrace), None, tags)
         }
 
       }
@@ -387,145 +388,6 @@ case class RootNodeSummary(nodeType: String, description: String, result : Strin
 import scala.collection.JavaConverters._
 
 
-case class NodeDetail(nodeType: String, filename: String, result : String, id : Long,
-                      executionDurationMillis : Option[Long], description : String,  method : Option[String],
-                      children : List[NodeDetail] = List(),
-                      exceptionMessage : Option[String] = None, stackTrace : Option[List[String]] = None,
-                      screenshot : Option[String] = None, tags : Option[List[String]] = None) {
-
-  def flattenTree() : List[NodeDetail] = {
-    NodeDetail.flatten(this)
-  }
-}
-
-
-
-case object NodeDetail {
-
-  def basicLeafNodeDetail(nodeType: String, filename: String, result : String, id : Long,
-                          executionDurationMillis : Option[Long], description : String,  method : Option[String]) : NodeDetail = {
-    // tags not important
-    NodeDetail(nodeType, filename, result, id, executionDurationMillis, description, method)
-  }
-
-  def withChildrenNodeDetail(nodeType: String, filename: String, result : String, id : Long,
-                             executionDurationMillis : Option[Long], description : String,  method : Option[String], children : List[NodeDetail], tags : Option[List[String]] = None) : NodeDetail = {
-    // might have tags
-    NodeDetail(nodeType, filename, result, id, executionDurationMillis, description, method, children, None, None, None, tags)
-  }
-
-
-
-  def inErrorwithChildrenNodeDetail(nodeType: String, filename: String, result : String, id : Long,
-                             executionDurationMillis : Option[Long], description : String,  method : Option[String],
-                                    children : List[NodeDetail], exceptionMessage : Option[String],
-                                    stackTrace : Option[List[String]] , screenshot : Option[String],
-                                    tags : Option[List[String]] = None) : NodeDetail = {
-    // might have tags
-
-    NodeDetail(nodeType, filename, result, id, executionDurationMillis, description, method, children, exceptionMessage, stackTrace, screenshot, tags)
-  }
-
-
-
-
-  implicit def Long2longOption(x: java.lang.Long): Option[Long] = {
-    if (Option(x).isDefined) Some(x.longValue) else None
-  }
-
-  def flatten(node : NodeDetail) : List[NodeDetail] = {
-
-    val children =
-      node.children.flatMap(child => {
-        flatten(child)
-      })
-
-    List(node) ++ children
-  }
-  def getData(stepNode: StepNode, screenshotsDir : File) : NodeDetail = {
-    stepNode match {
-      case stepImpl : StepImplementationNode => {
-
-        val result = stepImpl.getResult
-
-        // no error
-
-        if (!result.getResult.isFailure) {
-          NodeDetail("Step", stepImpl.getFilename, stepImpl.getResult.getResult.name(), stepImpl.getId.toInt,
-            result.getRunningDuration, stepImpl.getDescription, Some(stepImpl.getTargetMethod.toString ) )
-
-        }
-        else {
-
-          val stackTrace = result.getFailure.getCause.getStackTrace.toList.map(elem => elem.toString)
-
-          val screenshotFile =
-          if (Option(result.getFailure.getScreenshot).isDefined){
-
-            if(!screenshotsDir.exists()) {
-              screenshotsDir.mkdir()
-            }
-            val screenshotFile = new File(screenshotsDir, scala.util.Random.alphanumeric.take(10).mkString)
-
-            Files.write(result.getFailure.getScreenshot, screenshotFile)
-
-            val path = Paths.get(screenshotsDir.getName, screenshotFile.getName)
-            Some(path.toString)
-          }
-          else {
-            None
-          }
-
-          NodeDetail("Step", stepImpl.getFilename, stepImpl.getResult.getResult.name(), stepImpl.getId.toInt,
-            result.getRunningDuration, stepImpl.getDescription, Some(stepImpl.getTargetMethod.toString), List(),
-            Some(result.getFailure.getCause.getMessage), Some(stackTrace), screenshotFile )
-
-        }
-      }
-      case substepNode : SubstepNode => {
-
-        val result = substepNode.getResult
-
-        // may have children
-        val children =
-          Option(substepNode.getChildren) match {
-            case Some(childNodes) => {
-              childNodes.asScala.map(child => {
-                NodeDetail.getData(child, screenshotsDir)
-              })
-            }
-            case _ => List()
-          }
-
-
-
-        if (!result.getResult.isFailure) {
-          NodeDetail("SubstepNode", substepNode.getFilename, substepNode.getResult.getResult.name(), substepNode.getId.toInt,
-            result.getRunningDuration, substepNode.getDescription, None, children.toList  )
-
-        }
-        else {
-
-          if (result.getResult == ExecutionResult.CHILD_FAILED){
-
-            NodeDetail("SubstepNode", substepNode.getFilename, substepNode.getResult.getResult.name(), substepNode.getId.toInt,
-              result.getRunningDuration, substepNode.getDescription, None, children.toList)
-
-          }
-          else {
-            val stackTrace = result.getFailure.getCause.getStackTrace.toList.map(elem => elem.toString)
-
-            NodeDetail("SubstepNode", substepNode.getFilename, substepNode.getResult.getResult.name(), substepNode.getId.toInt,
-              result.getRunningDuration, substepNode.getDescription, None, children.toList,
-              Some(result.getFailure.getCause.getMessage), Some(stackTrace) )
-
-          }
-        }
-      }
-    }
-  }
-
-}
 
 case class Id(id: String)
 case class Data(title:String, attr: Id, icon : String, children: Option[List[Data]])

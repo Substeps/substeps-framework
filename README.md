@@ -20,7 +20,10 @@ Requirements
 1.0.4
 -----
 * Added a checkbox to the report to optionally hide skipped steps
-
+* Report enhancements
+  * Upgraded Bootstrap to 3.3.7
+  * 3 progress bars rather than one, toggle to show data in original tabular form
+  * Step implementation method usage report
 
 1.0.3
 -----

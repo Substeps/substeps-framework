@@ -40,7 +40,6 @@ class ParsingFromSourceTests extends FlatSpec with ShouldMatchers {
 
   private val log = LoggerFactory.getLogger(classOf[ParsingFromSourceTests])
 
-  // TODO - this fails
   "feature file parsing" should "work from string source" in {
 
     val theFeature =
@@ -237,10 +236,12 @@ Scenario: inline table
         | Scenario: A basic passing scenario
         |   PassingStepImpl
         |   PassingSubstepDef
+        |   WithParamsSubstepDef "a" and "b"
         |
         | Tags: scenario-level-tag
         | Scenario: A basic failing scenario
         |   PassingSubstepDef
+        |   WithParamsSubstepDef "c" and "d"
         |   FailingSubstepDef
         |   NotRun
       """.stripMargin
@@ -273,6 +274,9 @@ Scenario: inline table
         |Define: FailingSubstepDef
         | GenerateFailure
         |
+        |Define: WithParamsSubstepDef "<one>" and "<two>"
+        | WithParams "<one>" "<two>"
+        |
       """.stripMargin
 
     @StepImplementations
@@ -293,6 +297,11 @@ Scenario: inline table
       @SubSteps.Step("PassingStepImpl with (.*)")
       def passingStepImplWithParam(arg : String) = {
         if (arg =="fail")   throw new IllegalStateException("something went wrong")
+      }
+
+      @SubSteps.Step("""WithParams "([^"]*)" "([^"]*)"""")
+      def twoParams(arg1 : String, arg2 : String) = {
+        log.debug(s"pass two params $arg1 $arg2")
       }
 
       override def getScreenshotBytes: Array[Byte] = "fake screenshot bytes".getBytes
@@ -403,7 +412,7 @@ Scenario: inline table
 
     val passingScenarioContent = read[NodeDetail](Files.toString(passingScenario.get, UTF8))
 
-    passingScenarioContent.children.size should be (2)
+    passingScenarioContent.children.size should be (3)
 
     passingScenarioContent.children(0).children should be (empty)
 
@@ -420,24 +429,24 @@ Scenario: inline table
 
     val failingScenarioContent = read[NodeDetail](Files.toString(failingScenario.get, UTF8))
 
-    failingScenarioContent.children.size should be (3)
+    failingScenarioContent.children.size should be (4)
 
     failingScenarioContent.children(0).children.size should be (1)
     failingScenarioContent.children(0).result should be ("PASSED")
 
-    failingScenarioContent.children(1).children.size should be (1)
-    failingScenarioContent.children(1).result should be ("CHILD_FAILED")
+    failingScenarioContent.children(2).children.size should be (1)
+    failingScenarioContent.children(2).result should be ("CHILD_FAILED")
 
     // NB. no need for the parent to also have the error
-    failingScenarioContent.children(1).exceptionMessage shouldBe empty
-    failingScenarioContent.children(1).stackTrace shouldBe empty
+    failingScenarioContent.children(2).exceptionMessage shouldBe empty
+    failingScenarioContent.children(2).stackTrace shouldBe empty
 
-    failingScenarioContent.children(1).children(0).result should be("FAILED")
-    failingScenarioContent.children(1).children(0).exceptionMessage shouldBe defined
-    failingScenarioContent.children(1).children(0).stackTrace shouldBe defined
+    failingScenarioContent.children(2).children(0).result should be("FAILED")
+    failingScenarioContent.children(2).children(0).exceptionMessage shouldBe defined
+    failingScenarioContent.children(2).children(0).stackTrace shouldBe defined
 
-    failingScenarioContent.children(2).children should be (empty)
-    failingScenarioContent.children(2).result should be ("NOT_RUN")
+    failingScenarioContent.children(3).children should be (empty)
+    failingScenarioContent.children(3).result should be ("NOT_RUN")
 
     // TODO val failingScenario = scenarioResults.find(s => s.getName.contains("failing"))
 

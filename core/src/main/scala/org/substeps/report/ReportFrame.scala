@@ -8,16 +8,38 @@ package org.substeps.report
 trait ReportFrameTemplate {
 
 
+  def buildStatsBlock(name: String, counters : Counters) = {
 
-  def buildReportFrame(reportTitle: String, dateTimeStr : String, stats : ExecutionStats) = {
+    s"""
+       |    <div class="row-fluid">
+       |
+       |        <div class="col-md-1">${name} &nbsp;<span class="badge">${counters.total}</span></div>
+       |
+       |        <div class="col-md-11">
+       |
+       |            <div class="progress">
+       |                <div class="progress-bar progress-bar-success" style="width: ${counters.successPC}%;">${counters.successPC} Success (${counters.passed})</div>
+       |                <div class="progress-bar progress-bar-danger" style="width: ${counters.failedPC}%">${counters.failedPC}% Failure (${counters.failed})</div>
+       |                <div class="progress-bar progress-bar-warning progress-bar-striped" style="width: ${counters.skippedPC}%">${counters.skipped}%</div>
+       |            </div>
+       |
+       |        </div>
+       |
+       |    </div>
+       |
+     """.stripMargin
+
+  }
+
+  def buildReportFrame(reportTitle: String, dateTimeStr : String, stats : ExecutionStats, featureProgressBlock : String, scenarioProgressBlock : String, scenarioStepProgressBlock : String) = {
 
     s"""
        |<!DOCTYPE html>
-       |<!-- Copyright Technophobia Ltd 2012 -->
+       |<!-- Original Copyright Technophobia Ltd 2012, later revisions by others, see github  -->
        |<html lang="en">
        |
  |<head>
-       |    <title>SubSteps report</title>
+       |    <title>Substeps report</title>
        |    <meta charset="UTF-8">
        |    <link href="css/bootstrap.min.css" rel="stylesheet"/>
        |    <link href="css/bootstrap-responsive.min.css" rel="stylesheet"/>
@@ -59,30 +81,62 @@ trait ReportFrameTemplate {
        |</head>
        |
  |<body>
+ |
+ |<nav class="navbar navbar-default navbar-fixed-top">
+       |    <div class="container-fluid">
        |
- |<div class="container-fluid">
-       |    <header class="row-fluid">
-       |        <div id="navbar" class="navbar navbar-fixed-top">
-       |            <div class="navbar-inner">
-       |                <span class="brand" href="#" style="margin-left:5px">${reportTitle}</span> <span class="brand" style="margin-left:5px">${dateTimeStr}</span>
-       |                <ul class="nav" style="float:right">
-       |                    <li class="active"><a href="#summary">Summary</a></li>
-       |                    <li><a href="#feature-tag-summary" onclick="javascript:toggle('feature-tag-summary')">Features by tag</a></li>
-       |                    <li><a href="#scenario-tag-summary" onclick="javascript:toggle('scenario-tag-summary')">Scenario tag summary</a></li>
-       |                    <li><a href="#test-detail">Test detail</a></li>
+ |        <div class="navbar-header">
+       |            <span class="navbar-brand" href="#">title</span>
+       |            <span class="navbar-brand" >dateTime</span>
        |
-       |                </ul>
+ |        </div>
+       |
+ |        <div class="collapse navbar-collapse">
+       |
+ |            <ul class="nav navbar-nav navbar-right">
+       |                <li class="active"><a href="#summary">Summary</a></li>
+       |                <li><a href="#feature-tag-summary" onclick="javascript:toggle('feature-tag-summary')">Features by tag</a></li>
+       |                <li><a href="#scenario-tag-summary" onclick="javascript:toggle('scenario-tag-summary')">Scenario tag summary</a></li>
+       |                <li><a href="#test-detail">Test detail</a></li>
+       |                <li><a href="usage-tree.html">Usage</a></li>
+       |
+ |            </ul>
+       |        </div>
+       |    </div>
+       |</nav>
+       |
+       |
+       |<div class="container-fluid">
+       |    <div class="panel panel-default">
+       |        <div class="panel-heading">
+       |            <h3 class="panel-title">Summary</h3>
+       |        </div>
+       |        <div class="panel-body">
+       |
+       |     ${featureProgressBlock}
+       |
+       |     ${scenarioProgressBlock}
+       |
+       |     ${scenarioStepProgressBlock}
+       |
+       |             </div>
+       |    </div>
+       |
+       |        <div class="panel panel-default">
+       |        <div class="panel-heading">
+       |            <div class="row-fluid">
+       |                <div class="col-md-11">
+       |                    <h3 class="panel-title">Summary table</h3>
+       |                </div>
+       |                <div class="col-md-1">
+       |                   <a class="btn btn-primary btn-xs pull-right" role="button" data-toggle="collapse" href="#summaryTable" aria-expanded="false" aria-controls="summaryTable">Show</a>
+       |                </div>
        |            </div>
+       |
        |        </div>
-       |    </header>
+       |        <div class="panel-body">
        |
- |    <div id="summary" class="row-fluid">
-       |
-       |        <div class="progress">
-       |            <div class="bar bar-success" style="width: ${stats.featuresCounter.successPC}%;"></div>
-       |
-       |            <div class="bar bar-danger" style="width: ${stats.featuresCounter.failedPC}%;"></div>
-       |        </div>
+       |    <div id="summaryTable" class="row-fluid collapse">
        |
        |        <table class="table table-striped table-bordered">
        |            <thead>
@@ -151,11 +205,16 @@ trait ReportFrameTemplate {
        |
        |    </div>
        |    </div>
- |
- |
- |        <header>
-       |            <h2>Test details</h2>
-       |        </header>
+       |
+       |            </div>
+       |    </div>
+       |
+       |    <div class="panel panel-default">
+       |        <div class="panel-heading">
+       |            <h3 class="panel-title">Test details</h3>
+       |        </div>
+       |        <div class="panel-body">
+       |
        |    <div>
        |        <input type="checkbox" onclick="javascript:hideNotRun(this)"/>Hide not run
        |    </div>
@@ -169,14 +228,15 @@ trait ReportFrameTemplate {
        |
        |    <div id="test-detail" class="row-fluid">
        |
- |        <div id="feature-tree" class="span7">
+       |        <div id="feature-tree" class="span7">
        |
- |        </div>
+       |        </div>
        |
- |
- |        <div class="span5" id="detail-div-container">
+       |        <div class="span5" id="detail-div-container">
        |            <div id="affix-marker" data-spy="affix" data-offset-top="200"></div>
        |            <div id="feature-detail" class="detail-div"></div>
+       |        </div>
+       |    </div>
        |        </div>
        |    </div>
        |</div>

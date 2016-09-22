@@ -41,6 +41,18 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
 
 
 
+  "ReportBuilder" should "build the usage tree report from raw data input" in {
+    val now: LocalDateTime = LocalDateTime.now
+
+    val outputDir = new File("target/substeps-report_" + now.format(DateTimeFormatter.ofPattern("YYYYMMddHHmm")))
+
+    val reportBuilder = new ReportBuilder
+    reportBuilder.reportDir = outputDir
+
+    reportBuilder.buildFromDirectory(new File("src/test/resources/sample-results-data"))
+
+    // TODO few more assertions please !
+  }
 
 
   "ReportBuilder" should "build a report from raw data input" in {
@@ -107,73 +119,19 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
   }
 
 
-  import org.json4s._
-  import org.json4s.native.Serialization
-  import org.json4s.native.Serialization.writePretty
+
+//  case class Attr(id : String)
+//  case class Data (title : String, attr : Attr, icon : String)
+//
+//  case class DataHolder(id : String, title : String, icon : String) {
+//    def toMap = Map("data" -> Map("title" -> title, "attr" -> Map("id" -> id), "icon" -> icon))
+//  }
+//
+//
+//  case class State(opened : Boolean)
+//  case class JsTreeNode(id : String, text: String, icon : String, children : Option[List[JsTreeNode]], state : State)
+//
+//  case class Node(state:String, children : List[DataHolder])
 
 
-  case class Attr(id : String)
-  case class Data (title : String, attr : Attr, icon : String)
-
-  case class DataHolder(id : String, title : String, icon : String) {
-    def toMap = Map("data" -> Map("title" -> title, "attr" -> Map("id" -> id), "icon" -> icon))
-  }
-
-
-  case class State(opened : Boolean)
-  case class JsTreeNode(id : String, text: String, icon : String, children : Option[List[JsTreeNode]], state : State)
-
-  case class Node(state:String, children : List[DataHolder])
-
-
-  "jstree case classes" should "serialize correctly" in {
-
-    val st1 = JsTreeNode("6", "st1", "icon", None, State(true))
-    val st2 = JsTreeNode("7", "st2", "icon", None, State(true))
-
-    val s1 = JsTreeNode("4", "s1", "icon", Some(List(st1, st2)), State(true))
-
-    val st3 = JsTreeNode("8", "st3", "icon", None, State(true))
-    val st4 = JsTreeNode("9", "st4", "icon", None, State(true))
-
-    val s2 = JsTreeNode("5", "s2", "icon", Some(List(st3, st4)), State(true))
-
-    val f1 = JsTreeNode("2", "f1", "icon", Some(List(s1, s2)), State(true))
-
-    val root = JsTreeNode("1", "root", "icon", Some(List(f1)), State(true))
-
-    implicit val formats = Serialization.formats(NoTypeHints)
-
-    println(writePretty(root))
-
-
-  }
-
-  "report_data case classes" should "serialize correctly" in {
-
-    implicit val formats = Serialization.formats(NoTypeHints)
-
-
-    val dataMap2 = Map("data" -> Map("title" -> "the title 2", "attr" -> Map("id" -> "2"), "icon" -> "img/PASSED.png"))
-    val dataMap3 = Map("data" -> Map("title" -> "the title 3", "attr" -> Map("id" -> "3"), "icon" -> "img/PASSED.png"))
-    val dataMap4 = Map("data" -> Map("title" -> "the title 4", "attr" -> Map("id" -> "4"), "icon" -> "img/PASSED.png"))
-
-    val dataMap1 = Map("data" -> Map("title" -> "the title 1", "attr" -> Map("id" -> "1"), "icon" -> "img/PASSED.png"))
-
-    val root = Map("state" -> "open", "children" -> List(dataMap1, dataMap2, dataMap3,dataMap4))
-
-    println("using maps")
-    println(writePretty(root))
-    println("\n\n")
-
-    val d1 = new DataHolder("1", "title 1", "img/PASSED.png")
-    val d2 = new DataHolder("2", "title 2", "img/PASSED.png")
-    val d3 = new DataHolder("3", "title 3", "img/PASSED.png")
-    val d4 = new DataHolder("4", "title 4", "img/PASSED.png")
-
-    println("objects..")
-    println(writePretty(Node("open", List(d1,d2,d4,d4))))
-
-
-  }
 }

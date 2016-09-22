@@ -27,15 +27,15 @@ object ReportBuilder {
   }
 
   def iconFor(result: String): String = {
-    icons.getOrElse(result, "img/PARSE_FAILURE.png")
+    icons.getOrElse(result, "PARSE_FAILURE")
   }
 
 
-  val icons = Map("PASSED" -> "img/PASSED.png",
-    "NOT_RUN" -> "img/NOT_RUN.png",
-    "PARSE_FAILURE" -> "img/PARSE_FAILURE.png",
-    "FAILED" -> "img/FAILED.png",
-    "CHILD_FAILED" -> "img/FAILED.png")
+  val icons = Map("PASSED" -> "PASSED",
+    "NOT_RUN" -> "NOT_RUN",
+    "PARSE_FAILURE" -> "PARSE_FAILURE",
+    "FAILED" -> "FAILED",
+    "CHILD_FAILED" -> "FAILED")
 
 
   /* TODO
@@ -51,12 +51,22 @@ object ReportBuilder {
     "PARSE_FAILURE" -> Counters.build(1,0,0,1,0),
     "FAILED" -> Counters.build(1,1,0,1,0),
     "CHILD_FAILED" -> Counters.build(1,1,0,1,0))
+
+
+  var counter : Long = 1L
+
+  def uniqueId (realId : Long) = {
+    val id = s"$counter-$realId"
+    counter = counter + 1
+    id
+  }
+
 }
 
 /**
   * Created by ian on 30/06/16.
   */
-class ReportBuilder extends IReportBuilder with ReportFrameTemplate {
+class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTreeTemplate {
 
   @BeanProperty
   var reportDir : File = new File(".")
@@ -198,6 +208,158 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate {
     result
   }
 
+  def getHierarchy(nodeDetail : NodeDetail, allNodes : List[NodeDetail]) :  List[NodeDetail] = {
+
+    allNodes.find(n => n.children.exists(c => c.id == nodeDetail.id)) match {
+
+      case None => List(nodeDetail)
+      case Some(parent) => List(nodeDetail) ++ getHierarchy(parent, allNodes)
+
+    }
+  }
+
+  def getCallHierarchy(thisNodeDetail : NodeDetail, allNodes : List[NodeDetail]) : List[NodeDetail] = {
+
+    allNodes.find(n => n.children.exists(c => c.id == thisNodeDetail.id)) match {
+      case None => List() // this node is not a child of any other node
+      case Some(parent) => parent +: getCallHierarchy(parent, allNodes) // prepend
+    }
+
+  }
+
+
+  def createUsageTree(usageTreeDataFile: File, srcData: (RootNodeSummary, List[(FeatureSummary, List[NodeDetail])])) = {
+
+    val allNodeDetails =
+      srcData._2.flatMap(f => {
+        val scenarios = f._2
+        scenarios.flatMap(scenario => scenario.flattenTree())
+      })
+
+    val stepImplNodeDetails = allNodeDetails.filter(nd => nd.nodeType == "Step")
+
+    val stepImplsbyUniqueMethood = stepImplNodeDetails.groupBy(_.method.get)
+
+    val methodNodes = getJSTreeCallHierarchyForStepImpls(stepImplsbyUniqueMethood, allNodeDetails)
+
+    val writer = Files.newWriter(usageTreeDataFile, Charset.defaultCharset)
+    writer.append("var stepImplUsageTreeData=")
+
+    implicit val formats = Serialization.formats(NoTypeHints)
+
+    writer.append(writePretty(methodNodes))
+    writer.append(";")
+    writer.flush()
+    writer.close()
+
+
+  }
+
+  // TODO uncalled
+  def getJSTreeCallHierarchyForSubstepDefs(substepDefsByUniqueMethood: Map[String, List[NodeDetail]], allNodeDetails : List[NodeDetail]): Iterable[JsTreeNode] = {
+
+    substepDefsByUniqueMethood.flatMap(e => {
+
+      val method = e._1
+
+      // child nodes for each usage
+      val substepJsTreeNodes =
+
+      e._2.map(substep => {
+
+        val callHierarchy = getCallHierarchy(substep, allNodeDetails)
+
+        var lastChildOption: Option[List[JsTreeNode]] = None
+
+        callHierarchy.reverse.foreach(n => {
+
+          val last = JsTreeNode(ReportBuilder.uniqueId(n.id), n.description, n.nodeType, lastChildOption, State(false)) // might want to have more info - failures for example
+
+          lastChildOption = Some(List(last))
+
+        })
+        //lastChildOption.get.head
+
+        JsTreeNode(ReportBuilder.uniqueId(substep.id), substep.description, substep.nodeType, lastChildOption, State(true))
+      })
+      substepJsTreeNodes
+      // this jstree node represents the method
+//      val jstreeNode = JsTreeNode(ReportBuilder.uniqueId(nextId), method, "method", Some(substepJsTreeNodes), State(true))
+//
+//      nextId = nextId + 1
+//
+//      jstreeNode
+
+    })
+  }
+
+
+  def getJSTreeCallHierarchyForStepImpls(stepImplsbyUniqueMethood: Map[String, List[NodeDetail]], allNodeDetails : List[NodeDetail]): Iterable[JsTreeNode] = {
+
+    var nextId = allNodeDetails.map(n => n.id).max + 1
+
+
+    val stepImplNodeDetailstoUsages =
+    stepImplsbyUniqueMethood.toList.map(e => {
+      // convert the method reference to an examplar instance of such a node detail
+      (allNodeDetails.find(n => n.method == Some(e._1)).get,  e._2)
+
+    }).sortBy(_._1.source.get)
+
+
+
+    stepImplNodeDetailstoUsages.map(e => {
+
+      val exemplarNodeDetail = e._1
+
+      // child nodes for each usage
+      val stepImplJsTreeNodes =
+
+      e._2.map(stepImpl => {
+
+        val callHierarchy = getCallHierarchy(stepImpl, allNodeDetails)
+
+        var lastChildOption: Option[List[JsTreeNode]] = None
+
+        callHierarchy.reverse.foreach(n => {
+
+          val last = JsTreeNode(ReportBuilder.uniqueId(n.id), n.description, n.nodeType + " " + n.result, lastChildOption, State(false)) // might want to have more info - failures for example
+
+          lastChildOption = Some(List(last))
+
+        })
+        lastChildOption.get.head
+      })
+
+      // calculate the pass / fail / not run %
+
+      val total = e._2.size
+
+      val failures = e._2.count(n => n.result =="FAILED" || n.result =="CHILD_FAILED")
+
+      val passes = e._2.count(n => n.result =="PASSED")
+
+      val notRun = e._2.count(n => n.result =="NOT_RUN")
+
+      val failPC = Counters.pc(failures, total)
+      val passPC = Counters.pc(passes, total)
+      val notRunPC = Counters.pc(notRun, total)
+
+
+      // this jstree node represents the method
+      val jstreeNode = JsTreeNode(ReportBuilder.uniqueId(nextId),
+        StringEscapeUtils.ESCAPE_HTML4.translate(exemplarNodeDetail.source.get), "method", Some(stepImplJsTreeNodes), State(true),
+        Some(Map("data-stepimpl-method" -> s"${exemplarNodeDetail.method.get}", "data-stepimpl-passpc" -> s"${passPC}",
+          "data-stepimpl-failpc" -> s"${failPC}", "data-stepimpl-notrunpc" -> s"${notRunPC}")))
+
+      nextId = nextId + 1
+
+      jstreeNode
+
+    })
+  }
+
+
   def buildFromDirectory(sourceDataDir: File): Unit = {
 
     reportDir.mkdir()
@@ -217,7 +379,11 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate {
 
     val stats : ExecutionStats = buildExecutionStats(srcData)
 
-    val reportFrameHtml = buildReportFrame("title", "dateTime", stats)
+    val reportFrameHtml = buildReportFrame("title", "dateTime", stats,
+      buildStatsBlock("Features", stats.featuresCounter),
+      buildStatsBlock("Scenarios", stats.scenarioCounters),
+      buildStatsBlock("Scenario steps", stats.stepCounters))
+
     val writer = Files.newWriter(reportFrameHTML, Charset.defaultCharset)
     writer.append(reportFrameHtml)
     writer.flush()
@@ -229,6 +395,20 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate {
 
     val statsJsFile = createFile("substeps-stats-by-tag.js")
     writeStatsJs(statsJsFile, statsByTag)
+
+
+    val usageTreeDataFile = createFile("substeps-usage-tree.js")
+
+    createUsageTree(usageTreeDataFile, srcData)
+
+    val usgaeTreeHTMLFile  = createFile( "usage-tree.html")
+
+    val usageTreeHtml = buildUsageTree()
+    val writer2 = Files.newWriter(usgaeTreeHTMLFile, Charset.defaultCharset)
+    writer2.append(usageTreeHtml)
+    writer2.flush()
+    writer2.close()
+
   }
 
   def copyStaticResources() = {

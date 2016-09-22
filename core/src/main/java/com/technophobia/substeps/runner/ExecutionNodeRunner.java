@@ -36,6 +36,7 @@ import org.substeps.report.ExecutionResultsCollector;
 import org.substeps.report.IExecutionResultsCollector;
 import org.substeps.report.ReportingUtil;
 import org.substeps.runner.CoreSubstepsPropertiesConfiguration;
+import org.substeps.runner.UsageTreeBuilder;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -72,25 +73,6 @@ public class ExecutionNodeRunner implements SubstepsRunner {
     // map of nodes to each of the parents, where this node is used
     private final Map<ExecutionNodeUsage, List<ExecutionNodeUsage>> callerHierarchy = new HashMap<ExecutionNodeUsage, List<ExecutionNodeUsage>>();
 
-//    private final IExecutionResultsCollector executionResultsCollector;
-
-//    public ExecutionNodeRunner(){
-//
-//        this(new ExecutionResultsCollector(CoreSubstepsPropertiesConfiguration.INSTANCE.getReportDataBaseDir(),
-//                LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYYMMdd_HHmm_ss_SSS")),
-//                CoreSubstepsPropertiesConfiguration.INSTANCE.isPrettyPrintReportData()));
-//    }
-//    // called in tests
-//    public ExecutionNodeRunner(IExecutionResultsCollector executionResultsCollector ){
-//        this.executionResultsCollector = executionResultsCollector;
-//    }
-//
-//
-//
-//    public File getRootExecutionDataDirectory() {
-//        return this.executionResultsCollector.getRootExecutionDataDirectory();
-//    }
-
     @Override
     public void addNotifier(final IExecutionListener notifier) {
 
@@ -112,6 +94,8 @@ public class ExecutionNodeRunner implements SubstepsRunner {
 
         processUncalledAndUnused(syntax);
 
+        UsageTreeBuilder.buildUsageTree(this.rootNode);
+
         ExecutionContext.put(Scope.SUITE, INotificationDistributor.NOTIFIER_DISTRIBUTOR_KEY,
                 this.notificationDistributor);
 
@@ -124,7 +108,8 @@ public class ExecutionNodeRunner implements SubstepsRunner {
 
     }
 
-        @Override
+
+    @Override
     public RootNode prepareExecutionConfig(final SubstepsExecutionConfig config) {
 
         final ExecutionConfigWrapper configWrapper = new ExecutionConfigWrapper(config);

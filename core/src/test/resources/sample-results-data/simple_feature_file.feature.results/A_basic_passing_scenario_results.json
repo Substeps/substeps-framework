@@ -1,43 +1,84 @@
 {
   "nodeType":"BasicScenarioNode",
   "filename":"simple_feature_file.feature",
+  "lineNumber":0,
   "result":"PASSED",
-  "id":36,
-  "executionDurationMillis":4,
+  "id":42,
+  "executionDurationMillis":19,
   "description":"A basic passing scenario",
   "children":[
     {
       "nodeType":"Step",
       "filename":"simple_feature_file.feature",
+      "lineNumber":5,
       "result":"PASSED",
-      "id":33,
-      "executionDurationMillis":4,
+      "id":37,
+      "executionDurationMillis":15,
       "description":"PassingStepImpl",
       "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.passingStepImpl()",
       "children":[
         
-      ]
+      ],
+      "source":"PassingStepImpl"
     },
     {
       "nodeType":"SubstepNode",
       "filename":"temp_substep_def.substeps",
+      "lineNumber":2,
       "result":"PASSED",
-      "id":35,
+      "id":39,
       "executionDurationMillis":0,
       "description":"PassingSubstepDef",
       "children":[
         {
           "nodeType":"Step",
           "filename":"temp_substep_def.substeps",
+          "lineNumber":3,
           "result":"PASSED",
-          "id":34,
+          "id":38,
           "executionDurationMillis":0,
           "description":"AnotherPassingStepImpl",
           "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.anotherPassingStepImpl()",
           "children":[
             
+          ],
+          "source":"AnotherPassingStepImpl"
+        }
+      ],
+      "source":"PassingSubstepDef"
+    },
+    {
+      "nodeType":"SubstepNode",
+      "filename":"temp_substep_def.substeps",
+      "lineNumber":8,
+      "result":"PASSED",
+      "id":41,
+      "executionDurationMillis":1,
+      "description":"WithParamsSubstepDef \"a\" and \"b\"",
+      "children":[
+        {
+          "nodeType":"Step",
+          "filename":"temp_substep_def.substeps",
+          "lineNumber":9,
+          "result":"PASSED",
+          "id":40,
+          "executionDurationMillis":1,
+          "description":"WithParams \"a\" \"b\"",
+          "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.twoParams(java.lang.String,java.lang.String)",
+          "children":[
+            
+          ],
+          "source":"WithParams \"<one>\" \"<two>\"",
+          "sourceParameterNames":[
+            "one",
+            "two"
           ]
         }
+      ],
+      "source":"WithParamsSubstepDef \"<one>\" and \"<two>\"",
+      "sourceParameterNames":[
+        "one",
+        "two"
       ]
     }
   ],

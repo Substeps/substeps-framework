@@ -65,4 +65,6 @@ case object State {
   }
 }
 
-case class JsTreeNode(id : String, text: String, icon : String, children : Option[List[JsTreeNode]], state : State)
+case class JsTreeNode(id : String, text: String, icon : String, children : Option[List[JsTreeNode]], state : State, li_attr : Option[Map[String,String]] = None)
+
+

@@ -2,16 +2,16 @@
   "nodeType":"RootNode",
   "description":null,
   "result":"FAILED",
-  "id":64,
-  "executionDurationMillis":532,
+  "id":72,
+  "executionDurationMillis":613,
   "features":[
     {
-      "nodeId":43,
+      "nodeId":51,
       "resultsDir":"simple_feature_file.feature.results",
       "result":"CHILD_FAILED"
     },
     {
-      "nodeId":63,
+      "nodeId":71,
       "resultsDir":"outline_feature_file.feature.results",
       "result":"CHILD_FAILED"
     }

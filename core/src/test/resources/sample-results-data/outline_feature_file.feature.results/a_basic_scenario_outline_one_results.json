@@ -1,56 +1,65 @@
 {
   "nodeType":"BasicScenarioNode",
   "filename":"",
+  "lineNumber":0,
   "result":"PASSED",
-  "id":48,
+  "id":56,
   "executionDurationMillis":1,
   "description":"a basic scenario outline one",
   "children":[
     {
       "nodeType":"Step",
       "filename":"outline_feature_file.feature",
+      "lineNumber":7,
       "result":"PASSED",
-      "id":44,
-      "executionDurationMillis":1,
+      "id":52,
+      "executionDurationMillis":0,
       "description":"PassingStepImpl",
       "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.passingStepImpl()",
       "children":[
         
-      ]
+      ],
+      "source":"PassingStepImpl"
     },
     {
       "nodeType":"SubstepNode",
       "filename":"temp_substep_def.substeps",
+      "lineNumber":2,
       "result":"PASSED",
-      "id":46,
+      "id":54,
       "executionDurationMillis":0,
       "description":"PassingSubstepDef",
       "children":[
         {
           "nodeType":"Step",
           "filename":"temp_substep_def.substeps",
+          "lineNumber":3,
           "result":"PASSED",
-          "id":45,
+          "id":53,
           "executionDurationMillis":0,
           "description":"AnotherPassingStepImpl",
           "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.anotherPassingStepImpl()",
           "children":[
             
-          ]
+          ],
+          "source":"AnotherPassingStepImpl"
         }
-      ]
+      ],
+      "source":"PassingSubstepDef"
     },
     {
       "nodeType":"Step",
       "filename":"outline_feature_file.feature",
+      "lineNumber":9,
       "result":"PASSED",
-      "id":47,
-      "executionDurationMillis":0,
+      "id":55,
+      "executionDurationMillis":1,
       "description":"PassingStepImpl with param 1",
       "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.passingStepImplWithParam(java.lang.String)",
       "children":[
         
-      ]
+      ],
+      "source":"PassingStepImpl with <param>"
     }
   ],
   "tags":[

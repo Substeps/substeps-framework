@@ -86,4 +86,10 @@ public interface IExecutionNode extends Serializable {
     <RETURN_TYPE> RETURN_TYPE dispatch(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor);
 
     <RETURN_TYPE> List<RETURN_TYPE> accept(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor);
+
+    String getSourceLine();
+    void setSourceLine(String sourceLine);
+
+    List<String> getParameterNames();
+    void setParameterNames(List<String> parameterNames);
 }
