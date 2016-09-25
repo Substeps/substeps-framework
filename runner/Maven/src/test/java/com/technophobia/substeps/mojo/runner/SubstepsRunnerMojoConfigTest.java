@@ -22,12 +22,22 @@ import com.technophobia.substeps.report.ExecutionReportBuilder;
 import com.technophobia.substeps.runner.ExecutionConfig;
 import com.technophobia.substeps.runner.SubstepsReportBuilderMojo;
 import com.technophobia.substeps.runner.SubstepsRunnerMojo;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.execution.ReactorManager;
+import org.apache.maven.monitor.event.EventDispatcher;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.settings.Settings;
+import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.junit.Assert;
 import org.junit.Ignore;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
 
 import static org.hamcrest.Matchers.*;
 
@@ -42,14 +52,14 @@ public class SubstepsRunnerMojoConfigTest extends AbstractMojoTestCase {
     }
 
     private void actuallyRunTheTest() throws Exception{
-        File testPom = new File(getBasedir(),
-                "src/test/resources/sample-pom.xml");
+
+        File testPom = new File(getBasedir(), "src/test/resources/sample-pom.xml");
 
         Assert.assertNotNull(testPom);
         Assert.assertTrue(testPom.exists());
 
         PlexusConfiguration pluginConfiguration = this.extractPluginConfiguration("substeps-maven-plugin", testPom);
-        final SubstepsRunnerMojo mojo = (SubstepsRunnerMojo)lookupMojo("org.substeps", "substeps-maven-plugin", "1.0.2-SNAPSHOT", "run-features", pluginConfiguration);
+        final SubstepsRunnerMojo mojo = (SubstepsRunnerMojo)lookupMojo("org.substeps", "substeps-maven-plugin", "1.0.4-SNAPSHOT", "run-features", pluginConfiguration);
 
         Assert.assertNotNull("expecting a mojo", mojo);
 
@@ -103,9 +113,11 @@ public class SubstepsRunnerMojoConfigTest extends AbstractMojoTestCase {
 
     }
 
-    public void testMojoGoal() throws Exception {
+    public void testMojoConfig() throws Exception {
 
         // no op, can't get this test to work in release, when the version gets bumped
-
+        //actuallyRunTheTest();
     }
+
+
 }

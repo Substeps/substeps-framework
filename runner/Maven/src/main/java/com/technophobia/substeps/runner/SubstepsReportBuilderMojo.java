@@ -167,6 +167,26 @@ public class SubstepsReportBuilderMojo extends BaseSubstepsMojo {
 
         reportBuilder.buildFromDirectory(this.executionResultsCollector.getDataDir());
 
+
+
+        List<Throwable> exceptions = this.session.getResult().getExceptions();
+
+        if (exceptions != null && !exceptions.isEmpty()){
+            getLog().info("got exceptions");
+            for (Throwable t : exceptions){
+                if (t instanceof MojoFailureException){
+                    MojoFailureException failure = (MojoFailureException)t;
+                    // remove the exception otherwise it will get logged twice
+                    this.session.getResult().getExceptions().remove(t);
+
+                    throw failure;
+
+                }
+            }
+        }
+        else {
+            getLog().info("All good, no failures");
+        }
 //        ensureValidConfiguration();
 //
 //        this.runner = this.runTestsInForkedVM ? createForkedRunner() : createInProcessRunner();

@@ -33,7 +33,7 @@ object ExecutionResultsCollector{
 
 
 // TODO - remove the ctor params to allow injection from Maven via setter... eurgh  builder instead ?  when to init ?
-class ExecutionResultsCollector extends  IExecutionResultsCollector{
+class ExecutionResultsCollector extends  IExecutionResultsCollector {
 
   private val log: Logger = LoggerFactory.getLogger(classOf[ExecutionResultsCollector])
 
@@ -49,8 +49,8 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector{
   def setDataDir(dir : File) = this.dataDir = dir
   def setPretty(pretty : Boolean) = this.pretty = pretty
 
-
-  val UTF8 = Charset.forName("UTF-8")
+  @transient
+  lazy val UTF8 = Charset.forName("UTF-8")
 
   var featureToResultsDirMap: Map[FeatureNode, File] = Map()
 
