@@ -3,7 +3,7 @@
   "filename":"outline_feature_file.feature",
   "result":"CHILD_FAILED",
   "id":71,
-  "executionDurationMillis":15,
+  "executionDurationMillis":35,
   "description":"an outline feature",
   "scenarios":[
     {

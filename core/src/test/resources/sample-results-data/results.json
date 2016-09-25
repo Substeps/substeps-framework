@@ -3,7 +3,7 @@
   "description":null,
   "result":"FAILED",
   "id":72,
-  "executionDurationMillis":613,
+  "executionDurationMillis":962,
   "features":[
     {
       "nodeId":51,
@@ -15,5 +15,7 @@
       "resultsDir":"outline_feature_file.feature.results",
       "result":"CHILD_FAILED"
     }
-  ]
+  ],
+  "timestamp":1474753768268,
+  "environment":"localhost"
 }

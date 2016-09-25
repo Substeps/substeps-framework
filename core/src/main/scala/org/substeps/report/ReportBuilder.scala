@@ -2,6 +2,8 @@ package org.substeps.report
 
 import java.io.{BufferedWriter, File}
 import java.nio.charset.Charset
+import java.time.{Instant, LocalDateTime, ZoneId, ZoneOffset}
+import java.time.format.DateTimeFormatter
 
 import com.google.common.io.Files
 import com.technophobia.substeps.execution.ExecutionResult
@@ -236,11 +238,10 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
         scenarios.flatMap(scenario => scenario.flattenTree())
       })
 
-    val stepImplNodeDetails = allNodeDetails.filter(nd => nd.nodeType == "Step")
 
-    val stepImplsbyUniqueMethood = stepImplNodeDetails.groupBy(_.method.get)
+    val methodNodes = getJSTreeCallHierarchyForStepImpls( allNodeDetails)
 
-    val methodNodes = getJSTreeCallHierarchyForStepImpls(stepImplsbyUniqueMethood, allNodeDetails)
+    val substepDefNodes = getJSTreeCallHierarchyForSubstepDefs( allNodeDetails)
 
     val writer = Files.newWriter(usageTreeDataFile, Charset.defaultCharset)
     writer.append("var stepImplUsageTreeData=")
@@ -248,6 +249,10 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     implicit val formats = Serialization.formats(NoTypeHints)
 
     writer.append(writePretty(methodNodes))
+    writer.append(";\nvar substepDefUsageTreeData=")
+
+    writer.append(writePretty(substepDefNodes))
+
     writer.append(";")
     writer.flush()
     writer.close()
@@ -255,12 +260,18 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
   }
 
-  // TODO uncalled
-  def getJSTreeCallHierarchyForSubstepDefs(substepDefsByUniqueMethood: Map[String, List[NodeDetail]], allNodeDetails : List[NodeDetail]): Iterable[JsTreeNode] = {
+  def getJSTreeCallHierarchyForSubstepDefs(allNodeDetails : List[NodeDetail]): Iterable[JsTreeNode] = {
 
-    substepDefsByUniqueMethood.flatMap(e => {
+    val substepNodeDetails = allNodeDetails.filter(nd => nd.nodeType == "SubstepNode")
+    val substepDefsByUniqueMethood = substepNodeDetails.groupBy(_.source.get)
 
-      val method = e._1
+    var nextId = allNodeDetails.map(n => n.id).max + 1
+
+    println("x")
+
+    substepDefsByUniqueMethood.map(e => {
+
+      val substepDef = e._1
 
       // child nodes for each usage
       val substepJsTreeNodes =
@@ -273,18 +284,41 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
         callHierarchy.reverse.foreach(n => {
 
-          val last = JsTreeNode(ReportBuilder.uniqueId(n.id), n.description, n.nodeType, lastChildOption, State(false)) // might want to have more info - failures for example
+          val last = JsTreeNode(ReportBuilder.uniqueId(n.id), n.description, n.nodeType + " " + n.result, lastChildOption, State(false)) // might want to have more info - failures for example
 
           lastChildOption = Some(List(last))
 
         })
-        //lastChildOption.get.head
-
-        JsTreeNode(ReportBuilder.uniqueId(substep.id), substep.description, substep.nodeType, lastChildOption, State(true))
+        lastChildOption.get.head.copy(li_attr = Some(Map("data-substep-def-call" -> substep.description)))
+        // substep.description is what we want - applied to the lastChildOption..?
+//        JsTreeNode(ReportBuilder.uniqueId(substep.id), substep.description, substep.nodeType, lastChildOption, State(true))
       })
-      substepJsTreeNodes
-      // this jstree node represents the method
-//      val jstreeNode = JsTreeNode(ReportBuilder.uniqueId(nextId), method, "method", Some(substepJsTreeNodes), State(true))
+
+      // this jstree node represents the substepdef
+
+//      val jstreeNode = JsTreeNode(ReportBuilder.uniqueId(nextId),
+//        StringEscapeUtils.ESCAPE_HTML4.translate(exemplarNodeDetail.source.get), "method", Some(stepImplJsTreeNodes), State(true),
+//        Some(Map("data-stepimpl-method" -> s"${exemplarNodeDetail.method.get}", "data-stepimpl-passpc" -> s"${passPC}",
+//          "data-stepimpl-failpc" -> s"${failPC}", "data-stepimpl-notrunpc" -> s"${notRunPC}")))
+
+      // calculate the pass / fail / not run %
+
+      val total = e._2.size
+
+      val failures = e._2.count(n => n.result =="FAILED" || n.result =="CHILD_FAILED")
+
+      val passes = e._2.count(n => n.result =="PASSED")
+
+      val notRun = e._2.count(n => n.result =="NOT_RUN")
+
+      val failPC = Counters.pc(failures, total)
+      val passPC = Counters.pc(passes, total)
+      val notRunPC = Counters.pc(notRun, total)
+
+
+      JsTreeNode(ReportBuilder.uniqueId(nextId), StringEscapeUtils.ESCAPE_HTML4.translate(substepDef), "SubstepDefinition", Some(substepJsTreeNodes), State(true),
+        Some(Map("data-substep-def" -> "true", "data-substepdef-passpc" -> s"${passPC}",
+        "data-substepdef-failpc" -> s"${failPC}", "data-substepdef-notrunpc" -> s"${notRunPC}")))
 //
 //      nextId = nextId + 1
 //
@@ -294,7 +328,12 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
   }
 
 
-  def getJSTreeCallHierarchyForStepImpls(stepImplsbyUniqueMethood: Map[String, List[NodeDetail]], allNodeDetails : List[NodeDetail]): Iterable[JsTreeNode] = {
+  def getJSTreeCallHierarchyForStepImpls(allNodeDetails : List[NodeDetail]): Iterable[JsTreeNode] = {
+
+    val stepImplNodeDetails = allNodeDetails.filter(nd => nd.nodeType == "Step")
+
+    val stepImplsbyUniqueMethood = stepImplNodeDetails.groupBy(_.method.get)
+
 
     var nextId = allNodeDetails.map(n => n.id).max + 1
 
@@ -379,7 +418,13 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
     val stats : ExecutionStats = buildExecutionStats(srcData)
 
-    val reportFrameHtml = buildReportFrame("title", "dateTime", stats,
+
+    val description = Option(srcData._1.description).getOrElse("Substeps Test Report")
+
+    val localDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(srcData._1.timestamp), ZoneId.systemDefault());
+    val dateTimeString = localDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss"))
+
+    val reportFrameHtml = buildReportFrame(description, dateTimeString, stats,
       buildStatsBlock("Features", stats.featuresCounter),
       buildStatsBlock("Scenarios", stats.scenarioCounters),
       buildStatsBlock("Scenario steps", stats.stepCounters))

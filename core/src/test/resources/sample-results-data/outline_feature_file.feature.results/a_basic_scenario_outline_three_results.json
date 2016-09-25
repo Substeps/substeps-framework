@@ -4,7 +4,7 @@
   "lineNumber":0,
   "result":"CHILD_FAILED",
   "id":68,
-  "executionDurationMillis":0,
+  "executionDurationMillis":8,
   "description":"a basic scenario outline three",
   "children":[
     {
@@ -13,7 +13,7 @@
       "lineNumber":7,
       "result":"PASSED",
       "id":64,
-      "executionDurationMillis":0,
+      "executionDurationMillis":1,
       "description":"PassingStepImpl",
       "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.passingStepImpl()",
       "children":[
@@ -150,7 +150,7 @@
         "java.lang.reflect.Method.invoke(Method.java:497)",
         "com.intellij.rt.execution.application.AppMain.main(AppMain.java:147)"
       ],
-      "screenshot":"a_basic_scenario_outline_three/A1Af1VPTIF",
+      "screenshot":"a_basic_scenario_outline_three/oLlL4lMirK",
       "source":"PassingStepImpl with <param>"
     }
   ],

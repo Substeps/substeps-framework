@@ -22,6 +22,7 @@ import com.google.common.collect.Lists;
 import com.technophobia.substeps.execution.node.FeatureNode;
 import com.technophobia.substeps.execution.node.RootNode;
 import com.technophobia.substeps.model.FeatureFile;
+import com.technophobia.substeps.runner.ExecutionConfigWrapper;
 import com.technophobia.substeps.runner.TestParameters;
 
 import java.util.List;
@@ -33,10 +34,12 @@ public class ExecutionNodeTreeBuilder {
 
     private final TestParameters parameters;
     private final FeatureNodeBuilder featureNodeBuilder;
+    private final ExecutionConfigWrapper configWrapper;
 
-    public ExecutionNodeTreeBuilder(final TestParameters parameters) {
+    public ExecutionNodeTreeBuilder(final TestParameters parameters, ExecutionConfigWrapper configWrapper) {
         this.parameters = parameters;
         this.featureNodeBuilder = new FeatureNodeBuilder(parameters);
+        this.configWrapper = configWrapper;
     }
 
     public RootNode buildExecutionNodeTree(String description) {
@@ -51,8 +54,10 @@ public class ExecutionNodeTreeBuilder {
                 features.add(featureNode);
             }
         }
+        String env = System.getProperty("environment", "localhost");
 
-        return new RootNode(description, features);
+
+        return new RootNode(description, features, env, configWrapper.getExecutionConfig().getTags(), configWrapper.getExecutionConfig().getNonFatalTags());
     }
 
 }

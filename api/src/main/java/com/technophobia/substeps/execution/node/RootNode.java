@@ -29,10 +29,20 @@ public class RootNode extends NodeWithChildren<FeatureNode> {
 
     private final String featureSetDescription;
 
-    public RootNode(String featureSetDescription, List<FeatureNode> features) {
+    private final long timestamp;
+
+    private final String environment;
+    private final String tags;
+    private final String nonFatalTags;
+
+    public RootNode(String featureSetDescription, List<FeatureNode> features, String environment, String tags, String nonFatalTags) {
         super(features);
         this.featureSetDescription = featureSetDescription;
         this.setDepth(0);
+        this.timestamp = System.currentTimeMillis();
+        this.environment = environment;
+        this.tags = tags;
+        this.nonFatalTags = nonFatalTags;
     }
 
     @Override
@@ -61,5 +71,22 @@ public class RootNode extends NodeWithChildren<FeatureNode> {
 
         return featureSetDescription;
     }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public String getEnvironment() {
+        return environment;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public String getNonFatalTags() {
+        return nonFatalTags;
+    }
+
 
 }

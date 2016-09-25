@@ -85,7 +85,7 @@ public class ExecutionNodeRunner implements SubstepsRunner {
                                            TagManager nonFatalTagmanager ) {
 
 
-        final ExecutionNodeTreeBuilder nodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters);
+        final ExecutionNodeTreeBuilder nodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, configWrapper);
 
         // building the tree can throw critical failures if exceptions are found
         this.rootNode = nodeTreeBuilder.buildExecutionNodeTree(configWrapper.getExecutionConfig().getDescription());

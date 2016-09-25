@@ -58,7 +58,7 @@ public class SubstepsGlossaryMojoTest {
 
         final SubstepsExecutionConfig execConfig = new SubstepsExecutionConfig();
 
-        final IExecutionNode rootNode = new RootNode("", null);
+        final IExecutionNode rootNode = new RootNode("", null, "env", "tags", "non-fatal-tags");
 
         method.invoke(mojo, rootNode, execConfig);
 

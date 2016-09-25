@@ -98,6 +98,9 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector{
 
         Files.write(generateJson(rootNode), summaryFile, UTF8)
 
+
+
+
       }
 
       case _ => log.debug("other node failed")
@@ -208,9 +211,10 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector{
 
       })
 
+
     val data =
       RootNodeSummary("RootNode", rootNode.getDescription, rootNode.getResult.getResult.name(), rootNode.getId,
-        Some(rootNode.getResult.getRunningDuration), features.toList)
+        Some(rootNode.getResult.getRunningDuration), features.toList, Option(rootNode.getTags), Option(rootNode.getNonFatalTags), rootNode.getTimestamp, rootNode.getEnvironment)
 
     implicit val formats = Serialization.formats(NoTypeHints)
 
@@ -382,7 +386,7 @@ case class ScenarioSummary(nodeId : Long, filename : String, result: String, tag
 case class FeatureSummaryForRootNode(nodeId : Long, resultsDir: String, result : String)
 
 case class RootNodeSummary(nodeType: String, description: String, result : String, id : Long,
-                           executionDurationMillis : Option[Long], features : List[FeatureSummaryForRootNode])
+                           executionDurationMillis : Option[Long], features : List[FeatureSummaryForRootNode], tags : Option[String], nonFatalTags : Option[String], timestamp : Long, environment : String)
 
 
 import scala.collection.JavaConverters._

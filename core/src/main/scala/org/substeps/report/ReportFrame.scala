@@ -86,8 +86,8 @@ trait ReportFrameTemplate {
        |    <div class="container-fluid">
        |
  |        <div class="navbar-header">
-       |            <span class="navbar-brand" href="#">title</span>
-       |            <span class="navbar-brand" >dateTime</span>
+       |            <span class="navbar-brand" href="#">${reportTitle}</span>
+       |            <span class="navbar-brand" >${dateTimeStr}</span>
        |
  |        </div>
        |
@@ -98,7 +98,7 @@ trait ReportFrameTemplate {
        |                <li><a href="#feature-tag-summary" onclick="javascript:toggle('feature-tag-summary')">Features by tag</a></li>
        |                <li><a href="#scenario-tag-summary" onclick="javascript:toggle('scenario-tag-summary')">Scenario tag summary</a></li>
        |                <li><a href="#test-detail">Test detail</a></li>
-       |                <li><a href="usage-tree.html">Usage</a></li>
+       |                <li><a href="usage-tree.html">Usage <span class="label label-warning">Beta</span></a></li>
        |
  |            </ul>
        |        </div>

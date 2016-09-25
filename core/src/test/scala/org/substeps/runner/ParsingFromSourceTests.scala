@@ -330,8 +330,8 @@ Scenario: inline table
 
     val parameters: TestParameters = new TestParameters(new TagManager(""), syntax, List(featureFile, featureFile2).asJava)
 
-
-    val nodeTreeBuilder: ExecutionNodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters)
+    val cfgWrapper = new ExecutionConfigWrapper(executionConfig)
+    val nodeTreeBuilder: ExecutionNodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, cfgWrapper)
 
     // building the tree can throw critical failures if exceptions are found
     val rootNode = nodeTreeBuilder.buildExecutionNodeTree("test description")

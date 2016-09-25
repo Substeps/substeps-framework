@@ -23,7 +23,8 @@ Requirements
 * Report enhancements
   * Upgraded Bootstrap to 3.3.7
   * 3 progress bars rather than one, toggle to show data in original tabular form
-  * Step implementation method usage report
+  * Step implementation method usage report (Beta)
+  * Replaced hand rolled recursive File listing with commons.io implementation
 
 1.0.3
 -----

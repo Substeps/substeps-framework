@@ -343,7 +343,7 @@ public class ExecutionNodeRunnerTest {
 
         final ExecutionNodeRunner runner = new ExecutionNodeRunner();
 
-        final RootNode node = new RootNode("Description", Collections.emptyList());
+        final RootNode node = new RootNode("Description", Collections.emptyList(), "env", "tags", "non-fatal-tags");
 
         final INotificationDistributor notificationDistributor = getPrivateField(runner, "notificationDistributor");
         final SetupAndTearDown setupAndTearDown = mock(SetupAndTearDown.class);
@@ -375,7 +375,7 @@ public class ExecutionNodeRunnerTest {
                 Collections.emptyList(), Collections.emptySet(), 2);
         final FeatureNode featureNode = new FeatureNode(new Feature("test feature", "file"),
                 Collections.singletonList(outlineNode), Collections.emptySet());
-        final ExecutionNode rootNode = new RootNode("Description", Collections.singletonList(featureNode));
+        final ExecutionNode rootNode = new RootNode("Description", Collections.singletonList(featureNode), "env", "tags", "non-fatal-tags");
 
 //        final ExecutionNodeRunner runner = new ExecutionNodeRunner();
 

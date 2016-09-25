@@ -29,10 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author ian
@@ -162,7 +159,7 @@ public class SubstepsToHTML {
 
         List<FeatureFile> featureFileList = null;
 
-        final List<File> featureFiles = FileUtils.getFiles(new File(featureFile), ".feature");
+        final Collection<File> featureFiles = FileUtils.getFiles(new File(featureFile), "feature");
 
         final FeatureFileParser fp2 = new FeatureFileParser();
         for (final File f : featureFiles) {

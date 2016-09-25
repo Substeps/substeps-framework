@@ -46,7 +46,7 @@ trait UsageTreeTemplate {
     |    <div class="container-fluid">
     |
     |        <div class="navbar-header">
-    |            <span class="navbar-brand" href="#">title</span>
+    |            <span class="navbar-brand" href="#">Substeps Usage Report <span class="label label-warning">Beta</span></span>
     |            <span class="navbar-brand" >dateTime</span>
     |
     |        </div>
@@ -64,12 +64,11 @@ trait UsageTreeTemplate {
     |
     |<div class="container-fluid">
     |
-    |
-    |
-    |        <header>
-    |            <h2>Step Implementation Usage Tree</h2>
-    |        </header>
-    |
+    |    <div class="panel panel-default">
+    |        <div class="panel-heading">
+    |            <h3 class="panel-title">Step Implementation Usage Tree</h3>
+    |        </div>
+    |        <div class="panel-body">
     |
     |    <noscript>
     |        <h3>Please enable Javascript to view Test details</h3>
@@ -77,17 +76,40 @@ trait UsageTreeTemplate {
     |        <p>Please enable javascript and reload this page</p>
     |    </noscript>
     |
-    |    <div id="test-detail" class="row-fluid">
-    |        <div id="step-impls-usage-tree" class="col-md-6"></div>
+    |            <div id="test-detail" class="row-fluid">
+    |                <div id="step-impls-usage-tree" class="col-md-6"></div>
     |
     |
-    |        <div class="col-md-6" id="detail-div-container">
-    |            <div id="affix-marker" data-spy="affix" data-offset-top="200"></div>
-    |            <div id="usage-detail" class="detail-div"></div>
+    |                <div class="col-md-6" id="detail-div-container">
+    |                    <div id="affix-marker" data-spy="affix" data-offset-top="200"></div>
+    |                    <div id="usage-detail" class="detail-div"></div>
+    |                </div>
+    |            </div>
     |        </div>
     |    </div>
     |
+    |    <div class="panel panel-default">
+    |        <div class="panel-heading">
+    |            <h3 class="panel-title">Substep Usage Tree</h3>
+    |        </div>
+    |        <div class="panel-body">
+    |
+    |            <div id="substep-test-detail" class="row-fluid">
+    |                <div id="substep-usage-tree" class="col-md-6"></div>
+    |
+    |
+    |                <div class="col-md-6" id="substep-detail-div-container">
+    |                    <div id="affix-marker2" data-spy="affix" data-offset-top="200"></div>
+    |                    <div id="substep-usage-detail" class="detail-div"></div>
+    |                </div>
+    |            </div>
+    |
+    |
+    |        </div>
+    |    </div>
     |</div>
+    |
+    |
     |
     |<script type="text/javascript" src="js/jquery.min.js"></script>
     |<script type="text/javascript" src="js/bootstrap.min.js"></script>
@@ -119,11 +141,38 @@ trait UsageTreeTemplate {
     |                "multiple" : false
     |            }
     |        });
+    |
+    |        $("#substep-usage-tree").jstree({
+    |            "core":{
+    |                "data":substepDefUsageTreeData,
+    |                "progressive_render":true,
+    |                "themes" : {
+    |                    "dots" : true,
+    |                    "icons" : true
+    |                },
+    |                "multiple" : false
+    |            }
+    |        });
     |    });
     |
-    |    function formatStackElement(item, index){
-    |        return "<li>" + item + "</li>"
-    |    }
+    |    $(function () {
+    |        $('#substep-usage-tree')
+    |                .on('select_node.jstree', function (e, data) {
+    |
+    |                    var liattr = data.node.li_attr["data-substep-def-call"]
+    |                    if (typeof liattr === "undefined"){
+    |                        $("#substep-usage-detail").html("");
+    |                    }
+    |                    else {
+    |
+    |                        var substepDefDetail = "<p>" + data.node.li_attr["data-substep-def-call"] +"</p>"
+    |
+    |                        $("#substep-usage-detail").html(substepDefDetail);
+    |
+    |                    }
+    |
+    |                }).jstree();
+    |    });
     |
     |    $(function () {
     |        $('#step-impls-usage-tree')
@@ -181,6 +230,32 @@ trait UsageTreeTemplate {
     |
     |                }).jstree();
     |    });
+    |
+    |    $(function () {
+    |        $('#substep-usage-tree')
+    |                .on('ready.jstree', function (e, data) {
+    |
+    |                    $("li[data-substep-def]").each(function(i, li) {
+    |
+    |                        // li/a/i - insert into there
+    |                        var treeIconPlaceholder = $(li).find("> a > i")
+    |
+    |
+    |                        var passPc = parseFloat($(li).attr("data-substepdef-passpc"))
+    |                        var failPC = parseFloat($(li).attr("data-substepdef-failpc"))
+    |                        var notRunPC = parseFloat($(li).attr("data-substepdef-notrunpc"))
+    |
+    |                        var context = {pc: passPc};
+    |                        var html    = svgTemplate(context);
+    |
+    |                        $(treeIconPlaceholder).html(html)
+    |                    });
+    |
+    |                }).jstree();
+    |    });
+    |
+    |
+    |
     |
     |</script>
     |

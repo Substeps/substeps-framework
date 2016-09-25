@@ -20,8 +20,6 @@ import scala.collection.JavaConverters._
   */
 class ExecutionResultsCollectorTest extends FlatSpec with ShouldMatchers{
 
-  // TODO build up a full Execution hierarchy
-
   lazy val singleFeatureSingleScenario = {
 
     val nonFailMethod: Method = getNonFailMethod

@@ -4,7 +4,7 @@
   "lineNumber":0,
   "result":"CHILD_FAILED",
   "id":50,
-  "executionDurationMillis":3,
+  "executionDurationMillis":7,
   "description":"A basic failing scenario",
   "children":[
     {
@@ -13,7 +13,7 @@
       "lineNumber":2,
       "result":"PASSED",
       "id":44,
-      "executionDurationMillis":0,
+      "executionDurationMillis":1,
       "description":"PassingSubstepDef",
       "children":[
         {
@@ -73,7 +73,7 @@
       "lineNumber":5,
       "result":"CHILD_FAILED",
       "id":48,
-      "executionDurationMillis":3,
+      "executionDurationMillis":5,
       "description":"FailingSubstepDef",
       "children":[
         {
@@ -82,7 +82,7 @@
           "lineNumber":6,
           "result":"FAILED",
           "id":47,
-          "executionDurationMillis":1,
+          "executionDurationMillis":4,
           "description":"GenerateFailure",
           "method":"public scala.runtime.Nothing$ org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.generateFailure()",
           "children":[
@@ -179,7 +179,7 @@
             "java.lang.reflect.Method.invoke(Method.java:497)",
             "com.intellij.rt.execution.application.AppMain.main(AppMain.java:147)"
           ],
-          "screenshot":"A_basic_failing_scenario/2heGq7Jt49",
+          "screenshot":"A_basic_failing_scenario/2eFeTFvPKG",
           "source":"GenerateFailure"
         }
       ],
