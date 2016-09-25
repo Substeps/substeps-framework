@@ -121,11 +121,14 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
 
         this.runner = this.runTestsInForkedVM ? createForkedRunner() : createInProcessRunner();
 
-        executeConfigs();
+        try {
+            executeConfigs();
 
-        processBuildData();
-
-        this.runner.shutdown();
+            processBuildData();
+        }
+        finally {
+            this.runner.shutdown();
+        }
     }
 
 
@@ -219,17 +222,39 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
     private void processBuildData() throws MojoFailureException {
 
         if (reportBuilder == null && this.executionReportBuilder != null) {
+
             this.executionReportBuilder.buildReport();
         }
 
 
+        StringBuilder buf = new StringBuilder();
+        for (String s : this.session.getGoals()){
+            buf.append(s);
+            buf.append(" ");
+        }
+
+        this.getLog().info("this.session.getGoals(): " + buf.toString());
+
+        List<String> goals = this.session.getGoals();
+
         if (this.buildFailureManager.testSuiteFailed()) {
 
-            this.session.getResult().addException(new MojoFailureException("Substep Execution failed:\n"
-                    + this.buildFailureManager.getBuildFailureInfo()));
+            MojoFailureException e = new MojoFailureException("Substep Execution failed:\n"
+                    + this.buildFailureManager.getBuildFailureInfo());
+
 
             // actually throwing an exception results in the build terminating immediately
             // - not really desireable as it stops the report from being built in the verify phase
+
+            if (goals.contains("verify") || goals.contains("install") || goals.contains("deploy")){
+
+                // we don't want to throw the exception - it will be thrown in the reportbuildermojo
+                getLog().info("Not immediately failing the build, deferring..");
+                this.session.getResult().addException(e);
+            }
+            else {
+                throw e;
+            }
 
         } else if (!this.buildFailureManager.testSuiteCompletelyPassed()) {
             // print out the failure string (but won't include any failures)
