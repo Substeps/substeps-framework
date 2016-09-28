@@ -32,6 +32,9 @@ public class StepImplementationNode extends ExecutionNode implements StepNode {
     private final transient Class<?> targetClass;
     private final transient Method targetMethod;
 
+    private final String targetClassName;
+    private final String methodName;
+
     private final Set<String> tags;
 
     // FIXME: RB I'd prefer this to be final, it's like this because of the builder.
@@ -46,6 +49,19 @@ public class StepImplementationNode extends ExecutionNode implements StepNode {
         this.targetMethod = targetMethod;
         this.setDepth(depth);
         this.tags = tags;
+
+        if (targetClass.getDeclaringClass() != null) {
+            this.targetClassName = targetClass.getDeclaringClass().getName();
+        }
+        else {
+            this.targetClassName = targetClass.getName();
+        }
+        if (targetMethod != null){
+            this.methodName = targetMethod.getName();
+        }
+        else {
+            this.methodName = null;
+        }
     }
 
 
@@ -138,8 +154,7 @@ public class StepImplementationNode extends ExecutionNode implements StepNode {
 
     @Override
     public String toDebugString() {
-        return super.toDebugString() + " impl: "
-                + this.targetMethod.getDeclaringClass().getSimpleName() + "." + this.targetMethod.getName();
+        return super.toDebugString() + " impl: " + targetClassName + "." + methodName;
     }
 
 

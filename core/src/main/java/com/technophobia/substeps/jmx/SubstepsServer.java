@@ -171,10 +171,9 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
 
         this.notificationSequenceNumber++;
 
-
         n.setUserData(getBytes(node.getResult()));
 
-        this.log.trace("sending notification for node id: " + node.getId() + " sequence: "
+        log.trace("sending notification for node id: " + node.getId() + " sequence: "
                 + this.notificationSequenceNumber);
 
         sendNotification(n);

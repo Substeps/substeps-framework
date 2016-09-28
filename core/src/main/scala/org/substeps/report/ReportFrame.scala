@@ -20,7 +20,7 @@ trait ReportFrameTemplate {
        |            <div class="progress">
        |                <div class="progress-bar progress-bar-success" style="width: ${counters.successPC}%;">${counters.successPC} Success (${counters.passed})</div>
        |                <div class="progress-bar progress-bar-danger" style="width: ${counters.failedPC}%">${counters.failedPC}% Failure (${counters.failed})</div>
-       |                <div class="progress-bar progress-bar-warning progress-bar-striped" style="width: ${counters.skippedPC}%">${counters.skipped}%</div>
+       |                <div class="progress-bar progress-bar-warning" style="width: ${counters.skippedPC}%">${counters.skippedPC}% Not run (${counters.skipped})</div>
        |            </div>
        |
        |        </div>

@@ -26,6 +26,7 @@ Requirements
   * 3 progress bars rather than one, toggle to show data in original tabular form
   * Step implementation method usage report (Beta)
   * Replaced hand rolled recursive File listing with commons.io implementation
+* Fixed Issue #24 - ExecutionResultsCollector didn't work with forked mode
 
 1.0.3
 -----

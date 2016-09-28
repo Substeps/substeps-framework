@@ -34,7 +34,8 @@ object ExecutionResultsCollector{
 
 class ExecutionResultsCollector extends  IExecutionResultsCollector {
 
-  private val log: Logger = LoggerFactory.getLogger(classOf[ExecutionResultsCollector])
+  @transient
+  private lazy val log: Logger = LoggerFactory.getLogger(classOf[ExecutionResultsCollector])
 
   var dataDir: File = new File(".")
   var pretty : Boolean = false
@@ -49,11 +50,14 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
   @transient
   lazy val UTF8 = Charset.forName("UTF-8")
 
-  var featureToResultsDirMap: Map[FeatureNode, File] = Map()
+  var featureToResultsDirMap: Map[Long, File] = Map()
 
   val scenarioSummaryMap = new mutable.HashMap[Long, (BasicScenarioNode, File)]
 
   def onNodeFailed(node: IExecutionNode, cause: Throwable): Unit = {
+
+    log.debug("ExecutionResultsCollector nodeFailed: " + node.getId)
+
 
     node match {
       case scenarioNode :  BasicScenarioNode => {
@@ -61,8 +65,11 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
 
         val feature = getFeatureFromNode(scenarioNode)
 
-        featureToResultsDirMap.get(feature) match {
-          case None => log.error("no report dir for feature: " + feature.getFilename)
+        featureToResultsDirMap.get(feature.getId) match {
+          case None => {
+            log.error("scenario node failed - no report dir for feature: " + feature.getFilename + " id: " + feature.getId)
+
+          }
           case Some(dir) => {
 
             // write out a results file for this scenario
@@ -81,26 +88,22 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
         log.debug("feature node failed")
 
         // write a summary file for the feature
-        featureToResultsDirMap.get(featureNode) match {
-          case None => log.error("no report dir for feature: " + featureNode.getFilename)
+        featureToResultsDirMap.get(featureNode.getId) match {
+          case None => {
+            log.error("feature node failed - no report dir for feature: " + featureNode.getFilename+ " id: " + featureNode.getId)
+          }
           case Some(dir) => {
             val summaryFile = new File(dir, dir.getName + ".json")
 
             Files.write(generateJson(featureNode), summaryFile, UTF8)
-
           }
         }
-
       }
       case rootNode : RootNode => {
         log.debug("root node failed")
         val summaryFile = new File(dataDir, "results.json")
 
         Files.write(generateJson(rootNode), summaryFile, UTF8)
-
-
-
-
       }
 
       case _ => log.debug("other node failed")
@@ -111,7 +114,7 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
   def onNodeStarted(node: IExecutionNode): Unit = {
 
     // do we care about nodes starting ?
-
+    log.debug("ExecutionResultsCollector nodeStarted: " + node.getId)
   }
 
   def getFeatureFromNode(node: IExecutionNode) : FeatureNode = {
@@ -127,13 +130,18 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
 
   def onNodeFinished(node: IExecutionNode): Unit = {
 
+    log.debug("ExecutionResultsCollector nodeFinished: " + node.getId)
+
+
     node match {
       case scenarioNode :  BasicScenarioNode => {
         log.debug("basic scenario finished")
         val feature = getFeatureFromNode(scenarioNode)
 
-        featureToResultsDirMap.get(feature) match {
-          case None => log.error("no report dir for feature: " + feature.getFilename)
+        featureToResultsDirMap.get(feature.getId) match {
+          case None => {
+            log.error("basic scenario node finished - no report dir for feature: " + feature.getFilename + " id: " + feature.getId)
+          }
           case Some(dir) => {
 
             // write out a results file for this scenario
@@ -152,8 +160,10 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
         log.debug("feature node finished")
 
         // write a summary file for the feature
-        featureToResultsDirMap.get(featureNode) match {
-          case None => log.error("no report dir for feature: " + featureNode.getFilename)
+        featureToResultsDirMap.get(featureNode.getId) match {
+          case None => {
+            log.error("feature node finished - no report dir for feature: " + featureNode.getFilename + " id: " + featureNode.getId)
+          }
           case Some(dir) => {
             val summaryFile = new File(dir, dir.getName + ".json")
 
@@ -172,9 +182,6 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
       case stepImplNode : StepImplementationNode => {
         log.debug("stepImpl Node finished")
 
-
-
-        stepImplNode.getParent
       }
       case _ => log.debug("other node finished")
     }
@@ -182,6 +189,8 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
   }
 
   def onNodeIgnored(node: IExecutionNode): Unit = {
+
+    log.debug("ExecutionResultsCollector nodeIgnored: " + node.getId)
 
     node match {
       case scenarioNode :  BasicScenarioNode => {
@@ -199,9 +208,9 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
       rootNode.getChildren.asScala.map(f => {
 
         val featureResultsDir =
-          featureToResultsDirMap.get(f) match {
+          featureToResultsDirMap.get(f.getId) match {
             case None => {
-              log.error("no report dir for feature: " + f.getFilename)
+              log.error("generateJson for RootNode - no report dir for feature: " + f.getFilename)
               ""
             }
             case Some(dir) => dir.getName
@@ -330,18 +339,19 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
       }
     }
 
-    log.debug("collecting data into " + dataDir.getAbsolutePath)
-
+    log.info("collecting data into " + dataDir.getAbsolutePath)
 
     // create subdirs for each feature
 
     val featureNodes = rootNode.getChildren.asScala
 
+    log.debug("init dirs for " + featureNodes.size + " features")
+
     val featureNames =
-    featureNodes.map(featureNode => featureNode.getFilename)
+      featureNodes.map(featureNode => featureNode.getFilename)
 
     val dupes =
-      if (featureNames.distinct.size < featureNames.size){
+      if (featureNames.distinct.size <= featureNames.size){
       // take into account the same feature files in different dirs - featureNode.getFileUri
 
       val uniqueFeatureNamesMap: Map[String, mutable.Buffer[String]] = featureNames.groupBy(identity)
@@ -372,7 +382,9 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
 
       featureResultsDir.mkdir()
 
-      featureNode -> featureResultsDir
+      log.debug("mapping feature node id " + featureNode.getId + " to dir: "  + featureResultsDir.getAbsolutePath)
+
+      featureNode.getId -> featureResultsDir
     }).toMap
   }
 }

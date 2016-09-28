@@ -144,4 +144,25 @@ public class ExecutionNodeResult implements Serializable {
         return substepExecutionFailure;
     }
 
+    public Long getStartedAt() {
+        return startedAt;
+    }
+
+    public Long getCompletedAt() {
+        return completedAt;
+    }
+
+    public void setStartedAt(Long startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public void setCompletedAt(Long completedAt) {
+        this.completedAt = completedAt;
+    }
+
+    public void setSubstepExecutionFailure(SubstepExecutionFailure substepExecutionFailure) {
+        this.substepExecutionFailure = substepExecutionFailure;
+    }
+
+
 }
