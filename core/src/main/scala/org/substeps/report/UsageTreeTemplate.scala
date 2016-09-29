@@ -25,6 +25,10 @@ trait UsageTreeTemplate {
     |            stroke-width: 32;
     |        }
     |
+    |        circle.not-run {
+    |            stroke: #f0ad4e;
+    |        }
+    |
     |        svg {
     |            width: 22px; height: 22px;
     |            transform: rotate(-90deg);
@@ -35,7 +39,13 @@ trait UsageTreeTemplate {
     |    </style>
     |
     |    <script id="pie-svg-template" type="text/x-handlebars-template">
-    |        <svg viewBox="0 0 32 32" style="margin-right:4px"><title>{{pc}}%</title><circle r="16" cx="16" cy="16" stroke-dasharray="{{pc}} 100"></circle></svg>
+    |
+    |
+    |        <svg viewBox="0 0 32 32" style="margin-right:4px">
+    |        <title>{{passPC}}% Pass {{notRunPC}}% Not run {{failPC}}% Fail</title>
+    |        <circle r="16" cx="16" cy="16" stroke-dasharray="{{passPC}} 100"></circle>
+    |        <circle class="not-run" r="16" cx="16" cy="16" stroke-dashoffset="-{{passPC}}" stroke-dasharray="{{notRunPC}} 100" fill-opacity="0.0"></circle>
+    |        </svg>
     |    </script>
     |
     |</head>
@@ -222,7 +232,7 @@ trait UsageTreeTemplate {
     |                        var failPC = parseFloat($(li).attr("data-stepimpl-failpc"))
     |                        var notRunPC = parseFloat($(li).attr("data-stepimpl-notrunpc"))
     |
-    |                        var context = {pc: passPc};
+    |                        var context = {passPC: passPc, notRunPC : notRunPC, failPC : failPC};
     |                        var html    = svgTemplate(context);
     |
     |                        $(treeIconPlaceholder).html(html)
@@ -245,7 +255,7 @@ trait UsageTreeTemplate {
     |                        var failPC = parseFloat($(li).attr("data-substepdef-failpc"))
     |                        var notRunPC = parseFloat($(li).attr("data-substepdef-notrunpc"))
     |
-    |                        var context = {pc: passPc};
+    |                        var context = {passPC: passPc, notRunPC : notRunPC, failPC : failPC};
     |                        var html    = svgTemplate(context);
     |
     |                        $(treeIconPlaceholder).html(html)

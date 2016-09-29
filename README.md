@@ -27,6 +27,7 @@ Requirements
   * Step implementation method usage report (Beta)
   * Replaced hand rolled recursive File listing with commons.io implementation
 * Fixed Issue #24 - ExecutionResultsCollector didn't work with forked mode
+* Added 3rd colour to usage report pie charts to show not run state
 
 1.0.3
 -----
