@@ -4,7 +4,7 @@
   "lineNumber":0,
   "result":"CHILD_FAILED",
   "id":50,
-  "executionDurationMillis":7,
+  "executionDurationMillis":4,
   "description":"A basic failing scenario",
   "children":[
     {
@@ -13,7 +13,7 @@
       "lineNumber":2,
       "result":"PASSED",
       "id":44,
-      "executionDurationMillis":1,
+      "executionDurationMillis":0,
       "description":"PassingSubstepDef",
       "children":[
         {
@@ -73,7 +73,7 @@
       "lineNumber":5,
       "result":"CHILD_FAILED",
       "id":48,
-      "executionDurationMillis":5,
+      "executionDurationMillis":4,
       "description":"FailingSubstepDef",
       "children":[
         {
@@ -82,7 +82,7 @@
           "lineNumber":6,
           "result":"FAILED",
           "id":47,
-          "executionDurationMillis":4,
+          "executionDurationMillis":1,
           "description":"GenerateFailure",
           "method":"public scala.runtime.Nothing$ org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.generateFailure()",
           "children":[
@@ -101,7 +101,7 @@
             "com.technophobia.substeps.runner.node.AbstractNodeRunner.run(AbstractNodeRunner.java:47)",
             "com.technophobia.substeps.runner.node.SubstepNodeRunner.visit(SubstepNodeRunner.java:70)",
             "com.technophobia.substeps.runner.node.SubstepNodeRunner.visit(SubstepNodeRunner.java:31)",
-            "com.technophobia.substeps.execution.node.StepImplementationNode.dispatch(StepImplementationNode.java:116)",
+            "com.technophobia.substeps.execution.node.StepImplementationNode.dispatch(StepImplementationNode.java:132)",
             "com.technophobia.substeps.runner.node.SubstepNodeRunner.execute(SubstepNodeRunner.java:56)",
             "com.technophobia.substeps.runner.node.SubstepNodeRunner.execute(SubstepNodeRunner.java:31)",
             "com.technophobia.substeps.runner.node.AbstractNodeRunner.run(AbstractNodeRunner.java:47)",
@@ -179,7 +179,7 @@
             "java.lang.reflect.Method.invoke(Method.java:497)",
             "com.intellij.rt.execution.application.AppMain.main(AppMain.java:147)"
           ],
-          "screenshot":"A_basic_failing_scenario/2eFeTFvPKG",
+          "screenshot":"/simple_feature_file.feature.results/A_basic_failing_scenario/9ps0iwZ307",
           "source":"GenerateFailure"
         }
       ],

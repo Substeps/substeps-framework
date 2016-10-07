@@ -4,7 +4,7 @@
   "lineNumber":0,
   "result":"PASSED",
   "id":56,
-  "executionDurationMillis":1,
+  "executionDurationMillis":0,
   "description":"a basic scenario outline one",
   "children":[
     {
@@ -53,7 +53,7 @@
       "lineNumber":9,
       "result":"PASSED",
       "id":55,
-      "executionDurationMillis":1,
+      "executionDurationMillis":0,
       "description":"PassingStepImpl with param 1",
       "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.passingStepImplWithParam(java.lang.String)",
       "children":[

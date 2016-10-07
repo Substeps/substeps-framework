@@ -3,7 +3,7 @@
   "description":null,
   "result":"FAILED",
   "id":72,
-  "executionDurationMillis":962,
+  "executionDurationMillis":607,
   "features":[
     {
       "nodeId":51,
@@ -16,6 +16,6 @@
       "result":"CHILD_FAILED"
     }
   ],
-  "timestamp":1474753768268,
+  "timestamp":1475823914962,
   "environment":"localhost"
 }

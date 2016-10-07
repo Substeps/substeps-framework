@@ -288,7 +288,7 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
        Option(scenarioNode.getChildren) match {
           case Some(childNodes) => {
             childNodes.asScala.map(child => {
-              NodeDetail.getData(child, screenshotsDir )
+              NodeDetail.getData(child, screenshotsDir, dataDir )
             })
           }
           case _ => List()

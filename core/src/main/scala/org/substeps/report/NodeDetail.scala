@@ -110,7 +110,8 @@ case object NodeDetail {
 
     List(node) ++ children
   }
-  def getData(stepNode: StepNode, screenshotsDir : File) : NodeDetail = {
+
+  def getData(stepNode: StepNode, screenshotsDir : File, baseDataDir : File) : NodeDetail = {
     stepNode match {
       case stepImpl : StepImplementationNode => {
 
@@ -135,8 +136,7 @@ case object NodeDetail {
 
               Files.write(result.getFailure.getScreenshot, screenshotFile)
 
-              val path = Paths.get(screenshotsDir.getName, screenshotFile.getName)
-              Some(path.toString)
+              Some(screenshotFile.getAbsolutePath.stripPrefix(baseDataDir.getAbsolutePath))
             }
             else {
               None
@@ -155,7 +155,7 @@ case object NodeDetail {
         Option(substepNode.getChildren) match {
           case Some(childNodes) => {
             childNodes.asScala.map(child => {
-              NodeDetail.getData(child, screenshotsDir)
+              NodeDetail.getData(child, screenshotsDir, baseDataDir)
             })
           }
           case _ => List()

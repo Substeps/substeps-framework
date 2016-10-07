@@ -61,7 +61,27 @@ background-color: transparent;
     position: relative;
 }
 
+#step-impl-detail-div-container{
+    position: relative;
+}
+
+#substep-detail-div-container{
+    position: relative;
+}
+
 #feature-detail {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+}
+
+#substep-usage-detail{
+    position:absolute;
+    top: 0px;
+    left: 0px;
+}
+
+#step-impl-usage-detail{
     position:absolute;
     top: 0px;
     left: 0px;
@@ -102,7 +122,7 @@ i.jstree-icon.jstree-themeicon.FAILED.jstree-themeicon-custom
 
 i.jstree-icon.jstree-themeicon.NOT_RUN.jstree-themeicon-custom
 {
-    background-image: url("../img/NOT_RUN.png");
+    background-image: url("../img/NOT_RUN2.png");
     background-size: auto;
     background-position: center center;
 }

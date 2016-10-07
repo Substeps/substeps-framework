@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter
 import com.google.common.io.Files
 import com.technophobia.substeps.execution.ExecutionResult
 import com.technophobia.substeps.report.{DefaultExecutionReportBuilder, DetailedJsonBuilder}
+import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringEscapeUtils
 import org.json4s._
 import org.json4s.native.Serialization
@@ -72,9 +73,73 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
   @BeanProperty
   var reportDir : File = new File(".")
-
+  lazy val dataDir = new File(reportDir, "data")
 
   private val log: Logger = LoggerFactory.getLogger(classOf[ReportBuilder])
+
+
+  def buildFromDirectory(sourceDataDir: File): Unit = {
+
+    reportDir.mkdir()
+
+    dataDir.mkdir()
+
+    FileUtils.copyDirectory(new File(sourceDataDir.getPath), dataDir)
+
+    val detailData = createFile( "detail_data.js")
+
+    val srcData: (RootNodeSummary, List[(FeatureSummary, List[NodeDetail])]) = readModel(dataDir)
+
+    createDetailData(detailData,srcData)
+
+    val resultsTreeJs = createFile( "substeps-results-tree.js")
+
+    createTreeData2(resultsTreeJs,srcData)
+
+    val reportFrameHTML = createFile( "report_frame.html")
+
+
+    val stats : ExecutionStats = buildExecutionStats(srcData)
+
+
+    val description = Option(srcData._1.description).getOrElse("Substeps Test Report")
+
+    val localDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(srcData._1.timestamp), ZoneId.systemDefault());
+    val dateTimeString = localDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss"))
+
+    val reportFrameHtml = buildReportFrame(description, dateTimeString, stats,
+      buildStatsBlock("Features", stats.featuresCounter),
+      buildStatsBlock("Scenarios", stats.scenarioCounters),
+      buildStatsBlock("Scenario steps", stats.stepCounters))
+
+    val writer = Files.newWriter(reportFrameHTML, Charset.defaultCharset)
+    writer.append(reportFrameHtml)
+    writer.flush()
+    writer.close()
+
+    copyStaticResources()
+
+    val statsByTag = buildExecutionStatsByTag(srcData)
+
+    val statsJsFile = createFile("substeps-stats-by-tag.js")
+    writeStatsJs(statsJsFile, statsByTag)
+
+
+    val usageTreeDataFile = createFile("substeps-usage-tree.js")
+
+    createUsageTree(usageTreeDataFile, srcData)
+
+    val usgaeTreeHTMLFile  = createFile( "usage-tree.html")
+
+    val usageTreeHtml = buildUsageTree()
+    val writer2 = Files.newWriter(usgaeTreeHTMLFile, Charset.defaultCharset)
+    writer2.append(usageTreeHtml)
+    writer2.flush()
+    writer2.close()
+
+  }
+
+
 
   def writeStatsJs(statsJsFile: File, stats: (List[Counters], List[Counters])) = {
 
@@ -338,18 +403,26 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     var nextId = allNodeDetails.map(n => n.id).max + 1
 
 
-    val stepImplNodeDetailstoUsages =
+    val stepImplNodeDetailsToUsages =
     stepImplsbyUniqueMethood.toList.map(e => {
       // convert the method reference to an examplar instance of such a node detail
-      (allNodeDetails.find(n => n.method == Some(e._1)).get,  e._2)
 
-    }).sortBy(_._1.source.get)
+      (allNodeDetails.filter(n => n.method == Some(e._1)),  e._2)
+
+      //(allNodeDetails.find(n => n.method == Some(e._1)).get,  e._2)
+
+    }).sortBy(_._1.head.source.get)
 
 
 
-    stepImplNodeDetailstoUsages.map(e => {
+    stepImplNodeDetailsToUsages.map(e => {
 
-      val exemplarNodeDetail = e._1
+      val exemplarNodeDetail = e._1.head
+
+      val nodeIds =
+        e._1.map(n => {
+          n.id
+        })
 
       // child nodes for each usage
       val stepImplJsTreeNodes =
@@ -389,7 +462,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
       val jstreeNode = JsTreeNode(ReportBuilder.uniqueId(nextId),
         StringEscapeUtils.ESCAPE_HTML4.translate(exemplarNodeDetail.source.get), "method", Some(stepImplJsTreeNodes), State(true),
         Some(Map("data-stepimpl-method" -> s"${exemplarNodeDetail.method.get}", "data-stepimpl-passpc" -> s"${passPC}",
-          "data-stepimpl-failpc" -> s"${failPC}", "data-stepimpl-notrunpc" -> s"${notRunPC}")))
+          "data-stepimpl-failpc" -> s"${failPC}", "data-stepimpl-notrunpc" -> s"${notRunPC}", "data-stepimpl-node-ids" -> nodeIds.mkString(","))))
 
       nextId = nextId + 1
 
@@ -399,62 +472,6 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
   }
 
 
-  def buildFromDirectory(sourceDataDir: File): Unit = {
-
-    reportDir.mkdir()
-
-    val detailData = createFile( "detail_data.js")
-
-    val srcData: (RootNodeSummary, List[(FeatureSummary, List[NodeDetail])]) = readModel(sourceDataDir)
-
-    createDetailData(detailData,srcData)
-
-    val resultsTreeJs = createFile( "substeps-results-tree.js")
-
-    createTreeData2(resultsTreeJs,srcData)
-
-    val reportFrameHTML = createFile( "report_frame.html")
-
-
-    val stats : ExecutionStats = buildExecutionStats(srcData)
-
-
-    val description = Option(srcData._1.description).getOrElse("Substeps Test Report")
-
-    val localDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(srcData._1.timestamp), ZoneId.systemDefault());
-    val dateTimeString = localDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss"))
-
-    val reportFrameHtml = buildReportFrame(description, dateTimeString, stats,
-      buildStatsBlock("Features", stats.featuresCounter),
-      buildStatsBlock("Scenarios", stats.scenarioCounters),
-      buildStatsBlock("Scenario steps", stats.stepCounters))
-
-    val writer = Files.newWriter(reportFrameHTML, Charset.defaultCharset)
-    writer.append(reportFrameHtml)
-    writer.flush()
-    writer.close()
-
-    copyStaticResources()
-
-    val statsByTag = buildExecutionStatsByTag(srcData)
-
-    val statsJsFile = createFile("substeps-stats-by-tag.js")
-    writeStatsJs(statsJsFile, statsByTag)
-
-
-    val usageTreeDataFile = createFile("substeps-usage-tree.js")
-
-    createUsageTree(usageTreeDataFile, srcData)
-
-    val usgaeTreeHTMLFile  = createFile( "usage-tree.html")
-
-    val usageTreeHtml = buildUsageTree()
-    val writer2 = Files.newWriter(usgaeTreeHTMLFile, Charset.defaultCharset)
-    writer2.append(usageTreeHtml)
-    writer2.flush()
-    writer2.close()
-
-  }
 
   def copyStaticResources() = {
 
@@ -657,9 +674,14 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     |"runningDurationMillis":${nodeDetail.executionDurationMillis.getOrElse(-1)},
     |"runningDurationString":"${nodeDetail.executionDurationMillis.getOrElse("n/a")} milliseconds","description":"${StringEscapeUtils.escapeEcmaScript(nodeDetail.description)}",""".stripMargin.replaceAll("\n", ""))
 
+    nodeDetail.method.map(s => writer.append(s""""method":"${StringEscapeUtils.escapeEcmaScript(s)}",""") )
+
+    writer.append(s""""lineNum":"${nodeDetail.lineNumber}",""")
 
     nodeDetail.exceptionMessage.map(s => writer.append(s""""emessage":"${StringEscapeUtils.escapeEcmaScript(s)}",""") )
-    nodeDetail.screenshot.map(s => writer.append(s"""screenshot:"${s}",""") )
+
+
+    nodeDetail.screenshot.map(s => writer.append(s"""screenshot:"${dataDir + s}",""") )
     nodeDetail.stackTrace.map(s => writer.append(s"""stacktrace:[${s.mkString("\"", "\",\n\"", "\"")}],"""))
 
     writer.append(s""""children":[""")

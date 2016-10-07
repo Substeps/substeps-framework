@@ -242,6 +242,7 @@ trait ReportFrameTemplate {
        |</div>
        |
        |<script type="text/javascript" src="js/jquery.min.js"></script>
+       |<script type="text/javascript" src="js/jquery-ui.min.js"></script>
        |<script type="text/javascript" src="js/bootstrap.min.js"></script>
        |<script type="text/javascript" src="js/datatables.min.js"></script>
        |<script type="text/javascript" src="js/jstree.min.js"></script>
@@ -249,6 +250,7 @@ trait ReportFrameTemplate {
        |<script type="text/javascript" src="substeps-results-tree.js"></script>
        |<script type="text/javascript" src="detail_data.js"></script>
        |<script type="text/javascript" src="substeps-stats-by-tag.js"></script>
+       |
        |
        |</body>
        |</html>

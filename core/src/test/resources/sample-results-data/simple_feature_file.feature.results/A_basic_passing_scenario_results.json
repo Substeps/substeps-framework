@@ -4,7 +4,7 @@
   "lineNumber":0,
   "result":"PASSED",
   "id":42,
-  "executionDurationMillis":9,
+  "executionDurationMillis":3,
   "description":"A basic passing scenario",
   "children":[
     {
@@ -13,7 +13,7 @@
       "lineNumber":5,
       "result":"PASSED",
       "id":37,
-      "executionDurationMillis":8,
+      "executionDurationMillis":2,
       "description":"PassingStepImpl",
       "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.passingStepImpl()",
       "children":[
@@ -27,7 +27,7 @@
       "lineNumber":2,
       "result":"PASSED",
       "id":39,
-      "executionDurationMillis":0,
+      "executionDurationMillis":1,
       "description":"PassingSubstepDef",
       "children":[
         {

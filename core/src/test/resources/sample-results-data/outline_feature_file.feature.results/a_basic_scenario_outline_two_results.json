@@ -13,7 +13,7 @@
       "lineNumber":7,
       "result":"PASSED",
       "id":58,
-      "executionDurationMillis":0,
+      "executionDurationMillis":1,
       "description":"PassingStepImpl",
       "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.passingStepImpl()",
       "children":[
@@ -27,7 +27,7 @@
       "lineNumber":2,
       "result":"PASSED",
       "id":60,
-      "executionDurationMillis":1,
+      "executionDurationMillis":0,
       "description":"PassingSubstepDef",
       "children":[
         {

@@ -4,7 +4,7 @@
   "lineNumber":0,
   "result":"CHILD_FAILED",
   "id":68,
-  "executionDurationMillis":8,
+  "executionDurationMillis":5,
   "description":"a basic scenario outline three",
   "children":[
     {
@@ -13,7 +13,7 @@
       "lineNumber":7,
       "result":"PASSED",
       "id":64,
-      "executionDurationMillis":1,
+      "executionDurationMillis":0,
       "description":"PassingStepImpl",
       "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.passingStepImpl()",
       "children":[
@@ -53,7 +53,7 @@
       "lineNumber":9,
       "result":"FAILED",
       "id":67,
-      "executionDurationMillis":0,
+      "executionDurationMillis":5,
       "description":"PassingStepImpl with fail",
       "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.passingStepImplWithParam(java.lang.String)",
       "children":[
@@ -72,7 +72,7 @@
         "com.technophobia.substeps.runner.node.AbstractNodeRunner.run(AbstractNodeRunner.java:47)",
         "com.technophobia.substeps.runner.node.BasicScenarioNodeRunner.visit(BasicScenarioNodeRunner.java:65)",
         "com.technophobia.substeps.runner.node.BasicScenarioNodeRunner.visit(BasicScenarioNodeRunner.java:28)",
-        "com.technophobia.substeps.execution.node.StepImplementationNode.dispatch(StepImplementationNode.java:116)",
+        "com.technophobia.substeps.execution.node.StepImplementationNode.dispatch(StepImplementationNode.java:132)",
         "com.technophobia.substeps.runner.node.BasicScenarioNodeRunner.execute(BasicScenarioNodeRunner.java:50)",
         "com.technophobia.substeps.runner.node.BasicScenarioNodeRunner.execute(BasicScenarioNodeRunner.java:28)",
         "com.technophobia.substeps.runner.node.AbstractNodeRunner.run(AbstractNodeRunner.java:47)",
@@ -150,7 +150,7 @@
         "java.lang.reflect.Method.invoke(Method.java:497)",
         "com.intellij.rt.execution.application.AppMain.main(AppMain.java:147)"
       ],
-      "screenshot":"a_basic_scenario_outline_three/oLlL4lMirK",
+      "screenshot":"/outline_feature_file.feature.results/a_basic_scenario_outline_three/xtfQR7jXJB",
       "source":"PassingStepImpl with <param>"
     }
   ],

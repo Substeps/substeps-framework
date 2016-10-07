@@ -5,6 +5,14 @@ package org.substeps.report
   */
 trait UsageTreeTemplate {
 
+  /*
+    * SVG Pie chart refs:
+    * https://css-tricks.com/using-svg/
+    * https://css-tricks.com/how-to-make-charts-with-svg/
+    * -> https://www.smashingmagazine.com/2015/07/designing-simple-pie-charts-with-css/
+    * @return
+    */
+
   def buildUsageTree() =
   """<!DOCTYPE html>
     |<html lang="en">
@@ -26,7 +34,7 @@ trait UsageTreeTemplate {
     |        }
     |
     |        circle.not-run {
-    |            stroke: #f0ad4e;
+    |           stroke: #f0ad4e;
     |        }
     |
     |        svg {
@@ -46,6 +54,24 @@ trait UsageTreeTemplate {
     |        <circle r="16" cx="16" cy="16" stroke-dasharray="{{passPC}} 100"></circle>
     |        <circle class="not-run" r="16" cx="16" cy="16" stroke-dashoffset="-{{passPC}}" stroke-dasharray="{{notRunPC}} 100" fill-opacity="0.0"></circle>
     |        </svg>
+    |    </script>
+    |
+    |    <script id="step-impl-usage-detail-template" type="text/x-handlebars-template">
+    |        <div class="row-fluid">
+    |            <h4>Usages</h4>
+    |        </div>
+    |        <div class="row-fluid">
+    |            <p style="word-break: break-all;">{{method}}</p>
+    |        </div>
+    |        {{{usageRows}}}
+    |    </script>
+    |
+    |    <script id="step-impl-usage-row-template" type="text/x-handlebars-template">
+    |        <div class="row-fluid">
+    |            <div class="col-md-2">{{{result}}}</div>
+    |            <div class="col-md-7">{{line}}</div>
+    |            <div class="col-md-3">{{file}}:{{lineNumber}}</div>
+    |        </div>
     |    </script>
     |
     |</head>
@@ -72,39 +98,56 @@ trait UsageTreeTemplate {
     |</nav>
     |
     |
-    |<div class="container-fluid">
-    |
-    |    <div class="panel panel-default">
-    |        <div class="panel-heading">
-    |            <h3 class="panel-title">Step Implementation Usage Tree</h3>
-    |        </div>
-    |        <div class="panel-body">
-    |
     |    <noscript>
     |        <h3>Please enable Javascript to view Test details</h3>
     |        <p>Non java script variants of this report were not viable, sorry.  We found that there was simply too much data to display and page load times were approaching unacceptable.</p>
     |        <p>Please enable javascript and reload this page</p>
     |    </noscript>
     |
-    |            <div id="test-detail" class="row-fluid">
+    |<div class="container-fluid" style="padding-top:10px">
+    |
+    |    <div class="panel panel-default">
+    |       <div class="panel-heading">
+    |            <div class="row-fluid">
+    |                <div class="col-md-11">
+    |                    <h3 class="panel-title">Step Implementation Usage Tree</h3>
+    |                </div>
+    |                <div class="col-md-1">
+    |                   <button id="stepimpl-usage-show-hide" class="btn btn-primary btn-xs pull-right" role="button"
+    |                     data-toggle="collapse" href="#step-impl-usage" aria-expanded="true" aria-controls="step-impl-usage">Hide</button>
+    |                </div>
+    |            </div>
+    |         </div>
+    |
+    |        <div class="panel-body">
+
+    |
+    |            <div id="step-impl-usage" class="row-fluid collapse in">
     |                <div id="step-impls-usage-tree" class="col-md-6"></div>
     |
-    |
-    |                <div class="col-md-6" id="detail-div-container">
-    |                    <div id="affix-marker" data-spy="affix" data-offset-top="200"></div>
-    |                    <div id="usage-detail" class="detail-div"></div>
-    |                </div>
+    |                <div class="col-md-6" id="step-impl-detail-div-container">
+    |                    <div id="step-impl-affix-marker" data-spy="affix" data-offset-top="200"></div>
+    |                    <div id="step-impl-usage-detail" class="detail-div"></div>
+    |                 </div>
     |            </div>
     |        </div>
     |    </div>
     |
     |    <div class="panel panel-default">
-    |        <div class="panel-heading">
-    |            <h3 class="panel-title">Substep Usage Tree</h3>
-    |        </div>
+    |          <div class="panel-heading">
+    |                 <div class="row-fluid">
+    |                    <div class="col-md-11">
+    |                       <h3 class="panel-title">Substep Usage Tree</h3>
+    |                    </div>
+    |                    <div class="col-md-1">
+    |                      <button type="button" id="substep-usage-show-hide" class="btn btn-primary btn-xs pull-right" role="button" data-toggle="collapse" href="#substep-usage" aria-expanded="true" aria-controls="substep-usage" autocomplete="off">Hide</button>
+    |                    </div>
+    |                </div>
+    |            </div>
+    |
     |        <div class="panel-body">
     |
-    |            <div id="substep-test-detail" class="row-fluid">
+    |            <div id="substep-usage" class="row-fluid collapse in">
     |                <div id="substep-usage-tree" class="col-md-6"></div>
     |
     |
@@ -122,8 +165,8 @@ trait UsageTreeTemplate {
     |
     |
     |<script type="text/javascript" src="js/jquery.min.js"></script>
+    |<script type="text/javascript" src="js/jquery-ui.min.js"></script>
     |<script type="text/javascript" src="js/bootstrap.min.js"></script>
-    |<script type="text/javascript" src="js/datatables.min.js"></script>
     |<script type="text/javascript" src="js/jstree.min.js"></script>
     |<script type="text/javascript" src="js/handlebars-v4.0.5.js"></script>
     |<!--<script type="text/javascript" src="js/substeps.js"></script>-->
@@ -137,8 +180,6 @@ trait UsageTreeTemplate {
     |    var svgTemplate = Handlebars.compile(source);
     |
     |    $(document).ready(function() {
-    |
-    |        console.log("doc ready rendering usage tree")
     |
     |        $("#step-impls-usage-tree").jstree({
     |            "core":{
@@ -191,19 +232,22 @@ trait UsageTreeTemplate {
     |                  var liattr = data.node.li_attr["data-stepimpl-method"]
     |
     |                    if (typeof liattr === "undefined"){
-    |                        $("#usage-detail").html("");
+    |                        $("#step-impl-usage-detail").html("");
     |                    }
     |                    else
     |                    {
-    |                        var detailhtml = "<p>" + data.node.li_attr["data-stepimpl-method"] +"</p>"
+    |                        var nodeIds = data.node.li_attr["data-stepimpl-node-ids"].split(",")
     |
-    |                        $("#usage-detail").html(detailhtml);
+    |                        var context = {method: data.node.li_attr["data-stepimpl-method"], usageRows : nodeIds.map(getStepImplUsageDetail).join(" ")};
+    |                        var detailhtml    = stepImplUsageDetailTemplate(context);
+    |
+    |                        $("#step-impl-usage-detail").html(detailhtml);
     |
     |                        // get the offset of where we should be?
-    |                        var topOffsetShouldbe = $("#detail-div-container").offset().top;
+    |                        var topOffsetShouldbe = $("#step-impl-detail-div-container").offset().top;
     |
     |                        // get the offset of the affixed div
-    |                        var affixOffset = $("#affix-marker").offset().top;
+    |                        var affixOffset = $("#step-impl-affix-marker").offset().top;
     |
     |                        // so the absolute position position, relative to the parent should be affixOffset - topOffsetShouldbe
     |                        var absPosition = affixOffset - topOffsetShouldbe;
@@ -212,7 +256,9 @@ trait UsageTreeTemplate {
     |                            absPosition = 0;
     |                        }
     |
-    |                        $("#usage-detail").css("top", absPosition + 'px');
+    |                        $("#step-impl-usage-detail").css("top", absPosition + 'px');
+    |
+    |                        $("#step-impl-usage-detail").css("width", ($("#step-impl-detail-div-container").width))
     |                    }
     |                })
     |                .jstree();
@@ -264,8 +310,47 @@ trait UsageTreeTemplate {
     |                }).jstree();
     |    });
     |
+    |  $('#substep-usage-show-hide').on('click', function () {
     |
+    |    toggleShowHide(this)
     |
+    |  })
+    |
+    |  $('#stepimpl-usage-show-hide').on('click', function () {
+    |
+    |    toggleShowHide(this)
+    |
+    |  })
+    |
+    |function toggleShowHide(elem){
+    |    if ($(elem).text() == 'Hide') {
+    |        $(elem).text('Show')
+    |    }
+    |    else {
+    |     $(elem).text('Hide')
+    |     $(elem).button('reset');
+    |    }
+    |}
+    |
+    |function getStepImplUsageDetail(id) {
+    |
+    |    var detailJSON = detail[id];
+    |    var result
+    |    if (detailJSON.result == "PASSED"){
+    |        result = '<span class="label label-success">Passed</span>'
+    |    }
+    |    else if (detailJSON.result == "NOT_RUN"){
+    |        result = '<span class="label label-warning">Not run</span>'
+    |    }
+    |    else if (detailJSON.result == "FAILED"){
+    |        result = '<span class="label label-danger">Failed</span>'
+    |    }
+    |    else if (detailJSON.result == "CHILD_FAILED"){
+    |        result = '<span class="label label-info">Child failed</span>'
+    |
+    |    var context = {result:result,line:detailJSON.description,file:detailJSON.filename, lineNumber:detailJSON.lineNum}
+    |    return stepImplUsageRowTemplate(context)
+    |}
     |
     |</script>
     |
