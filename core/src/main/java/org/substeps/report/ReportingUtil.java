@@ -104,9 +104,9 @@ public class ReportingUtil {
             }
         }
 
-        String json = "{ \"uncalledStepDefs\" : " + gson().toJson(uncalled) + "}";
+        String json = "var uncalledStepDefs=" + gson().toJson(uncalled) ;
 
-        File out = new File(outputDir, "uncalled.stepdefs.json");
+        File out = new File(outputDir, "uncalled.stepdefs.js");
 
         log.info("writing uncalledStepDefs to " + out.getAbsolutePath());
 
@@ -132,9 +132,9 @@ public class ReportingUtil {
         }
 
 
-        String json = "{ \"uncalledStepImplementations\" : " + gson().toJson(uncalledStepImplementations) + "}";
+        String json = "var uncalledStepImplementations=" + gson().toJson(uncalledStepImplementations);
 
-        File out = new File(outputDir, "uncalled.stepimpls.json");
+        File out = new File(outputDir, "uncalled.stepimpls.js");
 
         log.info("writing uncalledStepImplementations to " + out.getAbsolutePath());
 

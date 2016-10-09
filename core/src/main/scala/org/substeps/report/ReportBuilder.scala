@@ -1,6 +1,6 @@
 package org.substeps.report
 
-import java.io.{BufferedWriter, File}
+import java.io.{BufferedWriter, File, FileNotFoundException}
 import java.nio.charset.Charset
 import java.time.{Instant, LocalDateTime, ZoneId, ZoneOffset}
 import java.time.format.DateTimeFormatter
@@ -78,6 +78,15 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
   private val log: Logger = LoggerFactory.getLogger(classOf[ReportBuilder])
 
 
+  def safeCopy(src : File, dest : File) = {
+    try {
+      FileUtils.copyFile(src, dest)
+    }
+    catch {
+      case e : FileNotFoundException => log.warn("failed to find source file: " + src.getAbsolutePath)
+    }
+  }
+
   def buildFromDirectory(sourceDataDir: File): Unit = {
 
     reportDir.mkdir()
@@ -85,6 +94,9 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     dataDir.mkdir()
 
     FileUtils.copyDirectory(new File(sourceDataDir.getPath), dataDir)
+
+    safeCopy(new File(sourceDataDir, "../uncalled.stepdefs.js"), new File(reportDir, "uncalled.stepdefs.js"))
+    safeCopy(new File(sourceDataDir, "../uncalled.stepimpls.js"), new File(reportDir, "uncalled.stepimpls.js"))
 
     val detailData = createFile( "detail_data.js")
 
