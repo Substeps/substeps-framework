@@ -21,11 +21,11 @@ import java.util.List;
  */
 public class ReportingUtil {
 
-    private final File outputDir;
+//    private final File outputDir;
 
-    public ReportingUtil(final File outputDir){
-        this.outputDir = outputDir;
-    }
+//    public ReportingUtil(final File outputDir){
+//        this.outputDir = outputDir;
+//    }
 
     private static Logger log = LoggerFactory.getLogger(ReportingUtil.class);
 
@@ -77,7 +77,7 @@ public class ReportingUtil {
         return gson.create();
     }
 
-    public void writeUncalledStepDefs(List<Step> uncalledSubstepDefs) {
+    public void writeUncalledStepDefs(List<Step> uncalledSubstepDefs, File outputDir) {
 
         final StringBuilder buf = new StringBuilder();
 
@@ -114,7 +114,7 @@ public class ReportingUtil {
     }
 
 
-    public void writeUncalledStepImpls(List<StepImplementation> uncalledStepImplementations){
+    public void writeUncalledStepImpls(List<StepImplementation> uncalledStepImplementations, File outputDir){
 
 
         if (!uncalledStepImplementations.isEmpty()) {

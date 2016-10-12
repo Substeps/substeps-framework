@@ -1,5 +1,8 @@
 package org.substeps.report
 
+import java.time.{Instant, LocalDateTime, ZoneId}
+import java.time.format.DateTimeFormatter
+
 /**
   * Created by ian on 18/08/16.
   */
@@ -13,9 +16,9 @@ trait ReportFrameTemplate {
     s"""
        |    <div class="row-fluid">
        |
-       |        <div class="col-md-1">${name} &nbsp;<span class="badge">${counters.total}</span></div>
+       |        <div class="col-md-2">${name} &nbsp;<span class="badge">${counters.total}</span></div>
        |
-       |        <div class="col-md-11">
+       |        <div class="col-md-10">
        |
        |            <div class="progress">
        |                <div class="progress-bar progress-bar-success" style="width: ${counters.successPC}%;">${counters.successPC} Success (${counters.passed})</div>
@@ -31,7 +34,32 @@ trait ReportFrameTemplate {
 
   }
 
-  def buildReportFrame(reportTitle: String, dateTimeStr : String, stats : ExecutionStats, featureProgressBlock : String, scenarioProgressBlock : String, scenarioStepProgressBlock : String) = {
+  def buildReportFrame(rootNodeSummary: RootNodeSummary, stats : ExecutionStats) = {
+
+    val featureProgressBlock = buildStatsBlock("Features", stats.featuresCounter)
+    val scenarioProgressBlock = buildStatsBlock("Scenarios", stats.scenarioCounters)
+    val scenarioStepProgressBlock = buildStatsBlock("Scenario steps", stats.stepCounters)
+    val stepImplBlock = buildStatsBlock("Step Impls", stats.stepImplCounters)
+
+    val reportTitle = Option(rootNodeSummary.description).getOrElse("Substeps Test Report")
+
+    val localDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(rootNodeSummary.timestamp), ZoneId.systemDefault());
+    val dateTimeString = localDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss"))
+
+
+    // TODO pull out some of the other things from the node summary - tags, nonfatal tags and environment
+
+    val env = rootNodeSummary.environment
+
+
+    val nonFatalTagsOption =
+        rootNodeSummary.nonFatalTags.map(t => s"""<p class="navbar-text navbar-left">Non Fatal Tags: ${t}</p>""" )
+
+    val nonFatalTags = nonFatalTagsOption.getOrElse("")
+
+    val tags = rootNodeSummary.tags.getOrElse("")
+
+
 
     s"""
        |<!DOCTYPE html>
@@ -46,6 +74,7 @@ trait ReportFrameTemplate {
        |    <link href="css/substeps.css" rel="stylesheet"/>
        |
        |    <link rel="stylesheet" href="css/jstree/style.min.css" />
+       |    <script type="text/javascript" src="results-summary.js"></script>
        |
        |<script type="text/javascript">
        |//<!--
@@ -87,7 +116,11 @@ trait ReportFrameTemplate {
        |
  |        <div class="navbar-header">
        |            <span class="navbar-brand" href="#">${reportTitle}</span>
-       |            <span class="navbar-brand" >${dateTimeStr}</span>
+       |            <span class="navbar-brand" >${dateTimeString}</span>
+       |            <p class="navbar-text navbar-left">Environment: ${env}</p>
+       |            <p class="navbar-text navbar-left">Tags: ${tags}</p>
+       |            ${nonFatalTags}
+       |
        |
  |        </div>
        |
@@ -106,7 +139,7 @@ trait ReportFrameTemplate {
        |</nav>
        |
        |
-       |<div class="container-fluid">
+       |<div class="container-fluid" style="padding-top:10px">
        |    <div class="panel panel-default">
        |        <div class="panel-heading">
        |            <h3 class="panel-title">Summary</h3>
@@ -118,6 +151,7 @@ trait ReportFrameTemplate {
        |     ${scenarioProgressBlock}
        |
        |     ${scenarioStepProgressBlock}
+       |
        |
        |             </div>
        |    </div>

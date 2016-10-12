@@ -343,6 +343,8 @@ Scenario: inline table
     executionCollector.setDataDir(dataDir)
     executionCollector.setPretty(true)
 
+    executionConfig.setDataOutputDirectory(dataDir.getAbsolutePath)
+
     val runner = new ExecutionNodeRunner()
 
 

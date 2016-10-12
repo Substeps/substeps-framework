@@ -103,6 +103,8 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
 
     private List<Artifact> pluginDependencies;
 
+
+
     /**
      * //     * at component
      */
@@ -176,7 +178,11 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
 
     private void runExecutionConfig(final ExecutionConfig theConfig) throws MojoExecutionException {
 
-        final RootNode iniitalRootNode = this.runner.prepareExecutionConfig(theConfig.asSubstepsExecutionConfig());
+        final SubstepsExecutionConfig cfg =  theConfig.asSubstepsExecutionConfig();
+
+        this.getLog().info("SubstepsExecutionConfig: " + cfg.printParameters());
+
+        final RootNode iniitalRootNode = this.runner.prepareExecutionConfig(cfg);
 
         this.executionResultsCollector.initOutputDirectories(iniitalRootNode);
 

@@ -68,7 +68,7 @@ public class ExecutionNodeRunner implements SubstepsRunner {
 
     private List<SubstepExecutionFailure> failures;
 
-    private final ReportingUtil reportingUtil = new ReportingUtil(new File("target"));
+    private final ReportingUtil reportingUtil = new ReportingUtil();
 
     // map of nodes to each of the parents, where this node is used
     private final Map<ExecutionNodeUsage, List<ExecutionNodeUsage>> callerHierarchy = new HashMap<ExecutionNodeUsage, List<ExecutionNodeUsage>>();
@@ -92,9 +92,11 @@ public class ExecutionNodeRunner implements SubstepsRunner {
 
         setupExecutionListeners(configWrapper);
 
-        processUncalledAndUnused(syntax);
+        if (configWrapper.getExecutionConfig().isCheckForUncalledAndUnused()) {
+            processUncalledAndUnused(syntax, configWrapper.getExecutionConfig().getDataOutputDirectory());
+        }
 
-        UsageTreeBuilder.buildUsageTree(this.rootNode);
+        // UsageTreeBuilder.buildUsageTree(this.rootNode);
 
         ExecutionContext.put(Scope.SUITE, INotificationDistributor.NOTIFIER_DISTRIBUTOR_KEY,
                 this.notificationDistributor);
@@ -200,21 +202,25 @@ public class ExecutionNodeRunner implements SubstepsRunner {
     /**
      * @param syntax
      */
-    private void processUncalledAndUnused(final Syntax syntax) {
+    private void processUncalledAndUnused(final Syntax syntax, final File dataOutputDir) {
         final List<StepImplementation> uncalledStepImplementations = syntax.getUncalledStepImplementations();
 
-        reportingUtil.writeUncalledStepImpls(uncalledStepImplementations);
+        if (!dataOutputDir.exists()){
+            dataOutputDir.mkdir();
+        }
+
+        reportingUtil.writeUncalledStepImpls(uncalledStepImplementations, dataOutputDir);
 
         buildCallHierarchy();
 
-        checkForUncalledParentSteps(syntax);
+        checkForUncalledParentSteps(syntax, dataOutputDir);
 
     }
 
     /**
      * @param syntax
      */
-    private void checkForUncalledParentSteps(final Syntax syntax) {
+    private void checkForUncalledParentSteps(final Syntax syntax, File outputDir) {
 
         final Set<ExecutionNodeUsage> calledExecutionNodes = callerHierarchy.keySet();
 
@@ -230,7 +236,7 @@ public class ExecutionNodeRunner implements SubstepsRunner {
                 uncalledSubstepDefs.add(parent);
             }
         }
-        reportingUtil.writeUncalledStepDefs(uncalledSubstepDefs);
+        reportingUtil.writeUncalledStepDefs(uncalledSubstepDefs, outputDir);
     }
 
     private boolean thereIsNotAStepThatMatchesThisPattern(final String stepPattern, final Set<ExecutionNodeUsage> calledExecutionNodes) {

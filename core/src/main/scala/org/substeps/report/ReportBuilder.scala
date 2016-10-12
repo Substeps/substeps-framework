@@ -87,6 +87,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     }
   }
 
+
   def buildFromDirectory(sourceDataDir: File): Unit = {
 
     reportDir.mkdir()
@@ -95,8 +96,8 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
     FileUtils.copyDirectory(new File(sourceDataDir.getPath), dataDir)
 
-    safeCopy(new File(sourceDataDir, "../uncalled.stepdefs.js"), new File(reportDir, "uncalled.stepdefs.js"))
-    safeCopy(new File(sourceDataDir, "../uncalled.stepimpls.js"), new File(reportDir, "uncalled.stepimpls.js"))
+    safeCopy(new File(sourceDataDir, "uncalled.stepdefs.js"), new File(reportDir, "uncalled.stepdefs.js"))
+    safeCopy(new File(sourceDataDir, "uncalled.stepimpls.js"), new File(reportDir, "uncalled.stepimpls.js"))
 
     val detailData = createFile( "detail_data.js")
 
@@ -114,20 +115,12 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     val stats : ExecutionStats = buildExecutionStats(srcData)
 
 
-    val description = Option(srcData._1.description).getOrElse("Substeps Test Report")
 
-    val localDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(srcData._1.timestamp), ZoneId.systemDefault());
-    val dateTimeString = localDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss"))
+    val reportFrameHtml = buildReportFrame(srcData._1, stats
+      )
 
-    val reportFrameHtml = buildReportFrame(description, dateTimeString, stats,
-      buildStatsBlock("Features", stats.featuresCounter),
-      buildStatsBlock("Scenarios", stats.scenarioCounters),
-      buildStatsBlock("Scenario steps", stats.stepCounters))
 
-    val writer = Files.newWriter(reportFrameHTML, Charset.defaultCharset)
-    writer.append(reportFrameHtml)
-    writer.flush()
-    writer.close()
+    withWriter(reportFrameHTML, writer => writer.append(reportFrameHtml))
 
     copyStaticResources()
 
@@ -144,10 +137,9 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     val usgaeTreeHTMLFile  = createFile( "usage-tree.html")
 
     val usageTreeHtml = buildUsageTree()
-    val writer2 = Files.newWriter(usgaeTreeHTMLFile, Charset.defaultCharset)
-    writer2.append(usageTreeHtml)
-    writer2.flush()
-    writer2.close()
+
+    withWriter(usgaeTreeHTMLFile, writer => writer.append(usageTreeHtml) )
+
 
   }
 
@@ -155,18 +147,16 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
   def writeStatsJs(statsJsFile: File, stats: (List[Counters], List[Counters])) = {
 
-    val writer = Files.newWriter(statsJsFile, Charset.defaultCharset)
+    withWriter(statsJsFile, writer => {
 
-    implicit val formats = Serialization.formats(NoTypeHints)
+      implicit val formats = Serialization.formats(NoTypeHints)
 
-    writer.append("var featureStatsData = ")
-    writer.append(writePretty(stats._1))
-    writer.append(";\nvar scenarioStatsData = ")
-    writer.append(writePretty(stats._2))
-    writer.append(";\n")
-
-    writer.flush()
-    writer.close()
+      writer.append("var featureStatsData = ")
+      writer.append(writePretty(stats._1))
+      writer.append(";\nvar scenarioStatsData = ")
+      writer.append(writePretty(stats._2))
+      writer.append(";\n")
+    })
   }
 
   def buildExecutionStats(srcData: (RootNodeSummary, List[(FeatureSummary, List[NodeDetail])])): ExecutionStats = {
@@ -320,21 +310,20 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
     val substepDefNodes = getJSTreeCallHierarchyForSubstepDefs( allNodeDetails)
 
-    val writer = Files.newWriter(usageTreeDataFile, Charset.defaultCharset)
-    writer.append("var stepImplUsageTreeData=")
 
-    implicit val formats = Serialization.formats(NoTypeHints)
+    withWriter(usageTreeDataFile, writer => {
+      writer.append("var stepImplUsageTreeData=")
 
-    writer.append(writePretty(methodNodes))
-    writer.append(";\nvar substepDefUsageTreeData=")
+      implicit val formats = Serialization.formats(NoTypeHints)
 
-    writer.append(writePretty(substepDefNodes))
+      writer.append(writePretty(methodNodes))
+      writer.append(";\nvar substepDefUsageTreeData=")
 
-    writer.append(";")
-    writer.flush()
-    writer.close()
+      writer.append(writePretty(substepDefNodes))
 
+      writer.append(";")
 
+    })
   }
 
   def getJSTreeCallHierarchyForSubstepDefs(allNodeDetails : List[NodeDetail]): Iterable[JsTreeNode] = {
@@ -342,9 +331,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     val substepNodeDetails = allNodeDetails.filter(nd => nd.nodeType == "SubstepNode")
     val substepDefsByUniqueMethood = substepNodeDetails.groupBy(_.source.get)
 
-    var nextId = allNodeDetails.map(n => n.id).max + 1
-
-    println("x")
+    val nextId = allNodeDetails.map(n => n.id).max + 1
 
     substepDefsByUniqueMethood.map(e => {
 
@@ -367,16 +354,8 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
         })
         lastChildOption.get.head.copy(li_attr = Some(Map("data-substep-def-call" -> substep.description)))
-        // substep.description is what we want - applied to the lastChildOption..?
-//        JsTreeNode(ReportBuilder.uniqueId(substep.id), substep.description, substep.nodeType, lastChildOption, State(true))
       })
 
-      // this jstree node represents the substepdef
-
-//      val jstreeNode = JsTreeNode(ReportBuilder.uniqueId(nextId),
-//        StringEscapeUtils.ESCAPE_HTML4.translate(exemplarNodeDetail.source.get), "method", Some(stepImplJsTreeNodes), State(true),
-//        Some(Map("data-stepimpl-method" -> s"${exemplarNodeDetail.method.get}", "data-stepimpl-passpc" -> s"${passPC}",
-//          "data-stepimpl-failpc" -> s"${failPC}", "data-stepimpl-notrunpc" -> s"${notRunPC}")))
 
       // calculate the pass / fail / not run %
 
@@ -396,11 +375,6 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
       JsTreeNode(ReportBuilder.uniqueId(nextId), StringEscapeUtils.ESCAPE_HTML4.translate(substepDef), "SubstepDefinition", Some(substepJsTreeNodes), State(true),
         Some(Map("data-substep-def" -> "true", "data-substepdef-passpc" -> s"${passPC}",
         "data-substepdef-failpc" -> s"${failPC}", "data-substepdef-notrunpc" -> s"${notRunPC}")))
-//
-//      nextId = nextId + 1
-//
-//      jstreeNode
-
     })
   }
 
@@ -419,9 +393,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     stepImplsbyUniqueMethood.toList.map(e => {
       // convert the method reference to an examplar instance of such a node detail
 
-      (allNodeDetails.filter(n => n.method == Some(e._1)),  e._2)
-
-      //(allNodeDetails.find(n => n.method == Some(e._1)).get,  e._2)
+      (allNodeDetails.filter(n => n.method.contains(e._1)),  e._2)
 
     }).sortBy(_._1.head.source.get)
 
@@ -498,6 +470,28 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     f
   }
 
+  def writeResultSummary(resultsFile: RootNodeSummary) = {
+
+    val file = createFile("results-summary.js")
+
+    withWriter(file, writer => {
+      writer.append("var resultsSummary=")
+
+      val map = Map("description" -> resultsFile.description,
+      "timestamp" -> resultsFile.timestamp,
+      "result" -> resultsFile.result,
+      "environment" -> resultsFile.environment,
+      "nonFatalTags" -> resultsFile.nonFatalTags,
+        "tags" -> resultsFile.tags)
+
+      implicit val formats = Serialization.formats(NoTypeHints)
+
+      writer.append(writePretty(map)).append(";")
+
+    })
+
+  }
+
   def readModel(srcDir : File) = {
 
     implicit val formats = Serialization.formats(NoTypeHints)
@@ -513,6 +507,8 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
       resultsFileOption match {
       case Some(resultsFile) => {
+
+        writeResultSummary(resultsFile)
 
         resultsFile.features.flatMap(featureSummary => {
 
@@ -580,12 +576,20 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
     val rootNode = JsTreeNode(srcData._1.id.toString, srcData._1.description, icon, childrenOption, state)
 
+    withWriter(file, writer =>{
+      writer.append("var treeData = ")
+
+      implicit val formats = Serialization.formats(NoTypeHints)
+
+      writer.append(writePretty(rootNode))
+    })
+
+  }
+
+
+  def withWriter(file: File, op: BufferedWriter => Any) = {
     val writer = Files.newWriter(file, Charset.defaultCharset)
-    writer.append("var treeData = ")
-
-    implicit val formats = Serialization.formats(NoTypeHints)
-
-    writer.append(writePretty(rootNode))
+    op(writer)
     writer.flush()
     writer.close()
   }
@@ -634,21 +638,21 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
 
   def createDetailData(file : File, srcData : (RootNodeSummary, List[(FeatureSummary, List[NodeDetail])])) = {
-    val writer = Files.newWriter(file, Charset.defaultCharset)
-    writer.append("var detail = new Array();\n")
 
-    val featureSummaries = srcData._2.map( _._1)
+    withWriter(file, writer => {
 
-    val nodeDetailList = srcData._2.flatMap(_._2)
+      writer.append("var detail = new Array();\n")
 
-    writeRootNode(writer, srcData._1, featureSummaries)
+      val featureSummaries = srcData._2.map(_._1)
 
-    featureSummaries.foreach(f => {
-      writeFeatureNode(writer, f, nodeDetailList)
+      val nodeDetailList = srcData._2.flatMap(_._2)
+
+      writeRootNode(writer, srcData._1, featureSummaries)
+
+      featureSummaries.foreach(f => {
+        writeFeatureNode(writer, f, nodeDetailList)
+      })
     })
-
-    writer.flush()
-    writer.close()
   }
 
 
