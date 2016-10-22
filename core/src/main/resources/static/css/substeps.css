@@ -133,3 +133,11 @@ i.jstree-icon.jstree-themeicon.PARSE_FAILURE.jstree-themeicon-custom
     background-size: auto;
     background-position: center center;
 }
+
+i.jstree-icon.jstree-themeicon.NON_CRITICAL_FAILURE.jstree-themeicon-custom
+{
+    background-image: url("../img/NON_CRITICAL_FAILURE.png");
+    background-size: auto;
+    background-position: center center;
+}
+

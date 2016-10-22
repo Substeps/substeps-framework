@@ -95,6 +95,14 @@ public class RootNodeRunner extends AbstractNodeRunner<RootNode, Void> {
                     rootNodeStateSet = true;
                     break;
                 }
+
+                if (FeatureNode.hasNonCriticalFailure(featureNode)){
+                    SubstepsRuntimeException e = new SubstepsRuntimeException("At least one NON critical Feature failed");
+                    SubstepExecutionFailure.setResult(e, node, ExecutionResult.NON_CRITICAL_FAILURE);
+
+                    context.getNotificationDistributor().onNodeFailed(node, e);
+                    rootNodeStateSet = true;
+                }
             }
 
             if (!rootNodeStateSet) {

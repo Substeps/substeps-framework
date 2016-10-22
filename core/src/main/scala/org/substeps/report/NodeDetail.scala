@@ -27,7 +27,10 @@ case object NodeDetail {
 
     val stackTrace = scenarioNode.getResult.getFailure.getCause.getStackTrace.toList.map(elem => elem.toString)
 
-    NodeDetail("BasicScenarioNode", scenarioNode.getParent.getFilename, scenarioNode.getLineNumber, scenarioNode.getResult.getResult.name(), scenarioNode.getId.toInt,
+    val result = if (scenarioNode.getResult.getFailure.isNonCritical) "NON_CRITICAL_FAILURE" else scenarioNode.getResult.getResult.name()
+
+
+    NodeDetail("BasicScenarioNode", scenarioNode.getParent.getFilename, scenarioNode.getLineNumber, result, scenarioNode.getId.toInt,
       Option(scenarioNode.getResult.getRunningDuration), scenarioNode.getDescription, None, children,
       Some(scenarioNode.getResult.getFailure.getCause.getMessage), Some(stackTrace), None, tags, None, None)
 

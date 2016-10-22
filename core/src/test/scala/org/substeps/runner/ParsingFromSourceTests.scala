@@ -4,7 +4,8 @@ import java.io.File
 import java.nio.charset.Charset
 
 import com.google.common.io.Files
-import com.technophobia.substeps.execution.ImplementationCache
+import com.technophobia.substeps.execution.node.{ExecutionNode, IExecutionNode}
+import com.technophobia.substeps.execution.{ExecutionResult, ImplementationCache}
 import com.technophobia.substeps.model._
 import com.technophobia.substeps.model.SubSteps.StepImplementations
 import com.technophobia.substeps.parser.FileContents
@@ -222,6 +223,291 @@ Scenario: inline table
     featureFile
   }
 
+  "running some failing features marked as non critical" must "not fail the build and be visible" in {
+
+    // TODO - complete this test
+
+    val simpleFeature =
+      """
+        | Tags: all
+        | Feature: a simple feature
+        |
+        | Scenario: A basic failing scenario
+        |   PassingSubstepDef
+        |   FailingSubstepDef
+        |   NotRun
+      """.stripMargin
+
+    val substepDef =
+      """
+        |Define: PassingSubstepDef
+        |  AnotherPassingStepImpl
+        |
+        |Define: FailingSubstepDef
+        | GenerateFailure
+        |
+      """.stripMargin
+
+    @StepImplementations
+    class StepImpls () extends ProvidesScreenshot {
+
+      @SubSteps.Step("AnotherPassingStepImpl")
+      def anotherPassingStepImpl() = log.debug("pass")
+
+      @SubSteps.Step("NotRun")
+      def notRun() = log.debug("not run")
+
+      @SubSteps.Step("GenerateFailure")
+      def generateFailure() = throw new IllegalStateException("something went wrong")
+
+      override def getScreenshotBytes: Array[Byte] = "fake screenshot bytes".getBytes
+    }
+
+
+    val subStepParser: SubStepDefinitionParser = new SubStepDefinitionParser(true, new DefaultSyntaxErrorReporter)
+
+    val substepDeffileContentsFromSource = new FileContents(substepDef.split("\n").toList.asJava, new File("temp_substep_def.substeps"))
+
+    val parentMap = subStepParser.parseSubstepFileContents(substepDeffileContentsFromSource)
+
+    val featureFile = createFeatureFile(simpleFeature, "simple_feature_file.feature")
+
+    val stepImplementationClasses : List[java.lang.Class[_]] = List(classOf[StepImpls])
+
+    val executionConfig = new SubstepsExecutionConfig
+
+    executionConfig.setStepImplementationClasses(stepImplementationClasses.asJava)
+
+    executionConfig.setTags("all")
+    executionConfig.setNonFatalTags("all")
+
+    val syntax: Syntax = SyntaxBuilder.buildSyntax(stepImplementationClasses.asJava, parentMap)
+
+    val tagManager = new TagManager(executionConfig.getTags)
+
+    val nonFatalTAgManager = TagManager.fromTags(executionConfig.getNonFatalTags)
+
+    val parameters: TestParameters = new TestParameters(tagManager, syntax, List(featureFile).asJava)
+
+    val cfgWrapper = new ExecutionConfigWrapper(executionConfig)
+    val nodeTreeBuilder: ExecutionNodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, cfgWrapper)
+
+    // building the tree can throw critical failures if exceptions are found
+    val rootNode = nodeTreeBuilder.buildExecutionNodeTree("test description")
+
+    log.debug("rootNode 1:\n" + rootNode.toDebugString)
+
+    val executionCollector = new ExecutionResultsCollector
+    val dataDir = ExecutionResultsCollector.getBaseDir(new File("target"))
+    executionCollector.setDataDir(dataDir)
+    executionCollector.setPretty(true)
+
+    executionConfig.setDataOutputDirectory(dataDir)
+
+    val runner = new ExecutionNodeRunner()
+
+
+    runner.addNotifier(executionCollector)
+
+    val methodExecutorToUse = new ImplementationCache()
+
+    val setupAndTearDown: SetupAndTearDown = new SetupAndTearDown(executionConfig.getInitialisationClasses, methodExecutorToUse)
+
+
+    val rootNode2 = runner.prepareExecutionConfig(new ExecutionConfigWrapper(executionConfig), syntax, parameters, setupAndTearDown, methodExecutorToUse, nonFatalTAgManager)
+
+    executionCollector.initOutputDirectories(rootNode2)
+
+    log.debug("rootNode 2:\n" + rootNode2.toDebugString)
+
+    val finalRootNode = runner.run()
+
+    log.debug("finalRootNode :\n" + rootNode2.toDebugString)
+
+    finalRootNode.getResult.getResult should be (ExecutionResult.NON_CRITICAL_FAILURE)
+  }
+
+
+  // from ExecutionNodeRunnerTest.testValidErrorPlusNonCriticalFailures
+  "mixed critical and non critical failures" must "be reported as such" in {
+
+    val f1 = ("critical-failure.feature",
+      """
+        | Tags: toRun
+        | Feature: crit fail feature
+        | Scenario: scenario crit fail
+        |   nonFail
+        |   Fail
+        |   nonFail
+        |
+      """.stripMargin)
+
+
+    val f2 = ("non-critical-failure.feature",
+      """
+        | Tags: canFail
+        | Feature: non crit fail feature
+        |
+        | Tags: toRun canFail
+        | Scenario: scenario non crit fail
+        |   nonFail
+        |   Fail
+        |   nonFail
+        |
+      """.stripMargin)
+
+    val f3 = ("pass.feature",
+      """
+        | Feature: pass feature
+        | Tags: toRun
+        | Scenario: scenario pass
+        |   nonFail
+        |   nonFail
+        |   nonFail
+      """.stripMargin)
+
+
+    @StepImplementations
+    class StepImpls () extends ProvidesScreenshot {
+
+      @SubSteps.Step("nonFail")
+      def nonFailingMethod() =  System.out.println("no fail")
+
+      @SubSteps.Step("Fail")
+      def failingMethod() = throw new IllegalStateException("that's it, had enough")
+
+      override def getScreenshotBytes: Array[Byte] = "fake screenshot bytes".getBytes
+    }
+
+    val features = List(f1,f2,f3)
+
+    val (finalRootNode, failures) = runFeatures("", features, List(classOf[StepImpls]), Some("toRun"), Some("canFail"))
+
+    println("finalRootNode:\n" + finalRootNode.toDebugString)
+
+    // some assertions
+    val bfm = new BuildFailureManager();
+
+
+
+
+    val criticalFailuresField = classOf[BuildFailureManager].getDeclaredField("criticalFailures")
+    criticalFailuresField.setAccessible(true)
+    val criticalFailures =  criticalFailuresField.get(bfm).asInstanceOf[java.util.List[java.util.List[IExecutionNode]]].asScala  // (List<List<IExecutionNode>>)
+
+    val nonCriticalFailuresField = classOf[BuildFailureManager].getDeclaredField("nonCriticalFailures")
+    nonCriticalFailuresField.setAccessible(true)
+    val nonCriticalFailures =  nonCriticalFailuresField.get(bfm).asInstanceOf[java.util.List[java.util.List[IExecutionNode]]].asScala // (List<List<IExecutionNode>>)
+
+
+    bfm.addExecutionResult(finalRootNode)
+
+    criticalFailures should have size(1)
+    nonCriticalFailures should have size(1)
+
+
+    finalRootNode.getResult().getResult() should be (ExecutionResult.FAILED)
+
+    val featureList = finalRootNode.getChildren.asScala
+
+    featureList(0).getResult.getResult should be (ExecutionResult.CHILD_FAILED)
+    featureList(1).getResult.getResult should be (ExecutionResult.CHILD_FAILED)
+    featureList(2).getResult.getResult should be (ExecutionResult.PASSED)
+
+    val sc1 = featureList(0).getChildren.asScala(0)
+    val sc2 = featureList(1).getChildren.asScala(0)
+    val sc3 = featureList(2).getChildren.asScala(0)
+
+    sc1.getResult.getResult should be (ExecutionResult.CHILD_FAILED)
+    sc2.getResult.getResult should be (ExecutionResult.CHILD_FAILED)
+    sc3.getResult.getResult should be (ExecutionResult.PASSED)
+
+    val scenario1Results =
+      sc1.getChildren.asScala.toList.map(st => (st.asInstanceOf[ExecutionNode]).getResult.getResult)
+
+    import ExecutionResult._
+
+    scenario1Results should be (List(PASSED, FAILED, NOT_RUN))
+
+    val scenario2Results =
+      sc2.getChildren.asScala.toList.map(st => (st.asInstanceOf[ExecutionNode]).getResult.getResult)
+
+    scenario2Results should be (List(PASSED, NON_CRITICAL_FAILURE, NOT_RUN))
+
+
+    failures should have size(2)
+
+  }
+
+
+  def runFeatures(suiteDescription : String, features : List[(String, String)],
+                  stepImplementationClasses : List[java.lang.Class[_]],
+                  tags : Option[String],
+                  nonFatalTags : Option[String]
+                 ) = {
+
+//    val subStepParser: SubStepDefinitionParser = new SubStepDefinitionParser(true, new DefaultSyntaxErrorReporter)
+//
+//    val substepDeffileContentsFromSource = new FileContents(substepDef.split("\n").toList.asJava, new File("temp_substep_def.substeps"))
+//
+    val parentMap = new PatternMap[ParentStep]
+
+    val featureFileList =
+      features.map(f => {
+        createFeatureFile(f._2, f._1)
+      })
+
+
+    //val stepImplementationClasses : List[java.lang.Class[_]] = List(classOf[StepImpls])
+
+    val executionConfig = new SubstepsExecutionConfig
+
+    executionConfig.setStepImplementationClasses(stepImplementationClasses.asJava)
+
+    val syntax: Syntax = SyntaxBuilder.buildSyntax(stepImplementationClasses.asJava, parentMap)
+
+
+
+    val parameters: TestParameters = new TestParameters(new TagManager(tags.getOrElse(null)), syntax, featureFileList.asJava)
+
+    val cfgWrapper = new ExecutionConfigWrapper(executionConfig)
+    val nodeTreeBuilder: ExecutionNodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, cfgWrapper)
+
+    // building the tree can throw critical failures if exceptions are found
+    val rootNode = nodeTreeBuilder.buildExecutionNodeTree(suiteDescription)
+
+    log.debug("node tree builder rootNode 1:\n" + rootNode.toDebugString)
+
+    val executionCollector = new ExecutionResultsCollector
+    val dataDir = ExecutionResultsCollector.getBaseDir(new File("target"))
+    executionCollector.setDataDir(dataDir)
+    executionCollector.setPretty(true)
+
+    executionConfig.setDataOutputDirectory(dataDir)
+
+    val runner = new ExecutionNodeRunner()
+
+
+    runner.addNotifier(executionCollector)
+
+    val methodExecutorToUse = new ImplementationCache()
+
+    val setupAndTearDown: SetupAndTearDown = new SetupAndTearDown(executionConfig.getInitialisationClasses, methodExecutorToUse)
+
+
+    val rootNode2 = runner.prepareExecutionConfig(new ExecutionConfigWrapper(executionConfig), syntax, parameters, setupAndTearDown, methodExecutorToUse, TagManager.fromTags(nonFatalTags.getOrElse(null)))
+
+    executionCollector.initOutputDirectories(rootNode2)
+
+    log.debug("prepared rootNode 2:\n" + rootNode2.toDebugString)
+
+    val finalRootNode = runner.run()
+
+    (finalRootNode, runner.getFailures.asScala)
+
+
+  }
+
 
   /**
     * NB. this is the test that generates the source data, then used to test out report building
@@ -343,7 +629,7 @@ Scenario: inline table
     executionCollector.setDataDir(dataDir)
     executionCollector.setPretty(true)
 
-    executionConfig.setDataOutputDirectory(dataDir.getAbsolutePath)
+    executionConfig.setDataOutputDirectory(dataDir)
 
     val runner = new ExecutionNodeRunner()
 
@@ -460,7 +746,6 @@ Scenario: inline table
 
 
   }
-
 
 
 

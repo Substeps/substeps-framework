@@ -63,15 +63,22 @@ public class RootNodeExecutionContext {
         return setupAndTeardown;
     }
 
+
+
+    public boolean isNodeFailureNonCritical(final IExecutionNode node) {
+
+        return this.nonFatalTagmanager != null && nonFatalTagmanager.isApplicable(node);
+    }
+
     public void addFailure(final SubstepExecutionFailure failure) {
 
         failures.add(failure);
         logFailure(failure);
 
         // set the criticality of this failure
-
-        if (!failure.isSetupOrTearDown() && this.nonFatalTagmanager != null
-                && nonFatalTagmanager.isApplicable(failure.getExeccutionNode())) {
+        if (!failure.isSetupOrTearDown() && isNodeFailureNonCritical(failure.getExeccutionNode())) {
+//        if (!failure.isSetupOrTearDown() && this.nonFatalTagmanager != null
+//                && nonFatalTagmanager.isApplicable(failure.getExeccutionNode())) {
 
             failure.setNonCritical(true);
         }

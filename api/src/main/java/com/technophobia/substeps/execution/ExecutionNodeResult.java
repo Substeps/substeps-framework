@@ -134,7 +134,14 @@ public class ExecutionNodeResult implements Serializable {
         EnumSet<ExecutionResult> excluded = EnumSet.of(ExecutionResult.PARSE_FAILURE, ExecutionResult.SETUP_TEARDOWN_FAILURE);
 
         if (!excluded.contains(this.result)) {
-            this.result = ExecutionResult.FAILED;
+
+            if(substepExecutionFailure.isNonCritical()){
+                this.result = ExecutionResult.NON_CRITICAL_FAILURE;
+            }
+            else {
+                this.result = ExecutionResult.FAILED;
+            }
+
         }
 
         this.substepExecutionFailure = substepExecutionFailure;

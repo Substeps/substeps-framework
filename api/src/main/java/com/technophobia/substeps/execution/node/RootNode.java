@@ -19,6 +19,7 @@
 package com.technophobia.substeps.execution.node;
 
 import com.google.common.collect.Lists;
+import com.technophobia.substeps.execution.ExecutionNodeResult;
 import com.technophobia.substeps.execution.ExecutionNodeVisitor;
 
 import java.util.List;
@@ -43,6 +44,11 @@ public class RootNode extends NodeWithChildren<FeatureNode> {
         this.environment = environment;
         this.tags = tags;
         this.nonFatalTags = nonFatalTags;
+    }
+
+    @Override
+    public ExecutionNodeResult getResult() {
+        return super.getResult();
     }
 
     @Override

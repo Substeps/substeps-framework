@@ -267,8 +267,10 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
 
     })
 
+    val result = if (Option(featureNode.getResult.getFailure).isDefined && featureNode.getResult.getFailure.isNonCritical) "NON_CRITICAL_FAILURE" else featureNode.getResult.getResult.name()
+
     val data =
-      FeatureSummary("FeatureNode", featureNode.getFilename, featureNode.getResult.getResult.name(), featureNode.getId,
+      FeatureSummary("FeatureNode", featureNode.getFilename, result, featureNode.getId,
         Some(featureNode.getResult.getRunningDuration), featureNode.getDescription, scenarios.toList, featureNode.getTags.toList)
 
 
@@ -299,7 +301,11 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
       case _ => None
     }
 
-    // TODO - add this into the node detail..
+    Option(result.getFailure).map(sef => {
+
+      log.info(" *** got Substep Exec Failure: critical : " + sef.isNonCritical)
+
+    })
 
 
       val data =

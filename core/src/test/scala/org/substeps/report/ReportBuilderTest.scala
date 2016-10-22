@@ -21,11 +21,19 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
 
   val UTF8 = Charset.forName("UTF-8")
 
+  def getOutputDir = {
+    val now: LocalDateTime = LocalDateTime.now
+    val f = new File("target/substeps-report_" + now.format(DateTimeFormatter.ofPattern("YYYYMMddHHmmssSSS")))
+    f.mkdir()
+    f
+  }
+
+
   "ReportBuilder" should "read a correct model from the source data dir" in {
 
     val now: LocalDateTime = LocalDateTime.now
 
-    val outputDir = new File("target/substeps-report_" + now.format(DateTimeFormatter.ofPattern("YYYYMMddHHmm")))
+    val outputDir = getOutputDir
     val reportBuilder = new ReportBuilder
     reportBuilder.reportDir = outputDir
 
@@ -40,11 +48,10 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
   }
 
 
-
   "ReportBuilder" should "build the usage tree report from raw data input" in {
-    val now: LocalDateTime = LocalDateTime.now
 
-    val outputDir = new File("target/substeps-report_" + now.format(DateTimeFormatter.ofPattern("YYYYMMddHHmm")))
+
+    val outputDir = getOutputDir
 
     val reportBuilder = new ReportBuilder
     reportBuilder.reportDir = outputDir
@@ -61,7 +68,7 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
 
     val now: LocalDateTime = LocalDateTime.now
 
-    val outputDir = new File("target/substeps-report_" + now.format(DateTimeFormatter.ofPattern("YYYYMMddHHmm")))
+    val outputDir = getOutputDir
 
     val reportBuilder = new ReportBuilder
     reportBuilder.reportDir = outputDir
@@ -87,7 +94,7 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
     val baselineDetailDatajs = Files.toString(new File("src/test/resources/sample_feature_report_data/detail_data.js"), UTF8)
 
 
-    println(s"DIFF: baseline\n\n${baselineDetailDatajs}\n\n\ntestoutput:\n\n${newDetailDatajs}")
+    //println(s"DIFF: baseline\n\n${baselineDetailDatajs}\n\n\ntestoutput:\n\n${newDetailDatajs}")
     //  equalToIgnoringWhiteSpace(baselineDetailDatajs).matches(newDetailDatajs) should be (true)
 
 

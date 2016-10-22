@@ -73,6 +73,37 @@ public class FeatureNode extends NodeWithChildren<ScenarioNode<?>> implements Ta
         return tags;
     }
 
+
+
+    public static boolean hasNonCriticalFailure(ExecutionNode node) {
+
+        // TODO
+        boolean rtn = false;
+
+        if (node.getResult().getResult() == ExecutionResult.CHILD_FAILED){
+            // there is a failure at a parent level, is the cause critical ?
+            // any child nodes with failures that are critical ?
+
+            if (node instanceof NodeWithChildren){
+                List<ExecutionNode> children = ((NodeWithChildren) node).getChildren();
+
+                for (ExecutionNode child : children){
+                    rtn = hasNonCriticalFailure(child);
+                    if (rtn){
+                        break;
+                    }
+                }
+            }
+
+        }
+        else if (node.getResult().getResult() == ExecutionResult.NON_CRITICAL_FAILURE) {
+            // real failure, is it critical ?
+            rtn = node.getResult().getFailure().isNonCritical();
+        }
+        return rtn;
+    }
+
+
     public static boolean hasCriticalFailure(ExecutionNode node) {
         boolean rtn = false;
 
@@ -98,4 +129,5 @@ public class FeatureNode extends NodeWithChildren<ScenarioNode<?>> implements Ta
         }
         return rtn;
     }
+
 }
