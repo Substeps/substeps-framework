@@ -66,6 +66,7 @@ case object State {
     result match {
       case "CHILD_FAILED" =>     State(true)
       case "FAILED" => State(true)
+      case "NON_CRITICAL_FAILURE"  => State(true)
       case _ => State(false)
     }
 

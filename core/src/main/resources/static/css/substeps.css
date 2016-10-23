@@ -141,3 +141,16 @@ i.jstree-icon.jstree-themeicon.NON_CRITICAL_FAILURE.jstree-themeicon-custom
     background-position: center center;
 }
 
+label.icon-key
+{
+    font-weight: normal;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-bottom: 0px;
+}
+
+img.key-img {
+    width: 20px;
+    height: 20px;
+}
+

@@ -24,6 +24,7 @@ object ReportBuilder {
     result match {
       case "CHILD_FAILED" =>     Map ("state" -> "open")
       case "FAILED" => Map ("state" -> "open")
+      case "NON_CRITICAL_FAILURE"  => Map ("state" -> "open")
       case _ => Map()
     }
 
@@ -38,7 +39,8 @@ object ReportBuilder {
     "NOT_RUN" -> "NOT_RUN",
     "PARSE_FAILURE" -> "PARSE_FAILURE",
     "FAILED" -> "FAILED",
-    "CHILD_FAILED" -> "FAILED")
+    "CHILD_FAILED" -> "CHILD_FAILED",
+    "NON_CRITICAL_FAILURE" -> "NON_CRITICAL_FAILURE")
 
 
   /* TODO

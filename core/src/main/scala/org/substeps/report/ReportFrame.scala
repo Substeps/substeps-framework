@@ -76,35 +76,6 @@ trait ReportFrameTemplate {
        |    <link rel="stylesheet" href="css/jstree/style.min.css" />
        |    <script type="text/javascript" src="results-summary.js"></script>
        |
-       |<script type="text/javascript">
-       |//<!--
-       |function toggle(id){
-       |
- |    elem = document.getElementById(id);
-       |    if (elem.style.display == 'none') {
-       |        elem.style.display = 'block';
-       |
-       |    } else {
-       |        elem.style.display = 'none';
-       |    }
-       |}
-       |
- | function hideNotRun(chkBox){
- |    var result = document.evaluate('//li[a/i[contains(@style, "NOT_RUN")]]', document.documentElement, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
- |    for (var i = 0; i < result.snapshotLength; i++) {
- |        if (chkBox.checked) {
- |            result.snapshotItem(i).style.display = 'none'
-       |        }
-       |        else {
-       |            result.snapshotItem(i).style.display = 'block'
-       |        }
-       |    }
-       |}
- |
- |//-->
-       |
- |
- |</script>
        |
        |
        |</head>
@@ -245,12 +216,48 @@ trait ReportFrameTemplate {
        |
        |    <div class="panel panel-default">
        |        <div class="panel-heading">
-       |            <h3 class="panel-title">Test details</h3>
+       |          <div class="row-fluid">
+       |                <div class="col-md-6">
+       |                    <h3 class="panel-title">Test details</h3>
+       |                </div>
+       |
+       |                    <div class="col-md-1">
+       |                        <label style=" margin-bottom: 0px;">Key:</label>
+       |                    </div>
+       |                    <div class="col-md-5">
+       |
+ |                        <label class="icon-key">
+       |                        <img class="key-img" src="img/PASSED.png" alt="Passed"> <span>Passed</span>
+       |                        </label>
+       |
+ |                        <label class="icon-key">
+       |                        <img class="key-img" src="img/FAILED.png" alt="Failure"> <span>Failed</span>
+       |                        </label>
+       |
+ |
+       |                        <label class="icon-key">
+       |                        <img class="key-img" src="img/CHILD_FAILED.png" alt="Child failed"> <span>Child failed</span>
+       |                        </label>
+       |
+ |
+ |
+ |                        <label class="icon-key">
+       |                        <img class="key-img" src="img/NOT_RUN2.png" alt="Not run"> <span>Not run</span>
+       |                        </label>
+       |
+ |
+ |                        <label class="icon-key">
+       |                        <img class="key-img" src="img/NON_CRITICAL_FAILURE.png" alt="Non critical failure"> <span>Non critical failure</span>
+       |                        </label>
+       |
+ |
+ |                    </div>
+       |          </div>
        |        </div>
        |        <div class="panel-body">
        |
        |    <div>
-       |        <input type="checkbox" onclick="javascript:hideNotRun(this)"/>Hide not run
+       |        <input id="hide-not-run-chk" type="checkbox"/>Hide not run
        |    </div>
        |
        |

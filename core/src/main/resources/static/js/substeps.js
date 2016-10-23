@@ -58,73 +58,7 @@ $(document).ready(function() {
 
 });
 
-// "fnCreatedRow": function( nRow, aData, iDisplayIndex ) {
-			// 	/* Append the grade to the default row class name */
-			// 	if ( aData[4] > "0" )
-			// 	{
-			// 		$(nRow).addClass( "error_row");
-			// 	}
-			// 	return nRow;
-			// },
-			
-			// "aoColumns": [
-			// 	{ "sTitle": "Tag" },
-			// 	{ "sTitle": "Features" },
-			// 	{ "sTitle": "Features run" },
-			// 	{ "sTitle": "Features passed" },
-			// 	{ "sTitle": "Features failed" },
-			// 	{ "sTitle": "Features success" }
-			// ],
-			// "aoColumnDefs": [ 
-			//      			{
-			//      				"fnRender": function ( oObj ) {
-			//      					return oObj.aData[5] +' %';
-			//      				},
-			//      				"aTargets": [ 5 ]
-			//      			}]
 
-
-
-
-
-
-
-	// $('#scenario-stats-div').html( '<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="scenario-stats-table"></table>' );
-	
-	// $('#scenario-stats-table').dataTable( {
-	// 		"bPaginate": true,
-	// 		"bFilter": false,
-	// 		"bSort": true,
-	// 		"aaSorting": [[ 4, "desc" ]],
-	// 		"aaData": scenarioStatsData,
-			
-	// 		"fnCreatedRow": function( nRow, aData, iDisplayIndex ) {
-	// 			/* Append the grade to the default row class name */
-	// 			if ( aData[4] > "0" )
-	// 			{
-	// 				$(nRow).addClass( "error_row");
-	// 			}
-	// 			return nRow;
-	// 		},
-			
-	// 		"aoColumns": [
-	// 			{ "sTitle": "Tag" },
-	// 			{ "sTitle": "Scenarios" },
-	// 			{ "sTitle": "Scenarios run" },
-	// 			{ "sTitle": "Scenarios passed" },
-	// 			{ "sTitle": "Scenarios failed" },
-	// 			{ "sTitle": "Scenarios success" }
-	// 		],
-	// 		"aoColumnDefs": [ 
-	// 		     			{
-	// 		     				"fnRender": function ( oObj ) {
-	// 		     					return oObj.aData[5] +' %';
-	// 		     				},
-	// 		     				"aTargets": [ 5 ]
-	// 		     			}]
-	// 	} );		
-	
-	
 
 
 $(document).ready(function() {
@@ -140,11 +74,40 @@ $(document).ready(function() {
 		}
 	});
 
+	$("#hide-not-run-chk").bind("click", function(event){
+		var result = document.evaluate('//li[a/i[contains(@class, "NOT_RUN")]]', document.documentElement, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
+		for (var i = 0; i < result.snapshotLength; i++) {
+
+			if (event.target.checked) {
+				result.snapshotItem(i).style.display = 'none'
+			}
+			else {
+				result.snapshotItem(i).style.display = 'block'
+			}
+		}
+
+	});
 });
 
 function formatStackElement(item, index){
 	return "<li>" + item + "</li>"
 }
+
+
+	function toggle(id){
+
+		elem = document.getElementById(id);
+		if (elem.style.display == 'none') {
+			elem.style.display = 'block';
+
+		} else {
+			elem.style.display = 'none';
+		}
+	}
+
+
+
+
 
 $(function () {
 	$('#feature-tree')

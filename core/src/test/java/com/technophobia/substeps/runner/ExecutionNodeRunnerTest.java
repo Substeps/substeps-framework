@@ -788,7 +788,7 @@ public class ExecutionNodeRunnerTest {
 
     }
 
-    
+
 
     @Test
     public void testExecutionNodeTreeBuildingWithScenarioName() {
