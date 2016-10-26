@@ -55,7 +55,16 @@ public class StepImplementationNodeRunner extends AbstractNodeRunner<StepImpleme
     private void addFailure(StepImplementationNode node, RootNodeExecutionContext context, Throwable t) {
 
         byte[] screenshotBytes = attemptScreenshot(node, context);
-        context.addFailure(new SubstepExecutionFailure(t, node, screenshotBytes));
+
+        SubstepExecutionFailure failure;
+        if (context.isNodeFailureNonCritical(node)){
+            failure = SubstepExecutionFailure.nonCriticalFailure(t, node, screenshotBytes);
+        }
+        else {
+            failure = SubstepExecutionFailure.criticalFailure(t,node, screenshotBytes);
+        }
+
+        context.addFailure(failure);
     }
 
     @Override

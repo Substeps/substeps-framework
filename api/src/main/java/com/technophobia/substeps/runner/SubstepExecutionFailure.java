@@ -22,6 +22,7 @@ package com.technophobia.substeps.runner;
 import com.google.common.base.Function;
 import com.technophobia.substeps.execution.ExecutionResult;
 import com.technophobia.substeps.execution.node.IExecutionNode;
+import com.technophobia.substeps.execution.node.StepImplementationNode;
 
 import java.io.Serializable;
 
@@ -52,6 +53,47 @@ public class SubstepExecutionFailure implements Serializable {
 
     private final ThrowableInfo throwableInfo;
 
+    private SubstepExecutionFailure(Throwable cause, IExecutionNode executionNode, boolean setupOrTearDown, boolean nonCritical, byte[] screenshot) {
+        this.cause = cause;
+        this.executionNode = executionNode;
+        this.setupOrTearDown = setupOrTearDown;
+        this.nonCritical = nonCritical;
+        this.screenshot = screenshot;
+        this.throwableInfo = new ThrowableInfo(cause);
+    }
+
+
+
+
+    public static SubstepExecutionFailure criticalFailure(Throwable cause, IExecutionNode node, byte[] screenshotBytes) {
+        SubstepExecutionFailure sef = new SubstepExecutionFailure(cause, node, false, false, screenshotBytes);
+
+        node.getResult().setFailure(sef);
+
+        return sef;
+
+    }
+
+
+    public static SubstepExecutionFailure nonCriticalFailure(final Throwable cause, final IExecutionNode node, byte[] screenshotBytes) {
+
+        SubstepExecutionFailure sef = new SubstepExecutionFailure(cause, node, false, true, screenshotBytes);
+
+        node.getResult().setFailure(sef);
+
+        return sef;
+    }
+
+    /*
+     * @param cause      the cause of the failure
+     * @param node       the node that failed execution
+     * @param screenshot the bytes representing the screenshot taken when the node execution failed
+     */
+//    public SubstepExecutionFailure(final Throwable cause, final IExecutionNode node, final byte[] screenshot) {
+//        this(cause, node);
+//        this.setScreenshot(screenshot);
+//    }
+
 
     public SubstepExecutionFailure(final Throwable cause) {
 
@@ -73,16 +115,6 @@ public class SubstepExecutionFailure implements Serializable {
 
     }
 
-
-    /**
-     * @param cause      the cause of the failure
-     * @param node       the node that failed execution
-     * @param screenshot the bytes representing the screenshot taken when the node execution failed
-     */
-    public SubstepExecutionFailure(final Throwable cause, final IExecutionNode node, final byte[] screenshot) {
-        this(cause, node);
-        this.setScreenshot(screenshot);
-    }
 
 
     /**
@@ -106,10 +138,16 @@ public class SubstepExecutionFailure implements Serializable {
         node.getResult().setResult(result);
     }
 
+
+
     public static void setResult(final Throwable cause, final IExecutionNode node, final ExecutionResult result) {
-        final SubstepExecutionFailure sef = new SubstepExecutionFailure(cause);
-        sef.executionNode = node;
-        sef.executionNode.getResult().setFailure(sef);
+
+
+        final SubstepExecutionFailure sef = SubstepExecutionFailure.criticalFailure(cause, node, null);
+
+
+//        sef.executionNode = node;
+//        sef.executionNode.getResult().setFailure(sef);
         node.getResult().setResult(result);
     }
 
@@ -184,4 +222,5 @@ public class SubstepExecutionFailure implements Serializable {
     public void setScreenshot(final byte[] screenshot) {
         this.screenshot = screenshot;
     }
+
 }

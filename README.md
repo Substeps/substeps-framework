@@ -21,7 +21,14 @@ Requirements
 -----
 * Added a checkbox to the report to optionally hide skipped steps
 * Substeps Mojos - Failures should prevent the Maven install phase from running; The runner mojo will throw a MojoFailureException only if the verify phase is not planned.  The Report Builder will throw any such exception if one is encountered in the maven session.
-
+* Report enhancements
+  * Upgraded Bootstrap to 3.3.7
+  * 3 progress bars rather than one, toggle to show data in original tabular form
+  * Step implementation method usage report (Beta)
+  * Replaced hand rolled recursive File listing with commons.io implementation
+* Fixed Issue #24 - ExecutionResultsCollector didn't work with forked mode
+* Added 3rd colour to usage report pie charts to show not run state
+* Corrected the path to the screenshots in the report data and the final report
 
 1.0.3
 -----

@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -73,7 +74,7 @@ public class TestParameters {
 
 
     public void init(final boolean failOnNoFeatures) {
-        final List<File> featureFiles = FileUtils.getFiles(new File(featureFile), ".feature");
+        final Collection<File> featureFiles = FileUtils.getFiles(new File(featureFile), "feature");
 
         final FeatureFileParser fp2 = new FeatureFileParser();
         for (final File f : featureFiles) {

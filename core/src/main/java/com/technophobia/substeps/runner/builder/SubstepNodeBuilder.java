@@ -151,6 +151,10 @@ public class SubstepNodeBuilder {
         substepNode.setLine(step.getLine());
         substepNode.setFileUri(substepsParent.getSubStepFileUri());
         substepNode.setLineNumber(substepsParent.getSourceLineNumber());
+
+        substepNode.setSourceLine(substepsParent.getParent().getLine());
+        substepNode.setParameterNames(substepsParent.getParent().getParamNames());
+
         return substepNode;
     }
 
@@ -241,6 +245,11 @@ public class SubstepNodeBuilder {
             stepImplementationNode.setLine(step.getParameterLine());
             stepImplementationNode.setFileUri(step.getSource().getAbsolutePath());
             stepImplementationNode.setLineNumber(step.getSourceLineNumber());
+
+            stepImplementationNode.setSourceLine(step.getLine());
+            stepImplementationNode.setParameterNames(step.getParamNames());
+
+
 
             try {
                 setMethodParameters(execImpl, step.getParameterLine(), parent, step.getSubstitutedInlineTable(),

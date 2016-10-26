@@ -70,7 +70,11 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
             log.error("Error preparing ExecutionConfig", e);
 
             List<FeatureNode> empty = Collections.emptyList();
-            rtn = new RootNode("Substeps Test", empty);
+
+
+            String env = System.getProperty("environment", "localhost");
+
+            rtn = new RootNode("Substeps Test", empty, env, theConfig.getTags(), theConfig.getNonFatalTags());
             ExecutionNodeResult result = rtn.getResult();
             result.setThrown(e);
             result.setResult(ExecutionResult.PARSE_FAILURE);
@@ -167,10 +171,9 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
 
         this.notificationSequenceNumber++;
 
-
         n.setUserData(getBytes(node.getResult()));
 
-        this.log.trace("sending notification for node id: " + node.getId() + " sequence: "
+        log.trace("sending notification for node id: " + node.getId() + " sequence: "
                 + this.notificationSequenceNumber);
 
         sendNotification(n);

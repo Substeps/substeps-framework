@@ -36,6 +36,7 @@ import org.substeps.report.ExecutionResultsCollector;
 import org.substeps.report.IExecutionResultsCollector;
 import org.substeps.report.ReportingUtil;
 import org.substeps.runner.CoreSubstepsPropertiesConfiguration;
+import org.substeps.runner.UsageTreeBuilder;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -67,29 +68,10 @@ public class ExecutionNodeRunner implements SubstepsRunner {
 
     private List<SubstepExecutionFailure> failures;
 
-    private final ReportingUtil reportingUtil = new ReportingUtil(new File("target"));
+    private final ReportingUtil reportingUtil = new ReportingUtil();
 
     // map of nodes to each of the parents, where this node is used
     private final Map<ExecutionNodeUsage, List<ExecutionNodeUsage>> callerHierarchy = new HashMap<ExecutionNodeUsage, List<ExecutionNodeUsage>>();
-
-//    private final IExecutionResultsCollector executionResultsCollector;
-
-//    public ExecutionNodeRunner(){
-//
-//        this(new ExecutionResultsCollector(CoreSubstepsPropertiesConfiguration.INSTANCE.getReportDataBaseDir(),
-//                LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYYMMdd_HHmm_ss_SSS")),
-//                CoreSubstepsPropertiesConfiguration.INSTANCE.isPrettyPrintReportData()));
-//    }
-//    // called in tests
-//    public ExecutionNodeRunner(IExecutionResultsCollector executionResultsCollector ){
-//        this.executionResultsCollector = executionResultsCollector;
-//    }
-//
-//
-//
-//    public File getRootExecutionDataDirectory() {
-//        return this.executionResultsCollector.getRootExecutionDataDirectory();
-//    }
 
     @Override
     public void addNotifier(final IExecutionListener notifier) {
@@ -103,14 +85,18 @@ public class ExecutionNodeRunner implements SubstepsRunner {
                                            TagManager nonFatalTagmanager ) {
 
 
-        final ExecutionNodeTreeBuilder nodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters);
+        final ExecutionNodeTreeBuilder nodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, configWrapper);
 
         // building the tree can throw critical failures if exceptions are found
         this.rootNode = nodeTreeBuilder.buildExecutionNodeTree(configWrapper.getExecutionConfig().getDescription());
 
         setupExecutionListeners(configWrapper);
 
-        processUncalledAndUnused(syntax);
+        if (configWrapper.getExecutionConfig().isCheckForUncalledAndUnused()) {
+            processUncalledAndUnused(syntax, configWrapper.getExecutionConfig().getDataOutputDirectory());
+        }
+
+        // UsageTreeBuilder.buildUsageTree(this.rootNode);
 
         ExecutionContext.put(Scope.SUITE, INotificationDistributor.NOTIFIER_DISTRIBUTOR_KEY,
                 this.notificationDistributor);
@@ -124,7 +110,8 @@ public class ExecutionNodeRunner implements SubstepsRunner {
 
     }
 
-        @Override
+
+    @Override
     public RootNode prepareExecutionConfig(final SubstepsExecutionConfig config) {
 
         final ExecutionConfigWrapper configWrapper = new ExecutionConfigWrapper(config);
@@ -215,21 +202,25 @@ public class ExecutionNodeRunner implements SubstepsRunner {
     /**
      * @param syntax
      */
-    private void processUncalledAndUnused(final Syntax syntax) {
+    private void processUncalledAndUnused(final Syntax syntax, final File dataOutputDir) {
         final List<StepImplementation> uncalledStepImplementations = syntax.getUncalledStepImplementations();
 
-        reportingUtil.writeUncalledStepImpls(uncalledStepImplementations);
+        if (!dataOutputDir.exists()){
+            dataOutputDir.mkdir();
+        }
+
+        reportingUtil.writeUncalledStepImpls(uncalledStepImplementations, dataOutputDir);
 
         buildCallHierarchy();
 
-        checkForUncalledParentSteps(syntax);
+        checkForUncalledParentSteps(syntax, dataOutputDir);
 
     }
 
     /**
      * @param syntax
      */
-    private void checkForUncalledParentSteps(final Syntax syntax) {
+    private void checkForUncalledParentSteps(final Syntax syntax, File outputDir) {
 
         final Set<ExecutionNodeUsage> calledExecutionNodes = callerHierarchy.keySet();
 
@@ -245,7 +236,7 @@ public class ExecutionNodeRunner implements SubstepsRunner {
                 uncalledSubstepDefs.add(parent);
             }
         }
-        reportingUtil.writeUncalledStepDefs(uncalledSubstepDefs);
+        reportingUtil.writeUncalledStepDefs(uncalledSubstepDefs, outputDir);
     }
 
     private boolean thereIsNotAStepThatMatchesThisPattern(final String stepPattern, final Set<ExecutionNodeUsage> calledExecutionNodes) {

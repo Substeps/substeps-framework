@@ -77,7 +77,7 @@ public class SubstepsRunnerMojoTest {
 
         final ExecutionConfig execConfig = new ExecutionConfig();
 
-        final RootNode rootNode = new RootNode("desc", null);
+        final RootNode rootNode = new RootNode("desc", null, "env", "tags", "non-fatal-tags");
 
         method.invoke(mojo, rootNode, execConfig);
 

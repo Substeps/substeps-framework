@@ -1,0 +1,16 @@
+circle {
+    fill: #C02D05;
+    stroke: #59801A;
+    stroke-width: 32;
+}
+
+circle.not-run {
+    stroke: #f0ad4e;
+}
+
+svg {
+    width: 22px; height: 22px;
+    transform: rotate(-90deg);
+    background:#C02D05;
+    border-radius: 50%;
+}

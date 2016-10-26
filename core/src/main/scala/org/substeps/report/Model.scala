@@ -15,10 +15,14 @@ case object Counters {
 
 //    println(s"$total : Int, $run: Int, $passed: Int, $failed: Int, $skipped: Int")
 
+    val passedPC = pc(passed, total)
+    val failedPC = pc(failed, total)
+    val skippedPC = pc(skipped, total)
+
     new Counters(total, run, passed, failed, skipped,
-      pc(passed, total),
-      pc(skipped, total),
-      pc(failed, total))
+      passedPC,
+      skippedPC,
+      failedPC)
   }
 
   def pc (num : Int, total : Int) = {
@@ -29,14 +33,17 @@ case object Counters {
       case _ =>   {
         val numerator = BigDecimal.valueOf(num.toLong)
         val denominator = BigDecimal(total.toDouble)
-        ((numerator / denominator) * 100).setScale(2, BigDecimal.RoundingMode.HALF_DOWN).doubleValue()
+        ((numerator / denominator) * 100).setScale(2, BigDecimal.RoundingMode.DOWN).doubleValue()
       }
     }
 
   }
 }
 
-case class Counters(total : Int, run: Int, passed: Int, failed: Int, skipped: Int, successPC : Double, skippedPC : Double, failedPC : Double, tag: Option[String] = None ) {
+case class Counters(total : Int, run: Int, passed: Int, failed: Int, skipped: Int,
+                    successPC : Double,
+                    skippedPC : Double,
+                    failedPC : Double, tag: Option[String] = None ) {
 
   def + (that: Counters) : Counters = {
     Counters.build(this.total + that.total,
@@ -59,10 +66,13 @@ case object State {
     result match {
       case "CHILD_FAILED" =>     State(true)
       case "FAILED" => State(true)
+      case "NON_CRITICAL_FAILURE"  => State(true)
       case _ => State(false)
     }
 
   }
 }
 
-case class JsTreeNode(id : String, text: String, icon : String, children : Option[List[JsTreeNode]], state : State)
+case class JsTreeNode(id : String, text: String, icon : String, children : Option[List[JsTreeNode]], state : State, li_attr : Option[Map[String,String]] = None)
+
+

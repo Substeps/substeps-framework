@@ -201,6 +201,7 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
     @Override
     public void addNotifier(final IExecutionListener listener) {
 
+        //
         this.mbean.addNotifier(listener);
     }
 
@@ -216,7 +217,7 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
 
         } catch (final RuntimeException re) {
 
-            this.log.debug("Unable to connect to server to shutdown, it may have already closed", re);
+            log.debug("Unable to connect to server to shutdown, it may have already closed", re);
 
         }
         return successfulShutdown;
@@ -231,7 +232,7 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
 
             ExecutionNodeResult result = getFromBytes(rawBytes);
 
-            this.log.trace("received a JMX event msg: " + notification.getMessage() +
+            log.trace("received a JMX event msg: " + notification.getMessage() +
                     " seq: " + notification.getSequenceNumber() + " exec result node id: " + result.getExecutionNodeId());
 
                     notificiationHandler.handleNotification(result);

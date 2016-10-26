@@ -32,12 +32,10 @@ object ExecutionResultsCollector{
 }
 
 
-// TODO - remove the ctor params to allow injection from Maven via setter... eurgh  builder instead ?  when to init ?
 class ExecutionResultsCollector extends  IExecutionResultsCollector {
 
-  private val log: Logger = LoggerFactory.getLogger(classOf[ExecutionResultsCollector])
-
-//  val rootDir = new File(baseDir, "substeps-results_" +timestamp)
+  @transient
+  private lazy val log: Logger = LoggerFactory.getLogger(classOf[ExecutionResultsCollector])
 
   var dataDir: File = new File(".")
   var pretty : Boolean = false
@@ -52,11 +50,14 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
   @transient
   lazy val UTF8 = Charset.forName("UTF-8")
 
-  var featureToResultsDirMap: Map[FeatureNode, File] = Map()
+  var featureToResultsDirMap: Map[Long, File] = Map()
 
   val scenarioSummaryMap = new mutable.HashMap[Long, (BasicScenarioNode, File)]
 
   def onNodeFailed(node: IExecutionNode, cause: Throwable): Unit = {
+
+    log.debug("ExecutionResultsCollector nodeFailed: " + node.getId)
+
 
     node match {
       case scenarioNode :  BasicScenarioNode => {
@@ -64,8 +65,11 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
 
         val feature = getFeatureFromNode(scenarioNode)
 
-        featureToResultsDirMap.get(feature) match {
-          case None => log.error("no report dir for feature: " + feature.getFilename)
+        featureToResultsDirMap.get(feature.getId) match {
+          case None => {
+            log.error("scenario node failed - no report dir for feature: " + feature.getFilename + " id: " + feature.getId)
+
+          }
           case Some(dir) => {
 
             // write out a results file for this scenario
@@ -84,23 +88,22 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
         log.debug("feature node failed")
 
         // write a summary file for the feature
-        featureToResultsDirMap.get(featureNode) match {
-          case None => log.error("no report dir for feature: " + featureNode.getFilename)
+        featureToResultsDirMap.get(featureNode.getId) match {
+          case None => {
+            log.error("feature node failed - no report dir for feature: " + featureNode.getFilename+ " id: " + featureNode.getId)
+          }
           case Some(dir) => {
             val summaryFile = new File(dir, dir.getName + ".json")
 
             Files.write(generateJson(featureNode), summaryFile, UTF8)
-
           }
         }
-
       }
       case rootNode : RootNode => {
         log.debug("root node failed")
         val summaryFile = new File(dataDir, "results.json")
 
         Files.write(generateJson(rootNode), summaryFile, UTF8)
-
       }
 
       case _ => log.debug("other node failed")
@@ -111,7 +114,7 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
   def onNodeStarted(node: IExecutionNode): Unit = {
 
     // do we care about nodes starting ?
-
+    log.debug("ExecutionResultsCollector nodeStarted: " + node.getId)
   }
 
   def getFeatureFromNode(node: IExecutionNode) : FeatureNode = {
@@ -127,13 +130,18 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
 
   def onNodeFinished(node: IExecutionNode): Unit = {
 
+    log.debug("ExecutionResultsCollector nodeFinished: " + node.getId)
+
+
     node match {
       case scenarioNode :  BasicScenarioNode => {
         log.debug("basic scenario finished")
         val feature = getFeatureFromNode(scenarioNode)
 
-        featureToResultsDirMap.get(feature) match {
-          case None => log.error("no report dir for feature: " + feature.getFilename)
+        featureToResultsDirMap.get(feature.getId) match {
+          case None => {
+            log.error("basic scenario node finished - no report dir for feature: " + feature.getFilename + " id: " + feature.getId)
+          }
           case Some(dir) => {
 
             // write out a results file for this scenario
@@ -152,8 +160,10 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
         log.debug("feature node finished")
 
         // write a summary file for the feature
-        featureToResultsDirMap.get(featureNode) match {
-          case None => log.error("no report dir for feature: " + featureNode.getFilename)
+        featureToResultsDirMap.get(featureNode.getId) match {
+          case None => {
+            log.error("feature node finished - no report dir for feature: " + featureNode.getFilename + " id: " + featureNode.getId)
+          }
           case Some(dir) => {
             val summaryFile = new File(dir, dir.getName + ".json")
 
@@ -169,12 +179,18 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
         Files.write(generateJson(rootNode), summaryFile, UTF8)
 
       }
+      case stepImplNode : StepImplementationNode => {
+        log.debug("stepImpl Node finished")
+
+      }
       case _ => log.debug("other node finished")
     }
 
   }
 
   def onNodeIgnored(node: IExecutionNode): Unit = {
+
+    log.debug("ExecutionResultsCollector nodeIgnored: " + node.getId)
 
     node match {
       case scenarioNode :  BasicScenarioNode => {
@@ -192,9 +208,9 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
       rootNode.getChildren.asScala.map(f => {
 
         val featureResultsDir =
-          featureToResultsDirMap.get(f) match {
+          featureToResultsDirMap.get(f.getId) match {
             case None => {
-              log.error("no report dir for feature: " + f.getFilename)
+              log.error("generateJson for RootNode - no report dir for feature: " + f.getFilename)
               ""
             }
             case Some(dir) => dir.getName
@@ -204,9 +220,10 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
 
       })
 
+
     val data =
       RootNodeSummary("RootNode", rootNode.getDescription, rootNode.getResult.getResult.name(), rootNode.getId,
-        Some(rootNode.getResult.getRunningDuration), features.toList)
+        Some(rootNode.getResult.getRunningDuration), features.toList, Option(rootNode.getTags), Option(rootNode.getNonFatalTags), rootNode.getTimestamp, rootNode.getEnvironment)
 
     implicit val formats = Serialization.formats(NoTypeHints)
 
@@ -250,8 +267,10 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
 
     })
 
+    val result = if (Option(featureNode.getResult.getFailure).isDefined && featureNode.getResult.getFailure.isNonCritical) "NON_CRITICAL_FAILURE" else featureNode.getResult.getResult.name()
+
     val data =
-      FeatureSummary("FeatureNode", featureNode.getFilename, featureNode.getResult.getResult.name(), featureNode.getId,
+      FeatureSummary("FeatureNode", featureNode.getFilename, result, featureNode.getId,
         Some(featureNode.getResult.getRunningDuration), featureNode.getDescription, scenarios.toList, featureNode.getTags.toList)
 
 
@@ -271,7 +290,7 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
        Option(scenarioNode.getChildren) match {
           case Some(childNodes) => {
             childNodes.asScala.map(child => {
-              NodeDetail.getData(child, screenshotsDir )
+              NodeDetail.getData(child, screenshotsDir, dataDir )
             })
           }
           case _ => List()
@@ -282,29 +301,30 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
       case _ => None
     }
 
+    Option(result.getFailure).map(sef => {
+
+      log.info(" *** got Substep Exec Failure: critical : " + sef.isNonCritical)
+
+    })
 
 
       val data =
       if (!result.getResult.isFailure) {
 
-        NodeDetail.withChildrenNodeDetail("BasicScenarioNode", scenarioNode.getParent.getFilename, scenarioNode.getResult.getResult.name(), scenarioNode.getId.toInt,
-          Option(result.getRunningDuration), scenarioNode.getDescription, None, children.toList, tags )
+        NodeDetail.basicScenarioNodeNotInError(scenarioNode, children.toList, tags)
+
       }
       else {
 
         if (result.getResult == ExecutionResult.CHILD_FAILED){
 
-          NodeDetail.withChildrenNodeDetail("BasicScenarioNode", scenarioNode.getParent.getFilename, scenarioNode.getResult.getResult.name(), scenarioNode.getId.toInt,
-            Option(result.getRunningDuration), scenarioNode.getDescription, None, children.toList, tags )
+          NodeDetail.basicScenarioNodeNotInError(scenarioNode, children.toList, tags)
 
         }
         else {
 
-          val stackTrace = result.getFailure.getCause.getStackTrace.toList.map(elem => elem.toString)
+          NodeDetail.basicScenarioNodeInError(scenarioNode, children.toList, tags)
 
-          NodeDetail.inErrorwithChildrenNodeDetail("BasicScenarioNode", scenarioNode.getParent.getFilename, scenarioNode.getResult.getResult.name(), scenarioNode.getId.toInt,
-            Option(result.getRunningDuration), scenarioNode.getDescription, None, children.toList,
-            Some(result.getFailure.getCause.getMessage), Some(stackTrace), None, tags)
         }
 
       }
@@ -325,18 +345,19 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
       }
     }
 
-    log.debug("collecting data into " + dataDir.getAbsolutePath)
-
+    log.info("collecting data into " + dataDir.getAbsolutePath)
 
     // create subdirs for each feature
 
     val featureNodes = rootNode.getChildren.asScala
 
+    log.debug("init dirs for " + featureNodes.size + " features")
+
     val featureNames =
-    featureNodes.map(featureNode => featureNode.getFilename)
+      featureNodes.map(featureNode => featureNode.getFilename)
 
     val dupes =
-      if (featureNames.distinct.size < featureNames.size){
+      if (featureNames.distinct.size <= featureNames.size){
       // take into account the same feature files in different dirs - featureNode.getFileUri
 
       val uniqueFeatureNamesMap: Map[String, mutable.Buffer[String]] = featureNames.groupBy(identity)
@@ -367,7 +388,9 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
 
       featureResultsDir.mkdir()
 
-      featureNode -> featureResultsDir
+      log.debug("mapping feature node id " + featureNode.getId + " to dir: "  + featureResultsDir.getAbsolutePath)
+
+      featureNode.getId -> featureResultsDir
     }).toMap
   }
 }
@@ -381,151 +404,12 @@ case class ScenarioSummary(nodeId : Long, filename : String, result: String, tag
 case class FeatureSummaryForRootNode(nodeId : Long, resultsDir: String, result : String)
 
 case class RootNodeSummary(nodeType: String, description: String, result : String, id : Long,
-                           executionDurationMillis : Option[Long], features : List[FeatureSummaryForRootNode])
+                           executionDurationMillis : Option[Long], features : List[FeatureSummaryForRootNode], tags : Option[String], nonFatalTags : Option[String], timestamp : Long, environment : String)
 
 
 import scala.collection.JavaConverters._
 
 
-case class NodeDetail(nodeType: String, filename: String, result : String, id : Long,
-                      executionDurationMillis : Option[Long], description : String,  method : Option[String],
-                      children : List[NodeDetail] = List(),
-                      exceptionMessage : Option[String] = None, stackTrace : Option[List[String]] = None,
-                      screenshot : Option[String] = None, tags : Option[List[String]] = None) {
-
-  def flattenTree() : List[NodeDetail] = {
-    NodeDetail.flatten(this)
-  }
-}
-
-
-
-case object NodeDetail {
-
-  def basicLeafNodeDetail(nodeType: String, filename: String, result : String, id : Long,
-                          executionDurationMillis : Option[Long], description : String,  method : Option[String]) : NodeDetail = {
-    // tags not important
-    NodeDetail(nodeType, filename, result, id, executionDurationMillis, description, method)
-  }
-
-  def withChildrenNodeDetail(nodeType: String, filename: String, result : String, id : Long,
-                             executionDurationMillis : Option[Long], description : String,  method : Option[String], children : List[NodeDetail], tags : Option[List[String]] = None) : NodeDetail = {
-    // might have tags
-    NodeDetail(nodeType, filename, result, id, executionDurationMillis, description, method, children, None, None, None, tags)
-  }
-
-
-
-  def inErrorwithChildrenNodeDetail(nodeType: String, filename: String, result : String, id : Long,
-                             executionDurationMillis : Option[Long], description : String,  method : Option[String],
-                                    children : List[NodeDetail], exceptionMessage : Option[String],
-                                    stackTrace : Option[List[String]] , screenshot : Option[String],
-                                    tags : Option[List[String]] = None) : NodeDetail = {
-    // might have tags
-
-    NodeDetail(nodeType, filename, result, id, executionDurationMillis, description, method, children, exceptionMessage, stackTrace, screenshot, tags)
-  }
-
-
-
-
-  implicit def Long2longOption(x: java.lang.Long): Option[Long] = {
-    if (Option(x).isDefined) Some(x.longValue) else None
-  }
-
-  def flatten(node : NodeDetail) : List[NodeDetail] = {
-
-    val children =
-      node.children.flatMap(child => {
-        flatten(child)
-      })
-
-    List(node) ++ children
-  }
-  def getData(stepNode: StepNode, screenshotsDir : File) : NodeDetail = {
-    stepNode match {
-      case stepImpl : StepImplementationNode => {
-
-        val result = stepImpl.getResult
-
-        // no error
-
-        if (!result.getResult.isFailure) {
-          NodeDetail("Step", stepImpl.getFilename, stepImpl.getResult.getResult.name(), stepImpl.getId.toInt,
-            result.getRunningDuration, stepImpl.getDescription, Some(stepImpl.getTargetMethod.toString ) )
-
-        }
-        else {
-
-          val stackTrace = result.getFailure.getCause.getStackTrace.toList.map(elem => elem.toString)
-
-          val screenshotFile =
-          if (Option(result.getFailure.getScreenshot).isDefined){
-
-            if(!screenshotsDir.exists()) {
-              screenshotsDir.mkdir()
-            }
-            val screenshotFile = new File(screenshotsDir, scala.util.Random.alphanumeric.take(10).mkString)
-
-            Files.write(result.getFailure.getScreenshot, screenshotFile)
-
-            val path = Paths.get(screenshotsDir.getName, screenshotFile.getName)
-            Some(path.toString)
-          }
-          else {
-            None
-          }
-
-          NodeDetail("Step", stepImpl.getFilename, stepImpl.getResult.getResult.name(), stepImpl.getId.toInt,
-            result.getRunningDuration, stepImpl.getDescription, Some(stepImpl.getTargetMethod.toString), List(),
-            Some(result.getFailure.getCause.getMessage), Some(stackTrace), screenshotFile )
-
-        }
-      }
-      case substepNode : SubstepNode => {
-
-        val result = substepNode.getResult
-
-        // may have children
-        val children =
-          Option(substepNode.getChildren) match {
-            case Some(childNodes) => {
-              childNodes.asScala.map(child => {
-                NodeDetail.getData(child, screenshotsDir)
-              })
-            }
-            case _ => List()
-          }
-
-
-
-        if (!result.getResult.isFailure) {
-          NodeDetail("SubstepNode", substepNode.getFilename, substepNode.getResult.getResult.name(), substepNode.getId.toInt,
-            result.getRunningDuration, substepNode.getDescription, None, children.toList  )
-
-        }
-        else {
-
-          if (result.getResult == ExecutionResult.CHILD_FAILED){
-
-            NodeDetail("SubstepNode", substepNode.getFilename, substepNode.getResult.getResult.name(), substepNode.getId.toInt,
-              result.getRunningDuration, substepNode.getDescription, None, children.toList)
-
-          }
-          else {
-            val stackTrace = result.getFailure.getCause.getStackTrace.toList.map(elem => elem.toString)
-
-            NodeDetail("SubstepNode", substepNode.getFilename, substepNode.getResult.getResult.name(), substepNode.getId.toInt,
-              result.getRunningDuration, substepNode.getDescription, None, children.toList,
-              Some(result.getFailure.getCause.getMessage), Some(stackTrace) )
-
-          }
-        }
-      }
-    }
-  }
-
-}
 
 case class Id(id: String)
 case class Data(title:String, attr: Id, icon : String, children: Option[List[Data]])

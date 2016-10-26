@@ -134,7 +134,14 @@ public class ExecutionNodeResult implements Serializable {
         EnumSet<ExecutionResult> excluded = EnumSet.of(ExecutionResult.PARSE_FAILURE, ExecutionResult.SETUP_TEARDOWN_FAILURE);
 
         if (!excluded.contains(this.result)) {
-            this.result = ExecutionResult.FAILED;
+
+            if(substepExecutionFailure.isNonCritical()){
+                this.result = ExecutionResult.NON_CRITICAL_FAILURE;
+            }
+            else {
+                this.result = ExecutionResult.FAILED;
+            }
+
         }
 
         this.substepExecutionFailure = substepExecutionFailure;
@@ -143,5 +150,26 @@ public class ExecutionNodeResult implements Serializable {
     public SubstepExecutionFailure getFailure() {
         return substepExecutionFailure;
     }
+
+    public Long getStartedAt() {
+        return startedAt;
+    }
+
+    public Long getCompletedAt() {
+        return completedAt;
+    }
+
+    public void setStartedAt(Long startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public void setCompletedAt(Long completedAt) {
+        this.completedAt = completedAt;
+    }
+
+    public void setSubstepExecutionFailure(SubstepExecutionFailure substepExecutionFailure) {
+        this.substepExecutionFailure = substepExecutionFailure;
+    }
+
 
 }

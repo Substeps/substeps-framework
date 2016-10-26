@@ -48,9 +48,6 @@ import java.util.List;
         configurator = "include-project-dependencies")
 public class SubstepsRunnerMojo extends BaseSubstepsMojo {
 
-
-
-
     /**
      * When running in forked mode, a port is required to communicate between
      * maven and substeps, to set explicitly use -DjmxPort=9999
@@ -105,6 +102,8 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
     @Parameter(defaultValue = "${plugin.artifacts}")
 
     private List<Artifact> pluginDependencies;
+
+
 
     /**
      * //     * at component
@@ -179,7 +178,11 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
 
     private void runExecutionConfig(final ExecutionConfig theConfig) throws MojoExecutionException {
 
-        final RootNode iniitalRootNode = this.runner.prepareExecutionConfig(theConfig.asSubstepsExecutionConfig());
+        final SubstepsExecutionConfig cfg =  theConfig.asSubstepsExecutionConfig();
+
+        this.getLog().info("SubstepsExecutionConfig: " + cfg.printParameters());
+
+        final RootNode iniitalRootNode = this.runner.prepareExecutionConfig(cfg);
 
         this.executionResultsCollector.initOutputDirectories(iniitalRootNode);
 

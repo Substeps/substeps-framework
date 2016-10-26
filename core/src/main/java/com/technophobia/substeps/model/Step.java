@@ -206,7 +206,12 @@ public class Step {
     }
 
     public List<String> getParamNames() {
-        return Collections.unmodifiableList(this.paramNames);
+        if (this.paramNames == null){
+            return null;
+        }
+        else {
+            return Collections.unmodifiableList(this.paramNames);
+        }
     }
 
     /**

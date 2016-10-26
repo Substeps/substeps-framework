@@ -22,6 +22,7 @@ package com.technophobia.substeps.runner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.technophobia.substeps.execution.AbstractExecutionNodeVisitor;
+import com.technophobia.substeps.execution.ExecutionResult;
 import com.technophobia.substeps.execution.node.IExecutionNode;
 import com.technophobia.substeps.execution.node.NodeWithChildren;
 import com.technophobia.substeps.execution.node.RootNode;
@@ -106,7 +107,7 @@ public class BuildFailureManager extends AbstractExecutionNodeVisitor<String> {
         List<IExecutionNode> path = Lists.newArrayList(parents);
         path.add(node);
 
-        if (node.getResult().getResult().isFailure()) { // nodes in a state of child_failed won't have the actual failure : node.getResult().getFailure()
+        if (node.getResult().getResult().isFailure() || node.getResult().getResult() == ExecutionResult.NON_CRITICAL_FAILURE) { // nodes in a state of child_failed won't have the actual failure : node.getResult().getFailure()
 
             // child first
             if (node instanceof NodeWithChildren<?>) {

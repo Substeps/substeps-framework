@@ -1,5 +1,8 @@
 package org.substeps.report
 
+import java.time.{Instant, LocalDateTime, ZoneId}
+import java.time.format.DateTimeFormatter
+
 /**
   * Created by ian on 18/08/16.
   */
@@ -8,81 +11,137 @@ package org.substeps.report
 trait ReportFrameTemplate {
 
 
+  def buildStatsBlock(name: String, counters : Counters) = {
 
-  def buildReportFrame(reportTitle: String, dateTimeStr : String, stats : ExecutionStats) = {
+    s"""
+       |    <div class="row-fluid">
+       |
+       |        <div class="col-md-2">${name} &nbsp;<span class="badge">${counters.total}</span></div>
+       |
+       |        <div class="col-md-10">
+       |
+       |            <div class="progress">
+       |                <div class="progress-bar progress-bar-success" style="width: ${counters.successPC}%;">${counters.successPC} Success (${counters.passed})</div>
+       |                <div class="progress-bar progress-bar-danger" style="width: ${counters.failedPC}%">${counters.failedPC}% Failure (${counters.failed})</div>
+       |                <div class="progress-bar progress-bar-warning" style="width: ${counters.skippedPC}%">${counters.skippedPC}% Not run (${counters.skipped})</div>
+       |            </div>
+       |
+       |        </div>
+       |
+       |    </div>
+       |
+     """.stripMargin
+
+  }
+
+  def buildReportFrame(rootNodeSummary: RootNodeSummary, stats : ExecutionStats) = {
+
+    val featureProgressBlock = buildStatsBlock("Features", stats.featuresCounter)
+    val scenarioProgressBlock = buildStatsBlock("Scenarios", stats.scenarioCounters)
+    val scenarioStepProgressBlock = buildStatsBlock("Scenario steps", stats.stepCounters)
+    val stepImplBlock = buildStatsBlock("Step Impls", stats.stepImplCounters)
+
+    val reportTitle = Option(rootNodeSummary.description).getOrElse("Substeps Test Report")
+
+    val localDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(rootNodeSummary.timestamp), ZoneId.systemDefault());
+    val dateTimeString = localDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss"))
+
+
+    // TODO pull out some of the other things from the node summary - tags, nonfatal tags and environment
+
+    val env = rootNodeSummary.environment
+
+
+    val nonFatalTagsOption =
+        rootNodeSummary.nonFatalTags.map(t => s"""<p class="navbar-text navbar-left">Non Fatal Tags: ${t}</p>""" )
+
+    val nonFatalTags = nonFatalTagsOption.getOrElse("")
+
+    val tags = rootNodeSummary.tags.getOrElse("")
+
+
 
     s"""
        |<!DOCTYPE html>
-       |<!-- Copyright Technophobia Ltd 2012 -->
+       |<!-- Original Copyright Technophobia Ltd 2012, later revisions by others, see github  -->
        |<html lang="en">
        |
  |<head>
-       |    <title>SubSteps report</title>
+       |    <title>Substeps report</title>
        |    <meta charset="UTF-8">
        |    <link href="css/bootstrap.min.css" rel="stylesheet"/>
        |    <link href="css/bootstrap-responsive.min.css" rel="stylesheet"/>
        |    <link href="css/substeps.css" rel="stylesheet"/>
        |
        |    <link rel="stylesheet" href="css/jstree/style.min.css" />
+       |    <script type="text/javascript" src="results-summary.js"></script>
        |
-       |<script type="text/javascript">
-       |//<!--
-       |function toggle(id){
-       |
- |    elem = document.getElementById(id);
-       |    if (elem.style.display == 'none') {
-       |        elem.style.display = 'block';
-       |
-       |    } else {
-       |        elem.style.display = 'none';
-       |    }
-       |}
-       |
- | function hideNotRun(chkBox){
- |    var result = document.evaluate('//li[a/i[contains(@style, "NOT_RUN")]]', document.documentElement, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
- |    for (var i = 0; i < result.snapshotLength; i++) {
- |        if (chkBox.checked) {
- |            result.snapshotItem(i).style.display = 'none'
-       |        }
-       |        else {
-       |            result.snapshotItem(i).style.display = 'block'
-       |        }
-       |    }
-       |}
- |
- |//-->
-       |
- |
- |</script>
        |
        |
        |</head>
        |
  |<body>
+ |
+ |<nav class="navbar navbar-default navbar-fixed-top">
+       |    <div class="container-fluid">
        |
- |<div class="container-fluid">
-       |    <header class="row-fluid">
-       |        <div id="navbar" class="navbar navbar-fixed-top">
-       |            <div class="navbar-inner">
-       |                <span class="brand" href="#" style="margin-left:5px">${reportTitle}</span> <span class="brand" style="margin-left:5px">${dateTimeStr}</span>
-       |                <ul class="nav" style="float:right">
-       |                    <li class="active"><a href="#summary">Summary</a></li>
-       |                    <li><a href="#feature-tag-summary" onclick="javascript:toggle('feature-tag-summary')">Features by tag</a></li>
-       |                    <li><a href="#scenario-tag-summary" onclick="javascript:toggle('scenario-tag-summary')">Scenario tag summary</a></li>
-       |                    <li><a href="#test-detail">Test detail</a></li>
+ |        <div class="navbar-header">
+       |            <span class="navbar-brand" href="#">${reportTitle}</span>
+       |            <span class="navbar-brand" >${dateTimeString}</span>
+       |            <p class="navbar-text navbar-left">Environment: ${env}</p>
+       |            <p class="navbar-text navbar-left">Tags: ${tags}</p>
+       |            ${nonFatalTags}
        |
-       |                </ul>
+       |
+ |        </div>
+       |
+ |        <div class="collapse navbar-collapse">
+       |
+ |            <ul class="nav navbar-nav navbar-right">
+       |                <li class="active"><a href="#summary">Summary</a></li>
+       |                <li><a href="#feature-tag-summary" onclick="javascript:toggle('feature-tag-summary')">Features by tag</a></li>
+       |                <li><a href="#scenario-tag-summary" onclick="javascript:toggle('scenario-tag-summary')">Scenario tag summary</a></li>
+       |                <li><a href="#test-detail">Test detail</a></li>
+       |                <li><a href="usage-tree.html">Usage <span class="label label-warning">Beta</span></a></li>
+       |
+ |            </ul>
+       |        </div>
+       |    </div>
+       |</nav>
+       |
+       |
+       |<div class="container-fluid" style="padding-top:10px">
+       |    <div class="panel panel-default">
+       |        <div class="panel-heading">
+       |            <h3 class="panel-title">Summary</h3>
+       |        </div>
+       |        <div class="panel-body">
+       |
+       |     ${featureProgressBlock}
+       |
+       |     ${scenarioProgressBlock}
+       |
+       |     ${scenarioStepProgressBlock}
+       |
+       |
+       |             </div>
+       |    </div>
+       |
+       |        <div class="panel panel-default">
+       |        <div class="panel-heading">
+       |            <div class="row-fluid">
+       |                <div class="col-md-11">
+       |                    <h3 class="panel-title">Summary table</h3>
+       |                </div>
+       |                <div class="col-md-1">
+       |                   <a class="btn btn-primary btn-xs pull-right" role="button" data-toggle="collapse" href="#summaryTable" aria-expanded="false" aria-controls="summaryTable">Show</a>
+       |                </div>
        |            </div>
+       |
        |        </div>
-       |    </header>
+       |        <div class="panel-body">
        |
- |    <div id="summary" class="row-fluid">
-       |
-       |        <div class="progress">
-       |            <div class="bar bar-success" style="width: ${stats.featuresCounter.successPC}%;"></div>
-       |
-       |            <div class="bar bar-danger" style="width: ${stats.featuresCounter.failedPC}%;"></div>
-       |        </div>
+       |    <div id="summaryTable" class="row-fluid collapse">
        |
        |        <table class="table table-striped table-bordered">
        |            <thead>
@@ -151,13 +210,54 @@ trait ReportFrameTemplate {
        |
        |    </div>
        |    </div>
+       |
+       |            </div>
+       |    </div>
+       |
+       |    <div class="panel panel-default">
+       |        <div class="panel-heading">
+       |          <div class="row-fluid">
+       |                <div class="col-md-6">
+       |                    <h3 class="panel-title">Test details</h3>
+       |                </div>
+       |
+       |                    <div class="col-md-1">
+       |                        <label style=" margin-bottom: 0px;">Key:</label>
+       |                    </div>
+       |                    <div class="col-md-5">
+       |
+ |                        <label class="icon-key">
+       |                        <img class="key-img" src="img/PASSED.png" alt="Passed"> <span>Passed</span>
+       |                        </label>
+       |
+ |                        <label class="icon-key">
+       |                        <img class="key-img" src="img/FAILED.png" alt="Failure"> <span>Failed</span>
+       |                        </label>
+       |
+ |
+       |                        <label class="icon-key">
+       |                        <img class="key-img" src="img/CHILD_FAILED.png" alt="Child failed"> <span>Child failed</span>
+       |                        </label>
+       |
  |
  |
- |        <header>
-       |            <h2>Test details</h2>
-       |        </header>
+ |                        <label class="icon-key">
+       |                        <img class="key-img" src="img/NOT_RUN2.png" alt="Not run"> <span>Not run</span>
+       |                        </label>
+       |
+ |
+ |                        <label class="icon-key">
+       |                        <img class="key-img" src="img/NON_CRITICAL_FAILURE.png" alt="Non critical failure"> <span>Non critical failure</span>
+       |                        </label>
+       |
+ |
+ |                    </div>
+       |          </div>
+       |        </div>
+       |        <div class="panel-body">
+       |
        |    <div>
-       |        <input type="checkbox" onclick="javascript:hideNotRun(this)"/>Hide not run
+       |        <input id="hide-not-run-chk" type="checkbox"/>Hide not run
        |    </div>
        |
        |
@@ -169,19 +269,21 @@ trait ReportFrameTemplate {
        |
        |    <div id="test-detail" class="row-fluid">
        |
- |        <div id="feature-tree" class="span7">
+       |        <div id="feature-tree" class="span7">
        |
- |        </div>
+       |        </div>
        |
- |
- |        <div class="span5" id="detail-div-container">
+       |        <div class="span5" id="detail-div-container">
        |            <div id="affix-marker" data-spy="affix" data-offset-top="200"></div>
        |            <div id="feature-detail" class="detail-div"></div>
+       |        </div>
+       |    </div>
        |        </div>
        |    </div>
        |</div>
        |
        |<script type="text/javascript" src="js/jquery.min.js"></script>
+       |<script type="text/javascript" src="js/jquery-ui.min.js"></script>
        |<script type="text/javascript" src="js/bootstrap.min.js"></script>
        |<script type="text/javascript" src="js/datatables.min.js"></script>
        |<script type="text/javascript" src="js/jstree.min.js"></script>
@@ -189,6 +291,7 @@ trait ReportFrameTemplate {
        |<script type="text/javascript" src="substeps-results-tree.js"></script>
        |<script type="text/javascript" src="detail_data.js"></script>
        |<script type="text/javascript" src="substeps-stats-by-tag.js"></script>
+       |
        |
        |</body>
        |</html>
