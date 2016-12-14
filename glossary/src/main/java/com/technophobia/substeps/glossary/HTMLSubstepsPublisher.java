@@ -18,7 +18,7 @@
  */
 package com.technophobia.substeps.glossary;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,12 +67,12 @@ public class HTMLSubstepsPublisher extends FileBasedGlossaryPublisher implements
         for (final StepDescriptor info : infos) {
 
             log.debug("info non escaped: " + info.getExpression() + "\n\tescaped:\n"
-                    + StringEscapeUtils.escapeHtml(info.getExpression()));
+                    + StringEscapeUtils.escapeHtml4(info.getExpression()));
 
             buf.append(
                     String.format(TABLE_ROW_FORMAT,
-                            StringEscapeUtils.escapeHtml(info.getExpression()), info.getExample(),
-                            StringEscapeUtils.escapeHtml(info.getDescription()))).append("\n");
+                            StringEscapeUtils.escapeHtml4(info.getExpression()), info.getExample(),
+                            StringEscapeUtils.escapeHtml4(info.getDescription()))).append("\n");
 
         }
     }
