@@ -29,6 +29,7 @@ Requirements
 * Fixed Issue #24 - ExecutionResultsCollector didn't work with forked mode
 * Added 3rd colour to usage report pie charts to show not run state
 * Corrected the path to the screenshots in the report data and the final report
+* Replaced Apache config with [Typesafe Config](https://github.com/typesafehub/config) - similar functionality but provides better nesting of properties, variable substitution
 
 1.0.3
 -----

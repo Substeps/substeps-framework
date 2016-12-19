@@ -67,12 +67,12 @@
             <groupId>velocity</groupId>
             <artifactId>velocity</artifactId>
             <version>1.5</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-lang</groupId>
-                    <artifactId>commons-lang</artifactId>
-                </exclusion>
-            </exclusions>
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<groupId>commons-lang</groupId>-->
+                    <!--<artifactId>commons-lang</artifactId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

@@ -19,7 +19,7 @@
 package com.technophobia.substeps.model;
 
 import com.google.common.base.Strings;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 import java.util.Map.Entry;

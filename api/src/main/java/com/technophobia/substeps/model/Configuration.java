@@ -19,18 +19,12 @@
 
 package com.technophobia.substeps.model;
 
-import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
-import org.apache.commons.configuration.CombinedConfiguration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.configuration.tree.OverrideCombiner;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author ian
@@ -41,31 +35,12 @@ public enum Configuration {
 
     private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
 
-    private final CombinedConfiguration combinedConfig = new CombinedConfiguration(
-            new OverrideCombiner());
+    private final Config config;
 
     private Configuration() {
-        initialise();
-    }
-
-    private void initialise() {
-
         final String resourceBundleName = resourceBundleName();
+        config = ConfigFactory.load(resourceBundleName);
 
-        final URL customPropsUrl = Configuration.class.getResource(resourceBundleName);
-
-        if (customPropsUrl != null) {
-
-            try {
-                final PropertiesConfiguration customProps = new PropertiesConfiguration(
-                        customPropsUrl);
-                combinedConfig.addConfiguration(customProps, "customProps");
-
-            } catch (final ConfigurationException e) {
-                logger.error("error loading custom properties", e);
-
-            }
-        }
     }
 
 
@@ -76,77 +51,39 @@ public enum Configuration {
      * @param url  to a properties file containing default values
      * @param name to name of the properties file that is being added
      */
+    @Deprecated
     public void addDefaultProperties(final URL url, final String name) {
-
-        if (url != null) {
-            try {
-
-                final PropertiesConfiguration defaultProps = new PropertiesConfiguration(url);
-
-                combinedConfig.addConfiguration(defaultProps, name);
-            } catch (final ConfigurationException e) {
-                logger.error("error loading default properties", e);
-                throw new SubstepsConfigurationException(e);
-            }
-        }
+        throw new IllegalArgumentException("method no longer supported, rename default substep library properties to reference.conf and they will be loaded by Typesafe config");
     }
 
-
-    public void addDefaultProperty(final String key, final Object value) {
-        combinedConfig.addProperty(key, value);
-    }
 
 
     public String getConfigurationInfo() {
-
-        final List<String> configurationNameList = combinedConfig.getConfigurationNameList();
-
-        final StringBuilder buf = new StringBuilder();
-
-        for (final String configurationName : configurationNameList) {
-
-            buf.append("In config: ").append(configurationName).append("\n");
-
-            final org.apache.commons.configuration.Configuration cfg = combinedConfig
-                    .getConfiguration(configurationName);
-
-            final Iterator<String> keys = cfg.getKeys();
-
-            while (keys.hasNext()) {
-                final String key = keys.next();
-
-                final String val = cfg.getString(key);
-
-                buf.append("key: ").append(key).append("\tval: [").append(val).append("]\n");
-            }
-
-            buf.append("\n");
-        }
-        return buf.toString();
+        return config.root().render();
     }
 
 
     private static String resourceBundleName() {
-        return "/" + System.getProperty("environment", "localhost") + ".properties";
+        return  System.getProperty("environment", "localhost") + ".properties";
     }
 
 
     public String getString(final String key) {
-        return combinedConfig.getString(key);
+        return config.getString(key);
     }
 
 
     public int getInt(final String key) {
-        return combinedConfig.getInt(key);
+        return config.getInt(key);
     }
 
 
     public long getLong(final String key) {
-        return combinedConfig.getLong(key);
+        return config.getLong(key);
     }
 
 
     public boolean getBoolean(final String key) {
-        return combinedConfig.getBoolean(key);
+        return config.getBoolean(key);
     }
 }

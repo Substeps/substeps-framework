@@ -19,6 +19,7 @@
 
 package com.technophobia.substeps.model;
 
+import com.typesafe.config.ConfigException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -38,8 +39,8 @@ public class ConfigurationTest {
         // set the custom props, then override with defaults
         System.setProperty("environment", "custom");
 
-        final URL defaultPropsUrl = ConfigurationTest.class.getResource("/default.properties");
-        Configuration.INSTANCE.addDefaultProperties(defaultPropsUrl, "default");
+//        final URL defaultPropsUrl = ConfigurationTest.class.getResource("/default.properties");
+//        Configuration.INSTANCE.addDefaultProperties(defaultPropsUrl, "default");
 
         // overridden
         Assert.assertThat(Configuration.INSTANCE.getString("overridden.key"), is("overridden"));
@@ -50,7 +51,15 @@ public class ConfigurationTest {
         // custom
         Assert.assertThat(Configuration.INSTANCE.getString("custom.key"), is("custom-key"));
 
+
+
+    }
+
+    @Test(expected = ConfigException.Missing.class)
+    public void negativeTest(){
+        System.setProperty("environment", "custom");
         Assert.assertNull(Configuration.INSTANCE.getString("non-existant"));
+
     }
 
 }

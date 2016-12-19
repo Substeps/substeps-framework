@@ -41,14 +41,6 @@ public enum CoreSubstepsPropertiesConfiguration implements CoreSubstepsConfigura
 
     private CoreSubstepsPropertiesConfiguration() {
 
-        final URL defaultURL = getClass().getResource("/default-core-substeps.properties");
-
-        if (defaultURL == null){
-            throw new IllegalStateException("Unable to find default core properties");
-        }
-
-        Configuration.INSTANCE.addDefaultProperties(defaultURL, "default-core-substeps");
-
         stepDepthForDescription = Configuration.INSTANCE.getInt("step.depth.description");
 
         logUncalledAndUnusedStepImpls = Configuration.INSTANCE.getBoolean("log.unused.uncalled");
@@ -56,7 +48,6 @@ public enum CoreSubstepsPropertiesConfiguration implements CoreSubstepsConfigura
         prettyPrintReportData = Configuration.INSTANCE.getBoolean("report.data.pretty.print");
 
         reportDataBaseDir = Configuration.INSTANCE.getString("report.data.base.dir");
-
 
         LOG.info("Using core properties:\n" + Configuration.INSTANCE.getConfigurationInfo());
     }
