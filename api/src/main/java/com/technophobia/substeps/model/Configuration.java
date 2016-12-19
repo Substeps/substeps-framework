@@ -43,6 +43,10 @@ public enum Configuration {
 
     }
 
+    public Config getConfig(){
+        return config;
+    }
+
 
     /**
      * Implementors of substep libraries should call this with default
