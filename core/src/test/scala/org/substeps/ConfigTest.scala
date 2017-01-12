@@ -43,6 +43,9 @@ class ConfigTest extends FunSuite with Matchers{
         case None => "conf"
       }
 
+    ConfigFactory.invalidateCaches()
+
+
     val config = ConfigFactory.load(s"localhost.$ext")
 
     println("cfg: " +
