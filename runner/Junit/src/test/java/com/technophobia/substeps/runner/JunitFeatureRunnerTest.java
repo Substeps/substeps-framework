@@ -23,11 +23,14 @@ import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
 import com.technophobia.substeps.stepimplementations.MockStepImplementations;
 import com.technophobia.substeps.steps.TestStepImplementations;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,14 +45,45 @@ import static org.mockito.Mockito.*;
  */
 public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
 
-    private static final String SUBSTEPS_RESOURCES_BASE_DIRECTORY = "./target/core-tests/";
+//    private static final String SUBSTEPS_RESOURCES_BASE_DIRECTORY = "../../core/src/test/resources/";
 
+    private File baseResourcesDir;
+    
+    public JunitFeatureRunnerTest(){
+        // find the core dir
+        boolean found = false;
+        File coreDir = new File(".").getAbsoluteFile();
+
+        while (!found){
+
+            File[] children = coreDir.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return name.endsWith("core");
+                }
+            });
+
+            if (children != null && children.length > 0){
+                found = true;
+                baseResourcesDir = new File(coreDir, "core/src/test/resources");
+            }
+            else {
+                coreDir = coreDir.getAbsoluteFile().getParentFile();
+            }
+            
+        }
+    }
+    
+    private String getResourcePath(String resource){
+        return new File (baseResourcesDir, resource).getAbsolutePath();
+    }
+    
     @Test(expected = SubstepsConfigurationException.class)
     public void testScenarioWithMissingStepsCausesFailure() {
-        final String feature = SUBSTEPS_RESOURCES_BASE_DIRECTORY + "features/scenario_missing_steps.feature";
+        final String feature = getResourcePath( "features/scenario_missing_steps.feature");
 
         final String tag = "@scenario_with_missing_steps";
-        final String substeps = SUBSTEPS_RESOURCES_BASE_DIRECTORY + "substeps/error.substeps";
+        final String substeps = getResourcePath( "substeps/error.substeps");
 
         final JunitFeatureRunner runner = new JunitFeatureRunner();
 
@@ -62,9 +96,9 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
 
     @Test(expected = SubstepsConfigurationException.class)
     public void testMissingSubStepCausesFailure() {
-        final String feature = SUBSTEPS_RESOURCES_BASE_DIRECTORY + "features/error.feature";
+        final String feature = getResourcePath( "features/error.feature");
         final String tag = "@bug_missing_sub_step_impl";
-        final String substeps = SUBSTEPS_RESOURCES_BASE_DIRECTORY + "substeps/error.substeps";
+        final String substeps = getResourcePath( "substeps/error.substeps");
 
         final JunitFeatureRunner runner = new JunitFeatureRunner();
 
@@ -77,7 +111,7 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
     @Test
     public void testTableParameterPassingWithOutlines() {
 
-        final String feature = SUBSTEPS_RESOURCES_BASE_DIRECTORY + "features/bugs.feature";
+        final String feature = getResourcePath( "features/bugs.feature");
         final String tag = "@table_params_and_outline";
         final String substeps = null;
 
@@ -122,9 +156,9 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
         final List<Class<?>> stepImplsList = new ArrayList<Class<?>>();
         stepImplsList.add(TestStepImplementations.class);
 
-        runner.init(this.getClass(), stepImplsList, SUBSTEPS_RESOURCES_BASE_DIRECTORY
-                + "features/paramsToSubSteps.feature", "nested_params_bug", SUBSTEPS_RESOURCES_BASE_DIRECTORY
-                + "substeps/nested_params_substeps", null);
+        runner.init(this.getClass(), stepImplsList,
+                getResourcePath( "features/paramsToSubSteps.feature"), "nested_params_bug",
+                getResourcePath(  "substeps/nested_params_substeps"), null);
 
         final TestStepImplementations stepImpls = new TestStepImplementations();
         final TestStepImplementations spy = spy(stepImpls);
@@ -147,8 +181,8 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
         final List<Class<?>> stepImplsList = new ArrayList<Class<?>>();
         stepImplsList.add(TestStepImplementations.class);
 
-        runner.init(this.getClass(), stepImplsList, SUBSTEPS_RESOURCES_BASE_DIRECTORY + "features_dir", null,
-                SUBSTEPS_RESOURCES_BASE_DIRECTORY + "substeps_dir", null);
+        runner.init(this.getClass(), stepImplsList, getResourcePath( "features_dir"), null,
+                getResourcePath( "substeps_dir"), null);
 
         final TestStepImplementations stepImpls = new TestStepImplementations();
         final TestStepImplementations spy = spy(stepImpls);
@@ -176,8 +210,8 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
         stepImplsList.add(MockStepImplementations.class);
 
         // pass in the stuff that would normally be placed in the annotation
-        runner.init(this.getClass(), stepImplsList, SUBSTEPS_RESOURCES_BASE_DIRECTORY + "features/allFeatures.feature",
-                null, SUBSTEPS_RESOURCES_BASE_DIRECTORY + "substeps/allFeatures.substeps", null);
+        runner.init(this.getClass(), stepImplsList, getResourcePath( "features/allFeatures.feature"),
+                null, getResourcePath( "substeps/allFeatures.substeps"), null);
 
         final MockStepImplementations stepImpls = new MockStepImplementations();
         final MockStepImplementations spy = spy(stepImpls);
@@ -259,9 +293,9 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
         stepImplsList.add(MockStepImplementations.class);
 
         // pass in the stuff that would normally be placed in the annotation
-        runner.init(this.getClass(), stepImplsList, SUBSTEPS_RESOURCES_BASE_DIRECTORY
-                + "features/notifications.feature", null, SUBSTEPS_RESOURCES_BASE_DIRECTORY
-                + "substeps/allFeatures.substeps", null);
+        runner.init(this.getClass(), stepImplsList,
+                getResourcePath(  "features/notifications.feature"), null,
+                        getResourcePath(  "substeps/allFeatures.substeps"), null);
 
         final MockStepImplementations stepImpls = new MockStepImplementations();
         final MockStepImplementations spy = spy(stepImpls);
@@ -331,9 +365,9 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
         stepImplsList.add(MockStepImplementations.class);
 
         // pass in the stuff that would normally be placed in the annotation
-        runner.init(this.getClass(), stepImplsList, SUBSTEPS_RESOURCES_BASE_DIRECTORY
-                + "features/stepWithInlineTable.feature", null, SUBSTEPS_RESOURCES_BASE_DIRECTORY
-                + "substeps/allFeatures.substeps", null);
+        runner.init(this.getClass(), stepImplsList,
+                getResourcePath(  "features/stepWithInlineTable.feature"), null,
+                getResourcePath(  "substeps/allFeatures.substeps"), null);
 
         final MockStepImplementations stepImpls = new MockStepImplementations();
         final MockStepImplementations spy = spy(stepImpls);
@@ -368,8 +402,8 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
         stepImplsList.add(MockStepImplementations.class);
 
         // pass in the stuff that would normally be placed in the annotation
-        runner.init(this.getClass(), stepImplsList, SUBSTEPS_RESOURCES_BASE_DIRECTORY + "features/bugs.feature",
-                "@bug1", SUBSTEPS_RESOURCES_BASE_DIRECTORY + "substeps/bugs.substeps", null);
+        runner.init(this.getClass(), stepImplsList, getResourcePath( "features/bugs.feature"),
+                "@bug1", getResourcePath( "substeps/bugs.substeps"), null);
 
         final MockStepImplementations stepImpls = new MockStepImplementations();
         final MockStepImplementations spy = spy(stepImpls);

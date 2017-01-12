@@ -33,11 +33,12 @@ public enum Configuration {
 
     INSTANCE;
 
-    private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
+    private final Logger logger;
 
     private final Config config;
 
     private Configuration() {
+        logger = LoggerFactory.getLogger(Configuration.class);
         final String resourceBundleName = resourceBundleName();
         config = ConfigFactory.load(resourceBundleName);
 
@@ -67,8 +68,19 @@ public enum Configuration {
     }
 
 
-    private static String resourceBundleName() {
-        return  System.getProperty("environment", "localhost") + ".properties";
+    private String resourceBundleName() {
+
+        String useProps = System.getProperty("substeps.use.dot.properties");
+        String ext;
+        if (useProps != null && Boolean.parseBoolean(useProps)){
+            logger.info("Using legacy properties for configuration, use .conf for greater functionality");
+            ext = ".properties";
+        }
+        else {
+            ext = ".conf";
+        }
+
+        return  System.getProperty("environment", "localhost") + ext;
     }
 
 

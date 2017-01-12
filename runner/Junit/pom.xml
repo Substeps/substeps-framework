@@ -12,32 +12,6 @@
 	<name>SubSteps JUnit Runner</name>
 	<description>A junit runner for substeps</description>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-
-				<executions>
-					<execution>
-						<id>extract-core-substep-test-code</id>
-
-						<phase>test-compile</phase>
-						<goals>
-							<goal>unpack-dependencies</goal>
-						</goals>
-
-						<configuration>
-							<includeArtifactIds>substeps-core</includeArtifactIds>
-							<includeTypes>test-jar</includeTypes>
-							<outputDirectory>${project.build.directory}/core-tests</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.substeps</groupId>

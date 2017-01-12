@@ -38,9 +38,9 @@ public class ConfigurationTest {
         // tests around Config
         // set the custom props, then override with defaults
         System.setProperty("environment", "custom");
+        System.setProperty("substeps.use.dot.properties", "true");
 
-//        final URL defaultPropsUrl = ConfigurationTest.class.getResource("/default.properties");
-//        Configuration.INSTANCE.addDefaultProperties(defaultPropsUrl, "default");
+        System.out.println(Configuration.INSTANCE.getConfigurationInfo());
 
         // overridden
         Assert.assertThat(Configuration.INSTANCE.getString("overridden.key"), is("overridden"));
@@ -58,6 +58,7 @@ public class ConfigurationTest {
     @Test(expected = ConfigException.Missing.class)
     public void negativeTest(){
         System.setProperty("environment", "custom");
+        System.setProperty("substeps.use.dot.properties", "true");
         Assert.assertNull(Configuration.INSTANCE.getString("non-existant"));
 
     }
