@@ -31,6 +31,8 @@ import com.technophobia.substeps.runner.setupteardown.Annotations.BeforeAllFeatu
 import com.technophobia.substeps.runner.setupteardown.SetupAndTearDown;
 import com.technophobia.substeps.stepimplementations.MockStepImplementations;
 import com.technophobia.substeps.steps.TestStepImplementations;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -700,21 +702,31 @@ public class ExecutionNodeRunnerTest {
     @Test
     public void testArgSubstituion() {
 
+        Config cfg = ConfigFactory.load("localhost.conf");
+
+        String parameterFromConfig = cfg.getString("users.default.name");
+        Assert.assertThat(parameterFromConfig, is("bob"));
 
         final String srcString1 = "Given a substep that takes one parameter \"src1\"";
         final String srcString2 = "And a substep that takes one parameter \"src2\"";
+        final String srcString3 = "And a substep that takes one parameter \"${users.default.name}\"";
+
         final String patternString = "Given a substep that takes one parameter \"([^\"]*)\"";
         final String[] keywordPrecedence = new String[]{"Given", "And"};
-        String[] args1 = Util.getArgs(patternString, srcString1, keywordPrecedence);
+        String[] args1 = Util.getArgs(patternString, srcString1, keywordPrecedence, cfg);
 
 
-        String[] args2 = Util.getArgs(patternString, srcString2, keywordPrecedence);
+        String[] args2 = Util.getArgs(patternString, srcString2, keywordPrecedence, cfg);
 
         Assert.assertNotNull(args2);
         Assert.assertThat(args2[0], is("src2"));
 
         Assert.assertNotNull(args1);
         Assert.assertThat(args1[0], is("src1"));
+
+        String[] args3 = Util.getArgs(patternString, srcString3, keywordPrecedence, cfg);
+        Assert.assertNotNull(args3);
+        Assert.assertThat(args3[0], is("bob"));
 
     }
 

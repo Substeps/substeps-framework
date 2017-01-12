@@ -18,12 +18,15 @@
  */
 package com.technophobia.substeps.model;
 
+import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
 import com.technophobia.substeps.model.parameter.Converter;
 import com.technophobia.substeps.model.parameter.ConverterFactory;
+import com.typesafe.config.Config;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -35,15 +38,50 @@ import java.util.regex.Pattern;
 public final class Util {
     private static final Logger log = LoggerFactory.getLogger(Util.class);
 
+    private static final boolean substituteParameters = Configuration.INSTANCE.getConfig().getBoolean("parameter.substitution.enabled");
+    private static final String startDelimiter = Configuration.INSTANCE.getConfig().getString("parameter.substitution.start");
+    private static final String endDelimiter = Configuration.INSTANCE.getConfig().getString("parameter.substitution.end");
+
+    private static final boolean normalizeValues = Configuration.INSTANCE.getConfig().getBoolean("parameter.substitution.normalizeValue");
+    private static final String normalizeFrom = Configuration.INSTANCE.getConfig().getString("parameter.substitution.normalize.from");
+    private static final String normalizeTo = Configuration.INSTANCE.getConfig().getString("parameter.substitution.normalize.to");
+
+
 
     private Util() {
         // no op
     }
 
 
+    public static String substituteValues(String src) {
+
+
+        if (src != null && substituteParameters && src.startsWith(startDelimiter)){
+            String key = StringUtils.stripStart(StringUtils.stripEnd(src, endDelimiter), startDelimiter);
+            String substitute = Configuration.INSTANCE.getString(key);
+            if (substitute == null){
+                throw new SubstepsRuntimeException("Failed to resolve property " + src + " to be substituted ");
+            }
+            String normalizedValue = substitute;
+
+            if (normalizeValues) {
+                // This part will support the conversion of properties files containing accented characters
+                try {
+                    normalizedValue = new String(substitute.getBytes(normalizeFrom), normalizeTo);
+                } catch (UnsupportedEncodingException e) {
+                    log.error("error substituting accented characters", e);
+                }
+            }
+
+            return normalizedValue;
+        }
+        return src;
+    }
+
+
     // TODO - these two methods are both used - used to be one, but now it's two
     // - could they be combined ??
-    public static String[] getArgs(final String patternString, final String sourceString, final String[] keywordPrecedence) {
+    public static String[] getArgs(final String patternString, final String sourceString, final String[] keywordPrecedence, Config cfg) {
 
         log.debug("Util getArgs String[] with pattern: " + patternString + " and sourceStr: "
                 + sourceString);
@@ -74,7 +112,7 @@ public final class Util {
         if (matcher.find()) {
 
             for (int i = 1; i <= groupCount; i++) {
-                final String arg = matcher.group(i);
+                final String arg = substituteValues(matcher.group(i));
 
                 if (arg != null) {
                     if (argsList == null) {
@@ -131,8 +169,8 @@ public final class Util {
                     if (argsList == null) {
                         argsList = new ArrayList<Object>();
                     }
-
-                    argsList.add(getObjectArg(arg, parameterTypes[argIdx], converterTypes[argIdx]));
+                    String substituted = substituteValues(arg);
+                    argsList.add(getObjectArg(substituted, parameterTypes[argIdx], converterTypes[argIdx]));
 
                 }
                 argIdx++;
