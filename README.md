@@ -31,6 +31,7 @@ Requirements
 * Corrected the path to the screenshots in the report data and the final report
 * Replaced Apache config with [Typesafe Config](https://github.com/typesafehub/config) - similar functionality but provides better nesting of properties, variable substitution
 * Added System property switch to use original properties files over new .conf files (`-Dsubsteps.use.dot.properties=true`)
+* Enable any parameters to be substituted with values from config - user ${config.expression}. Delimitters can be specified and Charset conversion too, see core-api reference.conf for details 
 
 1.0.3
 -----

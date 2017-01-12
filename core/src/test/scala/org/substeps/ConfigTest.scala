@@ -8,6 +8,8 @@ import com.typesafe.config.ConfigFactory
   */
 class ConfigTest extends FunSuite with Matchers{
 
+
+
   test("test property substitution with env vars in conf files") {
 
     val configVal: String = runTest
@@ -41,9 +43,17 @@ class ConfigTest extends FunSuite with Matchers{
         case None => "conf"
       }
 
+    ConfigFactory.invalidateCaches()
+
+
     val config = ConfigFactory.load(s"localhost.$ext")
 
+    println("cfg: " +
+      config.root().render())
+
     val configVal = config.getString("some.val")
+
     configVal
+
   }
 }
