@@ -30,6 +30,7 @@ Requirements
 * Added 3rd colour to usage report pie charts to show not run state
 * Corrected the path to the screenshots in the report data and the final report
 * Replaced Apache config with [Typesafe Config](https://github.com/typesafehub/config) - similar functionality but provides better nesting of properties, variable substitution
+* Added System property switch to use original properties files over new .conf files (`-Dsubsteps.use.dot.properties=true`)
 
 1.0.3
 -----
