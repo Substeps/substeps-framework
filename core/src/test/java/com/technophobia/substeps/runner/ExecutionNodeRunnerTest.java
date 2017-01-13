@@ -24,7 +24,7 @@ import com.technophobia.substeps.execution.ExecutionResult;
 import com.technophobia.substeps.execution.Feature;
 import com.technophobia.substeps.execution.ImplementationCache;
 import com.technophobia.substeps.execution.node.*;
-import com.technophobia.substeps.model.Util;
+import com.technophobia.substeps.model.Arguments;
 import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
 import com.technophobia.substeps.model.exception.UnimplementedStepException;
 import com.technophobia.substeps.runner.setupteardown.Annotations.BeforeAllFeatures;
@@ -713,10 +713,10 @@ public class ExecutionNodeRunnerTest {
 
         final String patternString = "Given a substep that takes one parameter \"([^\"]*)\"";
         final String[] keywordPrecedence = new String[]{"Given", "And"};
-        String[] args1 = Util.getArgs(patternString, srcString1, keywordPrecedence, cfg);
+        String[] args1 = Arguments.getArgs(patternString, srcString1, keywordPrecedence, cfg);
 
 
-        String[] args2 = Util.getArgs(patternString, srcString2, keywordPrecedence, cfg);
+        String[] args2 = Arguments.getArgs(patternString, srcString2, keywordPrecedence, cfg);
 
         Assert.assertNotNull(args2);
         Assert.assertThat(args2[0], is("src2"));
@@ -724,7 +724,7 @@ public class ExecutionNodeRunnerTest {
         Assert.assertNotNull(args1);
         Assert.assertThat(args1[0], is("src1"));
 
-        String[] args3 = Util.getArgs(patternString, srcString3, keywordPrecedence, cfg);
+        String[] args3 = Arguments.getArgs(patternString, srcString3, keywordPrecedence, cfg);
         Assert.assertNotNull(args3);
         Assert.assertThat(args3[0], is("bob"));
 
