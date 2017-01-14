@@ -30,9 +30,9 @@ class ExpressionEvaluationTest extends FlatSpec with ShouldMatchers with Feature
       """
         | Feature: a simple feature
         | Scenario: config and runtime expression scenario
-        |   A step with a value from config "${users.default.name}"
+        |   A step with a value from config "${users.default.name}" and one "hardcoded"
         |   SetupContext
-        |   A step with param from context "${key.other.name}"
+        |   A step with a "hardcoded" param and another from context "${key.other.name}"
         |
       """.stripMargin
 
@@ -49,8 +49,8 @@ class ExpressionEvaluationTest extends FlatSpec with ShouldMatchers with Feature
     @StepImplementations
     class StepImpls (){
 
-      @SubSteps.Step("""A step with a value from config "([^"]*)"""")
-      def stepPassedFromConfig(arg : String) = log.debug("stepPassedFromConfig: " + arg)
+      @SubSteps.Step("""A step with a value from config "([^"]*)" and one "([^"]*)"""")
+      def stepPassedFromConfig(arg : String, arg2: String) = log.debug("stepPassedFromConfig: " + arg)
 
       @SubSteps.Step("SetupContext")
       def setupContext() = {
@@ -59,8 +59,8 @@ class ExpressionEvaluationTest extends FlatSpec with ShouldMatchers with Feature
         log.debug("SetupContext")
       }
 
-      @SubSteps.Step("""A step with param from context "([^"]*)"""")
-      def stepPassedFromContext(arg: String) = log.debug("stepPassedFromContext: " + arg)
+      @SubSteps.Step("""A step with a "([^"]*)" param and another from context "([^"]*)"""")
+      def stepPassedFromContext(arg : String, arg2: String) = log.debug("stepPassedFromContext: " + arg2)
     }
 
     val featureFile = createFeatureFile(simpleFeature, "expression-evaluation.feature")

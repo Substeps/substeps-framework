@@ -67,6 +67,16 @@ public class StepImplementationNodeRunner extends AbstractNodeRunner<StepImpleme
                     }
                 }
                 evaluatedArgs = evaluatedArgsList.toArray();
+                node.setMethodArgs(evaluatedArgs);
+
+
+                SubSteps.Step stepAnnotation = node.getTargetMethod().getAnnotation(SubSteps.Step.class);
+                String rawSourceLine = stepAnnotation.value();
+
+                for (Object o : evaluatedArgsList){
+                    rawSourceLine = rawSourceLine.replaceFirst("\\([^\\)]*\\)", o.toString());
+                }
+                node.setLine(rawSourceLine);
             }
 
 
