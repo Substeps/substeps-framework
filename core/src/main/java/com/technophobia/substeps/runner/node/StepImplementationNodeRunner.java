@@ -20,13 +20,28 @@ package com.technophobia.substeps.runner.node;
 
 import com.technophobia.substeps.execution.node.RootNodeExecutionContext;
 import com.technophobia.substeps.execution.node.StepImplementationNode;
-import com.technophobia.substeps.model.Scope;
+import com.technophobia.substeps.model.*;
+import com.technophobia.substeps.model.parameter.Converter;
+import com.technophobia.substeps.runner.ExecutionNodeRunner;
 import com.technophobia.substeps.runner.ProvidesScreenshot;
 import com.technophobia.substeps.runner.SubstepExecutionFailure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StepImplementationNodeRunner extends AbstractNodeRunner<StepImplementationNode, Void> {
+
+    private static final Logger log = LoggerFactory.getLogger(StepImplementationNodeRunner.class);
+
+
 
     @Override
     protected boolean execute(StepImplementationNode node, RootNodeExecutionContext context) {
@@ -35,8 +50,38 @@ public class StepImplementationNodeRunner extends AbstractNodeRunner<StepImpleme
 
         try {
 
+            // run through any args - if there's any expressions in there, evaluate them now
+            Object[] evaluatedArgs = null;
+
+            if (node.getMethodArgs() != null && node.getMethodArgs().length > 0) {
+                List<Object> evaluatedArgsList = new ArrayList<>();
+                for (Object o : node.getMethodArgs()) {
+
+                    if (o instanceof String) {
+
+                        Object result = Arguments.evaluateExpression((String) o);
+                        evaluatedArgsList.add(result);
+
+                    } else {
+                        evaluatedArgsList.add(o);
+                    }
+                }
+                evaluatedArgs = evaluatedArgsList.toArray();
+                node.setMethodArgs(evaluatedArgs);
+
+
+                SubSteps.Step stepAnnotation = node.getTargetMethod().getAnnotation(SubSteps.Step.class);
+                String rawSourceLine = stepAnnotation.value();
+
+                for (Object o : evaluatedArgsList){
+                    rawSourceLine = rawSourceLine.replaceFirst("\\([^\\)]*\\)", o.toString());
+                }
+                node.setLine(rawSourceLine);
+            }
+
+
             context.getMethodExecutor().executeMethod(node.getTargetClass(), node.getTargetMethod(),
-                    node.getMethodArgs());
+                    evaluatedArgs);
             context.setTestsHaveRun();
             success = true;
 

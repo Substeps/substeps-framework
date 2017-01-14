@@ -6,36 +6,41 @@ import java.nio.charset.Charset
 import com.google.common.io.Files
 import com.technophobia.substeps.execution.node.{ExecutionNode, IExecutionNode}
 import com.technophobia.substeps.execution.{ExecutionResult, ImplementationCache}
-import com.technophobia.substeps.model._
 import com.technophobia.substeps.model.SubSteps.StepImplementations
+import com.technophobia.substeps.model._
 import com.technophobia.substeps.parser.FileContents
-import com.technophobia.substeps.report.DefaultExecutionReportBuilder
-import com.technophobia.substeps.runner.builder.ExecutionNodeTreeBuilder
 import com.technophobia.substeps.runner._
+import com.technophobia.substeps.runner.builder.ExecutionNodeTreeBuilder
 import com.technophobia.substeps.runner.setupteardown.SetupAndTearDown
 import com.technophobia.substeps.runner.syntax._
-import com.technophobia.substeps.steps.TestStepImplementations
 import org.hamcrest.Matchers._
 import org.json4s.NoTypeHints
 import org.json4s.native.Serialization
+import org.json4s.native.Serialization.read
 import org.junit.Assert
 import org.scalatest._
+import org.slf4j.LoggerFactory
 import org.substeps.report.{ExecutionResultsCollector, NodeDetail}
 
 import scala.collection.JavaConverters._
-import scala.collection.JavaConverters._
-import org.json4s._
-import org.json4s.native.Serialization
-import org.json4s.native.Serialization.{read, write}
-import org.slf4j.{Logger, LoggerFactory}
 
-import scala.collection.JavaConversions._
-import scala.collection.JavaConverters._
+trait FeatureFilesFromSource {
+
+  def createFeatureFile(content: String, featureFileName: String): FeatureFile = {
+    val featureFileContentsFromSource = new FileContents(content.split("\n").toList.asJava, new File(featureFileName))
+
+    val parser: FeatureFileParser = new FeatureFileParser
+
+    val featureFile: FeatureFile = parser.getFeatureFile(featureFileContentsFromSource)
+    featureFile
+  }
+
+}
 
 /**
   * Created by ian on 20/05/16.
   */
-class ParsingFromSourceTests extends FlatSpec with ShouldMatchers {
+class ParsingFromSourceTests extends FlatSpec with ShouldMatchers with FeatureFilesFromSource {
 
   val UTF8 = Charset.forName("UTF-8")
 
@@ -214,14 +219,6 @@ Scenario: inline table
     // TODO more assertions here
   }
 
-  def createFeatureFile(content: String, featureFileName: String): FeatureFile = {
-    val featureFileContentsFromSource = new FileContents(content.split("\n").toList.asJava, new File(featureFileName))
-
-    val parser: FeatureFileParser = new FeatureFileParser
-
-    val featureFile: FeatureFile = parser.getFeatureFile(featureFileContentsFromSource)
-    featureFile
-  }
 
   "running some failing features marked as non critical" must "not fail the build and be visible" in {
 

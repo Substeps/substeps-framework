@@ -20,6 +20,7 @@
 package com.technophobia.substeps.runner;
 
 import com.technophobia.substeps.model.ParentStep;
+import com.technophobia.substeps.model.Scope;
 import com.technophobia.substeps.model.Step;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,6 +37,8 @@ import static org.hamcrest.CoreMatchers.is;
  * @author ian
  */
 public class ParsingTests {
+
+
     @Test
     public void testRegEx() {
         final String stepParameter = "bob <start_locateButton>";
@@ -199,7 +202,7 @@ public class ParsingTests {
         final ParentStep parentStep = new ParentStep(aParentSubStep);
 
         parentStep.initialiseParamValues(topLevelStepReDefinedInSubSteps);
-        // String[] paramValues = Util.getArgs(this.parent.pattern, step.param);
+        // String[] paramValues = Arguments.getArgs(this.parent.pattern, step.param);
 
         final Map<String, String> paramValueMap = parentStep.getParamValueMap().getParameters();
         Assert.assertNotNull(paramValueMap);

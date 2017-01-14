@@ -67,12 +67,7 @@
             <groupId>velocity</groupId>
             <artifactId>velocity</artifactId>
             <version>1.5</version>
-            <!--<exclusions>-->
-                <!--<exclusion>-->
-                    <!--<groupId>commons-lang</groupId>-->
-                    <!--<artifactId>commons-lang</artifactId>-->
-                <!--</exclusion>-->
-            <!--</exclusions>-->
+
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -95,6 +90,12 @@
             <groupId>org.json4s</groupId>
             <artifactId>json4s-native_2.11</artifactId>
             <version>${json4s.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-jexl3</artifactId>
+            <version>3.0</version>
         </dependency>
 
         <!-- Test Dependencies -->

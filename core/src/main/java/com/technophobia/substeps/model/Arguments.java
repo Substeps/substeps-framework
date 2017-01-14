@@ -21,7 +21,9 @@ package com.technophobia.substeps.model;
 import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
 import com.technophobia.substeps.model.parameter.Converter;
 import com.technophobia.substeps.model.parameter.ConverterFactory;
+import com.technophobia.substeps.runner.ExecutionContext;
 import com.typesafe.config.Config;
+import org.apache.commons.jexl3.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +37,8 @@ import java.util.regex.Pattern;
 /**
  * @author ian
  */
-public final class Util {
-    private static final Logger log = LoggerFactory.getLogger(Util.class);
+public final class Arguments {
+    private static final Logger log = LoggerFactory.getLogger(Arguments.class);
 
     private static final boolean substituteParameters = Configuration.INSTANCE.getConfig().getBoolean("parameter.substitution.enabled");
     private static final String startDelimiter = Configuration.INSTANCE.getConfig().getString("parameter.substitution.start");
@@ -46,32 +48,63 @@ public final class Util {
     private static final String normalizeFrom = Configuration.INSTANCE.getConfig().getString("parameter.substitution.normalize.from");
     private static final String normalizeTo = Configuration.INSTANCE.getConfig().getString("parameter.substitution.normalize.to");
 
+    private static final JexlEngine jexl = new JexlBuilder().cache(512).strict(false).silent(false).create();
 
 
-    private Util() {
+    private Arguments() {
         // no op
     }
 
+    public static Object evaluateExpression(String expressionWithDelimiters){
+
+        // TODO - check that the expression doesn't contain any of the bad words
+        // or and eq ne lt gt le ge div mod not null true false new var return
+        // any of those words need to be qutoed or ['  ']
+        // http://commons.apache.org/proper/commons-jexl/reference/syntax.html
+
+        // try evaluating this expression against the executionContext
+
+        // TODO check flag to see whether we can evaluate things from the ec
+
+        if (expressionWithDelimiters != null && substituteParameters && expressionWithDelimiters.startsWith(startDelimiter)) {
+            String expression = StringUtils.stripStart(StringUtils.stripEnd(expressionWithDelimiters, endDelimiter), startDelimiter);
+
+            JexlContext context = new MapContext(ExecutionContext.flatten());
+
+            JexlExpression e = jexl.createExpression(expression);
+
+            return e.evaluate(context);
+        }
+        else {
+            return expressionWithDelimiters;
+        }
+    }
 
     public static String substituteValues(String src) {
 
-
         if (src != null && substituteParameters && src.startsWith(startDelimiter)){
             String key = StringUtils.stripStart(StringUtils.stripEnd(src, endDelimiter), startDelimiter);
-            String substitute = Configuration.INSTANCE.getString(key);
-            if (substitute == null){
-                throw new SubstepsRuntimeException("Failed to resolve property " + src + " to be substituted ");
-            }
-            String normalizedValue = substitute;
 
-            if (normalizeValues) {
-                // This part will support the conversion of properties files containing accented characters
-                try {
-                    normalizedValue = new String(substitute.getBytes(normalizeFrom), normalizeTo);
-                } catch (UnsupportedEncodingException e) {
-                    log.error("error substituting accented characters", e);
+            String normalizedValue = src;
+
+            if (Configuration.INSTANCE.getConfig().hasPath(key)){
+                String substitute = Configuration.INSTANCE.getString(key);
+
+                if (substitute == null){
+                    throw new SubstepsRuntimeException("Failed to resolve property " + src + " to be substituted ");
+                }
+                normalizedValue = substitute;
+                if (normalizeValues) {
+                    // This part will support the conversion of properties files containing accented characters
+                    try {
+                        normalizedValue = new String(substitute.getBytes(normalizeFrom), normalizeTo);
+                    } catch (UnsupportedEncodingException e) {
+                        log.error("error substituting accented characters", e);
+                    }
                 }
             }
+
+
 
             return normalizedValue;
         }
@@ -83,7 +116,7 @@ public final class Util {
     // - could they be combined ??
     public static String[] getArgs(final String patternString, final String sourceString, final String[] keywordPrecedence, Config cfg) {
 
-        log.debug("Util getArgs String[] with pattern: " + patternString + " and sourceStr: "
+        log.debug("Arguments getArgs String[] with pattern: " + patternString + " and sourceStr: "
                 + sourceString);
 
         String[] rtn = null;
@@ -148,7 +181,7 @@ public final class Util {
     public static List<Object> getArgs(final String patternString, final String sourceString,
                                        final Class<?>[] parameterTypes, final Class<? extends Converter<?>>[] converterTypes) {
 
-        log.debug("Util getArgs List<Object> with pattern: " + patternString + " and sourceStr: "
+        log.debug("Arguments getArgs List<Object> with pattern: " + patternString + " and sourceStr: "
                 + sourceString);
 
         List<Object> argsList = null;
@@ -170,8 +203,20 @@ public final class Util {
                         argsList = new ArrayList<Object>();
                     }
                     String substituted = substituteValues(arg);
-                    argsList.add(getObjectArg(substituted, parameterTypes[argIdx], converterTypes[argIdx]));
 
+//                    if (substituted.equals(arg)){
+//                        // no change, lets try against the context
+//                        Object result = evaluateExpression(arg);
+//                        if (result != null){
+//                            argsList.add(result);
+//                        }
+//                        else {
+//                            argsList.add(getObjectArg(substituted, parameterTypes[argIdx], converterTypes[argIdx]));
+//                        }
+//                    }
+//                    else {
+                        argsList.add(getObjectArg(substituted, parameterTypes[argIdx], converterTypes[argIdx]));
+//                    }
                 }
                 argIdx++;
             }

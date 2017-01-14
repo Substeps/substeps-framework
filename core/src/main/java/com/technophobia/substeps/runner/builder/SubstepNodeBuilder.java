@@ -343,7 +343,7 @@ public class SubstepNodeBuilder {
         final String substitutedStepParam = substitutePlaceholders(stepParameter, parentArguments);
 
         stepNode.setLine(substitutedStepParam);
-        List<Object> argsList = Util.getArgs(stepImplementationPattern, substitutedStepParam, parameterTypes,
+        List<Object> argsList = Arguments.getArgs(stepImplementationPattern, substitutedStepParam, parameterTypes,
                 converterTypes);
 
         if (inlineTable != null) {

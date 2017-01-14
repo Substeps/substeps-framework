@@ -32,7 +32,8 @@ object ExecutionResultsCollector{
 }
 
 
-class ExecutionResultsCollector extends  IExecutionResultsCollector {
+class
+ExecutionResultsCollector extends  IExecutionResultsCollector {
 
   @transient
   private lazy val log: Logger = LoggerFactory.getLogger(classOf[ExecutionResultsCollector])

@@ -18,8 +18,12 @@
  */
 package com.technophobia.substeps.runner;
 
+import com.google.common.collect.Sets;
 import com.technophobia.substeps.model.Scope;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +35,8 @@ import java.util.Map;
  * @author imoore
  */
 public final class ExecutionContext {
+
+    private static final Logger log = LoggerFactory.getLogger(ExecutionContext.class);
 
     private static final ThreadLocal<ExecutionContext> executionContextThreadLocal = new ThreadLocal<ExecutionContext>() {
         @Override
@@ -77,5 +83,29 @@ public final class ExecutionContext {
 
     public static void clear(final Scope scope) {
         executionContextThreadLocal.get().scopedData.remove(scope);
+    }
+
+    public static Map<String, Object> flatten(){
+
+        // return a single Map with the items in the narrowest scope remaining
+
+        ExecutionContext ec = executionContextThreadLocal.get();
+
+        Map newMaster = new HashMap<String, Object>();
+        for (Scope scope : Scope.values()){
+
+            Map<String, Object> scopedMap = ec.scopedData.get(scope);
+            if (scopedMap != null) {
+                Sets.SetView intersection = Sets.intersection(newMaster.keySet(), scopedMap.keySet());
+
+                if (!intersection.isEmpty()) {
+                    StringBuilder buf = new StringBuilder();
+                    intersection.stream().forEach(s -> log.warn("existing key value " + s + " is being overwritten flattening the ExecutionContext"));
+                }
+
+                newMaster.putAll(scopedMap);
+            }
+        }
+        return newMaster;
     }
 }
