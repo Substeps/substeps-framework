@@ -88,20 +88,32 @@ public class CustomDoclet extends Doclet {
                             expression.setSection(getSingleJavadocTagValue(md, "section"));
 
                             String line = annotation.value();
+                            expression.setRegex(line);
 
                             final Parameter[] parameters = md.parameters();
                             if (parameters != null && parameters.length > 0) {
+
+                                String[] paramNames = new String[parameters.length];
+                                String[] paramTypes = new String[parameters.length];
+
+                                int i = 0;
                                 for (final Parameter p : parameters) {
                                     // replace any captures with <variable name>
 
                                     line = line.replaceFirst("\\([^\\)]*\\)", "<" + p.name() + ">");
 
-                                    p.typeName();
+                                    paramNames[i] = p.name();
+                                    paramTypes[i] = p.typeName();
+                                    i++;
                                 }
+
+                                expression.setParameterClassNames(paramTypes);
+                                expression.setParameterNames(paramNames);
                             }
                             line = line.replaceAll("\\?", "");
                             line = line.replaceAll("\\\\", "");
                             expression.setExpression(line);
+
                         }
                     }
                 }
