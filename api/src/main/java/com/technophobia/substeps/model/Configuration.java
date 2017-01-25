@@ -37,9 +37,11 @@ public enum Configuration {
 
     private final Config config;
 
-    private Configuration() {
+    Configuration() {
         logger = LoggerFactory.getLogger(Configuration.class);
         final String resourceBundleName = resourceBundleName();
+
+
         config = ConfigFactory.load(resourceBundleName);
 
     }
@@ -80,7 +82,10 @@ public enum Configuration {
             ext = ".conf";
         }
 
-        return  System.getProperty("environment", "localhost") + ext;
+        String resourceBundle = System.getProperty("environment", "localhost") + ext;
+
+        System.out.println("loading config from resource bundle: " + resourceBundle);
+        return  resourceBundle;
     }
 
 
