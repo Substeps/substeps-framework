@@ -98,7 +98,7 @@ public class ExecutionNodeResult implements Serializable {
 
     public Long getRunningDuration() {
 
-        return startedAt != null && completedAt != null ? completedAt - startedAt : null;
+        return startedAt != null && completedAt != null ? completedAt - startedAt : -1L;
     }
 
     private void recordComplete() {

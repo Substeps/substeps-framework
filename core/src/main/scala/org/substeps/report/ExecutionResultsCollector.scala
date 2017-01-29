@@ -62,7 +62,7 @@ ExecutionResultsCollector extends  IExecutionResultsCollector {
 
     node match {
       case scenarioNode :  BasicScenarioNode => {
-        log.debug("basic scenario failed")
+        log.debug(s"basic scenario id ${scenarioNode.getId} failed")
 
         val feature = getFeatureFromNode(scenarioNode)
 
@@ -136,7 +136,7 @@ ExecutionResultsCollector extends  IExecutionResultsCollector {
 
     node match {
       case scenarioNode :  BasicScenarioNode => {
-        log.debug("basic scenario finished")
+        log.debug(s"basic scenario id ${scenarioNode.getId} finished")
         val feature = getFeatureFromNode(scenarioNode)
 
         featureToResultsDirMap.get(feature.getId) match {
@@ -239,9 +239,19 @@ ExecutionResultsCollector extends  IExecutionResultsCollector {
 
       childNode match {
         case basicScenarioNode : BasicScenarioNode => {
-          val (sNode, resultsFile) = scenarioSummaryMap.get(basicScenarioNode.getId).get
 
-          List(ScenarioSummary(sNode.getId, resultsFile.getName, sNode.getResult.getResult.toString, basicScenarioNode.getTags.toList))
+          scenarioSummaryMap.get(basicScenarioNode.getId) match {
+            case Some((sNode, resultsFile)) => {
+
+              List(ScenarioSummary(sNode.getId, resultsFile.getName, sNode.getResult.getResult.toString, basicScenarioNode.getTags.toList))
+
+            }
+            case None => {
+              log.error("failed to find scenario summary for id: " + basicScenarioNode.getId)
+              List()
+            }
+          }
+
 
         }
         case outline : OutlineScenarioNode  => {
