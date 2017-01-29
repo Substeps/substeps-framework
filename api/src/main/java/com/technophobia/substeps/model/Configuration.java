@@ -21,6 +21,7 @@ package com.technophobia.substeps.model;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import com.typesafe.config.ConfigRenderOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +67,12 @@ public enum Configuration {
 
 
     public String getConfigurationInfo() {
-        return config.root().render();
+
+        ConfigRenderOptions options =
+                ConfigRenderOptions.defaults().setComments(false).setFormatted(true).setJson(false).setOriginComments(false);
+
+        return config.withoutPath("java")
+                .withoutPath("sun").withoutPath("awt").withoutPath("idea").withoutPath("line.separator").withoutPath("os").withoutPath("path.separator").root().render(options);
     }
 
 

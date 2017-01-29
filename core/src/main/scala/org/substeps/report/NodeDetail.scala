@@ -9,6 +9,8 @@ import com.technophobia.substeps.execution.node.{BasicScenarioNode, StepImplemen
 
 import scala.collection.JavaConverters._
 
+
+
 case class NodeDetail(nodeType: String, filename: String, lineNumber : Int, result : String, id : Long,
                       executionDurationMillis : Option[Long], description : String,  method : Option[String],
                       children : List[NodeDetail] = List(),
