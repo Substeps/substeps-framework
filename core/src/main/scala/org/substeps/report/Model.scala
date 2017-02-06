@@ -76,3 +76,25 @@ case object State {
 case class JsTreeNode(id : String, text: String, icon : String, children : Option[List[JsTreeNode]], state : State, li_attr : Option[Map[String,String]] = None)
 
 
+case class StepImplDesc(expressions : List[StepDesc],className: String )
+
+case class StepDesc(expression: String ,
+                    regex: String ,
+                    example: String ,
+                    section: String ,
+                    description: String ,
+                    parameterNames: List[String] ,
+                    parameterClassNames: List[String]
+                   )
+
+case class GlossaryElement(
+                            section: String ,
+                            expression: String ,
+
+                            className: String,
+                            regex: String ,
+                            example: String ,
+                            description: String ,
+                            parameterNames: List[String] ,
+                            parameterClassNames: List[String]
+                          )

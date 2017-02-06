@@ -35,6 +35,7 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.substeps.report.IExecutionResultsCollector;
 import org.substeps.report.IReportBuilder;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -63,9 +64,9 @@ public class SubstepsReportBuilderMojo extends BaseSubstepsMojo {
 
         this.getLog().info("this.session.getGoals(): " + buf.toString());
 
+        File stepImplsJsonFile = new File(outputDirectory, STEP_IMPLS_JSON_FILENAME);
 
-
-        reportBuilder.buildFromDirectory(this.executionResultsCollector.getDataDir());
+        reportBuilder.buildFromDirectory(this.executionResultsCollector.getDataDir(), stepImplsJsonFile);
 
 
 

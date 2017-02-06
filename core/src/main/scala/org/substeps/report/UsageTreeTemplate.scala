@@ -46,8 +46,8 @@ trait UsageTreeTemplate {
         <div class="collapse navbar-collapse">
 
             <ul class="nav navbar-nav navbar-right">
-                <li class="active"><a href="report_frame.html">Results Summary</a></li>
-
+                <li><a href="report_frame.html">Results Summary</a></li>
+                <li><a href="glossary.html">Glossary</a></li>
             </ul>
         </div>
     </div>

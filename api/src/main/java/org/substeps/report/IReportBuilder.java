@@ -8,5 +8,6 @@ import java.io.File;
 public interface IReportBuilder {
 
     void buildFromDirectory(File sourceDataDir);
+    void buildFromDirectory(File sourceDataDir, File stepImplsJson);
 
 }

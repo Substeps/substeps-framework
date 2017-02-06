@@ -17,6 +17,12 @@ Requirements
 ------------
  * Java 8
 
+1.0.5
+-----
+* Single Maven plugin, glossary functionality moved into the same plugin that provides execution and report building, 
+  original glossary-builder kept in place to avoid breakages.  Removed XML variant of the Glossary in favour of json.
+  
+
 1.0.4
 -----
 * Added a checkbox to the report to optionally hide skipped steps

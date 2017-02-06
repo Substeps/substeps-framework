@@ -18,24 +18,34 @@
  */
 package com.technophobia.substeps.glossary;
 
+import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.sun.tools.javadoc.Main;
+import com.technophobia.substeps.model.SubSteps;
+import com.technophobia.substeps.runner.BaseSubstepsMojo;
+import com.technophobia.substeps.runner.ExecutionConfig;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -53,15 +63,10 @@ import java.util.zip.ZipEntry;
         requiresDependencyResolution = ResolutionScope.TEST,
         requiresProject = true,
         configurator = "include-project-dependencies")
-public class SubstepsGlossaryMojo extends AbstractMojo {
+public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
 
     private final Logger log = LoggerFactory.getLogger(SubstepsGlossaryMojo.class);
 
-    /**
-     * Location of the file.
-     */
-    @Parameter(defaultValue = "${project.build.outputDirectory}", required = true)
-    private File outputDirectory;
 
     /**
      */
@@ -70,8 +75,8 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
 
     /**
      */
-    @Parameter(required = true)
-    private String[] stepImplementationClassNames;
+//    @Parameter(required = true)
+//    private String[] stepImplementationClassNames;
 
     /**
      * @parameter
@@ -154,45 +159,73 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
-        log.warn("********************************************\n\n" +
-                "Substeps Glossary Mojo is now deprecated, an HTML glossary can be produced as part of the execution report by adding this execution to the substeps-maven-plugin:\n\n" +
-                "<execution>\n" +
-                "   <id>Build SubSteps Glossary</id>\n" +
-                "   <phase>process-test-resources</phase>\n" +
-                "   <goals>\n" +
-                "      <goal>generate-docs</goal>\n" +
-                "   </goals>\n" +
-                "</execution>");
-
         final HashSet<String> loadedClasses = new HashSet<String>();
 
         final List<StepImplementationsDescriptor> classStepTags = new ArrayList<StepImplementationsDescriptor>();
 
-        for (final String classToDocument : stepImplementationClassNames) {
+        final PluginDescriptor pluginDescriptor = (PluginDescriptor) getPluginContext().get("pluginDescriptor");
+        final ClassRealm classRealm = pluginDescriptor.getClassRealm();
+        final File classes = new File(project.getBuild().getOutputDirectory());
+        try
+        {
+            classRealm.addURL(classes.toURI().toURL());
+        }
+        catch (MalformedURLException e)
+        {
+            log.error("MalformedURLException adding outputdir", e);
+//            e.printStackTrace();
+        }
 
-            log.debug("documenting: " + classToDocument);
 
-            // have we loaded info for this class already ?
-            if (!loadedClasses.contains(classToDocument)) {
+        for(ExecutionConfig cfg : executionConfigs) {
 
-                // where is this class ?
-                final JarFile jarFileForClass = getJarFileForClass(classToDocument);
-                if (jarFileForClass != null) {
 
-                    log.debug("loading info from jar");
+            for (final String classToDocument : cfg.getStepImplementationClassNames()) {
 
-                    // look for the xml file in the jar, load up from
-                    // there
-                    loadStepTagsFromJar(jarFileForClass, classStepTags, loadedClasses);
-                } else {
-                    log.debug("loading step info from paths");
-                    // if it's in the project, run the javadoc and collect the
-                    // details
+                log.debug("documenting: " + classToDocument);
 
-                    classStepTags.addAll(runJavaDoclet(classToDocument));
+                // have we loaded info for this class already ?
+                if (!loadedClasses.contains(classToDocument)) {
+
+                    // where is this class ?
+                    final JarFile jarFileForClass = getJarFileForClass(classToDocument);
+                    if (jarFileForClass != null) {
+
+                        log.debug("loading info from jar");
+
+                        // look for the xml file in the jar, load up from
+                        // there
+                        loadStepTagsFromJar(jarFileForClass, classStepTags, loadedClasses);
+                    } else {
+                        log.debug("loading step info from paths");
+                        // if it's in the project, run the javadoc and collect the
+                        // details
+
+                        // TODO - if this class is annotated with AdditionalStepImplementations, lookup those instead..
+
+                        try {
+                            Class<?> stepImplClass = classRealm.loadClass(classToDocument);
+
+                            SubSteps.AdditionalStepImplementations additionalStepImpls = stepImplClass.getDeclaredAnnotation(SubSteps.AdditionalStepImplementations.class);
+
+                            if (additionalStepImpls != null){
+                                for(Class c : additionalStepImpls.value()){
+
+                                    classStepTags.addAll(runJavaDoclet(c.getCanonicalName()));
+                                }
+                            }
+
+                        } catch (ClassNotFoundException e) {
+                            log.error("failed to load class: " + classToDocument, e);
+
+                        }
+
+                        classStepTags.addAll(runJavaDoclet(classToDocument));
+                    }
                 }
             }
         }
+
 
         if (!classStepTags.isEmpty()) {
 
@@ -221,7 +254,7 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
 
         final String json = gson.toJson(classStepTags);
 
-        writeOutputFile(json, "stepimplementations.json");
+        writeOutputFile(json, STEP_IMPLS_JSON_FILENAME);
     }
 
 //    /**
@@ -264,22 +297,39 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
 
         // TODO - change this to load from the json version
 
-//        final ZipEntry entry = jarFileForClass
-//                .getEntry(XMLSubstepsGlossarySerializer.XML_FILE_NAME);
-//
-//        if (entry != null) {
-//
+        final ZipEntry entry = jarFileForClass
+                .getEntry("stepimplementations.json");
+
+        if (entry != null) {
+
+
+            try {
+                final InputStream is = jarFileForClass.getInputStream(entry);
+                InputStreamReader isr = new InputStreamReader(is);
+                String src = CharStreams.toString(isr);
+
+                Gson gson = new GsonBuilder().create();
+                List<StepImplementationsDescriptor>stepDescriptors = gson.fromJson(isr, new TypeToken<List<StepImplementationsDescriptor>>() {
+                }.getType());
+
+                classStepTags.addAll(stepDescriptors);
+
+
+            } catch (final IOException e) {
+                log.error("Error loading from jarfile: ", e);
+            }
+
 //            final List<StepImplementationsDescriptor> classStepTagList = serializer
 //                    .loadStepImplementationsDescriptorFromJar(jarFileForClass);
-//
+
 //            classStepTags.addAll(classStepTagList);
-//
-//            for (final StepImplementationsDescriptor descriptor : classStepTagList) {
-//                loadedClasses.add(descriptor.getClassName());
-//            }
-//        } else {
-//            log.error("couldn't locate file in jar: " + XMLSubstepsGlossarySerializer.XML_FILE_NAME);
-//        }
+
+            for (final StepImplementationsDescriptor descriptor : classStepTags) {
+                loadedClasses.add(descriptor.getClassName());
+            }
+        } else {
+            log.error("couldn't locate file in jar: stepimplementations.json");
+        }
     }
 
 

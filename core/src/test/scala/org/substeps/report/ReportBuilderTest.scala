@@ -7,11 +7,11 @@ import java.time.format.DateTimeFormatter
 
 import com.google.common.base.Strings
 import com.google.common.io.Files
+import com.technophobia.substeps.glossary.StepImplementationsDescriptor
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import org.scalatest._
-
 import org.hamcrest.text.IsEqualIgnoringWhiteSpace.equalToIgnoringWhiteSpace
 
 /**
@@ -121,24 +121,7 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
 
     substepsStatsjs shouldBe defined
 
-
-
   }
-
-
-
-//  case class Attr(id : String)
-//  case class Data (title : String, attr : Attr, icon : String)
-//
-//  case class DataHolder(id : String, title : String, icon : String) {
-//    def toMap = Map("data" -> Map("title" -> title, "attr" -> Map("id" -> id), "icon" -> icon))
-//  }
-//
-//
-//  case class State(opened : Boolean)
-//  case class JsTreeNode(id : String, text: String, icon : String, children : Option[List[JsTreeNode]], state : State)
-//
-//  case class Node(state:String, children : List[DataHolder])
 
 
 }
