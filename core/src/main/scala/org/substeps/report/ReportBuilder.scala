@@ -71,7 +71,7 @@ object ReportBuilder {
 /**
   * Created by ian on 30/06/16.
   */
-class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTreeTemplate {
+class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTreeTemplate with GlossaryTemplate {
 
   @BeanProperty
   var reportDir : File = new File(".")
@@ -89,8 +89,26 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     }
   }
 
+  def buildGlossaryData(sourceJsonFile : File) = {
+    implicit val formats = Serialization.formats(NoTypeHints)
+
+    val data = read[List[StepImplDesc]](sourceJsonFile)
+
+    val glossaryElements =
+      data.map(sid => sid.expressions.map(sd => {
+        GlossaryElement(sd.section, sd.expression, sid.className, sd.regex, sd.example, sd.description, sd.parameterNames, sd.parameterClassNames)
+      })).flatten
+
+    glossaryElements
+  }
 
   def buildFromDirectory(sourceDataDir: File): Unit = {
+    buildFromDirectory(sourceDataDir, null)
+  }
+
+  def buildFromDirectory(sourceDataDir: File, stepImplsJson : File): Unit = {
+
+
 
     reportDir.mkdir()
 
@@ -116,10 +134,12 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
     val stats : ExecutionStats = buildExecutionStats(srcData)
 
+    val localDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(srcData._1.timestamp), ZoneId.systemDefault());
+    val dateTimeString = localDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss"))
 
 
-    val reportFrameHtml = buildReportFrame(srcData._1, stats
-      )
+
+    val reportFrameHtml = buildReportFrame(srcData._1, stats, dateTimeString)
 
 
     withWriter(reportFrameHTML, writer => writer.append(reportFrameHtml))
@@ -142,10 +162,35 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
     withWriter(usgaeTreeHTMLFile, writer => writer.append(usageTreeHtml) )
 
-
+    createGlossary(stepImplsJson, dateTimeString)
   }
 
+  def createGlossary(stepImplsJson : File, dateTimeString :String) = {
 
+    if (Option(stepImplsJson).isDefined) {
+      val glossaryHTML = createFile("glossary.html")
+      val glossaryContent = buildGlossaryReport(dateTimeString)
+
+      // TODO - pass in the path to step impls.json
+      val srcJsonFile = new File("/home/ian/projects/github/substeps-webdriver/target/classes/stepimplementations.json")
+
+      val glossaryData = buildGlossaryData(srcJsonFile)
+      val glossaryJsFile = createFile("glossary-data.js")
+      writeGlossaryJs(glossaryJsFile, glossaryData)
+
+      withWriter(glossaryHTML, writer => writer.append(glossaryContent))
+    }
+  }
+
+  def writeGlossaryJs(glossaryJSFile : File, glossaryData : List[GlossaryElement]) = {
+
+    withWriter(glossaryJSFile, writer => {
+      implicit val formats = Serialization.formats(NoTypeHints)
+      writer.append("var glossary=")
+      writer.append(writePretty(glossaryData))
+      writer.append(";\n")
+    })
+  }
 
   def writeStatsJs(statsJsFile: File, stats: (List[Counters], List[Counters])) = {
 

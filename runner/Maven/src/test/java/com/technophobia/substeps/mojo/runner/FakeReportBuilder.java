@@ -12,4 +12,9 @@ public class FakeReportBuilder implements IReportBuilder{
     public void buildFromDirectory(File sourceDataDir) {
 
     }
+
+    @Override
+    public void buildFromDirectory(File sourceDataDir, File stepImplsJson) {
+
+    }
 }

@@ -7,11 +7,11 @@ import java.time.format.DateTimeFormatter
 
 import com.google.common.base.Strings
 import com.google.common.io.Files
+import com.technophobia.substeps.glossary.StepImplementationsDescriptor
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import org.scalatest._
-
 import org.hamcrest.text.IsEqualIgnoringWhiteSpace.equalToIgnoringWhiteSpace
 
 /**
@@ -126,19 +126,51 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
   }
 
 
+  import org.json4s._
+  import org.json4s.native.Serialization
+  import org.json4s.native.Serialization._
 
-//  case class Attr(id : String)
-//  case class Data (title : String, attr : Attr, icon : String)
-//
-//  case class DataHolder(id : String, title : String, icon : String) {
-//    def toMap = Map("data" -> Map("title" -> title, "attr" -> Map("id" -> id), "icon" -> icon))
-//  }
-//
-//
-//  case class State(opened : Boolean)
-//  case class JsTreeNode(id : String, text: String, icon : String, children : Option[List[JsTreeNode]], state : State)
-//
-//  case class Node(state:String, children : List[DataHolder])
+  
+  "ReportBuilder" should "load step impls" in {
+
+    val jsonFile = new File("/home/ian/projects/github/substeps-webdriver/target/classes/stepimplementations.json")
+
+    implicit val formats = Serialization.formats(NoTypeHints)
 
 
+    val data = read[List[StepImplDesc]](jsonFile)
+
+//    println("data:\n" + data.toString())
+
+    val glossaryElements =
+    data.map(sid => sid.expressions.map(sd => {
+      GlossaryElement(sd.section, sd.expression, sid.className, sd.regex, sd.example, sd.description, sd.parameterNames, sd.parameterClassNames)
+    })).flatten
+
+    println("glossry data:\n" +
+    writePretty(glossaryElements))
+  }
+
+  case class StepImplDesc(expressions : List[StepDesc],className: String )
+
+  case class StepDesc(expression: String ,
+  regex: String ,
+  example: String ,
+  section: String ,
+  description: String ,
+  parameterNames: List[String] ,
+  parameterClassNames: List[String]
+  )
+
+  case class GlossaryElement(
+                              section: String ,
+                              expression: String ,
+
+                              className: String,
+                              regex: String ,
+                              example: String ,
+                              description: String ,
+                              parameterNames: List[String] ,
+                              parameterClassNames: List[String]
+                            )
 }

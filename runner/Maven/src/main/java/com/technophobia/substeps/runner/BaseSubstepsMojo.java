@@ -8,12 +8,15 @@ import org.apache.maven.project.MavenProject;
 import org.substeps.report.IExecutionResultsCollector;
 import org.substeps.report.IReportBuilder;
 
+import java.io.File;
 import java.util.List;
 
 /**
  * Created by ian on 06/09/16.
  */
 public abstract class BaseSubstepsMojo extends AbstractMojo {
+
+    protected static final String STEP_IMPLS_JSON_FILENAME = "stepimplementations.json";
 
 
     @Parameter(defaultValue = "${session}")
@@ -51,6 +54,11 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true)
     protected MavenProject project;
 
+    /**
+     * Location of the file.
+     */
+    @Parameter(defaultValue = "${project.build.outputDirectory}", required = true)
+    protected File outputDirectory;
 
     /**
      *

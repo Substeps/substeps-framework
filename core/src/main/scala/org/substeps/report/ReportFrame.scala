@@ -34,7 +34,7 @@ trait ReportFrameTemplate {
 
   }
 
-  def buildReportFrame(rootNodeSummary: RootNodeSummary, stats : ExecutionStats) = {
+  def buildReportFrame(rootNodeSummary: RootNodeSummary, stats : ExecutionStats, dateTimeString : String) = {
 
     val featureProgressBlock = buildStatsBlock("Features", stats.featuresCounter)
     val scenarioProgressBlock = buildStatsBlock("Scenarios", stats.scenarioCounters)
@@ -42,9 +42,6 @@ trait ReportFrameTemplate {
     val stepImplBlock = buildStatsBlock("Step Impls", stats.stepImplCounters)
 
     val reportTitle = Option(rootNodeSummary.description).getOrElse("Substeps Test Report")
-
-    val localDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(rootNodeSummary.timestamp), ZoneId.systemDefault());
-    val dateTimeString = localDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss"))
 
 
     // TODO pull out some of the other things from the node summary - tags, nonfatal tags and environment
@@ -103,6 +100,7 @@ trait ReportFrameTemplate {
        |                <li><a href="#scenario-tag-summary" onclick="javascript:toggle('scenario-tag-summary')">Scenario tag summary</a></li>
        |                <li><a href="#test-detail">Test detail</a></li>
        |                <li><a href="usage-tree.html">Usage <span class="label label-warning">Beta</span></a></li>
+       |                <li><a href="glossary.html">Glossary</a></li>
        |
  |            </ul>
        |        </div>
