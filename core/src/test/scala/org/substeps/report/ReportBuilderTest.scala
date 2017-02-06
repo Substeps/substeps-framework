@@ -121,56 +121,7 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
 
     substepsStatsjs shouldBe defined
 
-
-
   }
 
 
-  import org.json4s._
-  import org.json4s.native.Serialization
-  import org.json4s.native.Serialization._
-
-  
-  "ReportBuilder" should "load step impls" in {
-
-    val jsonFile = new File("/home/ian/projects/github/substeps-webdriver/target/classes/stepimplementations.json")
-
-    implicit val formats = Serialization.formats(NoTypeHints)
-
-
-    val data = read[List[StepImplDesc]](jsonFile)
-
-//    println("data:\n" + data.toString())
-
-    val glossaryElements =
-    data.map(sid => sid.expressions.map(sd => {
-      GlossaryElement(sd.section, sd.expression, sid.className, sd.regex, sd.example, sd.description, sd.parameterNames, sd.parameterClassNames)
-    })).flatten
-
-    println("glossry data:\n" +
-    writePretty(glossaryElements))
-  }
-
-  case class StepImplDesc(expressions : List[StepDesc],className: String )
-
-  case class StepDesc(expression: String ,
-  regex: String ,
-  example: String ,
-  section: String ,
-  description: String ,
-  parameterNames: List[String] ,
-  parameterClassNames: List[String]
-  )
-
-  case class GlossaryElement(
-                              section: String ,
-                              expression: String ,
-
-                              className: String,
-                              regex: String ,
-                              example: String ,
-                              description: String ,
-                              parameterNames: List[String] ,
-                              parameterClassNames: List[String]
-                            )
 }
