@@ -171,10 +171,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
       val glossaryHTML = createFile("glossary.html")
       val glossaryContent = buildGlossaryReport(dateTimeString)
 
-      // TODO - pass in the path to step impls.json
-      val srcJsonFile = new File("/home/ian/projects/github/substeps-webdriver/target/classes/stepimplementations.json")
-
-      val glossaryData = buildGlossaryData(srcJsonFile)
+      val glossaryData = buildGlossaryData(stepImplsJson)
       val glossaryJsFile = createFile("glossary-data.js")
       writeGlossaryJs(glossaryJsFile, glossaryData)
 
