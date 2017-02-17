@@ -25,6 +25,7 @@ import com.technophobia.substeps.execution.ImplementationCache;
 import com.technophobia.substeps.execution.MethodExecutor;
 import com.technophobia.substeps.execution.node.*;
 import com.technophobia.substeps.model.*;
+import com.technophobia.substeps.model.exception.NoTestsRunException;
 import com.technophobia.substeps.runner.builder.ExecutionNodeTreeBuilder;
 import com.technophobia.substeps.runner.node.RootNodeRunner;
 import com.technophobia.substeps.runner.setupteardown.SetupAndTearDown;
@@ -331,7 +332,7 @@ public class ExecutionNodeRunner implements SubstepsRunner {
 
         if (!this.nodeExecutionContext.haveTestsBeenRun()) {
 
-            final Throwable t = new IllegalStateException("No tests executed");
+            final Throwable t = new NoTestsRunException();//IllegalStateException("No tests executed");
 
             SubstepExecutionFailure sef = new SubstepExecutionFailure(t, this.rootNode, ExecutionResult.FAILED);
 

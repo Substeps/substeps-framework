@@ -25,7 +25,9 @@ import com.technophobia.substeps.execution.Feature;
 import com.technophobia.substeps.execution.ImplementationCache;
 import com.technophobia.substeps.execution.node.*;
 import com.technophobia.substeps.model.Arguments;
+import com.technophobia.substeps.model.exception.NoTestsRunException;
 import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
+import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
 import com.technophobia.substeps.model.exception.UnimplementedStepException;
 import com.technophobia.substeps.runner.setupteardown.Annotations.BeforeAllFeatures;
 import com.technophobia.substeps.runner.setupteardown.SetupAndTearDown;
@@ -38,6 +40,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.substeps.report.IExecutionResultsCollector;
 
 import java.io.File;
@@ -119,7 +123,7 @@ public class ExecutionNodeRunnerTest {
 
         Assert.assertThat(failures.get(0).getThrowableInfo().getMessage(), is(msg));
 
-        Assert.assertThat(failures.get(1).getThrowableInfo().getThrowableClass(), is(IllegalStateException.class.getName()));
+        Assert.assertThat(failures.get(1).getThrowableInfo().getThrowableClass(), is(NoTestsRunException.class.getName()));
         Assert.assertThat(failures.get(1).getThrowableInfo().getMessage(), is("No tests executed"));
 
     }
@@ -157,7 +161,7 @@ public class ExecutionNodeRunnerTest {
                         + TestStepImplementations.class.getName()
                         + ".given()] AND matches a sub step definition: [Given something] in [duplicates2.substeps]"));
 
-        Assert.assertThat(failures.get(1).getThrowableInfo().getThrowableClass(), is(IllegalStateException.class.getName()));
+        Assert.assertThat(failures.get(1).getThrowableInfo().getThrowableClass(), is(NoTestsRunException.class.getName()));
         Assert.assertThat(failures.get(1).getThrowableInfo().getMessage(), is("No tests executed"));
 
     }
@@ -362,7 +366,7 @@ public class ExecutionNodeRunnerTest {
         runner.run();
         final List<SubstepExecutionFailure> failures = runner.getFailures();
 
-        verify(mockNotifer, times(1)).onNodeFailed(argThat(is(node)), argThat(any(IllegalStateException.class)));
+        verify(mockNotifer, times(1)).onNodeFailed(argThat(is(node)), argThat(any(NoTestsRunException.class)));
         // verify(mockNotifer, times(1)).onNodeFailed(argThat(is(node)), argThat(any(SubstepsRuntimeException.class)));
 
         Assert.assertFalse("expecting some failures", failures.isEmpty());
@@ -417,11 +421,11 @@ public class ExecutionNodeRunnerTest {
 
         Assert.assertThat(failures.size(), is(2));
 
-        Assert.assertThat(failures.get(0).getThrowableInfo().getThrowableClass(), is(IllegalStateException.class.getName()));
+        Assert.assertThat(failures.get(0).getThrowableInfo().getThrowableClass(), is(SubstepsRuntimeException.class.getName()));
 
         Assert.assertThat(failures.get(0).getThrowableInfo().getMessage(), is("node should have children but doesn't"));
 
-        Assert.assertThat(failures.get(1).getThrowableInfo().getThrowableClass(), is(IllegalStateException.class.getName()));
+        Assert.assertThat(failures.get(1).getThrowableInfo().getThrowableClass(), is(NoTestsRunException.class.getName()));
         Assert.assertThat(failures.get(1).getThrowableInfo().getMessage(), is("No tests executed"));
     }
 
@@ -574,7 +578,7 @@ public class ExecutionNodeRunnerTest {
         Assert.assertTrue("failure should be marked as setup or tear down", failures.get(0).isSetupOrTearDown());
 
 
-        Assert.assertThat(failures.get(1).getThrowableInfo().getThrowableClass(), is(IllegalStateException.class.getName()));
+        Assert.assertThat(failures.get(1).getThrowableInfo().getThrowableClass(), is(NoTestsRunException.class.getName()));
 
         Assert.assertThat(failures.get(1).getThrowableInfo().getMessage(), is("No tests executed"));
     }
@@ -842,5 +846,17 @@ public class ExecutionNodeRunnerTest {
         Assert.assertThat(rootNode.getChildren().get(0).getChildren().size(), is(1));
     }
 
+    private static final Logger log = LoggerFactory.getLogger(ExecutionNodeRunnerTest.class);
+
+
+    @Test
+    public void testNoTestRunException(){
+
+        Throwable e = new NoTestsRunException();
+
+        log.debug("an exception: ", e);
+    }
 
 }
+
+
