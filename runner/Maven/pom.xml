@@ -124,7 +124,11 @@
             <artifactId>gson</artifactId>
         </dependency>
 
-
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>4.6.0.201612231935-r</version>
+        </dependency>
         <!--      <dependency>
                   <groupId>org.apache.maven.shared</groupId>
                   <artifactId>maven-plugin-testing-harness</artifactId>

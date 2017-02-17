@@ -17,6 +17,12 @@ Requirements
 ------------
  * Java 8
 
+1.0.6
+-----
+* Redacted some of the output of the config
+* Passed the name of the running feature and scenario into the context.
+* RemoteWebDriverFactory sets up additional information to pass though via capabilities (current git branch, version)
+
 1.0.5
 -----
 * Single Maven plugin, glossary functionality moved into the same plugin that provides execution and report building, 

@@ -99,7 +99,7 @@ public abstract class AbstractNodeRunner<NODE_TYPE extends IExecutionNode, VISIT
     private boolean runSetup(final NODE_TYPE node, final RootNodeExecutionContext context) {
 
         try {
-            context.getSetupAndTeardown().runSetup(getScope());
+            context.getSetupAndTeardown().runSetup(getScope(), node);
             return true;
         } catch (final Throwable t) {
 

@@ -28,7 +28,6 @@ import com.technophobia.substeps.model.SubSteps;
 import com.technophobia.substeps.runner.BaseSubstepsMojo;
 import com.technophobia.substeps.runner.ExecutionConfig;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
@@ -70,8 +69,8 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
 
     /**
      */
-    @Parameter(defaultValue = "${project}", required = true, readonly = true)
-    private MavenProject project;
+//    @Parameter(defaultValue = "${project}", required = true, readonly = true)
+//    private MavenProject project;
 
     /**
      */
@@ -158,6 +157,8 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+
+        setupBuildEnvironmentInfo();
 
         final HashSet<String> loadedClasses = new HashSet<String>();
 
