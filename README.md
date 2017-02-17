@@ -22,6 +22,9 @@ Requirements
 * Redacted some of the output of the config
 * Passed the name of the running feature and scenario into the context.
 * RemoteWebDriverFactory sets up additional information to pass though via capabilities (current git branch, version)
+* Made the report builder more robust when there are no tests run
+* Modified the Substeps exceptions to limit the stack trace
+* Improved error message when no tests are run
 
 1.0.5
 -----
