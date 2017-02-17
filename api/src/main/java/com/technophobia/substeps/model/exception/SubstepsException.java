@@ -18,6 +18,10 @@
  */
 package com.technophobia.substeps.model.exception;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.util.Arrays;
+
 public class SubstepsException extends RuntimeException {
 
     private static final long serialVersionUID = 4647698987295633906L;
@@ -38,4 +42,35 @@ public class SubstepsException extends RuntimeException {
         super(cause);
     }
 
+    @Override
+    public StackTraceElement[] getStackTrace() {
+
+        StackTraceElement[] original = super.getStackTrace();
+        int i = 0;
+        for (; i < original.length; i++){
+            if (original[i].getClassName().contains("substeps")){
+                //
+            }
+            else {
+                break;
+            }
+        }
+
+        return Arrays.copyOf(original, i + 1);
+    }
+
+    @Override
+    public void printStackTrace(PrintStream s) {
+        StackTraceElement[] elems = getStackTrace();
+        setStackTrace(elems);
+        super.printStackTrace(s);
+    }
+
+    @Override
+    public void printStackTrace(PrintWriter s) {
+        StackTraceElement[] elems = getStackTrace();
+        setStackTrace(elems);
+
+        super.printStackTrace(s);
+    }
 }

@@ -375,7 +375,11 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     val substepNodeDetails = allNodeDetails.filter(nd => nd.nodeType == "SubstepNode")
     val substepDefsByUniqueMethood = substepNodeDetails.groupBy(_.source.get)
 
-    val nextId = allNodeDetails.map(n => n.id).max + 1
+    var nextId = allNodeDetails.map(n => n.id) match {
+      case Nil => 1
+      case ids => ids.max + 1
+    }
+
 
     substepDefsByUniqueMethood.map(e => {
 
@@ -430,7 +434,10 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     val stepImplsbyUniqueMethood = stepImplNodeDetails.groupBy(_.method.get)
 
 
-    var nextId = allNodeDetails.map(n => n.id).max + 1
+    var nextId = allNodeDetails.map(n => n.id) match {
+      case Nil => 1
+      case ids => ids.max + 1
+    }
 
 
     val stepImplNodeDetailsToUsages =
