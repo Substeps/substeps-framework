@@ -19,9 +19,7 @@
 
 package com.technophobia.substeps.model;
 
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
-import com.typesafe.config.ConfigRenderOptions;
+import com.typesafe.config.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,8 +69,18 @@ public enum Configuration {
         ConfigRenderOptions options =
                 ConfigRenderOptions.defaults().setComments(false).setFormatted(true).setJson(false).setOriginComments(false);
 
-        return config.withoutPath("java")
-                .withoutPath("sun").withoutPath("awt").withoutPath("idea").withoutPath("line.separator").withoutPath("os").withoutPath("path.separator").root().render(options);
+        return config
+                .withoutPath("java")
+                .withoutPath("sun")
+                .withoutPath("awt")
+                .withoutPath("idea")
+                .withoutPath("line.separator")
+                .withoutPath("os")
+                .withoutPath("path.separator")
+                .withValue("remote.token",  ConfigValueFactory.fromAnyRef("******"))
+                .withValue("remote.username",  ConfigValueFactory.fromAnyRef("******"))
+
+                .root().render(options);
     }
 
 

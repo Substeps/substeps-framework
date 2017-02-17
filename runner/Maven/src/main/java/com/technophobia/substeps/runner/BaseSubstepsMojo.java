@@ -1,10 +1,15 @@
 package com.technophobia.substeps.runner;
 
+import com.technophobia.substeps.model.Configuration;
 import com.technophobia.substeps.report.ExecutionReportBuilder;
+import com.typesafe.config.Config;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.substeps.report.IExecutionResultsCollector;
 import org.substeps.report.IReportBuilder;
 
@@ -51,7 +56,7 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
 
     /**
      */
-    @Parameter(defaultValue = "${project}", readonly = true)
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
 
     /**
@@ -112,4 +117,42 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
         this.runTestsInForkedVM = runTestsInForkedVM;
     }
 
+    public String getVersion(){
+        return project.getVersion();
+    }
+
+    protected void setupBuildEnvironmentInfo(){
+
+
+
+        MavenProject root = project;
+
+        while (root.hasParent()){
+            root = root.getParent();
+        }
+        System.setProperty("SUBSTEPS_CURRENT_PROJECT_VERSION", project.getVersion());
+
+
+        FileRepositoryBuilder builder = new FileRepositoryBuilder();
+        try {
+            Repository repository = builder.setGitDir(new File(root.getBasedir(), ".git"))
+                    .readEnvironment() // scan environment GIT_* variables
+                    .findGitDir() // scan up the file system tree
+                    .build();
+
+            Git git = new Git(repository);
+
+            String branchName = git.getRepository().getBranch();
+
+            if (branchName != null) {
+                System.setProperty("SUBSTEPS_CURRENT_BRANCHNAME", branchName);
+            }
+        }
+        catch (Exception e){
+            // this is best efforts...
+            getLog().debug("Not important - Exception trying to get hold of the current branch", e);
+
+        }
+
+    }
 }
