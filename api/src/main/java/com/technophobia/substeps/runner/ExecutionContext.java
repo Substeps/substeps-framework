@@ -80,6 +80,14 @@ public final class ExecutionContext {
         }
         return rtn;
     }
+    public static void clear(final Scope scope, String key) {
+        ExecutionContext ec = executionContextThreadLocal.get();
+        Map<String, Object> map = ec.scopedData.get(scope);
+        if (map != null) {
+            map.remove(key);
+        }
+
+    }
 
     public static void clear(final Scope scope) {
         executionContextThreadLocal.get().scopedData.remove(scope);
