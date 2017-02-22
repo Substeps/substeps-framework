@@ -96,7 +96,11 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
     val glossaryElements =
       data.map(sid => sid.expressions.map(sd => {
-        GlossaryElement(sd.section, sd.expression, sid.className, sd.regex, sd.example, sd.description, sd.parameterNames, sd.parameterClassNames)
+
+        val escapedExpression =
+          sd.expression.replaceAll("\\$$", "").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+
+        GlossaryElement(sd.section, escapedExpression, sid.className, sd.regex, sd.example, sd.description, sd.parameterNames, sd.parameterClassNames)
       })).flatten
 
     glossaryElements
@@ -748,7 +752,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     nodeDetail.exceptionMessage.map(s => writer.append(s""""emessage":"${StringEscapeUtils.escapeEcmaScript(s)}",""") )
 
 
-    nodeDetail.screenshot.map(s => writer.append(s"""screenshot:"${dataDir + s}",""") )
+    nodeDetail.screenshot.map(s => writer.append(s"""screenshot:"data${s}",""") )
     nodeDetail.stackTrace.map(s => writer.append(s"""stacktrace:[${s.mkString("\"", "\",\n\"", "\"")}],"""))
 
     writer.append(s""""children":[""")

@@ -846,17 +846,6 @@ public class ExecutionNodeRunnerTest {
         Assert.assertThat(rootNode.getChildren().get(0).getChildren().size(), is(1));
     }
 
-    private static final Logger log = LoggerFactory.getLogger(ExecutionNodeRunnerTest.class);
-
-
-    @Test
-    public void testNoTestRunException(){
-
-        Throwable e = new NoTestsRunException();
-
-        log.debug("an exception: ", e);
-    }
-
 }
 
 
