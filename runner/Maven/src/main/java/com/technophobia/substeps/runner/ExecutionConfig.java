@@ -21,6 +21,7 @@ package com.technophobia.substeps.runner;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Properties;
@@ -123,6 +124,14 @@ public class ExecutionConfig {
      */
     @Parameter(required = true)
     private String[] executionListeners;
+
+
+    @Parameter(defaultValue = "${project.build.outputDirectory}")
+    private File dataOutputDirectory;
+
+
+    @Parameter
+    private boolean checkForUncalledAndUnused = true;
 
 
     public SubstepsExecutionConfig asSubstepsExecutionConfig() throws MojoExecutionException {
@@ -251,4 +260,21 @@ public class ExecutionConfig {
     public void setExecutionListeners(String[] executionListeners) {
         this.executionListeners = executionListeners;
     }
+
+    public File getDataOutputDirectory() {
+        return dataOutputDirectory;
+    }
+
+    public void setDataOutputDirectory(File dataOutputDirectory) {
+        this.dataOutputDirectory = dataOutputDirectory;
+    }
+
+    public boolean isCheckForUncalledAndUnused() {
+        return checkForUncalledAndUnused;
+    }
+
+    public void setCheckForUncalledAndUnused(boolean checkForUncalledAndUnused) {
+        this.checkForUncalledAndUnused = checkForUncalledAndUnused;
+    }
+
 }

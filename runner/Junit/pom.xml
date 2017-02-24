@@ -4,39 +4,13 @@
     <parent>
         <groupId>org.substeps</groupId>
         <artifactId>substeps-runner-parent</artifactId>
-        <version>1.0.2-SNAPSHOT</version>
+        <version>1.0.6-SNAPSHOT</version>
     </parent>
 
 	<artifactId>substeps-junit-runner</artifactId>
 
 	<name>SubSteps JUnit Runner</name>
 	<description>A junit runner for substeps</description>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-
-				<executions>
-					<execution>
-						<id>extract-core-substep-test-code</id>
-
-						<phase>test-compile</phase>
-						<goals>
-							<goal>unpack-dependencies</goal>
-						</goals>
-
-						<configuration>
-							<includeArtifactIds>substeps-core</includeArtifactIds>
-							<includeTypes>test-jar</includeTypes>
-							<outputDirectory>${project.build.directory}/core-tests</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
 
 	<dependencies>
 		<dependency>

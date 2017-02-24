@@ -74,8 +74,8 @@ public class ParentStep {
     public void initialiseParamValues(final Step step) {
         final HashMap<String, String> map = new HashMap<String, String>();
 
-        final String[] paramValues = Util.getArgs(this.parent.getPattern(),
-                step.getLine(), null);
+        final String[] paramValues = Arguments.getArgs(this.parent.getPattern(),
+                step.getLine(), null, Configuration.INSTANCE.getConfig());
 
         if (paramValues != null) {
             for (int i = 0; i < paramValues.length; i++) {
@@ -97,8 +97,8 @@ public class ParentStep {
 
         log.debug("initialiseParamValues with line: " + line);
 
-        final String[] paramValues = Util.getArgs(this.parent.getPattern(),
-                line, keywordPrecedence);
+        final String[] paramValues = Arguments.getArgs(this.parent.getPattern(),
+                line, keywordPrecedence, Configuration.INSTANCE.getConfig());
 
         if (paramValues != null) {
 

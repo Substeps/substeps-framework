@@ -19,6 +19,8 @@
 package com.technophobia.substeps.runner.syntax;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Collections2;
+import com.google.common.io.Files;
 import com.technophobia.substeps.model.ParentStep;
 import com.technophobia.substeps.model.PatternMap;
 import com.technophobia.substeps.model.Step;
@@ -31,6 +33,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -53,8 +58,6 @@ public class SubStepDefinitionParser {
 
     private final SyntaxErrorReporter syntaxErrorReporter;
 
-    private FileContents currentFileContents;
-
     public SubStepDefinitionParser(final SyntaxErrorReporter syntaxErrorReporter) {
         this(true, syntaxErrorReporter);
     }
@@ -66,51 +69,50 @@ public class SubStepDefinitionParser {
 
     void parseSubStepFile(final File substepFile) {
 
-        this.currentFileContents = new FileContents();
+        FileContents currentFileContents = FileContents.fromFile(substepFile);
 
-        try {
+        parseSubstepFileContents(currentFileContents);
 
-            this.currentFileContents.readFile(substepFile);
+    }
 
-            for (int i = 0; i < this.currentFileContents.getNumberOfLines(); i++) {
+    public PatternMap<ParentStep> parseSubstepFileContents(FileContents currentFileContents) {
+        for (int i = 0; i < currentFileContents.getNumberOfLines(); i++) {
 
-                // Line numbers are 1-based in FileContents
-                processLine(i + 1);
-            }
+            // Line numbers are 1-based in FileContents
+            int idx = i + 1;
+            final String line = currentFileContents.getLineAt(idx);
 
-            // add the last scenario in, but only if it has some steps
-            if (this.currentParentStep != null) {
-
-                if (this.currentParentStep.getSteps() != null && !this.currentParentStep.getSteps().isEmpty()) {
-                    try {
-                        storeForPatternOrThrowException(this.currentParentStep.getParent().getPattern(),
-                                this.currentParentStep);
-                    } catch (final DuplicatePatternException ex) {
-                        this.syntaxErrorReporter.reportSubstepsError(ex);
-                        if (this.failOnDuplicateSubsteps) {
-                            throw ex;
-                        }
-                    }
-                } else {
-
-                    this.log.warn("Ignoring substep definition [" + this.currentParentStep.getParent().getLine()
-                            + "] as it has no steps");
-                }
-                // we're moving on to another file, so set this to null.
-                // TODO - pass this around rather than stash the state
-                this.currentParentStep = null;
-            }
-        } catch (final FileNotFoundException e) {
-            this.log.error(e.getMessage(), e);
-        } catch (final IOException e) {
-
-            this.log.error(e.getMessage(), e);
+            processLine(idx, line, currentFileContents);
         }
+
+        // add the last scenario in, but only if it has some steps
+        if (this.currentParentStep != null) {
+
+            if (this.currentParentStep.getSteps() != null && !this.currentParentStep.getSteps().isEmpty()) {
+                try {
+                    storeForPatternOrThrowException(this.currentParentStep.getParent().getPattern(),
+                            this.currentParentStep);
+                } catch (final DuplicatePatternException ex) {
+                    this.syntaxErrorReporter.reportSubstepsError(ex);
+                    if (this.failOnDuplicateSubsteps) {
+                        throw ex;
+                    }
+                }
+            } else {
+
+                this.log.warn("Ignoring substep definition [" + this.currentParentStep.getParent().getLine()
+                        + "] as it has no steps");
+            }
+            // we're moving on to another file, so set this to null.
+            // TODO - pass this around rather than stash the state
+            this.currentParentStep = null;
+        }
+        return this.parentMap;
     }
 
     public PatternMap<ParentStep> loadSubSteps(final File definitions) {
 
-        final List<File> substepsFiles = FileUtils.getFiles(definitions, ".substeps");
+        final Collection<File> substepsFiles = FileUtils.getFiles(definitions, "substeps");
 
         for (final File f : substepsFiles) {
             parseSubStepFile(f);
@@ -119,12 +121,11 @@ public class SubStepDefinitionParser {
         return this.parentMap;
     }
 
-    private void processLine(final int lineNumberIdx) {
-        final String line = this.currentFileContents.getLineAt(lineNumberIdx);
+    private void processLine(final int lineNumberIdx, final String line, final FileContents currentFileContents) {
 
         if (this.log.isTraceEnabled()) {
             this.log.trace("substep line[" + line + "] @ " + lineNumberIdx + ":"
-                    + this.currentFileContents.getFile().getName());
+                    + currentFileContents.getFile().getName());
         }
 
         if (line != null && line.length() > 0) {
@@ -134,13 +135,13 @@ public class SubStepDefinitionParser {
             // pick out the first word
             final String trimmed = FeatureFileParser.stripComments(line.trim());
             if (trimmed != null && trimmed.length() > 0 && !trimmed.startsWith("#")) {
-                processTrimmedLine(trimmed, lineNumberIdx);
+                processTrimmedLine(trimmed, lineNumberIdx, currentFileContents);
             }
 
         }
     }
 
-    private void processTrimmedLine(final String trimmed, final int lineNumberIdx) {
+    private void processTrimmedLine(final String trimmed, final int lineNumberIdx, FileContents currentFileContents) {
 
         // TODO convert <> into regex wildcards
 
@@ -156,7 +157,7 @@ public class SubStepDefinitionParser {
             if (d != null) {
                 final String trimmedRemainder = remainder.trim();
                 if (!Strings.isNullOrEmpty(trimmedRemainder)) {
-                    processDirective(d, remainder, lineNumberIdx);
+                    processDirective(d, remainder, lineNumberIdx, currentFileContents);
                     lineProcessed = true;
                 }
             }
@@ -165,16 +166,16 @@ public class SubStepDefinitionParser {
         if (!lineProcessed) {
             if (this.currentParentStep != null) {
 
-                final int sourceOffset = this.currentFileContents.getSourceStartOffsetForLineIndex(lineNumberIdx);
+                final int sourceOffset = currentFileContents.getSourceStartOffsetForLineIndex(lineNumberIdx);
                 // no context at the mo
-                this.currentParentStep.addStep(new Step(trimmed, true, this.currentFileContents.getFile(),
+                this.currentParentStep.addStep(new Step(trimmed, true, currentFileContents.getFile(),
                         lineNumberIdx, sourceOffset));
             }
         }
     }
 
 
-    private void processDirective(final Directive d, final String remainder, final int lineNumberIdx) {
+    private void processDirective(final Directive d, final String remainder, final int lineNumberIdx, FileContents currentFileContents) {
         this.currentDirective = d;
 
         switch (this.currentDirective) {
@@ -183,9 +184,9 @@ public class SubStepDefinitionParser {
 
                 // build up a Step from the remainder
 
-                final int sourceOffset = this.currentFileContents.getSourceStartOffsetForLineIndex(lineNumberIdx);
+                final int sourceOffset = currentFileContents.getSourceStartOffsetForLineIndex(lineNumberIdx);
 
-                final Step parent = new Step(remainder, true, this.currentFileContents.getFile(), lineNumberIdx,
+                final Step parent = new Step(remainder, true, currentFileContents.getFile(), lineNumberIdx,
                         sourceOffset);
 
                 if (this.currentParentStep != null) {

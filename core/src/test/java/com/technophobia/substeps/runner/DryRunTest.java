@@ -25,16 +25,23 @@ import com.technophobia.substeps.steps.TestStepImplementations;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.substeps.report.IExecutionResultsCollector;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DryRunTest {
 
-    private final ExecutionNodeRunner runner = new ExecutionNodeRunner();
+    private ExecutionNodeRunner runner;
 
     @Before
     public void configureRunner() {
+
+        IExecutionResultsCollector mockCollector = Mockito.mock(IExecutionResultsCollector.class);
+
+        runner = new ExecutionNodeRunner();
+        runner.addNotifier(mockCollector);
 
         TestInitialisationClass.reset();
         TestStepImplementations.somethingCalled = false;

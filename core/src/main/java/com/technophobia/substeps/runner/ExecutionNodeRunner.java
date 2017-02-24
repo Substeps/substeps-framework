@@ -25,14 +25,23 @@ import com.technophobia.substeps.execution.ImplementationCache;
 import com.technophobia.substeps.execution.MethodExecutor;
 import com.technophobia.substeps.execution.node.*;
 import com.technophobia.substeps.model.*;
+import com.technophobia.substeps.model.exception.NoTestsRunException;
 import com.technophobia.substeps.runner.builder.ExecutionNodeTreeBuilder;
 import com.technophobia.substeps.runner.node.RootNodeRunner;
 import com.technophobia.substeps.runner.setupteardown.SetupAndTearDown;
 import com.technophobia.substeps.runner.syntax.SyntaxBuilder;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.substeps.report.ExecutionResultsCollector;
+import org.substeps.report.IExecutionResultsCollector;
+import org.substeps.report.ReportingUtil;
+import org.substeps.runner.CoreSubstepsPropertiesConfiguration;
+import org.substeps.runner.UsageTreeBuilder;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -60,14 +69,48 @@ public class ExecutionNodeRunner implements SubstepsRunner {
 
     private List<SubstepExecutionFailure> failures;
 
+    private final ReportingUtil reportingUtil = new ReportingUtil();
+
     // map of nodes to each of the parents, where this node is used
-    final Map<ExecutionNodeUsage, List<ExecutionNodeUsage>> callerHierarchy = new HashMap<ExecutionNodeUsage, List<ExecutionNodeUsage>>();
+    private final Map<ExecutionNodeUsage, List<ExecutionNodeUsage>> callerHierarchy = new HashMap<ExecutionNodeUsage, List<ExecutionNodeUsage>>();
 
     @Override
     public void addNotifier(final IExecutionListener notifier) {
 
         this.notificationDistributor.addListener(notifier);
     }
+
+    public RootNode prepareExecutionConfig(final ExecutionConfigWrapper configWrapper , final Syntax syntax, final TestParameters parameters,
+                                           final SetupAndTearDown setupAndTearDown ,
+                                           final MethodExecutor methodExecutorToUse,
+                                           TagManager nonFatalTagmanager ) {
+
+
+        final ExecutionNodeTreeBuilder nodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, configWrapper);
+
+        // building the tree can throw critical failures if exceptions are found
+        this.rootNode = nodeTreeBuilder.buildExecutionNodeTree(configWrapper.getExecutionConfig().getDescription());
+
+        setupExecutionListeners(configWrapper);
+
+        if (configWrapper.getExecutionConfig().isCheckForUncalledAndUnused()) {
+            processUncalledAndUnused(syntax, configWrapper.getExecutionConfig().getDataOutputDirectory());
+        }
+
+        // UsageTreeBuilder.buildUsageTree(this.rootNode);
+
+        ExecutionContext.put(Scope.SUITE, INotificationDistributor.NOTIFIER_DISTRIBUTOR_KEY,
+                this.notificationDistributor);
+
+
+        this.nodeExecutionContext = new RootNodeExecutionContext(this.notificationDistributor,
+                Lists.<SubstepExecutionFailure>newArrayList(), setupAndTearDown, nonFatalTagmanager,
+                methodExecutorToUse);
+
+        return this.rootNode;
+
+    }
+
 
     @Override
     public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
@@ -113,14 +156,36 @@ public class ExecutionNodeRunner implements SubstepsRunner {
         parameters.setFailParseErrorsImmediately(config.isFastFailParseErrors());
         parameters.init();
 
-        final ExecutionNodeTreeBuilder nodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters);
+        return prepareExecutionConfig(configWrapper, syntax, parameters, setupAndTearDown, methodExecutorToUse, nonFatalTagmanager);
 
-        // building the tree can throw critical failures if exceptions are found
-        this.rootNode = nodeTreeBuilder.buildExecutionNodeTree(theConfig.getDescription());
+//        final ExecutionNodeTreeBuilder nodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters);
+//
+//        // building the tree can throw critical failures if exceptions are found
+//        this.rootNode = nodeTreeBuilder.buildExecutionNodeTree(config.getDescription());
+//
+//        setupExecutionListeners(configWrapper);
+//
+//
+//        processUncalledAndUnused(syntax);
+//
+//        ExecutionContext.put(Scope.SUITE, INotificationDistributor.NOTIFIER_DISTRIBUTOR_KEY,
+//                this.notificationDistributor);
+//
+//
+//        this.nodeExecutionContext = new RootNodeExecutionContext(this.notificationDistributor,
+//                Lists.<SubstepExecutionFailure>newArrayList(), setupAndTearDown, nonFatalTagmanager,
+//                methodExecutorToUse);
+//
+//        return this.rootNode;
+    }
 
+    private void setupExecutionListeners(ExecutionConfigWrapper configWrapper) {
         // add any listeners (including the step execution logger)
 
         final List<Class<? extends IExecutionListener>> executionListenerClasses = configWrapper.getExecutionListenerClasses();
+
+        // TODO - pass the base dir in or get from config
+//        executionResultsCollector.initOutputDirectories(this.rootNode);
 
         for (final Class<? extends IExecutionListener> listener : executionListenerClasses) {
 
@@ -134,49 +199,35 @@ public class ExecutionNodeRunner implements SubstepsRunner {
             }
         }
 
-        // TODO - put a switch in here, only really relevant to headless builds running a full suite..
-        processUncalledAndUnused(syntax);
-
-        ExecutionContext.put(Scope.SUITE, INotificationDistributor.NOTIFIER_DISTRIBUTOR_KEY,
-                this.notificationDistributor);
-
-
-        this.nodeExecutionContext = new RootNodeExecutionContext(this.notificationDistributor,
-                Lists.<SubstepExecutionFailure>newArrayList(), setupAndTearDown, nonFatalTagmanager,
-                methodExecutorToUse);
-
-        return this.rootNode;
+//        this.notificationDistributor.addListener(executionResultsCollector);
     }
 
     /**
      * @param syntax
      */
-    private void processUncalledAndUnused(final Syntax syntax) {
+    private void processUncalledAndUnused(final Syntax syntax, final File dataOutputDir) {
         final List<StepImplementation> uncalledStepImplementations = syntax.getUncalledStepImplementations();
-        if (!uncalledStepImplementations.isEmpty()) {
-            final StringBuilder buf = new StringBuilder();
-            buf.append("** Uncalled Step implementations in scope, this is suspect if these implementations are in your projects domain:\n\n");
-            for (final StepImplementation s : uncalledStepImplementations) {
-                buf.append(s.getMethod()).append("\n");
-            }
-            buf.append("\n");
-            log.info(buf.toString());
+
+        if (!dataOutputDir.exists()){
+            dataOutputDir.mkdir();
         }
+
+        reportingUtil.writeUncalledStepImpls(uncalledStepImplementations, dataOutputDir);
 
         buildCallHierarchy();
 
-        checkForUncalledParentSteps(syntax);
+        checkForUncalledParentSteps(syntax, dataOutputDir);
 
     }
 
     /**
      * @param syntax
      */
-    private void checkForUncalledParentSteps(final Syntax syntax) {
+    private void checkForUncalledParentSteps(final Syntax syntax, File outputDir) {
 
         final Set<ExecutionNodeUsage> calledExecutionNodes = callerHierarchy.keySet();
 
-        final StringBuilder buf = new StringBuilder();
+        List<Step> uncalledSubstepDefs = new ArrayList<>();
 
         for (final ParentStep p : syntax.getSortedRootSubSteps()) {
 
@@ -185,18 +236,10 @@ public class ExecutionNodeRunner implements SubstepsRunner {
             final Step parent = p.getParent();
 
             if (thereIsNotAStepThatMatchesThisPattern(parent.getPattern(), calledExecutionNodes)) {
-                buf.append("\t")
-                        .append(parent.getLine())
-                        .append(" @ ")
-                        .append(parent.getSource().getName())
-                        .append(":")
-                        .append(parent.getSourceLineNumber())
-                        .append("\n");
+                uncalledSubstepDefs.add(parent);
             }
         }
-        if (buf.length() > 0) {
-            log.warn("** Substep definitions not called in current substep execution scope...\n\n" + buf.toString());
-        }
+        reportingUtil.writeUncalledStepDefs(uncalledSubstepDefs, outputDir);
     }
 
     private boolean thereIsNotAStepThatMatchesThisPattern(final String stepPattern, final Set<ExecutionNodeUsage> calledExecutionNodes) {
@@ -291,7 +334,7 @@ public class ExecutionNodeRunner implements SubstepsRunner {
 
         if (!this.nodeExecutionContext.haveTestsBeenRun()) {
 
-            final Throwable t = new IllegalStateException("No tests executed");
+            final Throwable t = new NoTestsRunException();//IllegalStateException("No tests executed");
 
             SubstepExecutionFailure sef = new SubstepExecutionFailure(t, this.rootNode, ExecutionResult.FAILED);
 

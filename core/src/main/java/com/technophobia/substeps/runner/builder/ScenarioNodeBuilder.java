@@ -110,6 +110,8 @@ public class ScenarioNodeBuilder {
             allTags.addAll(scenario.getTags());
         }
 
+        // TODO pass in the example params into the outline scenarionode
+
         for (final ExampleParameter outlineParameters : scenario.getExampleParameters()) {
 
             BasicScenarioNode basicSenarioNode = buildBasicScenarioNode(scenario, outlineParameters, allTags, depth + 2);
@@ -140,13 +142,17 @@ public class ScenarioNodeBuilder {
 
             for (Step step : scenario.getSteps()) {
 
-                steps.add(substepNodeBuilder.buildStepNode(scenario.getDescription(), step, parameters.getSyntax()
-                        .getSubStepsMap(), null, scenarioParameters, false, allTags, depth + 1));
+                steps.add(substepNodeBuilder.buildStepNode(scenario.getDescription(), step,
+                        parameters.getSyntax().getSubStepsMap(), null, scenarioParameters, false, allTags, depth + 1));
             }
 
         }
 
-        return new BasicScenarioNode(scenario.getDescription(), background, steps, allTags, depth);
+        String scenarioDescription =
+                scenarioParameters == null ? scenario.getDescription() :
+                SubstepNodeBuilder.substitutePlaceholders(scenario.getDescription(), scenarioParameters.getParameters());
+
+        return new BasicScenarioNode(scenarioDescription, background, steps, allTags, depth);
     }
 
 }

@@ -52,7 +52,7 @@ public class TestRootNodeBuilder {
             featureNodes.add(builder.build());
         }
 
-        return new RootNode(description, featureNodes);
+        return new RootNode(description, featureNodes, "test", "test-tags", "test-non-fatal-tags");
     }
 
 }

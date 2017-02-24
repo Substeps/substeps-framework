@@ -19,6 +19,11 @@
 package com.technophobia.substeps.parser;
 
 import com.google.common.io.Files;
+import com.technophobia.substeps.model.exception.SubstepsParsingException;
+import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
+import com.technophobia.substeps.runner.FeatureFileParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,10 +56,34 @@ import java.util.List;
  */
 public class FileContents {
 
-    private List<String> lines = null;
-    private int[] lineStartOffsets = null;
-    private String fullContents = null;
-    private File file;
+    private final List<String> lines;
+    private final int[] lineStartOffsets;
+    private final String fullContents ;
+    private final File file;
+
+
+    public FileContents(final List<String> lines, final File file ){
+        this.lines = lines;
+        this.file = file;
+
+        this.lineStartOffsets = new int[this.lines.size()];
+
+        StringBuilder buf = new StringBuilder();
+
+        for (String l : lines){
+            buf.append(l).append("\n");
+        }
+        this.fullContents = buf.toString();
+
+        int lastOffset = 0;
+        for (int i = 0; i < this.lines.size(); i++) {
+
+            final String s = this.lines.get(i);
+
+            this.lineStartOffsets[i] = this.fullContents.indexOf(s, lastOffset);
+            lastOffset = this.lineStartOffsets[i] + s.length();
+        }
+    }
 
 
     public List<String> getLines() {
@@ -84,25 +113,16 @@ public class FileContents {
     }
 
 
-    public void readFile(final File file) throws IOException {
+    public static FileContents fromFile(final File file) {
 
-        this.file = file;
-        this.lines = Files.readLines(file, Charset.forName("UTF-8"));
-
-        this.lineStartOffsets = new int[this.lines.size()];
-
-        this.fullContents = Files.toString(file, Charset.forName("UTF-8"));
-
-        int lastOffset = 0;
-        for (int i = 0; i < this.lines.size(); i++) {
-
-            final String s = this.lines.get(i);
-
-            this.lineStartOffsets[i] = this.fullContents.indexOf(s, lastOffset);
-            lastOffset = this.lineStartOffsets[i] + s.length();
+        try {
+            List<String> lines = Files.readLines(file, Charset.forName("UTF-8"));
+            return new FileContents(lines, file);
+        }
+        catch (final IOException e) {
+            throw new SubstepsRuntimeException("failed to load feature file: " + e.getMessage(), e);
         }
     }
-
 
     public int getSourceLineNumber(final String line, final int offset) {
 

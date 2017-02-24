@@ -24,15 +24,12 @@ import com.technophobia.substeps.model.Step;
 import com.technophobia.substeps.runner.FeatureFileComparator;
 import com.technophobia.substeps.runner.FeatureFileParser;
 import com.technophobia.substeps.runner.syntax.FileUtils;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author ian
@@ -121,7 +118,7 @@ public class SubstepsToHTML {
         buf.append("<div style=\"position:relative;left:5em\">");
         for (final Step step : scenario.getSteps()) {
 
-            buf.append(StringEscapeUtils.escapeHtml(step.getLine())).append("<br/>").append("\n");
+            buf.append(StringEscapeUtils.escapeHtml4(step.getLine())).append("<br/>").append("\n");
         }
         buf.append("</div>");
         buf.append("<br/><br/>\n");
@@ -162,7 +159,7 @@ public class SubstepsToHTML {
 
         List<FeatureFile> featureFileList = null;
 
-        final List<File> featureFiles = FileUtils.getFiles(new File(featureFile), ".feature");
+        final Collection<File> featureFiles = FileUtils.getFiles(new File(featureFile), "feature");
 
         final FeatureFileParser fp2 = new FeatureFileParser();
         for (final File f : featureFiles) {

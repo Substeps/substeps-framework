@@ -20,13 +20,20 @@ package com.technophobia.substeps.mojo.runner;
 
 import com.technophobia.substeps.execution.node.ExecutionNode;
 import com.technophobia.substeps.execution.node.RootNode;
+import com.technophobia.substeps.model.Configuration;
 import com.technophobia.substeps.runner.BuildFailureManager;
 import com.technophobia.substeps.runner.ExecutionConfig;
 import com.technophobia.substeps.runner.SubstepsRunnerMojo;
+import com.typesafe.config.Config;
 import junit.framework.Assert;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -77,7 +84,7 @@ public class SubstepsRunnerMojoTest {
 
         final ExecutionConfig execConfig = new ExecutionConfig();
 
-        final RootNode rootNode = new RootNode("desc", null);
+        final RootNode rootNode = new RootNode("desc", null, "env", "tags", "non-fatal-tags");
 
         method.invoke(mojo, rootNode, execConfig);
 
@@ -86,4 +93,36 @@ public class SubstepsRunnerMojoTest {
 
     }
 
+    @Test
+    public void testGitStuff(){
+
+        FileRepositoryBuilder builder = new FileRepositoryBuilder();
+        try {
+            Repository repository = builder.setGitDir(new File("/home/ian/projects/github/substeps-framework/.git"))
+                    .readEnvironment() // scan environment GIT_* variables
+                    .findGitDir() // scan up the file system tree
+                    .build();
+
+            Git git = new Git(repository);
+
+            String branchName = git.getRepository().getBranch();
+            System.out.println("get branch: " + branchName);
+
+            if (branchName != null) {
+                System.setProperty("SUBSTEPS_CURRENT_BRANCHNAME", branchName);
+            }
+
+            Config cfg = Configuration.INSTANCE.getConfig();
+            //
+
+            System.out.println(cfg.getString("user.name"));
+
+            System.out.println(cfg.getString("substeps.current.branchname"));
+
+        }
+        catch (Exception e){
+            System.out.println("Exception trying to get hold of the current branch: " + e.getMessage());
+        }
+
+    }
 }

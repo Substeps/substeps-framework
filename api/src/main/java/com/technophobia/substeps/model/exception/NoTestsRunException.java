@@ -16,33 +16,15 @@
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with Substeps.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.technophobia.substeps.model.exception;
 
-package com.technophobia.substeps.report;
+public class NoTestsRunException extends SubstepsException {
 
-import com.technophobia.substeps.execution.node.FeatureNode;
-import com.technophobia.substeps.execution.node.RootNode;
-import org.junit.Ignore;
-import org.junit.Test;
+    private static final long serialVersionUID = 4050361783327727693L;
 
-import java.util.Collections;
-
-/**
- * @author ian
- */
-public class ReportDataTest {
-
-    @Ignore("work in progress")
-    @Test
-    public void testCounts() {
-        final RootNode root = new RootNode("Description", Collections.<FeatureNode>emptyList());
-
-        final ReportData data = new ReportData();
-        data.addRootExecutionNode(root);
-
-        final ExecutionStats stats = new ExecutionStats();
-        stats.buildStats(data);
-
-        // TODO -check some stuff out
-
+    public NoTestsRunException() {
+        super("No tests executed");
     }
+
+
 }

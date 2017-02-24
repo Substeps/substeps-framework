@@ -18,18 +18,20 @@
  */
 package com.technophobia.substeps.glossary;
 
+import java.util.Arrays;
+
 /**
  * @author ian
  */
 public class StepDescriptor {
     private String expression;
-
+    private String regex;
     private String example;
     private String section;
     private String description;
+    private String[] parameterNames;
+    private String[] parameterClassNames;
 
-
-    // TODO - add parameter information.
 
     /**
      * @return the example
@@ -95,45 +97,50 @@ public class StepDescriptor {
     }
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#hashCode()
-     */
+    public String getRegex() {
+        return regex;
+    }
+
+    public void setRegex(String regex) {
+        this.regex = regex;
+    }
+
+    public String[] getParameterClassNames() {
+        return parameterClassNames;
+    }
+
+    public void setParameterClassNames(String[] parameterClassNames) {
+        this.parameterClassNames = parameterClassNames;
+    }
+    public String[] getParameterNames() {
+        return parameterNames;
+    }
+
+    public void setParameterNames(String[] parameterNames) {
+        this.parameterNames = parameterNames;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        StepDescriptor that = (StepDescriptor) o;
+
+        if (expression != null ? !expression.equals(that.expression) : that.expression != null) return false;
+        if (regex != null ? !regex.equals(that.regex) : that.regex != null) return false;
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        if (!Arrays.equals(parameterNames, that.parameterNames)) return false;
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        return Arrays.equals(parameterClassNames, that.parameterClassNames);
+    }
+
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((expression == null) ? 0 : expression.hashCode());
+        int result = expression != null ? expression.hashCode() : 0;
+        result = 31 * result + (regex != null ? regex.hashCode() : 0);
+        result = 31 * result + Arrays.hashCode(parameterNames);
+        result = 31 * result + Arrays.hashCode(parameterClassNames);
         return result;
     }
-
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final StepDescriptor other = (StepDescriptor) obj;
-        if (expression == null) {
-            if (other.expression != null) {
-                return false;
-            }
-        } else if (!expression.equals(other.expression)) {
-            return false;
-        }
-        return true;
-    }
-
 }

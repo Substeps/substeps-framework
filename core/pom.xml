@@ -5,12 +5,16 @@
     <parent>
         <groupId>org.substeps</groupId>
         <artifactId>substeps-framework</artifactId>
-        <version>1.0.2-SNAPSHOT</version>
+        <version>1.0.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>substeps-core</artifactId>
 
     <name>Substeps Core</name>
+
+    <properties>
+            <json4s.version>3.3.0</json4s.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -22,6 +26,18 @@
             <artifactId>substeps-core-api</artifactId>
             <type>test-jar</type>
         </dependency>
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_2.11</artifactId>
+            <scope>test</scope>
+        </dependency>
+
 
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
@@ -42,15 +58,16 @@
         </dependency>
 
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>velocity</groupId>
             <artifactId>velocity</artifactId>
             <version>1.5</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-lang</groupId>
-                    <artifactId>commons-lang</artifactId>
-                </exclusion>
-            </exclusions>
+
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -66,6 +83,19 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>2.9.1</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.json4s</groupId>
+            <artifactId>json4s-native_2.11</artifactId>
+            <version>${json4s.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-jexl3</artifactId>
+            <version>3.0</version>
         </dependency>
 
         <!-- Test Dependencies -->
@@ -131,6 +161,100 @@
                     </excludes>
                 </configuration>
             </plugin>
+
+
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+<!--
+                <version>3.1.6</version> -->
+                <executions>
+
+                    <!-- Run scala compiler in the process-resources phase, so that dependencies on scala classes can be
+                        resolved later in the (Java) compile phase -->
+                    <execution>
+                        <id>scala-compile-first</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+
+                    <!-- Run scala compiler in the process-test-resources phase, so that dependencies on scala classes can
+                        be resolved later in the (Java) test-compile phase -->
+                    <execution>
+                        <id>scala-test-compile</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+
+                </executions>
+                <configuration>
+                    <sourceDir>src/main/scala</sourceDir>
+                    <jvmArgs>
+                        <jvmArg>-Xms64m</jvmArg>
+                        <jvmArg>-Xmx1024m</jvmArg>
+                    </jvmArgs>
+                    <scalaVersion>${scala.version}</scalaVersion>
+                    <!-- <args> <arg>-make:transitive</arg> <arg>dependenfile</arg> <arg>${project.build.directory}/.scala_dependencies</arg>
+                        </args> -->
+                </configuration>
+
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+
+<!--
+                <executions>
+                    <execution>
+                        <id>add-scala-source-folder</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>/src/main/scala</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>add-scala-test-folder</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>/src/test/scala</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+-->
+            </plugin>
+
+            <plugin>
+                <groupId>org.scalatest</groupId>
+                <artifactId>scalatest-maven-plugin</artifactId>
+                <version>1.0</version>
+                <configuration>
+                    <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                    <junitxml>.</junitxml>
+                    <filereports>WDF TestSuite.txt</filereports>
+                </configuration>
+                <executions><execution>
+                    <id>test</id>
+                    <goals><goal>test</goal></goals>
+                </execution></executions>
+            </plugin>
+
         </plugins>
     </build>
 
@@ -140,9 +264,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
 
+<!--
                 <configuration>
+
                     <outputDirectory>${basedir}/target/newsite</outputDirectory>
                 </configuration>
+-->
             </plugin>
 
             <plugin>

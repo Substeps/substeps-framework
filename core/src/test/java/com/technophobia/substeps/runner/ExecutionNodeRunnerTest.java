@@ -24,17 +24,25 @@ import com.technophobia.substeps.execution.ExecutionResult;
 import com.technophobia.substeps.execution.Feature;
 import com.technophobia.substeps.execution.ImplementationCache;
 import com.technophobia.substeps.execution.node.*;
-import com.technophobia.substeps.model.Util;
+import com.technophobia.substeps.model.Arguments;
+import com.technophobia.substeps.model.exception.NoTestsRunException;
 import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
+import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
 import com.technophobia.substeps.model.exception.UnimplementedStepException;
 import com.technophobia.substeps.runner.setupteardown.Annotations.BeforeAllFeatures;
 import com.technophobia.substeps.runner.setupteardown.SetupAndTearDown;
 import com.technophobia.substeps.stepimplementations.MockStepImplementations;
 import com.technophobia.substeps.steps.TestStepImplementations;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.substeps.report.IExecutionResultsCollector;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -57,7 +65,10 @@ public class ExecutionNodeRunnerTest {
 
     @Before
     public void setup() {
+        IExecutionResultsCollector mockCollector = Mockito.mock(IExecutionResultsCollector.class);
+
         runner = new ExecutionNodeRunner();
+        runner.addNotifier(mockCollector);
     }
 
     @Test
@@ -71,7 +82,7 @@ public class ExecutionNodeRunnerTest {
         final String substeps = "./target/test-classes/substeps/simple.substeps";
         final IExecutionListener notifier = mock(IExecutionListener.class);
 
-        final List<SubstepExecutionFailure> failures = new ArrayList<SubstepExecutionFailure>();
+        final List<SubstepExecutionFailure> failures = new ArrayList<>();
 
         final RootNode rootNode = runExecutionTest(feature, tags, substeps, notifier, failures);
 
@@ -89,7 +100,7 @@ public class ExecutionNodeRunnerTest {
         final String substeps = "./target/test-classes/substeps/error.substeps";
         final IExecutionListener notifier = mock(IExecutionListener.class);
 
-        final List<SubstepExecutionFailure> failures = new ArrayList<SubstepExecutionFailure>();
+        final List<SubstepExecutionFailure> failures = new ArrayList<>();
 
         final RootNode rootNode = runExecutionTest(feature, tags, substeps, notifier, failures);
 
@@ -112,7 +123,7 @@ public class ExecutionNodeRunnerTest {
 
         Assert.assertThat(failures.get(0).getThrowableInfo().getMessage(), is(msg));
 
-        Assert.assertThat(failures.get(1).getThrowableInfo().getThrowableClass(), is(IllegalStateException.class.getName()));
+        Assert.assertThat(failures.get(1).getThrowableInfo().getThrowableClass(), is(NoTestsRunException.class.getName()));
         Assert.assertThat(failures.get(1).getThrowableInfo().getMessage(), is("No tests executed"));
 
     }
@@ -125,7 +136,7 @@ public class ExecutionNodeRunnerTest {
         final String substeps = "./target/test-classes/substeps/duplicates2.substeps";
         final IExecutionListener notifier = mock(IExecutionListener.class);
 
-        final List<SubstepExecutionFailure> failures = new ArrayList<SubstepExecutionFailure>();
+        final List<SubstepExecutionFailure> failures = new ArrayList<>();
 
         final RootNode rootNode = runExecutionTest(feature, tags, substeps, notifier, failures);
 
@@ -150,7 +161,7 @@ public class ExecutionNodeRunnerTest {
                         + TestStepImplementations.class.getName()
                         + ".given()] AND matches a sub step definition: [Given something] in [duplicates2.substeps]"));
 
-        Assert.assertThat(failures.get(1).getThrowableInfo().getThrowableClass(), is(IllegalStateException.class.getName()));
+        Assert.assertThat(failures.get(1).getThrowableInfo().getThrowableClass(), is(NoTestsRunException.class.getName()));
         Assert.assertThat(failures.get(1).getThrowableInfo().getMessage(), is("No tests executed"));
 
     }
@@ -167,7 +178,7 @@ public class ExecutionNodeRunnerTest {
         final IExecutionListener notifier = mock(IExecutionListener.class);
 
         // TODO - checkfailures - test currently ignored anyway..
-        final List<SubstepExecutionFailure> failures = new ArrayList<SubstepExecutionFailure>();
+        final List<SubstepExecutionFailure> failures = new ArrayList<>();
         final RootNode rootNode = runExecutionTest(feature, tags, substeps, notifier, failures);
 
         System.out.println("\n\n\n\n\n*************\n\n" + rootNode.toDebugString());
@@ -288,7 +299,7 @@ public class ExecutionNodeRunnerTest {
     private RootNode runExecutionTest(final String feature, final String tags, final String substeps,
                                       final IExecutionListener notifier, final List<SubstepExecutionFailure> failures) {
 
-        final List<Class<?>> stepImplementationClasses = new ArrayList<Class<?>>();
+        final List<Class<?>> stepImplementationClasses = new ArrayList<>();
         stepImplementationClasses.add(TestStepImplementations.class);
 
         return runExecutionTest(feature, tags, substeps, notifier, null, failures, stepImplementationClasses);
@@ -338,13 +349,13 @@ public class ExecutionNodeRunnerTest {
 
         final ExecutionNodeRunner runner = new ExecutionNodeRunner();
 
-        final RootNode node = new RootNode("Description", Collections.<FeatureNode>emptyList());
+        final RootNode node = new RootNode("Description", Collections.emptyList(), "env", "tags", "non-fatal-tags");
 
         final INotificationDistributor notificationDistributor = getPrivateField(runner, "notificationDistributor");
         final SetupAndTearDown setupAndTearDown = mock(SetupAndTearDown.class);
 
         final RootNodeExecutionContext nodeExecutionContext = new RootNodeExecutionContext(notificationDistributor,
-                Lists.<SubstepExecutionFailure>newArrayList(), setupAndTearDown, null, new ImplementationCache());
+                Lists.newArrayList(), setupAndTearDown, null, new ImplementationCache());
 
         setPrivateField(runner, "rootNode", node);
         setPrivateField(runner, "nodeExecutionContext", nodeExecutionContext);
@@ -355,7 +366,7 @@ public class ExecutionNodeRunnerTest {
         runner.run();
         final List<SubstepExecutionFailure> failures = runner.getFailures();
 
-        verify(mockNotifer, times(1)).onNodeFailed(argThat(is(node)), argThat(any(IllegalStateException.class)));
+        verify(mockNotifer, times(1)).onNodeFailed(argThat(is(node)), argThat(any(NoTestsRunException.class)));
         // verify(mockNotifer, times(1)).onNodeFailed(argThat(is(node)), argThat(any(SubstepsRuntimeException.class)));
 
         Assert.assertFalse("expecting some failures", failures.isEmpty());
@@ -367,17 +378,17 @@ public class ExecutionNodeRunnerTest {
     public void testScenarioOutlineFailsWithNoExamples() {
 
         final OutlineScenarioNode outlineNode = new OutlineScenarioNode("scenarioName",
-                Collections.<OutlineScenarioRowNode>emptyList(), Collections.<String>emptySet(), 2);
+                Collections.emptyList(), Collections.emptySet(), 2);
         final FeatureNode featureNode = new FeatureNode(new Feature("test feature", "file"),
-                Collections.<ScenarioNode<?>>singletonList(outlineNode), Collections.<String>emptySet());
-        final ExecutionNode rootNode = new RootNode("Description", Collections.singletonList(featureNode));
+                Collections.singletonList(outlineNode), Collections.emptySet());
+        final ExecutionNode rootNode = new RootNode("Description", Collections.singletonList(featureNode), "env", "tags", "non-fatal-tags");
 
-        final ExecutionNodeRunner runner = new ExecutionNodeRunner();
+//        final ExecutionNodeRunner runner = new ExecutionNodeRunner();
 
         final INotificationDistributor notificationDistributor = getPrivateField(runner, "notificationDistributor");
         final SetupAndTearDown setupAndTearDown = mock(SetupAndTearDown.class);
         final RootNodeExecutionContext nodeExecutionContext = new RootNodeExecutionContext(notificationDistributor,
-                Lists.<SubstepExecutionFailure>newArrayList(), setupAndTearDown, null, new ImplementationCache());
+                Lists.newArrayList(), setupAndTearDown, null, new ImplementationCache());
 
         setPrivateField(runner, "rootNode", rootNode);
         setPrivateField(runner, "nodeExecutionContext", nodeExecutionContext);
@@ -410,11 +421,11 @@ public class ExecutionNodeRunnerTest {
 
         Assert.assertThat(failures.size(), is(2));
 
-        Assert.assertThat(failures.get(0).getThrowableInfo().getThrowableClass(), is(IllegalStateException.class.getName()));
+        Assert.assertThat(failures.get(0).getThrowableInfo().getThrowableClass(), is(SubstepsRuntimeException.class.getName()));
 
         Assert.assertThat(failures.get(0).getThrowableInfo().getMessage(), is("node should have children but doesn't"));
 
-        Assert.assertThat(failures.get(1).getThrowableInfo().getThrowableClass(), is(IllegalStateException.class.getName()));
+        Assert.assertThat(failures.get(1).getThrowableInfo().getThrowableClass(), is(NoTestsRunException.class.getName()));
         Assert.assertThat(failures.get(1).getThrowableInfo().getMessage(), is("No tests executed"));
     }
 
@@ -465,12 +476,12 @@ public class ExecutionNodeRunnerTest {
 
         final RootNode rootNode = rootNodeBuilder.build();
 
-        final ExecutionNodeRunner runner = new ExecutionNodeRunner();
+//        final ExecutionNodeRunner runner = new ExecutionNodeRunner();
 
         final INotificationDistributor notificationDistributor = getPrivateField(runner, "notificationDistributor");
         final SetupAndTearDown setupAndTearDown = mock(SetupAndTearDown.class);
         final RootNodeExecutionContext nodeExecutionContext = new RootNodeExecutionContext(notificationDistributor,
-                Lists.<SubstepExecutionFailure>newArrayList(), setupAndTearDown, null, new ImplementationCache());
+                Lists.newArrayList(), setupAndTearDown, null, new ImplementationCache());
 
         setPrivateField(runner, "rootNode", rootNode);
         setPrivateField(runner, "nodeExecutionContext", nodeExecutionContext);
@@ -478,14 +489,17 @@ public class ExecutionNodeRunnerTest {
         runner.run();
         final List<SubstepExecutionFailure> failures = runner.getFailures();
 
+        System.out.println(
+        rootNode.toDebugString());
+
         Assert.assertThat(rootNode.getResult().getResult(), is(ExecutionResult.FAILED));
-        Assert.assertThat(featureBuilder.getBuilt().getResult().getResult(), is(ExecutionResult.FAILED));
-        Assert.assertThat(row1ScenarioBuilder.getBuilt().getResult().getResult(), is(ExecutionResult.FAILED));
+        Assert.assertThat(featureBuilder.getBuilt().getResult().getResult(), is(ExecutionResult.CHILD_FAILED));
+        Assert.assertThat(row1ScenarioBuilder.getBuilt().getResult().getResult(), is(ExecutionResult.CHILD_FAILED));
         Assert.assertThat(row2ScenarioBuilder.getBuilt().getResult().getResult(), is(ExecutionResult.PASSED));
-        Assert.assertThat(rowBuilder1.getBuilt().getResult().getResult(), is(ExecutionResult.FAILED));
+        Assert.assertThat(rowBuilder1.getBuilt().getResult().getResult(), is(ExecutionResult.CHILD_FAILED));
         Assert.assertThat(rowBuilder2.getBuilt().getResult().getResult(), is(ExecutionResult.PASSED));
 
-        Assert.assertThat(outlineScenarioBuilder.getBuilt().getResult().getResult(), is(ExecutionResult.FAILED));
+        Assert.assertThat(outlineScenarioBuilder.getBuilt().getResult().getResult(), is(ExecutionResult.CHILD_FAILED));
         Assert.assertThat(row1ScenarioBuilder.getBuilt().getChildren().get(0).getResult().getResult(),
                 is(ExecutionResult.PASSED));
         Assert.assertThat(row1ScenarioBuilder.getBuilt().getChildren().get(1).getResult().getResult(),
@@ -540,11 +554,11 @@ public class ExecutionNodeRunnerTest {
         final Class<?>[] setupClasses = new Class[]{this.getClass()};
         final SetupAndTearDown setupAndTearDown = new SetupAndTearDown(setupClasses, new ImplementationCache());
 
-        final ExecutionNodeRunner runner = new ExecutionNodeRunner();
+//        final ExecutionNodeRunner runner = new ExecutionNodeRunner();
 
         final INotificationDistributor notificationDistributor = getPrivateField(runner, "notificationDistributor");
         final RootNodeExecutionContext nodeExecutionContext = new RootNodeExecutionContext(notificationDistributor,
-                Lists.<SubstepExecutionFailure>newArrayList(), setupAndTearDown, null, new ImplementationCache());
+                Lists.newArrayList(), setupAndTearDown, null, new ImplementationCache());
 
         setPrivateField(runner, "rootNode", rootNode);
         setPrivateField(runner, "nodeExecutionContext", nodeExecutionContext);
@@ -564,7 +578,7 @@ public class ExecutionNodeRunnerTest {
         Assert.assertTrue("failure should be marked as setup or tear down", failures.get(0).isSetupOrTearDown());
 
 
-        Assert.assertThat(failures.get(1).getThrowableInfo().getThrowableClass(), is(IllegalStateException.class.getName()));
+        Assert.assertThat(failures.get(1).getThrowableInfo().getThrowableClass(), is(NoTestsRunException.class.getName()));
 
         Assert.assertThat(failures.get(1).getThrowableInfo().getMessage(), is("No tests executed"));
     }
@@ -624,14 +638,14 @@ public class ExecutionNodeRunnerTest {
         final String substeps = "./target/test-classes/substeps/outline_scenario/outline_scenario.substeps";
         final IExecutionListener notifier = mock(IExecutionListener.class);
 
-        final List<SubstepExecutionFailure> failures = new ArrayList<SubstepExecutionFailure>();
+        final List<SubstepExecutionFailure> failures = new ArrayList<>();
 
 
         final Map<Class<?>, Object> implsCache = getImplsCache(runner);
 
         implsCache.put(MockStepImplementations.class, spy);
 
-        final List<Class<?>> stepImplementationClasses = new ArrayList<Class<?>>();
+        final List<Class<?>> stepImplementationClasses = new ArrayList<>();
         stepImplementationClasses.add(MockStepImplementations.class);
 
         SubstepsExecutionConfig cfg = buildConfig(feature, tags, substeps, null, stepImplementationClasses, false, new String[]{"Given", "And"});
@@ -641,6 +655,13 @@ public class ExecutionNodeRunnerTest {
 
         Assert.assertThat(rootNode.getResult().getResult(), is(ExecutionResult.PASSED));
 
+        if (!tags.contains("scenario-with-params-fail")) {
+
+            // this test method called in s several contexts, the above tag calls a different set of scenarios altogether
+            OutlineScenarioNode osn = (OutlineScenarioNode) rootNode.getChildren().get(0).getChildren().get(0);
+
+            Assert.assertThat(osn.getChildren().get(0).getChildren().get(0).getScenarioName(), is("scenario with table failing iter 1"));
+        }
 
         // TODO - not working either ! no sub twice
         //verify(spy, times(1)).meth13("no sub");
@@ -685,21 +706,31 @@ public class ExecutionNodeRunnerTest {
     @Test
     public void testArgSubstituion() {
 
+        Config cfg = ConfigFactory.load("localhost.conf");
+
+        String parameterFromConfig = cfg.getString("users.default.name");
+        Assert.assertThat(parameterFromConfig, is("bob"));
 
         final String srcString1 = "Given a substep that takes one parameter \"src1\"";
         final String srcString2 = "And a substep that takes one parameter \"src2\"";
+        final String srcString3 = "And a substep that takes one parameter \"${users.default.name}\"";
+
         final String patternString = "Given a substep that takes one parameter \"([^\"]*)\"";
         final String[] keywordPrecedence = new String[]{"Given", "And"};
-        String[] args1 = Util.getArgs(patternString, srcString1, keywordPrecedence);
+        String[] args1 = Arguments.getArgs(patternString, srcString1, keywordPrecedence, cfg);
 
 
-        String[] args2 = Util.getArgs(patternString, srcString2, keywordPrecedence);
+        String[] args2 = Arguments.getArgs(patternString, srcString2, keywordPrecedence, cfg);
 
         Assert.assertNotNull(args2);
         Assert.assertThat(args2[0], is("src2"));
 
         Assert.assertNotNull(args1);
         Assert.assertThat(args1[0], is("src1"));
+
+        String[] args3 = Arguments.getArgs(patternString, srcString3, keywordPrecedence, cfg);
+        Assert.assertNotNull(args3);
+        Assert.assertThat(args3[0], is("bob"));
 
     }
 
@@ -742,7 +773,7 @@ public class ExecutionNodeRunnerTest {
         TagManager nonFatalTagManager = new TagManager("canFail");
 
         final RootNodeExecutionContext nodeExecutionContext = new RootNodeExecutionContext(notificationDistributor,
-                Lists.<SubstepExecutionFailure>newArrayList(), setupAndTearDown, nonFatalTagManager, new ImplementationCache());
+                Lists.newArrayList(), setupAndTearDown, nonFatalTagManager, new ImplementationCache());
 
         setPrivateField(runner, "rootNode", rootNode);
         setPrivateField(runner, "nodeExecutionContext", nodeExecutionContext);
@@ -774,160 +805,6 @@ public class ExecutionNodeRunnerTest {
     }
 
 
-    @Test
-    public void testValidErrorPlusNonCriticalFailures() throws NoSuchFieldException, IllegalAccessException {
-
-        // three features, a scenario each, 1 fails (crit), 1 fails(non crit), 1 pass. mixup the ordering
-
-        String[] critNonCritPass = {"scenario crit fail", "scenario non crit fail", "scenario pass"};
-        String[] nonCritCritPass = {"scenario non crit fail", "scenario crit fail", "scenario pass"};
-        String[] passCritNonCrit = {"scenario pass", "scenario crit fail", "scenario non crit fail"};
-
-
-        String[][] scenarios = {nonCritCritPass, critNonCritPass, passCritNonCrit};
-
-        for (String[] ordering : scenarios) {
-
-            System.out.println("\n\n** Running scenario: " + Arrays.toString(ordering));
-
-            final Method nonFailMethod = getNonFailMethod();
-            final Method failMethod = getFailMethod();
-            Assert.assertNotNull(nonFailMethod);
-            Assert.assertNotNull(failMethod);
-
-            final TestRootNodeBuilder rootNodeBuilder = new TestRootNodeBuilder();
-
-            //   featureBuilder.addTags("toRun", "canFail");
-
-            TestBasicScenarioNodeBuilder scenario1Builder = null;
-            TestBasicScenarioNodeBuilder scenario2Builder = null;
-            TestBasicScenarioNodeBuilder scenario3Builder = null;
-
-            TestFeatureNodeBuilder f1Builder = null;
-            TestFeatureNodeBuilder f2Builder = null;
-            TestFeatureNodeBuilder f3Builder = null;
-
-            for (String scenarioName : ordering) {
-
-                if (scenarioName.equals("scenario crit fail")) {
-
-                    f1Builder = rootNodeBuilder.addFeature(new Feature("crit fail feature", "file"));
-
-                    scenario1Builder = f1Builder.addBasicScenario("scenario crit fail");
-                    scenario1Builder.addTags(ImmutableSet.of("toRun"));
-                    scenario1Builder.addStepImpl(getClass(), nonFailMethod).addStepImpl(getClass(), failMethod).addStepImpl(getClass(), nonFailMethod);
-                }
-
-                if (scenarioName.equals("scenario non crit fail")) {
-
-                    f2Builder = rootNodeBuilder.addFeature(new Feature("non crit fail feature", "file"));
-                    f2Builder.addTags("canFail");
-
-                    scenario2Builder = f2Builder.addBasicScenario("scenario non crit fail");
-                    scenario2Builder.addStepImpl(getClass(), nonFailMethod).addStepImpl(getClass(), failMethod).addStepImpl(getClass(), nonFailMethod);
-                    scenario2Builder.addTags(ImmutableSet.of("toRun", "canFail"));
-                }
-
-                if (scenarioName.equals("scenario pass")) {
-                    f3Builder = rootNodeBuilder.addFeature(new Feature("pass feature", "file"));
-
-                    scenario3Builder = f3Builder.addBasicScenario("scenario pass");
-                    scenario3Builder.addStepImpl(getClass(), nonFailMethod).addStepImpl(getClass(), nonFailMethod).addStepImpl(getClass(), nonFailMethod);
-                    scenario3Builder.addTags(ImmutableSet.of("toRun"));
-                }
-            }
-
-            final RootNode rootNode = rootNodeBuilder.build();
-
-            BasicScenarioNode scenario1 = scenario1Builder.getBuilt();
-            BasicScenarioNode scenario2 = scenario2Builder.getBuilt();
-            BasicScenarioNode scenario3 = scenario3Builder.getBuilt();
-
-            final ExecutionNodeRunner runner = new ExecutionNodeRunner();
-
-            final INotificationDistributor notificationDistributor = getPrivateField(runner, "notificationDistributor");
-            final SetupAndTearDown setupAndTearDown = mock(SetupAndTearDown.class);
-
-            TagManager nonFatalTagManager = new TagManager("canFail");
-
-            final RootNodeExecutionContext nodeExecutionContext = new RootNodeExecutionContext(notificationDistributor,
-                    Lists.<SubstepExecutionFailure>newArrayList(), setupAndTearDown, nonFatalTagManager, new ImplementationCache());
-
-            setPrivateField(runner, "rootNode", rootNode);
-            setPrivateField(runner, "nodeExecutionContext", nodeExecutionContext);
-
-            runner.run();
-
-            BuildFailureManager bfm = new BuildFailureManager();
-
-            Field criticalFailuresField = BuildFailureManager.class.getDeclaredField("criticalFailures");
-            criticalFailuresField.setAccessible(true);
-            List<List<IExecutionNode>> criticalFailures = (List<List<IExecutionNode>>) criticalFailuresField.get(bfm);
-
-            Field nonCriticalFailuresField = BuildFailureManager.class.getDeclaredField("nonCriticalFailures");
-            nonCriticalFailuresField.setAccessible(true);
-            List<List<IExecutionNode>> nonCriticalFailures = (List<List<IExecutionNode>>) nonCriticalFailuresField.get(bfm);
-
-
-            bfm.addExecutionResult(rootNode);
-
-//            Assert.assertFalse("non critical failure incorrectly reported as critical", bfm.testSuiteFailed());
-//            Assert.assertFalse("non critical failure reporting issue", bfm.testSuiteCompletelyPassed());
-
-            // TODO should be 4 criticals (3 for the feature, scenario, step) + 1 for the root
-            // cenario crit fail, scenario non crit fail, scenario pass - the last non critical plays a factor?
-            // TODO test out what the rootnode execution context thinks...
-
-            System.out.println("build failure info: " +
-                    bfm.getBuildFailureInfo());
-
-
-            Assert.assertThat("expecting a critical failure", criticalFailures.size(), is(1));
-            Assert.assertThat("expecting a non critical failure", nonCriticalFailures.size(), is(1));
-
-
-            final List<SubstepExecutionFailure> failures = runner.getFailures();
-
-            Assert.assertThat(rootNode.getResult().getResult(), is(ExecutionResult.FAILED));
-
-            Assert.assertThat(f1Builder.getBuilt().getResult().getResult(), is(ExecutionResult.FAILED));
-            Assert.assertThat(f2Builder.getBuilt().getResult().getResult(), is(ExecutionResult.FAILED));
-
-            Assert.assertThat(f3Builder.getBuilt().getResult().getResult(), is(ExecutionResult.PASSED));
-
-
-            Assert.assertThat(scenario1.getResult().getResult(), is(ExecutionResult.FAILED));
-            Assert.assertThat(scenario2.getResult().getResult(), is(ExecutionResult.FAILED));
-            Assert.assertThat(scenario3.getResult().getResult(), is(ExecutionResult.PASSED));
-
-
-//            Assert.assertThat(rowBuilder1.getBuilt().getResult().getResult(), is(ExecutionResult.FAILED));
-//            Assert.assertThat(rowBuilder2.getBuilt().getResult().getResult(), is(ExecutionResult.PASSED));
-//
-//            Assert.assertThat(outlineScenarioBuilder.getBuilt().getResult().getResult(), is(ExecutionResult.FAILED));
-//            Assert.assertThat(row1ScenarioBuilder.getBuilt().getChildren().get(0).getResult().getResult(),
-//                    is(ExecutionResult.PASSED));
-//            Assert.assertThat(row1ScenarioBuilder.getBuilt().getChildren().get(1).getResult().getResult(),
-//                    is(ExecutionResult.FAILED));
-//            Assert.assertThat(row1ScenarioBuilder.getBuilt().getChildren().get(2).getResult().getResult(),
-//                    is(ExecutionResult.NOT_RUN));
-//
-//            Assert.assertThat(row2ScenarioBuilder.getBuilt().getChildren().get(0).getResult().getResult(),
-//                    is(ExecutionResult.PASSED));
-//            Assert.assertThat(row2ScenarioBuilder.getBuilt().getChildren().get(1).getResult().getResult(),
-//                    is(ExecutionResult.PASSED));
-//            Assert.assertThat(row2ScenarioBuilder.getBuilt().getChildren().get(2).getResult().getResult(),
-//                    is(ExecutionResult.PASSED));
-
-            // TODO check that the number of errors is correct
-
-            Assert.assertFalse("expecting some failures", failures.isEmpty());
-
-            // just two failures for the actual steps that failed
-            Assert.assertThat(failures.size(), is(2));
-        }
-    }
-
 
     @Test
     public void testExecutionNodeTreeBuildingWithScenarioName() {
@@ -940,10 +817,10 @@ public class ExecutionNodeRunnerTest {
         final String substeps = "./target/test-classes/substeps/simple.substeps";
         final IExecutionListener notifier = mock(IExecutionListener.class);
 
-        final List<SubstepExecutionFailure> failures = new ArrayList<SubstepExecutionFailure>();
+        final List<SubstepExecutionFailure> failures = new ArrayList<>();
 
 
-        final List<Class<?>> stepImplementationClasses = new ArrayList<Class<?>>();
+        final List<Class<?>> stepImplementationClasses = new ArrayList<>();
         stepImplementationClasses.add(MockStepImplementations.class);
 
         final SubstepsExecutionConfig executionConfig = new SubstepsExecutionConfig();
@@ -969,5 +846,6 @@ public class ExecutionNodeRunnerTest {
         Assert.assertThat(rootNode.getChildren().get(0).getChildren().size(), is(1));
     }
 
-
 }
+
+

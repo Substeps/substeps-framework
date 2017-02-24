@@ -1,0 +1,21 @@
+{
+  "nodeType":"RootNode",
+  "description":null,
+  "result":"FAILED",
+  "id":72,
+  "executionDurationMillis":607,
+  "features":[
+    {
+      "nodeId":51,
+      "resultsDir":"simple_feature_file.feature.results",
+      "result":"CHILD_FAILED"
+    },
+    {
+      "nodeId":71,
+      "resultsDir":"outline_feature_file.feature.results",
+      "result":"CHILD_FAILED"
+    }
+  ],
+  "timestamp":1475823914962,
+  "environment":"localhost"
+}

@@ -79,7 +79,7 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
     @Parameter
     private final GlossaryPublisher glossaryPublisher = null;
 
-    private final XMLSubstepsGlossarySerializer serializer = new XMLSubstepsGlossarySerializer();
+//    private final XMLSubstepsGlossarySerializer serializer = new XMLSubstepsGlossarySerializer();
 
 
     private List<StepImplementationsDescriptor> runJavaDoclet(final String classToDocument) {
@@ -154,6 +154,16 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
+        log.warn("********************************************\n\n" +
+                "Substeps Glossary Mojo is now deprecated, an HTML glossary can be produced as part of the execution report by adding this execution to the substeps-maven-plugin:\n\n" +
+                "<execution>\n" +
+                "   <id>Build SubSteps Glossary</id>\n" +
+                "   <phase>process-test-resources</phase>\n" +
+                "   <goals>\n" +
+                "      <goal>generate-docs</goal>\n" +
+                "   </goals>\n" +
+                "</execution>");
+
         final HashSet<String> loadedClasses = new HashSet<String>();
 
         final List<StepImplementationsDescriptor> classStepTags = new ArrayList<StepImplementationsDescriptor>();
@@ -193,7 +203,7 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
             }
 
             // always do this
-            saveXMLFile(classStepTags);
+//            saveXMLFile(classStepTags);
 
             // and this!
             saveJsonFile(classStepTags);
@@ -214,17 +224,17 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
         writeOutputFile(json, "stepimplementations.json");
     }
 
-    /**
-     * @param classStepTags
-     */
-    private void saveXMLFile(final List<StepImplementationsDescriptor> classStepTags) {
-        // got them all now serialize
-
-        final String xml = serializer.toXML(classStepTags);
-
-        writeOutputFile(xml, XMLSubstepsGlossarySerializer.XML_FILE_NAME);
-
-    }
+//    /**
+//     * @param classStepTags
+//     */
+//    private void saveXMLFile(final List<StepImplementationsDescriptor> classStepTags) {
+//        // got them all now serialize
+//
+//        final String xml = serializer.toXML(classStepTags);
+//
+//        writeOutputFile(xml, XMLSubstepsGlossarySerializer.XML_FILE_NAME);
+//
+//    }
 
     private void writeOutputFile(String xml, String filename) {
         final File output = new File(outputDirectory, filename);
@@ -254,22 +264,22 @@ public class SubstepsGlossaryMojo extends AbstractMojo {
 
         // TODO - change this to load from the json version
 
-        final ZipEntry entry = jarFileForClass
-                .getEntry(XMLSubstepsGlossarySerializer.XML_FILE_NAME);
-
-        if (entry != null) {
-
-            final List<StepImplementationsDescriptor> classStepTagList = serializer
-                    .loadStepImplementationsDescriptorFromJar(jarFileForClass);
-
-            classStepTags.addAll(classStepTagList);
-
-            for (final StepImplementationsDescriptor descriptor : classStepTagList) {
-                loadedClasses.add(descriptor.getClassName());
-            }
-        } else {
-            log.error("couldn't locate file in jar: " + XMLSubstepsGlossarySerializer.XML_FILE_NAME);
-        }
+//        final ZipEntry entry = jarFileForClass
+//                .getEntry(XMLSubstepsGlossarySerializer.XML_FILE_NAME);
+//
+//        if (entry != null) {
+//
+//            final List<StepImplementationsDescriptor> classStepTagList = serializer
+//                    .loadStepImplementationsDescriptorFromJar(jarFileForClass);
+//
+//            classStepTags.addAll(classStepTagList);
+//
+//            for (final StepImplementationsDescriptor descriptor : classStepTagList) {
+//                loadedClasses.add(descriptor.getClassName());
+//            }
+//        } else {
+//            log.error("couldn't locate file in jar: " + XMLSubstepsGlossarySerializer.XML_FILE_NAME);
+//        }
     }
 
 

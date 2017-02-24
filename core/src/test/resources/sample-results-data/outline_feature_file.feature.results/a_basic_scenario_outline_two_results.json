@@ -1,0 +1,69 @@
+{
+  "nodeType":"BasicScenarioNode",
+  "filename":"",
+  "lineNumber":0,
+  "result":"PASSED",
+  "id":62,
+  "executionDurationMillis":1,
+  "description":"a basic scenario outline two",
+  "children":[
+    {
+      "nodeType":"Step",
+      "filename":"outline_feature_file.feature",
+      "lineNumber":7,
+      "result":"PASSED",
+      "id":58,
+      "executionDurationMillis":1,
+      "description":"PassingStepImpl",
+      "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.passingStepImpl()",
+      "children":[
+        
+      ],
+      "source":"PassingStepImpl"
+    },
+    {
+      "nodeType":"SubstepNode",
+      "filename":"temp_substep_def.substeps",
+      "lineNumber":2,
+      "result":"PASSED",
+      "id":60,
+      "executionDurationMillis":0,
+      "description":"PassingSubstepDef",
+      "children":[
+        {
+          "nodeType":"Step",
+          "filename":"temp_substep_def.substeps",
+          "lineNumber":3,
+          "result":"PASSED",
+          "id":59,
+          "executionDurationMillis":0,
+          "description":"AnotherPassingStepImpl",
+          "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.anotherPassingStepImpl()",
+          "children":[
+            
+          ],
+          "source":"AnotherPassingStepImpl"
+        }
+      ],
+      "source":"PassingSubstepDef"
+    },
+    {
+      "nodeType":"Step",
+      "filename":"outline_feature_file.feature",
+      "lineNumber":9,
+      "result":"PASSED",
+      "id":61,
+      "executionDurationMillis":0,
+      "description":"PassingStepImpl with param 2",
+      "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.passingStepImplWithParam(java.lang.String)",
+      "children":[
+        
+      ],
+      "source":"PassingStepImpl with <param>"
+    }
+  ],
+  "tags":[
+    "scenario-level-tag",
+    "feature-level-tag"
+  ]
+}

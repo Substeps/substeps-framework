@@ -43,6 +43,15 @@ public class TagManager extends AbstractExecutionNodeVisitor<Boolean> {
     private Set<String> acceptedTags = null;
     private Set<String> excludedTags = null;
 
+    public static TagManager fromTags(final String tags){
+        if (tags != null){
+            return new TagManager(tags);
+        }
+        else {
+            return null;
+        }
+    }
+
     public TagManager(final String tagList) {
 
         acceptedTags = new HashSet<String>();

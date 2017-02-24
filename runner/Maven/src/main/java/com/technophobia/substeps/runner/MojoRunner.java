@@ -18,7 +18,11 @@
  */
 package com.technophobia.substeps.runner;
 
+import java.io.File;
+
 public interface MojoRunner extends SubstepsRunner {
 
     void shutdown();
+
+//    File getRootExecutionDataDirectory();
 }

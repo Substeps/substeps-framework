@@ -19,14 +19,12 @@
 package com.technophobia.substeps.runner;
 
 import com.technophobia.substeps.execution.node.RootNode;
-import com.technophobia.substeps.report.ExecutionReportBuilder;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.*;
@@ -45,21 +43,7 @@ import java.util.List;
         requiresDependencyResolution = ResolutionScope.TEST,
         requiresProject = true,
         configurator = "include-project-dependencies")
-public class SubstepsRunnerMojo extends AbstractMojo {
-
-
-    /**
-     * See <a href="./executionConfig.html">ExecutionConfig</a>
-     */
-
-    @Parameter
-    private List<ExecutionConfig> executionConfigs;
-
-    /**
-     * The execution report builder you wish to use
-     */
-    @Parameter
-    private final ExecutionReportBuilder executionReportBuilder = null;
+public class SubstepsRunnerMojo extends BaseSubstepsMojo {
 
     /**
      * When running in forked mode, a port is required to communicate between
@@ -72,28 +56,9 @@ public class SubstepsRunnerMojo extends AbstractMojo {
      * A space delimited string of vm arguments to pass to the forked jvm
      */
     @Parameter
-
     private String vmArgs = null;
 
-    /**
-     * if true a jvm will be spawned to run substeps otherwise substeps will
-     * execute within the same jvm as maven
-     */
-    @Parameter(property = "runTestsInForkedVM", defaultValue = "false")
 
-    private boolean runTestsInForkedVM = false;
-
-    /**
-     * List of classes containing step implementations e.g.
-     * <param>com.technophobia.substeps.StepImplmentations<param>
-     */
-    @Parameter
-    private List<String> stepImplementationArtifacts;
-
-    /**
-     */
-    @Parameter(defaultValue = "${project}", readonly = true)
-    private MavenProject project;
 
     private final BuildFailureManager buildFailureManager = new BuildFailureManager();
 
@@ -135,6 +100,7 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
     private List<Artifact> pluginDependencies;
 
+
     /**
      * //     * at component
      */
@@ -146,26 +112,23 @@ public class SubstepsRunnerMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
-//        assertCompatibleCoreVersion();
-
         ensureValidConfiguration();
+
+        setupBuildEnvironmentInfo();
 
         this.runner = this.runTestsInForkedVM ? createForkedRunner() : createInProcessRunner();
 
-        executeConfigs();
+        try {
+            executeConfigs();
 
-        processBuildData();
-
-        this.runner.shutdown();
+            processBuildData();
+        }
+        finally {
+            this.runner.shutdown();
+        }
     }
 
 
-//    private void assertCompatibleCoreVersion() throws MojoExecutionException {
-//
-//        CoreVersionChecker.assertCompatibleVersion(getLog(), this.artifactFactory, this.artifactResolver,
-//                this.remoteRepositories, this.localRepository, this.mavenProjectBuilder, this.project,
-//                this.pluginDependencies);
-//    }
 
 
     private ForkedRunner createForkedRunner() throws MojoExecutionException {
@@ -215,7 +178,15 @@ public class SubstepsRunnerMojo extends AbstractMojo {
 
     private void runExecutionConfig(final ExecutionConfig theConfig) throws MojoExecutionException {
 
-        this.runner.prepareExecutionConfig(theConfig.asSubstepsExecutionConfig());
+        final SubstepsExecutionConfig cfg =  theConfig.asSubstepsExecutionConfig();
+
+        this.getLog().info("SubstepsExecutionConfig: " + cfg.printParameters());
+
+        final RootNode iniitalRootNode = this.runner.prepareExecutionConfig(cfg);
+
+        this.executionResultsCollector.initOutputDirectories(iniitalRootNode);
+
+        this.runner.addNotifier(this.executionResultsCollector);
 
         final RootNode rootNode = this.runner.run();
 
@@ -224,15 +195,25 @@ public class SubstepsRunnerMojo extends AbstractMojo {
             rootNode.setLine(theConfig.getDescription());
         }
 
-        addToReport(rootNode);
+
+
+       addToLegacyReport(rootNode);
+
 
         this.buildFailureManager.addExecutionResult(rootNode);
     }
 
 
-    private void addToReport(final RootNode rootNode) {
 
-        if (this.executionReportBuilder != null) {
+
+    private void addToLegacyReport(final RootNode rootNode) {
+
+        if (reportBuilder == null && this.executionReportBuilder != null) {
+
+            getLog().warn("\nExecutionReportBuilder is deprecated, replace with:\n\t<reportBuilder implementation=\"org.substeps.report.ReportBuilder\">\n" +
+                    "\t\t<reportDir>${project.build.directory}/substeps_report</reportDir>\n" +
+                    "\t</reportBuilder>\n");
+
             this.executionReportBuilder.addRootExecutionNode(rootNode);
         }
     }
@@ -243,14 +224,40 @@ public class SubstepsRunnerMojo extends AbstractMojo {
      */
     private void processBuildData() throws MojoFailureException {
 
-        if (this.executionReportBuilder != null) {
+        if (reportBuilder == null && this.executionReportBuilder != null) {
+
             this.executionReportBuilder.buildReport();
         }
 
+
+        StringBuilder buf = new StringBuilder();
+        for (String s : this.session.getGoals()){
+            buf.append(s);
+            buf.append(" ");
+        }
+
+        this.getLog().info("this.session.getGoals(): " + buf.toString());
+
+        List<String> goals = this.session.getGoals();
+
         if (this.buildFailureManager.testSuiteFailed()) {
 
-            throw new MojoFailureException("Substep Execution failed:\n"
+            MojoFailureException e = new MojoFailureException("Substep Execution failed:\n"
                     + this.buildFailureManager.getBuildFailureInfo());
+
+
+            // actually throwing an exception results in the build terminating immediately
+            // - not really desireable as it stops the report from being built in the verify phase
+
+            if (goals.contains("verify") || goals.contains("install") || goals.contains("deploy")){
+
+                // we don't want to throw the exception - it will be thrown in the reportbuildermojo
+                getLog().info("Not immediately failing the build, deferring..");
+                this.session.getResult().addException(e);
+            }
+            else {
+                throw e;
+            }
 
         } else if (!this.buildFailureManager.testSuiteCompletelyPassed()) {
             // print out the failure string (but won't include any failures)
@@ -276,17 +283,6 @@ public class SubstepsRunnerMojo extends AbstractMojo {
     }
 
 
-    public List<ExecutionConfig> getExecutionConfigs() {
-        return executionConfigs;
-    }
-
-    public void setExecutionConfigs(List<ExecutionConfig> executionConfigs) {
-        this.executionConfigs = executionConfigs;
-    }
-
-    public ExecutionReportBuilder getExecutionReportBuilder() {
-        return executionReportBuilder;
-    }
 
     public Integer getJmxPort() {
         return jmxPort;
@@ -304,21 +300,7 @@ public class SubstepsRunnerMojo extends AbstractMojo {
         this.vmArgs = vmArgs;
     }
 
-    public boolean isRunTestsInForkedVM() {
-        return runTestsInForkedVM;
-    }
 
-    public void setRunTestsInForkedVM(boolean runTestsInForkedVM) {
-        this.runTestsInForkedVM = runTestsInForkedVM;
-    }
-
-    public List<String> getStepImplementationArtifacts() {
-        return stepImplementationArtifacts;
-    }
-
-    public void setStepImplementationArtifacts(List<String> stepImplementationArtifacts) {
-        this.stepImplementationArtifacts = stepImplementationArtifacts;
-    }
 
     public MavenProject getProject() {
         return project;

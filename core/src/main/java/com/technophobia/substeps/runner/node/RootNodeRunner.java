@@ -82,7 +82,11 @@ public class RootNodeRunner extends AbstractNodeRunner<RootNode, Void> {
             boolean rootNodeStateSet = false;
             for (FeatureNode featureNode : node.getChildren()) {
 
-                if (featureNode.getResult().getResult() == ExecutionResult.FAILED && !featureNode.getResult().getFailure().isNonCritical()) {
+                if (FeatureNode.hasCriticalFailure(featureNode)){
+
+//                }
+
+//                if (featureNode.getResult().getResult().isFailure() && !featureNode.getResult().getFailure().isNonCritical()) {
                     // we've got one valid feature failure, fail the root node
                     SubstepsRuntimeException e = new SubstepsRuntimeException("At least one critical Feature failed");
                     SubstepExecutionFailure.setResult(e, node, ExecutionResult.FAILED);
@@ -90,6 +94,14 @@ public class RootNodeRunner extends AbstractNodeRunner<RootNode, Void> {
                     context.getNotificationDistributor().onNodeFailed(node, e);
                     rootNodeStateSet = true;
                     break;
+                }
+
+                if (FeatureNode.hasNonCriticalFailure(featureNode)){
+                    SubstepsRuntimeException e = new SubstepsRuntimeException("At least one NON critical Feature failed");
+                    SubstepExecutionFailure.setResult(e, node, ExecutionResult.NON_CRITICAL_FAILURE);
+
+                    context.getNotificationDistributor().onNodeFailed(node, e);
+                    rootNodeStateSet = true;
                 }
             }
 

@@ -20,7 +20,11 @@ package com.technophobia.substeps.runner;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.technophobia.substeps.execution.AbstractExecutionNodeVisitor;
 import com.technophobia.substeps.execution.ExecutionNodeResult;
+import com.technophobia.substeps.execution.ExecutionResult;
+import com.technophobia.substeps.execution.node.FeatureNode;
+import com.technophobia.substeps.execution.node.IExecutionNode;
 import com.technophobia.substeps.execution.node.RootNode;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -42,9 +46,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.lang.reflect.Field;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotificationHandler {
@@ -80,6 +83,8 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
     private final InputStreamConsumer consumer;
 
     private final CountDownLatch countDownLatch = new CountDownLatch(1);
+
+    private Map<Long, IExecutionNode> nodeMap = new HashMap<>();
 
 
     ForkedRunner(final Log log, final int jmxPort, final String vmArgs, final List<String> testClasspathElements,
@@ -144,6 +149,7 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
         this.log.info("forked process returned");
 
     }
+
 
     private InputStreamConsumer startMBeanJVM() throws MojoExecutionException {
         // launch the jvm process that will contain the Substeps MBean Server
@@ -350,16 +356,22 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
 
         byte[] bytes = substepsJmxClient.prepareExecutionConfigAsBytes(theConfig);
 
-        RootNode rn = getRootNodeFromBytes(bytes);
+        RootNode rootNode = getRootNodeFromBytes(bytes);
 
-        return rn;//this.substepsJmxClient.prepareExecutionConfig(theConfig);
+        log.debug("rootNode.toDebugString():\n" + rootNode.toDebugString());
+
+        List<IExecutionNode> nodes = flattenTree(rootNode);
+        for (IExecutionNode n : nodes){
+           nodeMap.put(n.getId(), n);
+        }
+
+        return rootNode;
     }
 
     @Override
     public RootNode run() {
 
         this.log.info("Running substeps tests in forked jvm");
-        //return this.substepsJmxClient.run();
 
         RootNode resultNode = getRootNodeFromBytes(substepsJmxClient.runAsBytes());
 
@@ -380,15 +392,63 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
         return this.substepsJmxClient.getFailures();
     }
 
+    private List<IExecutionListener> listeners = new ArrayList<>();
+
     @Override
     public void addNotifier(final IExecutionListener listener) {
 
         this.substepsJmxClient.addNotifier(listener);
+        listeners.add(listener);
+
     }
 
     @Override
-    public void handleNotification(ExecutionNodeResult result) {
+    public void handleNotification(ExecutionNodeResult resultNotification) {
 
+        // reinflate the resultNotification back into something the collector can use..
+
+        IExecutionNode iExecutionNode = nodeMap.get(resultNotification.getExecutionNodeId());
+
+        ExecutionNodeResult nodeResult = iExecutionNode.getResult();
+
+        nodeResult.setResult(resultNotification.getResult()); // how many results!
+        nodeResult.setSubstepExecutionFailure(resultNotification.getFailure());
+        nodeResult.setStartedAt(resultNotification.getStartedAt());
+        nodeResult.setCompletedAt(resultNotification.getCompletedAt());
+        nodeResult.setScreenshot(resultNotification.getScreenshot());
+
+
+
+
+        if (resultNotification.getResult().isFailure()){
+            listeners.forEach(l -> l.onNodeFailed(iExecutionNode, nodeResult.getThrown()));
+        }
+
+        else if (resultNotification.getResult() == ExecutionResult.PASSED){
+            listeners.forEach(l -> l.onNodeFinished(iExecutionNode));
+        }
+        else if (resultNotification.getResult() == ExecutionResult.IGNORED){
+            listeners.forEach(l -> l.onNodeIgnored(iExecutionNode));
+        }
+        else if (resultNotification.getResult() == ExecutionResult.RUNNING){
+            // no op
+        }
+        else {
+            log.warn("unhandled result notification: " + resultNotification.getResult());
+        }
+
+    }
+
+
+    private List<IExecutionNode> flattenTree(final IExecutionNode node) {
+
+        return node.accept(new AbstractExecutionNodeVisitor<IExecutionNode>() {
+
+            @Override
+            public IExecutionNode visit(IExecutionNode node) {
+                return node;
+            }
+        });
     }
 
     @Override

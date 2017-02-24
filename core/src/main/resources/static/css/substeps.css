@@ -61,7 +61,27 @@ background-color: transparent;
     position: relative;
 }
 
+#step-impl-detail-div-container{
+    position: relative;
+}
+
+#substep-detail-div-container{
+    position: relative;
+}
+
 #feature-detail {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+}
+
+#substep-usage-detail{
+    position:absolute;
+    top: 0px;
+    left: 0px;
+}
+
+#step-impl-usage-detail{
     position:absolute;
     top: 0px;
     left: 0px;
@@ -78,3 +98,59 @@ tr.error_row td{
 .table-striped tbody tr:nth-child(2n+1).error_row td, .table-striped tbody tr:nth-child(2n+1).error_row th {
     background-color: #FFB7B7;
 }
+
+i.jstree-icon.jstree-themeicon.PASSED.jstree-themeicon-custom
+{
+    background-image: url("../img/PASSED.png");
+    background-size: auto;
+    background-position: center center;
+}
+
+i.jstree-icon.jstree-themeicon.CHILD_FAILED.jstree-themeicon-custom
+{
+    background-image: url("../img/CHILD_FAILED.png");
+    background-size: auto;
+    background-position: center center;
+}
+
+i.jstree-icon.jstree-themeicon.FAILED.jstree-themeicon-custom
+{
+    background-image: url("../img/FAILED.png");
+    background-size: auto;
+    background-position: center center;
+}
+
+i.jstree-icon.jstree-themeicon.NOT_RUN.jstree-themeicon-custom
+{
+    background-image: url("../img/NOT_RUN2.png");
+    background-size: auto;
+    background-position: center center;
+}
+
+i.jstree-icon.jstree-themeicon.PARSE_FAILURE.jstree-themeicon-custom
+{
+    background-image: url("../img/PARSE_FAILURE.png");
+    background-size: auto;
+    background-position: center center;
+}
+
+i.jstree-icon.jstree-themeicon.NON_CRITICAL_FAILURE.jstree-themeicon-custom
+{
+    background-image: url("../img/NON_CRITICAL_FAILURE.png");
+    background-size: auto;
+    background-position: center center;
+}
+
+label.icon-key
+{
+    font-weight: normal;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-bottom: 0px;
+}
+
+img.key-img {
+    width: 20px;
+    height: 20px;
+}
+

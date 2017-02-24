@@ -18,6 +18,7 @@
  */
 package com.technophobia.substeps.runner;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -58,6 +59,11 @@ public class SubstepsExecutionConfig implements Serializable {
     private Class<?>[] initialisationClasses;
 
     private String[] executionListeners;
+
+    private File dataOutputDirectory;
+
+    private boolean checkForUncalledAndUnused = false;
+
 
     public String getDescription() {
         return description;
@@ -180,6 +186,24 @@ public class SubstepsExecutionConfig implements Serializable {
     }
 
 
+    public File getDataOutputDirectory() {
+        return dataOutputDirectory;
+    }
+
+    public void setDataOutputDirectory(File dataOutputDirectory) {
+        this.dataOutputDirectory = dataOutputDirectory;
+    }
+
+    public boolean isCheckForUncalledAndUnused() {
+        return checkForUncalledAndUnused;
+    }
+
+    public void setCheckForUncalledAndUnused(boolean checkForUncalledAndUnused) {
+        this.checkForUncalledAndUnused = checkForUncalledAndUnused;
+    }
+
+
+
     public String printParameters() {
         return "SubstepExecutionConfig [description=" + getDescription() + ", tags=" + getTags() + ", nonFatalTags="
                 + getNonFatalTags() + ", featureFile=" + getFeatureFile() + ", subStepsFileName="
@@ -189,6 +213,6 @@ public class SubstepsExecutionConfig implements Serializable {
                 + ", initialisationClass=" + Arrays.toString(getInitialisationClass()) + ", stepImplementationClasses="
                 + getStepImplementationClasses() + ", initialisationClasses="
                 + Arrays.toString(getInitialisationClasses()) + ", executionListeners="
-                + Arrays.toString(getExecutionListeners()) + "]";
+                + Arrays.toString(getExecutionListeners()) + "], dataOutputDirectory=" + getDataOutputDirectory();
     }
 }

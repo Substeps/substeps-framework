@@ -103,7 +103,7 @@ public class DefaultExecutionReportBuilderTest {
 
     private RootNode createRootNode() {
 
-        return new RootNode("Description", Collections.singletonList(createFeature(FEATURE_NAME, "test file")));
+        return new RootNode("Description", Collections.singletonList(createFeature(FEATURE_NAME, "test file")), "env", "tags", "non-fatal-tags");
     }
 
     private FeatureNode createFeature(String name, String fileName) {

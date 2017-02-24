@@ -22,42 +22,32 @@ package com.technophobia.substeps.runner.syntax;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author ian
  */
-// TODO replace with commons io
-@Deprecated
 public class FileUtils {
 
     private FileUtils(){
         // uninstantiable
     }
 
-    public static List<File> getFiles(final File fFile, final String extension) {
+    public static Collection<File> getFiles(final File fFile, final String extension) {
 
-        final List<File> files = new ArrayList<File>();
-        if (fFile.exists()) {
-            if (fFile.isDirectory()) {
-                final File[] children = fFile.listFiles(new FileFilter() {
-                    @Override
-                    public boolean accept(final File dir) {
-                        return dir.isDirectory()
-                                || (dir.isFile() && dir.getName().endsWith(
-                                extension));
-                    }
-
-                });
-                if (children != null && children.length > 0) {
-                    for (final File f : children) {
-                        files.addAll(getFiles(f, extension));
-                    }
-                }
-            } else {
-                files.add(fFile);
-            }
+        //  the parameter might be a dir or a single file
+        final Collection<File> files;
+        if (fFile.isFile()){
+            List<File> fileList = new ArrayList<>();
+            fileList.add(fFile);
+            files = Collections.unmodifiableCollection(fileList);
         }
-        return files;
+        else {
+            files = org.apache.commons.io.FileUtils.listFiles(fFile, new String[]{extension}, true);
+        }
+
+      return files;
     }
 }

@@ -21,6 +21,7 @@ package com.technophobia.substeps.runner.node;
 import com.technophobia.substeps.execution.AbstractExecutionNodeVisitor;
 import com.technophobia.substeps.execution.ExecutionResult;
 import com.technophobia.substeps.execution.node.IExecutionNode;
+import com.technophobia.substeps.execution.node.RootNode;
 import com.technophobia.substeps.execution.node.RootNodeExecutionContext;
 import com.technophobia.substeps.model.Scope;
 import com.technophobia.substeps.model.exception.SubstepsException;
@@ -99,7 +100,7 @@ public abstract class AbstractNodeRunner<NODE_TYPE extends IExecutionNode, VISIT
     private boolean runSetup(final NODE_TYPE node, final RootNodeExecutionContext context) {
 
         try {
-            context.getSetupAndTeardown().runSetup(getScope());
+            context.getSetupAndTeardown().runSetup(getScope(), node);
             return true;
         } catch (final Throwable t) {
 
@@ -134,7 +135,17 @@ public abstract class AbstractNodeRunner<NODE_TYPE extends IExecutionNode, VISIT
                 lastException = lastFailure.getCause();
                 node.getResult().setScreenshot(lastFailure.getScreenshot());
                 if (node.getResult().getResult() == ExecutionResult.RUNNING) {
-                    node.getResult().setFailure(lastFailure);
+
+                    if (lastFailure.getExeccutionNode() == node) {
+                        node.getResult().setFailure(lastFailure);
+                    }
+                    else {
+                        // it's a child node that's failed - no need to copy the details
+                        node.getResult().setChildFailure(lastFailure);
+                    }
+                }
+                else {
+                    log.debug("node not running, not setting...");
                 }
             } else {
                 lastException = new SubstepsRuntimeException("Error throw during startup, initialisation issue ?");
@@ -165,8 +176,15 @@ public abstract class AbstractNodeRunner<NODE_TYPE extends IExecutionNode, VISIT
 
         final boolean hasChildren = children != null && !children.isEmpty();
         if (!hasChildren) {
-            context.addFailure(new SubstepExecutionFailure(new IllegalStateException(
-                    "node should have children but doesn't"), node));
+
+            String msg;
+            if (node instanceof RootNode){
+                msg = "\n\n ** No tests were executed, check Tag configuration in your pom.xml and the tags in the included features **\n\n";
+            }else {
+                msg = "node should have children but doesn't";
+            }
+
+            context.addFailure(new SubstepExecutionFailure(new SubstepsRuntimeException(msg), node));
         }
 
         return hasChildren;

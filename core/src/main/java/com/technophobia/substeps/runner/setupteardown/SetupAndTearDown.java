@@ -19,7 +19,9 @@
 package com.technophobia.substeps.runner.setupteardown;
 
 import com.technophobia.substeps.execution.MethodExecutor;
+import com.technophobia.substeps.execution.node.IExecutionNode;
 import com.technophobia.substeps.model.Scope;
+import com.technophobia.substeps.runner.ExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -123,8 +125,10 @@ public class SetupAndTearDown {
     }
 
 
-    public void runSetup(final Scope currentScope) throws Throwable {
+    public void runSetup(final Scope currentScope, IExecutionNode node) throws Throwable {
         this.log.trace("running setup for scope: " + currentScope);
+
+        ExecutionContext.put(currentScope, "SCOPE_DESCRIPTION", node.getDescription());
 
         switch (currentScope) {
             case SUITE: {
@@ -152,6 +156,7 @@ public class SetupAndTearDown {
     public void runTearDown(final Scope currentScope) throws Throwable {
         this.log.trace("runTearDown: " + currentScope);
 
+
         // TODO: could implement this as methods on Scope itself
         switch (currentScope) {
             case SUITE: {
@@ -176,6 +181,9 @@ public class SetupAndTearDown {
                 // no op STEP, SCENARIO_BACKGROUND
             }
         }
+
+        ExecutionContext.clear(currentScope, "SCOPE_DESCRIPTION");
+
 
     }
 }

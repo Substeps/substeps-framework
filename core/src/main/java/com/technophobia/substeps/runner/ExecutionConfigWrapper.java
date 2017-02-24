@@ -102,7 +102,7 @@ public class ExecutionConfigWrapper {
                     if (IExecutionListener.class.isAssignableFrom(implClass)) {
                         notifierClassList.add((Class<? extends IExecutionListener>) implClass);
                     } else {
-                        AssertHelper.fail("Execution Listener does not extend com.technophobia.substeps.runner.INotifier");
+                        AssertHelper.fail("Execution Listener does not extend com.technophobia.substeps.runner.IExecutionListener");
                     }
 
                 } catch (final ClassNotFoundException e) {

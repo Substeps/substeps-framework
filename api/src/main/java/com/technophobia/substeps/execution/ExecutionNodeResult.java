@@ -98,7 +98,7 @@ public class ExecutionNodeResult implements Serializable {
 
     public Long getRunningDuration() {
 
-        return startedAt != null && completedAt != null ? completedAt - startedAt : null;
+        return startedAt != null && completedAt != null ? completedAt - startedAt : -1L;
     }
 
     private void recordComplete() {
@@ -115,19 +115,61 @@ public class ExecutionNodeResult implements Serializable {
         this.screenshot = screenshot;
     }
 
-    public void setFailure(SubstepExecutionFailure substepExecutionFailure) {
+    public void setChildFailure(SubstepExecutionFailure substepExecutionFailure) {
 
+        recordComplete();
         // this is to prevent a failure from overwriting a parse or setup / tear down failure
         EnumSet<ExecutionResult> excluded = EnumSet.of(ExecutionResult.PARSE_FAILURE, ExecutionResult.SETUP_TEARDOWN_FAILURE);
 
         if (!excluded.contains(this.result)) {
-            this.result = ExecutionResult.FAILED;
+            this.result = ExecutionResult.CHILD_FAILED;
         }
+
+    }
+
+    public void setFailure(SubstepExecutionFailure substepExecutionFailure) {
+
+        recordComplete();
+        // this is to prevent a failure from overwriting a parse or setup / tear down failure
+        EnumSet<ExecutionResult> excluded = EnumSet.of(ExecutionResult.PARSE_FAILURE, ExecutionResult.SETUP_TEARDOWN_FAILURE);
+
+        if (!excluded.contains(this.result)) {
+
+            if(substepExecutionFailure.isNonCritical()){
+                this.result = ExecutionResult.NON_CRITICAL_FAILURE;
+            }
+            else {
+                this.result = ExecutionResult.FAILED;
+            }
+
+        }
+
         this.substepExecutionFailure = substepExecutionFailure;
     }
 
     public SubstepExecutionFailure getFailure() {
         return substepExecutionFailure;
     }
+
+    public Long getStartedAt() {
+        return startedAt;
+    }
+
+    public Long getCompletedAt() {
+        return completedAt;
+    }
+
+    public void setStartedAt(Long startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public void setCompletedAt(Long completedAt) {
+        this.completedAt = completedAt;
+    }
+
+    public void setSubstepExecutionFailure(SubstepExecutionFailure substepExecutionFailure) {
+        this.substepExecutionFailure = substepExecutionFailure;
+    }
+
 
 }

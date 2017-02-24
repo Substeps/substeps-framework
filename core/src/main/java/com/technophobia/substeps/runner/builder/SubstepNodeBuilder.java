@@ -151,6 +151,10 @@ public class SubstepNodeBuilder {
         substepNode.setLine(step.getLine());
         substepNode.setFileUri(substepsParent.getSubStepFileUri());
         substepNode.setLineNumber(substepsParent.getSourceLineNumber());
+
+        substepNode.setSourceLine(substepsParent.getParent().getLine());
+        substepNode.setParameterNames(substepsParent.getParent().getParamNames());
+
         return substepNode;
     }
 
@@ -241,6 +245,11 @@ public class SubstepNodeBuilder {
             stepImplementationNode.setLine(step.getParameterLine());
             stepImplementationNode.setFileUri(step.getSource().getAbsolutePath());
             stepImplementationNode.setLineNumber(step.getSourceLineNumber());
+
+            stepImplementationNode.setSourceLine(step.getLine());
+            stepImplementationNode.setParameterNames(step.getParamNames());
+
+
 
             try {
                 setMethodParameters(execImpl, step.getParameterLine(), parent, step.getSubstitutedInlineTable(),
@@ -334,7 +343,7 @@ public class SubstepNodeBuilder {
         final String substitutedStepParam = substitutePlaceholders(stepParameter, parentArguments);
 
         stepNode.setLine(substitutedStepParam);
-        List<Object> argsList = Util.getArgs(stepImplementationPattern, substitutedStepParam, parameterTypes,
+        List<Object> argsList = Arguments.getArgs(stepImplementationPattern, substitutedStepParam, parameterTypes,
                 converterTypes);
 
         if (inlineTable != null) {
@@ -375,7 +384,7 @@ public class SubstepNodeBuilder {
         return result;
     }
 
-    public String substitutePlaceholders(final String stepParameter, final Map<String, String> parentArguments) {
+    public static String substitutePlaceholders(final String stepParameter, final Map<String, String> parentArguments) {
         // is there anything to replace?
 
         log.trace("substitutePlaceholders stepParameter: " + stepParameter);
