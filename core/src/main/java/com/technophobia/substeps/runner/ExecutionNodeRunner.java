@@ -97,8 +97,6 @@ public class ExecutionNodeRunner implements SubstepsRunner {
             processUncalledAndUnused(syntax, configWrapper.getExecutionConfig().getDataOutputDirectory());
         }
 
-        // UsageTreeBuilder.buildUsageTree(this.rootNode);
-
         ExecutionContext.put(Scope.SUITE, INotificationDistributor.NOTIFIER_DISTRIBUTOR_KEY,
                 this.notificationDistributor);
 
@@ -158,25 +156,6 @@ public class ExecutionNodeRunner implements SubstepsRunner {
 
         return prepareExecutionConfig(configWrapper, syntax, parameters, setupAndTearDown, methodExecutorToUse, nonFatalTagmanager);
 
-//        final ExecutionNodeTreeBuilder nodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters);
-//
-//        // building the tree can throw critical failures if exceptions are found
-//        this.rootNode = nodeTreeBuilder.buildExecutionNodeTree(config.getDescription());
-//
-//        setupExecutionListeners(configWrapper);
-//
-//
-//        processUncalledAndUnused(syntax);
-//
-//        ExecutionContext.put(Scope.SUITE, INotificationDistributor.NOTIFIER_DISTRIBUTOR_KEY,
-//                this.notificationDistributor);
-//
-//
-//        this.nodeExecutionContext = new RootNodeExecutionContext(this.notificationDistributor,
-//                Lists.<SubstepExecutionFailure>newArrayList(), setupAndTearDown, nonFatalTagmanager,
-//                methodExecutorToUse);
-//
-//        return this.rootNode;
     }
 
     private void setupExecutionListeners(ExecutionConfigWrapper configWrapper) {
@@ -185,7 +164,6 @@ public class ExecutionNodeRunner implements SubstepsRunner {
         final List<Class<? extends IExecutionListener>> executionListenerClasses = configWrapper.getExecutionListenerClasses();
 
         // TODO - pass the base dir in or get from config
-//        executionResultsCollector.initOutputDirectories(this.rootNode);
 
         for (final Class<? extends IExecutionListener> listener : executionListenerClasses) {
 
@@ -198,8 +176,6 @@ public class ExecutionNodeRunner implements SubstepsRunner {
                 log.warn("failed to instantiate ExecutionListener: " + listener.getClass(), e);
             }
         }
-
-//        this.notificationDistributor.addListener(executionResultsCollector);
     }
 
     /**
@@ -334,7 +310,7 @@ public class ExecutionNodeRunner implements SubstepsRunner {
 
         if (!this.nodeExecutionContext.haveTestsBeenRun()) {
 
-            final Throwable t = new NoTestsRunException();//IllegalStateException("No tests executed");
+            final Throwable t = new NoTestsRunException();
 
             SubstepExecutionFailure sef = new SubstepExecutionFailure(t, this.rootNode, ExecutionResult.FAILED);
 

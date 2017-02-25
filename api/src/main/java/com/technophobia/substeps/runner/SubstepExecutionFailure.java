@@ -142,12 +142,8 @@ public class SubstepExecutionFailure implements Serializable {
 
     public static void setResult(final Throwable cause, final IExecutionNode node, final ExecutionResult result) {
 
+        SubstepExecutionFailure.criticalFailure(cause, node, null);
 
-        final SubstepExecutionFailure sef = SubstepExecutionFailure.criticalFailure(cause, node, null);
-
-
-//        sef.executionNode = node;
-//        sef.executionNode.getResult().setFailure(sef);
         node.getResult().setResult(result);
     }
 

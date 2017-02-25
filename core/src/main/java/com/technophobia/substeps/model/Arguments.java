@@ -149,7 +149,7 @@ public final class Arguments {
 
                 if (arg != null) {
                     if (argsList == null) {
-                        argsList = new ArrayList<String>();
+                        argsList = new ArrayList<>();
                     }
                     argsList.add(arg);
                 }
@@ -200,23 +200,11 @@ public final class Arguments {
 
                 if (arg != null) {
                     if (argsList == null) {
-                        argsList = new ArrayList<Object>();
+                        argsList = new ArrayList<>();
                     }
                     String substituted = substituteValues(arg);
 
-//                    if (substituted.equals(arg)){
-//                        // no change, lets try against the context
-//                        Object result = evaluateExpression(arg);
-//                        if (result != null){
-//                            argsList.add(result);
-//                        }
-//                        else {
-//                            argsList.add(getObjectArg(substituted, parameterTypes[argIdx], converterTypes[argIdx]));
-//                        }
-//                    }
-//                    else {
                         argsList.add(getObjectArg(substituted, parameterTypes[argIdx], converterTypes[argIdx]));
-//                    }
                 }
                 argIdx++;
             }

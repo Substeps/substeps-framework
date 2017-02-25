@@ -43,8 +43,6 @@ public class FeatureFileParser {
 
     private static Map<String, Directive> directiveMap = new HashMap<String, Directive>();
 
-//    private FileContents currentFileContents = null;
-
     private static final Pattern DIRECTIVE_PATTERN = Pattern.compile("([\\w ]*):");
 
     public FeatureFile loadFeatureFile(final File featureFile) {
@@ -52,8 +50,6 @@ public class FeatureFileParser {
         // if invalid, discarded..
 
         // rest our current set of lines
-        //this.currentFileContents = null;
-
 
         AssertHelper.assertTrue("Feature file: " + featureFile.getAbsolutePath() + " does not exist!", featureFile.exists());
 
@@ -92,19 +88,6 @@ public class FeatureFileParser {
             return null;
         }
     }
-
-//    private FileContents readFeatureFile(final File featureFile) {
-//
-//        FileContents currentFileContents = new FileContents();
-//
-//        try {
-//            currentFileContents.readFile(featureFile);
-//
-//        } catch (final IOException e) {
-//            this.log.error("failed to load feature file: " + e.getMessage(), e);
-//        }
-//        return currentFileContents;
-//    }
 
     private static String getFirstLinePattern(final String element) {
 

@@ -21,22 +21,18 @@ import java.util.List;
  */
 public class ReportingUtil {
 
-//    private final File outputDir;
-
-//    public ReportingUtil(final File outputDir){
-//        this.outputDir = outputDir;
-//    }
-
     private static Logger log = LoggerFactory.getLogger(ReportingUtil.class);
 
 
     public static class ClassSerializer implements JsonSerializer<Class> {
+        @Override
         public JsonElement serialize(Class src, Type typeOfSrc, JsonSerializationContext context) {
             return new JsonPrimitive(src.getName());
         }
     }
 
     public static class MethodSerializer implements JsonSerializer<Method> {
+        @Override
         public JsonElement serialize(Method src, Type typeOfSrc, JsonSerializationContext context) {
             return new JsonPrimitive(src.getName());
         }

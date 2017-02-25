@@ -67,24 +67,12 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
     private final Logger log = LoggerFactory.getLogger(SubstepsGlossaryMojo.class);
 
 
-    /**
-     */
-//    @Parameter(defaultValue = "${project}", required = true, readonly = true)
-//    private MavenProject project;
-
-    /**
-     */
-//    @Parameter(required = true)
-//    private String[] stepImplementationClassNames;
 
     /**
      * @parameter
      */
     @Parameter
     private final GlossaryPublisher glossaryPublisher = null;
-
-//    private final XMLSubstepsGlossarySerializer serializer = new XMLSubstepsGlossarySerializer();
-
 
     private List<StepImplementationsDescriptor> runJavaDoclet(final String classToDocument) {
 
@@ -307,7 +295,6 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
             try {
                 final InputStream is = jarFileForClass.getInputStream(entry);
                 InputStreamReader isr = new InputStreamReader(is);
-                String src = CharStreams.toString(isr);
 
                 Gson gson = new GsonBuilder().create();
                 List<StepImplementationsDescriptor>stepDescriptors = gson.fromJson(isr, new TypeToken<List<StepImplementationsDescriptor>>() {
@@ -319,11 +306,6 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
             } catch (final IOException e) {
                 log.error("Error loading from jarfile: ", e);
             }
-
-//            final List<StepImplementationsDescriptor> classStepTagList = serializer
-//                    .loadStepImplementationsDescriptorFromJar(jarFileForClass);
-
-//            classStepTags.addAll(classStepTagList);
 
             for (final StepImplementationsDescriptor descriptor : classStepTags) {
                 loadedClasses.add(descriptor.getClassName());

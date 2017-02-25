@@ -327,24 +327,26 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
     }
 
 
-    protected static RootNode getRootNodeFromBytes(byte[] bytes) {
+    protected RootNode getRootNodeFromBytes(byte[] bytes) {
         RootNode rn = null;
         ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-        ObjectInputStream ois = null;
+        ObjectInputStream ois;
         try {
             ois = new ObjectInputStream(bis);
             rn = (RootNode)ois.readObject();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.debug("IOException getting rootNodeFromBytes", e);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+
+            log.debug("ClassNotFoundException getting rootNodeFromBytes", e);
+
         }
         finally{
             try {
                 bis.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.debug("IOException getting rootNodeFromBytes", e);
             }
         }
         return rn;

@@ -32,9 +32,9 @@ public enum Configuration {
 
     INSTANCE;
 
-    private final Logger logger;
+    private transient final Logger logger;
 
-    private final Config config;
+    private transient final Config config;
 
     Configuration() {
         logger = LoggerFactory.getLogger(Configuration.class);

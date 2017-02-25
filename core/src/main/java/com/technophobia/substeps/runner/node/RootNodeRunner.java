@@ -84,9 +84,6 @@ public class RootNodeRunner extends AbstractNodeRunner<RootNode, Void> {
 
                 if (FeatureNode.hasCriticalFailure(featureNode)){
 
-//                }
-
-//                if (featureNode.getResult().getResult().isFailure() && !featureNode.getResult().getFailure().isNonCritical()) {
                     // we've got one valid feature failure, fail the root node
                     SubstepsRuntimeException e = new SubstepsRuntimeException("At least one critical Feature failed");
                     SubstepExecutionFailure.setResult(e, node, ExecutionResult.FAILED);

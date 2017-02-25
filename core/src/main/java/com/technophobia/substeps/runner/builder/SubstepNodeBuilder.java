@@ -146,8 +146,6 @@ public class SubstepNodeBuilder {
 
         final SubstepNode substepNode = build(scenarioDescription, substepsParent.getSteps(), subStepsMapLocal,
                 substepsParent, parametersForSubSteps, throwExceptionIfUnableToBuildMethodArgs, tags, depth);
-        // Change TPCLA-299
-        //  substepNode.setLine(substepsParent.getParent().getParameterLine());
         substepNode.setLine(step.getLine());
         substepNode.setFileUri(substepsParent.getSubStepFileUri());
         substepNode.setLineNumber(substepsParent.getSourceLineNumber());

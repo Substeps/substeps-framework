@@ -102,23 +102,6 @@ public class TagManager extends AbstractExecutionNodeVisitor<Boolean> {
         }
     }
 
-    // public boolean acceptTaggedScenario(final String... tags) {
-    //
-    // Set<String> strList = null;
-    //
-    // if (tags != null) {
-    // for (final String s : tags) {
-    // if (s != null) {
-    // if (strList == null) {
-    // strList = new HashSet<String>();
-    // }
-    // strList.add(s);
-    // }
-    // }
-    // }
-    // return acceptTaggedScenario(strList);
-    // }
-
     @Override
     public Boolean visit(IExecutionNode node) {
 
