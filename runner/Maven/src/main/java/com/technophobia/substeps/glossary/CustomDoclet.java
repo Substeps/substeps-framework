@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO
  *
  * @author imoore
  */
@@ -163,10 +162,8 @@ public class CustomDoclet extends Doclet {
 
         // try and match by name
         for (final Method m : implMethods) {
-            if (m.getName().equals(md.name())) {
-                if (m.getParameterTypes().length == desiredNumberOfParams) {
-                    candidateMethods.add(m);
-                }
+            if (m.getName().equals(md.name()) && m.getParameterTypes().length == desiredNumberOfParams) {
+                candidateMethods.add(m);
             }
         }
 

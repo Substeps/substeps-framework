@@ -163,14 +163,13 @@ public class SubStepDefinitionParser {
             }
         }
 
-        if (!lineProcessed) {
-            if (this.currentParentStep != null) {
+        if (!lineProcessed && this.currentParentStep != null) {
 
-                final int sourceOffset = currentFileContents.getSourceStartOffsetForLineIndex(lineNumberIdx);
-                // no context at the mo
-                this.currentParentStep.addStep(new Step(trimmed, true, currentFileContents.getFile(),
-                        lineNumberIdx, sourceOffset));
-            }
+            final int sourceOffset = currentFileContents.getSourceStartOffsetForLineIndex(lineNumberIdx);
+            // no context at the mo
+            this.currentParentStep.addStep(new Step(trimmed, true, currentFileContents.getFile(),
+                    lineNumberIdx, sourceOffset));
+
         }
     }
 

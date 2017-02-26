@@ -75,14 +75,7 @@ public class JunitFeatureRunner extends org.junit.runner.Runner {
 
     // Used by tests only
     public JunitFeatureRunner() {
-        // notifier = new JunitNotifier();
     }
-
-    // Used by tests only
-    // public JunitFeatureRunner(final IJunitNotifier notifier) {
-    // this.notifier = notifier;
-    //
-    // }
 
     // Constructor required by Junit
     public JunitFeatureRunner(final Class<?> classContainingTheTests) {
@@ -207,12 +200,7 @@ public class JunitFeatureRunner extends org.junit.runner.Runner {
 
         log.debug("Description tree:\n" + printDescription(thisDescription, 0));
 
-        // ExecutionContext.put(Scope.SUITE,
-        // INotificationDistributor.NOTIFIER_DISTRIBUTOR_KEY,
-        // notifier);
-
         notifier.setJunitRunNotifier(junitNotifier);
-        // runner.setNotifier(notifier);
 
         Assert.assertNotNull("execution config has not been initialised", executionConfig);
 

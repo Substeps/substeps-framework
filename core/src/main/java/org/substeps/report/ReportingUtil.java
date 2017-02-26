@@ -93,11 +93,8 @@ public class ReportingUtil {
             }
         }
 
-        if (CoreSubstepsPropertiesConfiguration.INSTANCE.isLogUncalledAndUnusedStepImpls()) {
-
-            if (buf.length() > 0) {
-                log.warn("** Substep definitions not called in current substep execution scope...\n\n" + buf.toString());
-            }
+        if (CoreSubstepsPropertiesConfiguration.INSTANCE.isLogUncalledAndUnusedStepImpls() && buf.length() > 0) {
+            log.warn("** Substep definitions not called in current substep execution scope...\n\n" + buf.toString());
         }
 
         String json = "var uncalledStepDefs=" + gson().toJson(uncalled) ;
@@ -113,18 +110,16 @@ public class ReportingUtil {
     public void writeUncalledStepImpls(List<StepImplementation> uncalledStepImplementations, File outputDir){
 
 
-        if (!uncalledStepImplementations.isEmpty()) {
+        if (!uncalledStepImplementations.isEmpty() && CoreSubstepsPropertiesConfiguration.INSTANCE.isLogUncalledAndUnusedStepImpls()) {
 
-            if (CoreSubstepsPropertiesConfiguration.INSTANCE.isLogUncalledAndUnusedStepImpls()) {
-
-                final StringBuilder buf = new StringBuilder();
-                buf.append("** Uncalled Step implementations in scope, this is suspect if these implementations are in your projects domain:\n\n");
-                for (final StepImplementation s : uncalledStepImplementations) {
-                    buf.append(s.getMethod()).append("\n");
-                }
-                buf.append("\n");
-                log.info(buf.toString());
+            final StringBuilder buf = new StringBuilder();
+            buf.append("** Uncalled Step implementations in scope, this is suspect if these implementations are in your projects domain:\n\n");
+            for (final StepImplementation s : uncalledStepImplementations) {
+                buf.append(s.getMethod()).append("\n");
             }
+            buf.append("\n");
+            log.info(buf.toString());
+
         }
 
 

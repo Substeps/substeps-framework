@@ -42,25 +42,6 @@ public class IncludeProjectDependenciesComponentConfigurator extends
     // use this instead
     private final Log log = new SystemStreamLog();
 
-
-//    public void configureComponent(Object component, PlexusConfiguration configuration,
-//
-//                                   org.codehaus.plexus.classworlds.realm.ClassRealm containerRealm) throws ComponentConfigurationException {
-//        this.configureComponent(component, configuration, new DefaultExpressionEvaluator(), containerRealm);
-//    }
-//
-//    public void configureComponent(Object component, PlexusConfiguration configuration,
-//                                   ExpressionEvaluator expressionEvaluator,
-//                                   org.codehaus.plexus.classworlds.realm.ClassRealm containerRealm) throws ComponentConfigurationException {
-//        this.configureComponent(component, configuration, expressionEvaluator, containerRealm, (ConfigurationListener)null);
-//    }
-//
-//    public void configureComponent(Object component, PlexusConfiguration configuration,
-//                                   ExpressionEvaluator expressionEvaluator,
-//                                   org.codehaus.plexus.classworlds.realm.ClassRealm containerRealm,
-//                                   ConfigurationListener listener) throws ComponentConfigurationException {
-
-
     @Override
     public void configureComponent(final Object component,
                                    final PlexusConfiguration configuration,
@@ -71,8 +52,7 @@ public class IncludeProjectDependenciesComponentConfigurator extends
 
         addProjectDependenciesToClassRealm(expressionEvaluator, containerRealm);
 
-        this.converterLookup.registerConverter(new ClassRealmConverter(
-                containerRealm));
+        this.converterLookup.registerConverter(new ClassRealmConverter(containerRealm));
 
         final ObjectWithFieldsConverter converter = new ObjectWithFieldsConverter();
 
@@ -88,7 +68,7 @@ public class IncludeProjectDependenciesComponentConfigurator extends
             final ClassRealm containerRealm)
             throws ComponentConfigurationException {
 
-        List<String> testClasspathElements = null;
+        List<String> testClasspathElements;
 
         try {
             // noinspection unchecked
@@ -115,7 +95,6 @@ public class IncludeProjectDependenciesComponentConfigurator extends
 
             for (final URL url : testUrls) {
 
-//                containerRealm.addConstituent(url);
                 containerRealm.addURL(url);
             }
         }

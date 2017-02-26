@@ -21,6 +21,7 @@ package com.technophobia.substeps.runner.node;
 import com.technophobia.substeps.execution.node.RootNodeExecutionContext;
 import com.technophobia.substeps.execution.node.StepImplementationNode;
 import com.technophobia.substeps.model.*;
+import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
 import com.technophobia.substeps.model.parameter.Converter;
 import com.technophobia.substeps.runner.ExecutionNodeRunner;
 import com.technophobia.substeps.runner.ProvidesScreenshot;
@@ -38,9 +39,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StepImplementationNodeRunner extends AbstractNodeRunner<StepImplementationNode, Void> {
-
-    private static final Logger log = LoggerFactory.getLogger(StepImplementationNodeRunner.class);
-
 
 
     @Override
@@ -85,13 +83,17 @@ public class StepImplementationNodeRunner extends AbstractNodeRunner<StepImpleme
             context.setTestsHaveRun();
             success = true;
 
-        } catch (final InvocationTargetException e) {
+        } catch (final SubstepsRuntimeException e) {
+            Throwable cause = e.getCause();
 
-            addFailure(node, context, e.getTargetException());
+            if (cause instanceof InvocationTargetException){
+                InvocationTargetException ite = (InvocationTargetException)cause;
+                addFailure(node, context, ite.getTargetException());
 
-        } catch (final Exception e) {
+            } else {
+                addFailure(node, context, cause);
+            }
 
-            addFailure(node, context, e);
         }
 
         return success;

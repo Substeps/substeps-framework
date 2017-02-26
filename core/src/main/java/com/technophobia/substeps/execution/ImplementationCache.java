@@ -22,6 +22,7 @@ import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
+import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -111,7 +112,7 @@ public class ImplementationCache implements MethodExecutor {
      * .util.List)
      */
     @Override
-    public void executeMethods(final List<Method> methods) throws Exception {
+    public void executeMethods(final List<Method> methods) {
 
         for (final Method method : methods) {
 
@@ -119,9 +120,12 @@ public class ImplementationCache implements MethodExecutor {
             // method.getDeclaringClass be ok??
 
             for (final Object object : findSuitableInstancesOf(method.getDeclaringClass())) {
-
-                method.invoke(object);
-
+                try {
+                    method.invoke(object);
+                }
+                catch (Exception e){
+                    throw new SubstepsRuntimeException(e);
+                }
             }
         }
     }
@@ -147,15 +151,19 @@ public class ImplementationCache implements MethodExecutor {
      * .lang.Class, java.lang.reflect.Method, java.lang.Object[])
      */
     @Override
-    public void executeMethod(final Class<?> targetClass, final Method targetMethod, final Object[] methodArgs)
-            throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+    public void executeMethod(final Class<?> targetClass, final Method targetMethod, final Object[] methodArgs){
 
         addImplementationClasses(targetClass);
 
-        if (methodArgs != null) {
-            targetMethod.invoke(instanceMap.get(targetClass), methodArgs);
-        } else {
-            targetMethod.invoke(instanceMap.get(targetClass));
+        try {
+            if (methodArgs != null) {
+                targetMethod.invoke(instanceMap.get(targetClass), methodArgs);
+            } else {
+                targetMethod.invoke(instanceMap.get(targetClass));
+            }
+        }
+        catch (Exception e){
+            throw new SubstepsRuntimeException(e);
         }
     }
 

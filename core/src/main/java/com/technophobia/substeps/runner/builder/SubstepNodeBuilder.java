@@ -25,6 +25,7 @@ import com.technophobia.substeps.execution.node.SubstepNode;
 import com.technophobia.substeps.model.*;
 import com.technophobia.substeps.model.SubSteps.StepParameter;
 import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
+import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
 import com.technophobia.substeps.model.parameter.Converter;
 import com.technophobia.substeps.runner.TestParameters;
 import org.slf4j.Logger;
@@ -256,7 +257,7 @@ public class SubstepNodeBuilder {
             } catch (final Exception e) {
 
                 if (throwExceptionIfUnableToBuildMethodArgs) {
-                    throw new RuntimeException(e);
+                    throw new SubstepsRuntimeException(e);
                 } else {
                     log.debug(e.getMessage(), e);
                 }
@@ -305,8 +306,7 @@ public class SubstepNodeBuilder {
     }
 
     private void setMethodParameters(final StepImplementation execImpl, final String stepParameter,
-                                     final ParentStep parent, final List<Map<String, String>> inlineTable, final StepImplementationNode stepNode)
-            throws IllegalArgumentException {
+                                     final ParentStep parent, final List<Map<String, String>> inlineTable, final StepImplementationNode stepNode){
 
         final Method stepImplementationMethod = execImpl.getMethod();
 

@@ -224,10 +224,6 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
 
             }
 
-            // always do this
-//            saveXMLFile(classStepTags);
-
-            // and this!
             saveJsonFile(classStepTags);
         } else {
             log.error("no results to write out");
@@ -246,26 +242,11 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
         writeOutputFile(json, STEP_IMPLS_JSON_FILENAME);
     }
 
-//    /**
-//     * @param classStepTags
-//     */
-//    private void saveXMLFile(final List<StepImplementationsDescriptor> classStepTags) {
-//        // got them all now serialize
-//
-//        final String xml = serializer.toXML(classStepTags);
-//
-//        writeOutputFile(xml, XMLSubstepsGlossarySerializer.XML_FILE_NAME);
-//
-//    }
-
     private void writeOutputFile(String xml, String filename) {
         final File output = new File(outputDirectory, filename);
 
-        if (!outputDirectory.exists()) {
-            if (!outputDirectory.mkdirs()) {
-
-                throw new IllegalStateException("unable to create output directory");
-            }
+        if (!outputDirectory.exists() && !outputDirectory.mkdirs()) {
+            throw new IllegalStateException("unable to create output directory");
         }
 
         try {

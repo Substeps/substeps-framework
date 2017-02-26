@@ -164,7 +164,7 @@ public abstract class AbstractNodeRunner<NODE_TYPE extends IExecutionNode, VISIT
             context.getSetupAndTeardown().runTearDown(getScope());
             ExecutionContext.clear(getScope());
 
-        } catch (final Throwable t) {
+        } catch (final SubstepsRuntimeException t) {
             log.warn("tear down failed", t);
 
             context.addFailure(new SubstepExecutionFailure(t, node, true));
