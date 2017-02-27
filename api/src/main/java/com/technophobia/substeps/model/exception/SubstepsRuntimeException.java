@@ -30,5 +30,5 @@ public class SubstepsRuntimeException extends SubstepsException {
         super(msg, cause);
     }
 
-
+    public SubstepsRuntimeException(final Throwable cause) { super(cause);}
 }

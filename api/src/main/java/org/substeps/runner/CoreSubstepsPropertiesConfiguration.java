@@ -28,7 +28,7 @@ public enum CoreSubstepsPropertiesConfiguration implements CoreSubstepsConfigura
 
     INSTANCE ; // uninstantiable
 
-    private final Logger LOG = LoggerFactory.getLogger(CoreSubstepsPropertiesConfiguration.class);
+    private transient final Logger LOG = LoggerFactory.getLogger(CoreSubstepsPropertiesConfiguration.class);
 
     private final int stepDepthForDescription;
 

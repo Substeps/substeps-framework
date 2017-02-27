@@ -77,8 +77,6 @@ public class RootNodeExecutionContext {
 
         // set the criticality of this failure
         if (!failure.isSetupOrTearDown() && isNodeFailureNonCritical(failure.getExeccutionNode())) {
-//        if (!failure.isSetupOrTearDown() && this.nonFatalTagmanager != null
-//                && nonFatalTagmanager.isApplicable(failure.getExeccutionNode())) {
 
             failure.setNonCritical(true);
         }
@@ -90,7 +88,6 @@ public class RootNodeExecutionContext {
      */
     private void logFailure(final SubstepExecutionFailure failure) {
 
-//        final Throwable failureCause = failure.getCause();
         final Throwable here = new Throwable();
 
         final StackTraceElement[] failureTrace = failure.getThrowableInfo().getStackTrace();

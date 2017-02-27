@@ -21,22 +21,18 @@ import java.util.List;
  */
 public class ReportingUtil {
 
-//    private final File outputDir;
-
-//    public ReportingUtil(final File outputDir){
-//        this.outputDir = outputDir;
-//    }
-
     private static Logger log = LoggerFactory.getLogger(ReportingUtil.class);
 
 
     public static class ClassSerializer implements JsonSerializer<Class> {
+        @Override
         public JsonElement serialize(Class src, Type typeOfSrc, JsonSerializationContext context) {
             return new JsonPrimitive(src.getName());
         }
     }
 
     public static class MethodSerializer implements JsonSerializer<Method> {
+        @Override
         public JsonElement serialize(Method src, Type typeOfSrc, JsonSerializationContext context) {
             return new JsonPrimitive(src.getName());
         }
@@ -97,11 +93,8 @@ public class ReportingUtil {
             }
         }
 
-        if (CoreSubstepsPropertiesConfiguration.INSTANCE.isLogUncalledAndUnusedStepImpls()) {
-
-            if (buf.length() > 0) {
-                log.warn("** Substep definitions not called in current substep execution scope...\n\n" + buf.toString());
-            }
+        if (CoreSubstepsPropertiesConfiguration.INSTANCE.isLogUncalledAndUnusedStepImpls() && buf.length() > 0) {
+            log.warn("** Substep definitions not called in current substep execution scope...\n\n" + buf.toString());
         }
 
         String json = "var uncalledStepDefs=" + gson().toJson(uncalled) ;
@@ -117,18 +110,16 @@ public class ReportingUtil {
     public void writeUncalledStepImpls(List<StepImplementation> uncalledStepImplementations, File outputDir){
 
 
-        if (!uncalledStepImplementations.isEmpty()) {
+        if (!uncalledStepImplementations.isEmpty() && CoreSubstepsPropertiesConfiguration.INSTANCE.isLogUncalledAndUnusedStepImpls()) {
 
-            if (CoreSubstepsPropertiesConfiguration.INSTANCE.isLogUncalledAndUnusedStepImpls()) {
-
-                final StringBuilder buf = new StringBuilder();
-                buf.append("** Uncalled Step implementations in scope, this is suspect if these implementations are in your projects domain:\n\n");
-                for (final StepImplementation s : uncalledStepImplementations) {
-                    buf.append(s.getMethod()).append("\n");
-                }
-                buf.append("\n");
-                log.info(buf.toString());
+            final StringBuilder buf = new StringBuilder();
+            buf.append("** Uncalled Step implementations in scope, this is suspect if these implementations are in your projects domain:\n\n");
+            for (final StepImplementation s : uncalledStepImplementations) {
+                buf.append(s.getMethod()).append("\n");
             }
+            buf.append("\n");
+            log.info(buf.toString());
+
         }
 
 

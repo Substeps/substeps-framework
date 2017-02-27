@@ -1,6 +1,7 @@
 package com.technophobia.substeps.ant;
 
 import com.technophobia.substeps.execution.node.RootNode;
+import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
 import com.technophobia.substeps.report.ExecutionReportBuilder;
 import com.technophobia.substeps.runner.*;
 import junit.framework.Assert;
@@ -25,12 +26,12 @@ public class SubStepsTask extends Task {
     public void execute() throws BuildException {
         final BuildFailureManager buildFailureManager = new BuildFailureManager();
 
-        List<SubstepsExecutionConfig> configs = new ArrayList<SubstepsExecutionConfig>();
+        List<SubstepsExecutionConfig> substepConfigs = new ArrayList<SubstepsExecutionConfig>();
         for (AntExecutionConfig c : this.configs) {
-            configs.add(c);
+            substepConfigs.add(c);
         }
 
-        executeInternal(buildFailureManager, configs);
+        executeInternal(buildFailureManager, substepConfigs);
     }
 
     public void addConfiguredExecutionConfig(AntExecutionConfig config) {
@@ -42,7 +43,7 @@ public class SubStepsTask extends Task {
     }
 
     private void executeInternal(final BuildFailureManager buildFailureManager,
-                                 final List<SubstepsExecutionConfig> executionConfigList) throws RuntimeException {
+                                 final List<SubstepsExecutionConfig> executionConfigList)  {
 
         Assert.assertNotNull("executionConfigs cannot be null", executionConfigList);
         Assert.assertFalse("executionConfigs can't be empty", executionConfigList.isEmpty());
@@ -68,7 +69,7 @@ public class SubStepsTask extends Task {
         executionReportBuilder.buildReport();
 
         if (buildFailureManager.testSuiteFailed()) {
-            throw new RuntimeException("Substep Execution failed:\n" + buildFailureManager.getBuildFailureInfo());
+            throw new SubstepsRuntimeException("Substep Execution failed:\n" + buildFailureManager.getBuildFailureInfo());
 
         } else if (!buildFailureManager.testSuiteCompletelyPassed()) {
             // print out the failure string (but won't include any failures)

@@ -27,6 +27,7 @@ Requirements
 * Improved error message when no tests are run
 * escaped < and > in the glossary data
 * Corrected the path to the screenshot images to be relative so that they work when served off a server and locally.
+* various sonar fixes
 
 1.0.5
 -----

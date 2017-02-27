@@ -64,7 +64,7 @@ public class SetupAndTearDown {
 
 
 
-    public void runBeforeAll() throws Throwable {
+    public void runBeforeAll()  {
 
         prepareLoggingConfig();
 
@@ -72,35 +72,35 @@ public class SetupAndTearDown {
     }
 
 
-    public void runAfterAll() throws Throwable {
+    public void runAfterAll() {
         runAllMethods(MethodState.AFTER_ALL);
 
         removeLoggingConfig();
     }
 
 
-    public void runBeforeFeatures() throws Throwable {
+    public void runBeforeFeatures() {
         runAllMethods(MethodState.BEFORE_FEATURES);
     }
 
 
-    public void runAfterFeatures() throws Throwable {
+    public void runAfterFeatures(){
         runAllMethods(MethodState.AFTER_FEATURES);
     }
 
 
-    public void runBeforeScenarios() throws Throwable {
+    public void runBeforeScenarios() {
         runAllMethods(MethodState.BEFORE_SCENARIOS);
     }
 
 
-    public void runAfterScenarios() throws Throwable {
+    public void runAfterScenarios() {
         runAllMethods(MethodState.AFTER_SCENARIOS);
 
     }
 
 
-    private void runAllMethods(final MethodState methodState) throws Throwable {
+    private void runAllMethods(final MethodState methodState) {
 
         final List<Method> setupAndTearDownMethods = this.beforeAndAfterMethods.getSetupAndTearDownMethods(methodState);
 
@@ -120,7 +120,7 @@ public class SetupAndTearDown {
     }
 
 
-    private void removeLoggingConfig() {
+    private static void removeLoggingConfig() {
         MDC.remove(CLASS_NAME);
     }
 
@@ -153,7 +153,7 @@ public class SetupAndTearDown {
     }
 
 
-    public void runTearDown(final Scope currentScope) throws Throwable {
+    public void runTearDown(final Scope currentScope) {
         this.log.trace("runTearDown: " + currentScope);
 
 

@@ -163,14 +163,13 @@ public class SubStepDefinitionParser {
             }
         }
 
-        if (!lineProcessed) {
-            if (this.currentParentStep != null) {
+        if (!lineProcessed && this.currentParentStep != null) {
 
-                final int sourceOffset = currentFileContents.getSourceStartOffsetForLineIndex(lineNumberIdx);
-                // no context at the mo
-                this.currentParentStep.addStep(new Step(trimmed, true, currentFileContents.getFile(),
-                        lineNumberIdx, sourceOffset));
-            }
+            final int sourceOffset = currentFileContents.getSourceStartOffsetForLineIndex(lineNumberIdx);
+            // no context at the mo
+            this.currentParentStep.addStep(new Step(trimmed, true, currentFileContents.getFile(),
+                    lineNumberIdx, sourceOffset));
+
         }
     }
 
@@ -210,37 +209,6 @@ public class SubStepDefinitionParser {
             default: // whatever
         }
     }
-
-    /*
-     * private void processDirective(final Directive d, final String remainder,
-     * final File source, final int lineNumber) { this.currentDirective = d;
-     * 
-     * switch (this.currentDirective) {
-     * 
-     * case DEFINITION: {
-     * 
-     * // build up a Step from the remainder
-     * 
-     * final Step parent = new Step(remainder, true, source, lineNumber);
-     * 
-     * if (this.currentParentStep != null) { final String newPattern =
-     * this.currentParentStep.getParent() .getPattern(); // check for existing
-     * values if (this.parentMap.containsPattern(newPattern)) { final ParentStep
-     * otherValue = this.parentMap .getValueForPattern(newPattern);
-     * 
-     * this.log.error("duplicate patterns detected: " + newPattern + " in : " +
-     * otherValue.getSubStepFile() + " and " +
-     * this.currentParentStep.getSubStepFile());
-     * 
-     * }
-     * 
-     * storeForPatternOrReportFailure(source, newPattern,
-     * this.currentParentStep); }
-     * 
-     * this.currentParentStep = new ParentStep(parent);
-     * 
-     * break; } } }
-     */
 
     private void storeForPatternOrThrowException(final String newPattern, final ParentStep parentStep)
             throws DuplicatePatternException {

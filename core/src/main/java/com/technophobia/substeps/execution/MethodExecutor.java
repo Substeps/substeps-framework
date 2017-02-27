@@ -24,12 +24,11 @@ import java.util.List;
 
 public interface MethodExecutor {
 
-    void executeMethods(List<Method> setupAndTearDownMethods) throws Exception;
+    void executeMethods(List<Method> setupAndTearDownMethods) ;
 
     void addImplementationClasses(final Class<?>... implementationClasses);
 
     <T> T getImplementation(Class<T> implementationClass);
 
-    void executeMethod(final Class<?> targetClass, final Method targetMethod, final Object[] methodArgs)
-            throws IllegalArgumentException, IllegalAccessException, InvocationTargetException;
+    void executeMethod(final Class<?> targetClass, final Method targetMethod, final Object[] methodArgs);
 }

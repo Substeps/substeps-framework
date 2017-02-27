@@ -44,7 +44,6 @@ public class SubstepExecutionFailure implements Serializable {
 
     private static final long serialVersionUID = 4981517213059529046L;
 
-    private final transient Throwable cause;
     private IExecutionNode executionNode;
     private boolean setupOrTearDown = false;
     private boolean nonCritical = false;
@@ -54,7 +53,6 @@ public class SubstepExecutionFailure implements Serializable {
     private final ThrowableInfo throwableInfo;
 
     private SubstepExecutionFailure(Throwable cause, IExecutionNode executionNode, boolean setupOrTearDown, boolean nonCritical, byte[] screenshot) {
-        this.cause = cause;
         this.executionNode = executionNode;
         this.setupOrTearDown = setupOrTearDown;
         this.nonCritical = nonCritical;
@@ -84,20 +82,8 @@ public class SubstepExecutionFailure implements Serializable {
         return sef;
     }
 
-    /*
-     * @param cause      the cause of the failure
-     * @param node       the node that failed execution
-     * @param screenshot the bytes representing the screenshot taken when the node execution failed
-     */
-//    public SubstepExecutionFailure(final Throwable cause, final IExecutionNode node, final byte[] screenshot) {
-//        this(cause, node);
-//        this.setScreenshot(screenshot);
-//    }
-
 
     public SubstepExecutionFailure(final Throwable cause) {
-
-        this.cause = cause;
 
         this.throwableInfo = new ThrowableInfo(cause);
     }
@@ -108,7 +94,6 @@ public class SubstepExecutionFailure implements Serializable {
      * @param node  the node that failed execution
      */
     public SubstepExecutionFailure(final Throwable cause, final IExecutionNode node) {
-        this.cause = cause;
         this.executionNode = node;
         this.executionNode.getResult().setFailure(this);
         this.throwableInfo = new ThrowableInfo(cause);
@@ -142,12 +127,8 @@ public class SubstepExecutionFailure implements Serializable {
 
     public static void setResult(final Throwable cause, final IExecutionNode node, final ExecutionResult result) {
 
+        SubstepExecutionFailure.criticalFailure(cause, node, null);
 
-        final SubstepExecutionFailure sef = SubstepExecutionFailure.criticalFailure(cause, node, null);
-
-
-//        sef.executionNode = node;
-//        sef.executionNode.getResult().setFailure(sef);
         node.getResult().setResult(result);
     }
 
@@ -188,7 +169,7 @@ public class SubstepExecutionFailure implements Serializable {
      * @return the cause
      */
     public Throwable getCause() {
-        return this.cause;
+        return this.throwableInfo.getThrowable();
     }
 
 

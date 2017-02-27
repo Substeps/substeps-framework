@@ -29,6 +29,7 @@ public class StepImplementationNode extends ExecutionNode implements StepNode {
 
     private static final long serialVersionUID = 1L;
 
+    // these attributes are not required when serialized, just the string versions of them below.
     private final transient Class<?> targetClass;
     private final transient Method targetMethod;
 

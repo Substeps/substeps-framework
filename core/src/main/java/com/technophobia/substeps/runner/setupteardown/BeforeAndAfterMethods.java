@@ -100,7 +100,7 @@ public class BeforeAndAfterMethods {
 
     private void addToMethodMap(final MethodState methodState, final Method method) {
         if (!methodMap.containsKey(methodState)) {
-            methodMap.put(methodState, new ArrayList<Method>());
+            methodMap.put(methodState, new ArrayList<>());
         }
         methodMap.get(methodState).add(method);
     }
@@ -139,16 +139,6 @@ public class BeforeAndAfterMethods {
             }
 
         }
-
-//        for (final MethodState methodState : methodMap.keySet()) {
-//            final List<Method> methodsForState = methodMap.get(methodState);
-//            sortMethodList(methodsForState, methodComparator);
-//
-//            // Execute after tests in reverse order
-//            if (!methodState.isBeforeTest()) {
-//                Collections.reverse(methodsForState);
-//            }
-//        }
     }
 
 

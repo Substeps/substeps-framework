@@ -114,7 +114,7 @@
         <module>api</module>
         <module>core</module>
         <module>runner</module>
-        <module>glossary</module>
+<!--        <module>glossary</module>-->
     </modules>
 
     <properties>
@@ -139,6 +139,9 @@
         <scala-test.version>2.2.6</scala-test.version>
         <!-- Configuration to enable SCM access via Travis-CI -->
         <project.scm.id>scm.credentials</project.scm.id>
+
+        <scala.plugin.version>3.2.2</scala.plugin.version>
+        <scoverage.plugin.version>1.3.0</scoverage.plugin.version>
     </properties>
 
     <distributionManagement>
@@ -364,7 +367,7 @@
                 <plugin>
                     <groupId>net.alchim31.maven</groupId>
                     <artifactId>scala-maven-plugin</artifactId>
-                    <version>3.2.2</version>
+                    <version>${scala.plugin.version}</version>
                     <executions>
 
                         <!-- Run scala compiler in the process-resources phase, so that dependencies on scala classes can be
@@ -398,6 +401,15 @@
                         <scalaVersion>${scala.version}</scalaVersion>
                         <!-- <args> <arg>-make:transitive</arg> <arg>dependenfile</arg> <arg>${project.build.directory}/.scala_dependencies</arg>
                             </args> -->
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.scoverage</groupId>
+                    <artifactId>scoverage-maven-plugin</artifactId>
+                    <version>${scoverage.plugin.version}</version>
+                    <configuration>
+                        <highlighting>true</highlighting>
                     </configuration>
                 </plugin>
 

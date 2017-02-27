@@ -67,24 +67,12 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
     private final Logger log = LoggerFactory.getLogger(SubstepsGlossaryMojo.class);
 
 
-    /**
-     */
-//    @Parameter(defaultValue = "${project}", required = true, readonly = true)
-//    private MavenProject project;
-
-    /**
-     */
-//    @Parameter(required = true)
-//    private String[] stepImplementationClassNames;
 
     /**
      * @parameter
      */
     @Parameter
     private final GlossaryPublisher glossaryPublisher = null;
-
-//    private final XMLSubstepsGlossarySerializer serializer = new XMLSubstepsGlossarySerializer();
-
 
     private List<StepImplementationsDescriptor> runJavaDoclet(final String classToDocument) {
 
@@ -236,10 +224,6 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
 
             }
 
-            // always do this
-//            saveXMLFile(classStepTags);
-
-            // and this!
             saveJsonFile(classStepTags);
         } else {
             log.error("no results to write out");
@@ -258,26 +242,11 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
         writeOutputFile(json, STEP_IMPLS_JSON_FILENAME);
     }
 
-//    /**
-//     * @param classStepTags
-//     */
-//    private void saveXMLFile(final List<StepImplementationsDescriptor> classStepTags) {
-//        // got them all now serialize
-//
-//        final String xml = serializer.toXML(classStepTags);
-//
-//        writeOutputFile(xml, XMLSubstepsGlossarySerializer.XML_FILE_NAME);
-//
-//    }
-
     private void writeOutputFile(String xml, String filename) {
         final File output = new File(outputDirectory, filename);
 
-        if (!outputDirectory.exists()) {
-            if (!outputDirectory.mkdirs()) {
-
-                throw new IllegalStateException("unable to create output directory");
-            }
+        if (!outputDirectory.exists() && !outputDirectory.mkdirs()) {
+            throw new IllegalStateException("unable to create output directory");
         }
 
         try {
@@ -307,7 +276,6 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
             try {
                 final InputStream is = jarFileForClass.getInputStream(entry);
                 InputStreamReader isr = new InputStreamReader(is);
-                String src = CharStreams.toString(isr);
 
                 Gson gson = new GsonBuilder().create();
                 List<StepImplementationsDescriptor>stepDescriptors = gson.fromJson(isr, new TypeToken<List<StepImplementationsDescriptor>>() {
@@ -319,11 +287,6 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
             } catch (final IOException e) {
                 log.error("Error loading from jarfile: ", e);
             }
-
-//            final List<StepImplementationsDescriptor> classStepTagList = serializer
-//                    .loadStepImplementationsDescriptorFromJar(jarFileForClass);
-
-//            classStepTags.addAll(classStepTagList);
 
             for (final StepImplementationsDescriptor descriptor : classStepTags) {
                 loadedClasses.add(descriptor.getClassName());

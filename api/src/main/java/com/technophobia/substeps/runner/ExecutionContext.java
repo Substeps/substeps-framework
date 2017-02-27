@@ -107,7 +107,6 @@ public final class ExecutionContext {
                 Sets.SetView intersection = Sets.intersection(newMaster.keySet(), scopedMap.keySet());
 
                 if (!intersection.isEmpty()) {
-                    StringBuilder buf = new StringBuilder();
                     intersection.stream().forEach(s -> log.warn("existing key value " + s + " is being overwritten flattening the ExecutionContext"));
                 }
 
