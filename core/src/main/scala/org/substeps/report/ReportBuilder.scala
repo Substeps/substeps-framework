@@ -92,17 +92,22 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
   def buildGlossaryData(sourceJsonFile : File) = {
     implicit val formats = Serialization.formats(NoTypeHints)
 
-    val data = read[List[StepImplDesc]](sourceJsonFile)
-
     val glossaryElements =
-      data.map(sid => sid.expressions.map(sd => {
 
-        val escapedExpression =
-          sd.expression.replaceAll("\\$$", "").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+      if (sourceJsonFile.exists()) {
+        val data = read[List[StepImplDesc]](sourceJsonFile)
 
-        GlossaryElement(sd.section, escapedExpression, sid.className, sd.regex, sd.example, sd.description, sd.parameterNames, sd.parameterClassNames)
-      })).flatten
+        data.map(sid => sid.expressions.map(sd => {
 
+          val escapedExpression =
+            sd.expression.replaceAll("\\$$", "").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+
+          GlossaryElement(sd.section, escapedExpression, sid.className, sd.regex, sd.example, sd.description, sd.parameterNames, sd.parameterClassNames)
+        })).flatten
+      }
+      else {
+        List()
+      }
     glossaryElements
   }
 
