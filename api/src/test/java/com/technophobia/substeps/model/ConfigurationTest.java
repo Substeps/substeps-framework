@@ -19,7 +19,10 @@
 
 package com.technophobia.substeps.model;
 
+import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
+import com.typesafe.config.ConfigFactory;
+import com.typesafe.config.ConfigValueFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -60,6 +63,21 @@ public class ConfigurationTest {
         System.setProperty("environment", "custom");
         System.setProperty("substeps.use.dot.properties", "true");
         Assert.assertNull(Configuration.INSTANCE.getString("non-existant"));
+
+    }
+
+    @Test
+    public void testManualCreationOfConfig(){
+
+        Config cfg =
+        ConfigFactory.empty().withValue("org.substeps.config.executionConfigs",
+                ConfigValueFactory.fromAnyRef("bob")
+
+        );
+
+        System.out.println("********************* new cfg.root().render(): " +
+                cfg.root().render());
+
 
     }
 

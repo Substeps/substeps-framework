@@ -18,7 +18,9 @@
  */
 package com.technophobia.substeps.runner;
 
+import com.google.common.collect.Lists;
 import com.technophobia.substeps.execution.node.RootNode;
+import com.typesafe.config.*;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -31,7 +33,12 @@ import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Mojo to run a number SubStep features, each contained within any number of
@@ -112,6 +119,8 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
+        createExecutionConfigFromPom();
+
         ensureValidConfiguration();
 
         setupBuildEnvironmentInfo();
@@ -126,6 +135,57 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
         finally {
             this.runner.shutdown();
         }
+    }
+
+    private static Map toMap(ExecutionConfig executionConfig){
+        Map execConfig1 = new HashMap();
+
+        execConfig1.put("description", executionConfig.getDescription());
+        execConfig1.put("featureFile", executionConfig.getFeatureFile());
+        execConfig1.put("dataOutputDir", executionConfig.getDataOutputDirectory().getPath());
+        execConfig1.put("nonFatalTags", executionConfig.getNonFatalTags());
+        execConfig1.put("substepsFile", executionConfig.getSubStepsFileName());
+        execConfig1.put("tags", executionConfig.getTags());
+
+
+        execConfig1.put("nonStrictKeyWordPrecedence", Lists.newArrayList(executionConfig.getNonStrictKeywordPrecedence()));
+        execConfig1.put("stepImplementationClassNames", Lists.newArrayList(executionConfig.getStepImplementationClassNames()));
+        execConfig1.put("executionListeners", Lists.newArrayList(executionConfig.getExecutionListeners()));
+        execConfig1.put("initialisationClasses", Lists.newArrayList(executionConfig.getInitialisationClass()));
+
+        return execConfig1;
+    }
+
+    public Config createExecutionConfigFromPom() {
+
+        Map execConfig1 = new HashMap();
+
+        List<Map> executionConfigList = this.executionConfigs.stream().map(ec -> toMap(ec)).collect(Collectors.toList());
+
+        // per Mojo
+//        this.jmxPort
+//        this.vmArgs
+        //this.getExecutionResultsCollector()
+        //this.getExecutionReportBuilder()
+
+          // per exec config
+
+
+        List<Map> execConfigs = new ArrayList<>();
+        execConfigs.add(execConfig1);
+
+        Config cfg =
+        ConfigFactory.empty().withValue("org.substeps.config.executionConfigs",
+                ConfigValueFactory.fromIterable(executionConfigList))
+                .withValue("org.substeps.config.jmxPort", ConfigValueFactory.fromAnyRef(this.jmxPort))
+                .withValue("org.substeps.config.vmArgs", ConfigValueFactory.fromAnyRef(this.vmArgs))
+                .withValue("org.substeps.config.executionResultsCollector", ConfigValueFactory.fromAnyRef(this.executionResultsCollector.getClass().getName()))
+                .withValue("org.substeps.config.reportBuilder", ConfigValueFactory.fromAnyRef(this.getReportBuilder().getClass().getName()));
+
+
+
+
+        return cfg;
     }
 
 
