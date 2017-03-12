@@ -28,6 +28,7 @@ import com.technophobia.substeps.runner.ExecutionNodeRunner;
 import com.technophobia.substeps.runner.IExecutionListener;
 import com.technophobia.substeps.runner.SubstepExecutionFailure;
 import com.technophobia.substeps.runner.SubstepsExecutionConfig;
+import com.typesafe.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,13 +124,18 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
         this.shutdownSignal.countDown();
     }
 
+    @Override
+    public RootNode prepareExecutionConfig(Config theConfig) {
+        return null;
+    }
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.technopobia.substeps.jmx.SubstepsMBean#prepareExecutionConfig(com
-     * .technophobia.substeps.runner.ExecutionConfig)
-     */
+         * (non-Javadoc)
+         *
+         * @see
+         * com.technopobia.substeps.jmx.SubstepsMBean#prepareExecutionConfig(com
+         * .technophobia.substeps.runner.ExecutionConfig)
+         */
     @Override
     public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
         // TODO - synchronise around the init call ?

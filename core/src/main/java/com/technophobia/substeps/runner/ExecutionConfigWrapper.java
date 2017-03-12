@@ -66,7 +66,7 @@ public class ExecutionConfigWrapper {
         log.debug(printParameters());
     }
 
-    private List<Class<?>> getClassesFromConfig(final String[] config) {
+    private static List<Class<?>> getClassesFromConfig(final String[] config) {
         List<Class<?>> stepImplementationClassList = null;
         for (final String className : config) {
             if (stepImplementationClassList == null) {
@@ -112,6 +112,45 @@ public class ExecutionConfigWrapper {
         }
         return notifierClassList;
 
+    }
+
+    public static Class<?>[] buildInitialisationClassList(List<Class<?>> stepImplClassList, List<Class<?>> initialisationClassList){
+
+        List<Class<?>> finalInitialisationClassList = null;
+        if (stepImplClassList != null) {
+
+            final InitialisationClassSorter orderer = new InitialisationClassSorter();
+
+            for (final Class<?> c : stepImplClassList) {
+
+                final StepImplementations annotation = c.getAnnotation(StepImplementations.class);
+
+                if (annotation != null) {
+                    final Class<?>[] initClasses = annotation.requiredInitialisationClasses();
+
+                    if (initClasses != null) {
+
+                        orderer.addOrderedInitialisationClasses(initClasses);
+                    }
+                }
+            }
+
+            finalInitialisationClassList = orderer.getOrderedList();
+        }
+        if (finalInitialisationClassList == null && initialisationClassList != null) {
+            finalInitialisationClassList = initialisationClassList;
+        }
+        // TODO - either init classes on the step impls, but not both!
+//        if (finalInitialisationClassList != null) {
+//            executionConfig.setInitialisationClasses(finalInitialisationClassList.toArray(new Class<?>[]{}));
+//        }
+
+        if (finalInitialisationClassList != null) {
+            return finalInitialisationClassList.toArray(new Class<?>[]{});
+        }
+        else {
+            return null;
+        }
     }
 
     public Class<?>[] determineInitialisationClasses() {

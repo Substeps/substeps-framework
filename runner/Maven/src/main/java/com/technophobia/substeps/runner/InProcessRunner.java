@@ -19,6 +19,7 @@
 package com.technophobia.substeps.runner;
 
 import com.technophobia.substeps.execution.node.RootNode;
+import com.typesafe.config.Config;
 import org.apache.maven.plugin.logging.Log;
 
 import java.util.List;
@@ -37,6 +38,11 @@ public class InProcessRunner implements MojoRunner {
     public RootNode run() {
         log.info("Running substeps tests in process");
         return executionNodeRunner.run();
+    }
+
+    @Override
+    public RootNode prepareExecutionConfig(Config theConfig) {
+        return executionNodeRunner.prepareExecutionConfig(theConfig);
     }
 
     @Override

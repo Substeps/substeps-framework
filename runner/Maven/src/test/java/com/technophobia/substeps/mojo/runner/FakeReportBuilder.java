@@ -9,12 +9,12 @@ import java.io.File;
  */
 public class FakeReportBuilder implements IReportBuilder{
     @Override
-    public void buildFromDirectory(File sourceDataDir) {
+    public void buildFromDirectory(File sourceDataDir, File reportDir) {
 
     }
 
     @Override
-    public void buildFromDirectory(File sourceDataDir, File stepImplsJson) {
+    public void buildFromDirectory(File sourceDataDir, File reportDir, File stepImplsJson) {
 
     }
 }

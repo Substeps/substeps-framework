@@ -113,7 +113,7 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <artifactId>mockito-core</artifactId>
         </dependency>
 
         <!-- Test Logging -->
@@ -166,8 +166,6 @@
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
-<!--
-                <version>3.1.6</version> -->
                 <executions>
 
                     <!-- Run scala compiler in the process-resources phase, so that dependencies on scala classes can be

@@ -73,9 +73,9 @@ object ReportBuilder {
   */
 class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTreeTemplate with GlossaryTemplate {
 
-  @BeanProperty
-  var reportDir : File = new File(".")
-  lazy val dataDir = new File(reportDir, "data")
+  // TODO need to leave here as legacy to ensure old behaviour still works, although new structure will mandate change ??
+//  @BeanProperty
+//  var reportDir : File = new File(".")
 
   private val log: Logger = LoggerFactory.getLogger(classOf[ReportBuilder])
 
@@ -111,16 +111,19 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     glossaryElements
   }
 
-  def buildFromDirectory(sourceDataDir: File): Unit = {
-    buildFromDirectory(sourceDataDir, null)
+  override def buildFromDirectory(sourceDataDir: File, reportDir : File): Unit = {
+    buildFromDirectory(sourceDataDir, reportDir, null)
   }
 
-  def buildFromDirectory(sourceDataDir: File, stepImplsJson : File): Unit = {
+  override def buildFromDirectory(sourceDataDir: File, reportDir : File, stepImplsJson : File): Unit = {
 
+    val created = reportDir.mkdir()
 
+    log.debug("creating report in " + reportDir.getAbsolutePath + " create returns: " + created)
 
-    reportDir.mkdir()
+    implicit val rDir : File = reportDir
 
+    val dataDir = new File(reportDir, "data")
     dataDir.mkdir()
 
     FileUtils.copyDirectory(new File(sourceDataDir.getPath), dataDir)
@@ -174,7 +177,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     createGlossary(stepImplsJson, dateTimeString)
   }
 
-  def createGlossary(stepImplsJson : File, dateTimeString :String) = {
+  def createGlossary(stepImplsJson : File, dateTimeString :String)(implicit reportDir : File) = {
 
     if (Option(stepImplsJson).isDefined) {
       val glossaryHTML = createFile("glossary.html")
@@ -517,20 +520,20 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
 
 
-  def copyStaticResources() = {
+  def copyStaticResources()(implicit reportDir : File) = {
 
     val defaultBuilder = new DefaultExecutionReportBuilder
 
     defaultBuilder.copyStaticResources(reportDir)
   }
 
-  def createFile(name : String) = {
+  def createFile(name : String)(implicit reportDir : File) = {
     val f = new File(reportDir, name)
     f.createNewFile()
     f
   }
 
-  def writeResultSummary(resultsFile: RootNodeSummary) = {
+  def writeResultSummary(resultsFile: RootNodeSummary)(implicit reportDir : File) = {
 
     val file = createFile("results-summary.js")
 
@@ -552,7 +555,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
   }
 
-  def readModel(srcDir : File) = {
+  def readModel(srcDir : File)(implicit reportDir : File) = {
 
     implicit val formats = Serialization.formats(NoTypeHints)
 

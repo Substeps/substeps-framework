@@ -47,7 +47,7 @@ public final class SyntaxBuilder {
 
 
     public static Syntax buildSyntax(final List<Class<?>> stepImplementationClasses, final File subStepsFile) {
-        return buildSyntax(stepImplementationClasses, subStepsFile, true, null);
+        return buildSyntax(stepImplementationClasses, subStepsFile, true, (String[])null);
     }
 
 
@@ -57,6 +57,15 @@ public final class SyntaxBuilder {
                 new ClassAnalyser());
     }
 
+    public static Syntax buildSyntax(final List<Class<?>> stepImplementationClasses, final File subStepsFile,
+                                     final boolean strict, final List<String> nonStrictKeywordPrecedence) {
+
+        String[] array = null;
+        if (nonStrictKeywordPrecedence != null){
+            array = nonStrictKeywordPrecedence.toArray(new String[nonStrictKeywordPrecedence.size()]);
+        }
+        return buildSyntax(stepImplementationClasses, subStepsFile, strict,array , new ClassAnalyser());
+    }
 
     public static Syntax buildSyntax(final List<Class<?>> stepImplementationClasses, final File subStepsFile,
                                      final boolean strict, final String[] nonStrictKeywordPrecedence, final ClassAnalyser classAnalyser) {

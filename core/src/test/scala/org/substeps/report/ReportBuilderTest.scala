@@ -33,9 +33,9 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
 
     val now: LocalDateTime = LocalDateTime.now
 
-    val outputDir = getOutputDir
+    implicit val outputDir = getOutputDir
     val reportBuilder = new ReportBuilder
-    reportBuilder.reportDir = outputDir
+  //  reportBuilder.reportDir = outputDir
 
     val model = reportBuilder.readModel(new File("src/test/resources/sample-results-data"))
 
@@ -54,9 +54,9 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
     val outputDir = getOutputDir
 
     val reportBuilder = new ReportBuilder
-    reportBuilder.reportDir = outputDir
+//    reportBuilder.reportDir = outputDir
 
-    reportBuilder.buildFromDirectory(new File("src/test/resources/sample-results-data"))
+    reportBuilder.buildFromDirectory(new File("src/test/resources/sample-results-data"), outputDir)
 
     // TODO few more assertions please !
   }
@@ -71,10 +71,10 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
     val outputDir = getOutputDir
 
     val reportBuilder = new ReportBuilder
-    reportBuilder.reportDir = outputDir
+    //reportBuilder.reportDir = outputDir
 
 
-    reportBuilder.buildFromDirectory(new File("src/test/resources/sample-results-data"))
+    reportBuilder.buildFromDirectory(new File("src/test/resources/sample-results-data"), outputDir)
 
 
 

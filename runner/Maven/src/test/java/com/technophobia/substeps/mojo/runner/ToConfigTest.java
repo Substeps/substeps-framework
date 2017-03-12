@@ -7,30 +7,32 @@ import com.technophobia.substeps.runner.ExecutionConfig;
 import com.technophobia.substeps.runner.SubstepsRunnerMojo;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigRenderOptions;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.junit.Assert;
 import org.junit.Test;
 import org.substeps.report.IExecutionResultsCollector;
 import org.substeps.report.IReportBuilder;
 
 import java.io.File;
 import java.lang.reflect.Field;
-
+import static org.mockito.Mockito.*;
 /**
  * Created by ian on 01/03/17.
  */
 public class ToConfigTest {
 
-    private static class TestReportBuilder implements IReportBuilder{
-
-        @Override
-        public void buildFromDirectory(File sourceDataDir) {
-
-        }
-
-        @Override
-        public void buildFromDirectory(File sourceDataDir, File stepImplsJson) {
-
-        }
-    }
+//    private static class TestReportBuilder implements IReportBuilder{
+//
+//        @Override
+//        public void buildFromDirectory(File sourceDataDir) {
+//
+//        }
+//
+//        @Override
+//        public void buildFromDirectory(File sourceDataDir, File stepImplsJson) {
+//
+//        }
+//    }
 
     private static class Collector implements IExecutionResultsCollector{
 
@@ -106,19 +108,24 @@ public class ToConfigTest {
         Field f2 = mojo.getClass().getSuperclass().getDeclaredField("reportBuilder");
         f2.setAccessible(true);
 
-        f2.set(mojo, new TestReportBuilder() );
+        IReportBuilder reportBuilder = mock(IReportBuilder.class);
 
-        Config cfg = mojo.createExecutionConfigFromPom();
+        f2.set(mojo, reportBuilder );
+
+        try {
+            mojo.execute();
+            Assert.fail("mojo should have thrown an exception");
+        }
+        catch (MojoExecutionException e){
+
+            // pass
+            System.out.println("msg: " + e.getMessage());
 
 
+            System.out.println("long msg\n" + e.getLongMessage());
 
-
-        ConfigRenderOptions options =
-                ConfigRenderOptions.defaults().setComments(false).setFormatted(true).setJson(false).setOriginComments(false);
-
-
-        System.out.println("********************* new cfg.root().render(): " +
-        cfg.root().render(options));
+        }
 
     }
+
 }

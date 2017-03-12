@@ -7,7 +7,7 @@ import java.io.File;
  */
 public interface IReportBuilder {
 
-    void buildFromDirectory(File sourceDataDir);
-    void buildFromDirectory(File sourceDataDir, File stepImplsJson);
+    void buildFromDirectory(File sourceDataDir, File reportDir);
+    void buildFromDirectory(File sourceDataDir, File reportDir, File stepImplsJson);
 
 }

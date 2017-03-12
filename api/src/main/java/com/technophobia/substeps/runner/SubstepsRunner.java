@@ -19,6 +19,7 @@
 package com.technophobia.substeps.runner;
 
 import com.technophobia.substeps.execution.node.RootNode;
+import com.typesafe.config.Config;
 
 import java.util.List;
 
@@ -26,6 +27,8 @@ import java.util.List;
  * Common interface for Substeps runners, prepare, then run.
  */
 public interface SubstepsRunner {
+
+    RootNode prepareExecutionConfig(final Config theConfig);
 
     RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig);
 

@@ -52,7 +52,7 @@ import java.util.regex.Matcher;
 
 import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.Matchers.argThat;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 

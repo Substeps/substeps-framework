@@ -23,6 +23,7 @@ import com.technophobia.substeps.execution.ExecutionNodeResult;
 import com.technophobia.substeps.execution.node.RootNode;
 import com.technophobia.substeps.jmx.SubstepsServerMBean;
 import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
+import com.typesafe.config.Config;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +56,13 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
     public void setNotificiationHandler(ExecutionNodeResultNotificationHandler notificiationHandler) {
         this.notificiationHandler = notificiationHandler;
     }
+
+    @Override
+    public RootNode prepareExecutionConfig(Config theConfig) {
+
+        throw new UnsupportedOperationException("sorry not yet implented!");
+    }
+
 
     private ExecutionNodeResultNotificationHandler notificiationHandler = null;
 

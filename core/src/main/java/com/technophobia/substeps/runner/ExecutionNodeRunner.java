@@ -31,12 +31,14 @@ import com.technophobia.substeps.runner.node.RootNodeRunner;
 import com.technophobia.substeps.runner.setupteardown.SetupAndTearDown;
 import com.technophobia.substeps.runner.syntax.SyntaxBuilder;
 
+import com.typesafe.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.substeps.report.ExecutionResultsCollector;
 import org.substeps.report.IExecutionResultsCollector;
 import org.substeps.report.ReportingUtil;
 import org.substeps.runner.CoreSubstepsPropertiesConfiguration;
+import org.substeps.runner.NewSubstepsExecutionConfig;
 import org.substeps.runner.UsageTreeBuilder;
 
 import java.io.File;
@@ -80,6 +82,38 @@ public class ExecutionNodeRunner implements SubstepsRunner {
         this.notificationDistributor.addListener(notifier);
     }
 
+    public RootNode prepareExecutionConfig(final Config config , final Syntax syntax, final TestParameters parameters,
+                                           final SetupAndTearDown setupAndTearDown ,
+                                           final MethodExecutor methodExecutorToUse,
+                                           TagManager nonFatalTagmanager ) {
+
+
+        final ExecutionNodeTreeBuilder nodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, config);
+
+        // building the tree can throw critical failures if exceptions are found
+        this.rootNode = nodeTreeBuilder.buildExecutionNodeTree(NewSubstepsExecutionConfig.getDescription(config));
+
+        setupExecutionListeners(NewSubstepsExecutionConfig.getExecutionListenerClasses(config));
+
+
+
+        if (NewSubstepsExecutionConfig.isCheckForUncalledAndUnused(config)) {
+            processUncalledAndUnused(syntax, NewSubstepsExecutionConfig.getDataOutputDirectory(config));
+        }
+
+        ExecutionContext.put(Scope.SUITE, INotificationDistributor.NOTIFIER_DISTRIBUTOR_KEY,
+                this.notificationDistributor);
+
+
+        this.nodeExecutionContext = new RootNodeExecutionContext(this.notificationDistributor,
+                Lists.<SubstepExecutionFailure>newArrayList(), setupAndTearDown, nonFatalTagmanager,
+                methodExecutorToUse);
+
+        return this.rootNode;
+
+    }
+
+
     public RootNode prepareExecutionConfig(final ExecutionConfigWrapper configWrapper , final Syntax syntax, final TestParameters parameters,
                                            final SetupAndTearDown setupAndTearDown ,
                                            final MethodExecutor methodExecutorToUse,
@@ -91,7 +125,7 @@ public class ExecutionNodeRunner implements SubstepsRunner {
         // building the tree can throw critical failures if exceptions are found
         this.rootNode = nodeTreeBuilder.buildExecutionNodeTree(configWrapper.getExecutionConfig().getDescription());
 
-        setupExecutionListeners(configWrapper);
+        setupExecutionListeners(configWrapper.getExecutionListenerClasses());
 
         if (configWrapper.getExecutionConfig().isCheckForUncalledAndUnused()) {
             processUncalledAndUnused(syntax, configWrapper.getExecutionConfig().getDataOutputDirectory());
@@ -109,6 +143,59 @@ public class ExecutionNodeRunner implements SubstepsRunner {
 
     }
 
+
+    @Override
+    public RootNode prepareExecutionConfig(Config cfg) {
+
+        final String dryRunProperty = System.getProperty(DRY_RUN_KEY);
+        final boolean dryRun = dryRunProperty != null && Boolean.parseBoolean(dryRunProperty);
+
+        final MethodExecutor methodExecutorToUse = dryRun ? new DryRunImplementationCache() : this.methodExecutor;
+
+        if (dryRun) {
+            log.info("**** DRY RUN ONLY **");
+        }
+
+        List<Class<?>> stepImplementationClasses = NewSubstepsExecutionConfig.getStepImplementationClasses(cfg);
+        Class<?>[] initialisationClasses = NewSubstepsExecutionConfig.getInitialisationClasses(cfg);
+
+        ArrayList<Class<?>> initClassList = null;
+        if (initialisationClasses != null) {
+            initClassList = Lists.newArrayList(initialisationClasses);
+        }
+
+
+        Class<?>[] finalInitClasses = ExecutionConfigWrapper.buildInitialisationClassList(stepImplementationClasses, initClassList);
+
+        final SetupAndTearDown setupAndTearDown = new SetupAndTearDown(finalInitClasses,
+                methodExecutorToUse);
+
+
+        final String loggingConfigName = NewSubstepsExecutionConfig.getDescription(cfg);
+
+        setupAndTearDown.setLoggingConfigName(loggingConfigName);
+
+        final TagManager tagmanager = new TagManager(NewSubstepsExecutionConfig.getTags(cfg));
+
+        final TagManager nonFatalTagmanager = TagManager.fromTags(NewSubstepsExecutionConfig.getNonFatalTags(cfg));
+
+        File subStepsFile = null;
+
+        if (NewSubstepsExecutionConfig.getSubStepsFileName(cfg) != null) {
+            subStepsFile = new File(NewSubstepsExecutionConfig.getSubStepsFileName(cfg));
+        }
+
+        final Syntax syntax = SyntaxBuilder.buildSyntax(stepImplementationClasses, subStepsFile,
+                NewSubstepsExecutionConfig.isStrict(cfg), NewSubstepsExecutionConfig.getNonStrictKeywordPrecedence(cfg));
+
+        final TestParameters parameters = new TestParameters(tagmanager, syntax, NewSubstepsExecutionConfig.getFeatureFile(cfg),
+                NewSubstepsExecutionConfig.getScenarioName(cfg));
+
+        parameters.setFailParseErrorsImmediately(NewSubstepsExecutionConfig.isFastFailParseErrors(cfg));
+        parameters.init();
+
+        return prepareExecutionConfig(cfg, syntax, parameters, setupAndTearDown, methodExecutorToUse, nonFatalTagmanager);
+    }
 
     @Override
     public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
@@ -158,10 +245,8 @@ public class ExecutionNodeRunner implements SubstepsRunner {
 
     }
 
-    private void setupExecutionListeners(ExecutionConfigWrapper configWrapper) {
+    private void setupExecutionListeners( final List<Class<? extends IExecutionListener>> executionListenerClasses) {
         // add any listeners (including the step execution logger)
-
-        final List<Class<? extends IExecutionListener>> executionListenerClasses = configWrapper.getExecutionListenerClasses();
 
         // TODO - pass the base dir in or get from config
 
