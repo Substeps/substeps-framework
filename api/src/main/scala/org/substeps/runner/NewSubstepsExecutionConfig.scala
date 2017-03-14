@@ -1,9 +1,10 @@
 package org.substeps.runner
 
 import java.io.File
+import java.util
 
 import com.technophobia.substeps.model.exception.SubstepsConfigurationException
-import com.technophobia.substeps.runner.IExecutionListener
+import com.technophobia.substeps.runner.{IExecutionListener, SubstepsExecutionConfig}
 import com.typesafe.config._
 import org.slf4j.{Logger, LoggerFactory}
 import org.substeps.report.{IExecutionResultsCollector, IReportBuilder}
@@ -23,6 +24,40 @@ case object NewSubstepsExecutionConfig {
   def addConfigToContext(cfg :Config) = {
     // TODO add to a threadlocal context
     threadLocalContext.set(cfg)
+  }
+
+  // transitional method
+  def toConfig(substepsConfig : SubstepsExecutionConfig) : Config = {
+
+    import com.google.common.collect.Lists
+
+    val execConfig1 = new java.util.HashMap[String, AnyRef]
+    execConfig1.put("description", substepsConfig.getDescription)
+    execConfig1.put("featureFile", substepsConfig.getFeatureFile)
+    if (substepsConfig.getDataOutputDirectory != null) execConfig1.put("dataOutputDir", substepsConfig.getDataOutputDirectory.getPath)
+    if (substepsConfig.getNonFatalTags != null) execConfig1.put("nonFatalTags", substepsConfig.getNonFatalTags)
+    execConfig1.put("substepsFile", substepsConfig.getSubStepsFileName)
+    execConfig1.put("tags", substepsConfig.getTags)
+    execConfig1.put("fastFailParseErrors", Boolean.box(substepsConfig.isFastFailParseErrors))
+
+    if (substepsConfig.getNonStrictKeywordPrecedence != null)  execConfig1.put("nonStrictKeyWordPrecedence", substepsConfig.getNonStrictKeywordPrecedence.toList.asJava)
+
+//
+    execConfig1.put("stepImplementationClassNames", substepsConfig.getStepImplementationClasses.asScala.map(c => c.getName).asJava)
+//
+    if (substepsConfig.getExecutionListeners != null) execConfig1.put("executionListeners", substepsConfig.getExecutionListeners.toList.asJava)
+    if (substepsConfig.getInitialisationClass != null) execConfig1.put("initialisationClasses", substepsConfig.getInitialisationClass.toList.asJava)
+    if (substepsConfig.getExecutionListeners != null) execConfig1.put("executionListeners", substepsConfig.getExecutionListeners.toList.asJava)
+
+
+
+    ConfigFactory.empty
+      .withValue("org.substeps.config.executionConfig", ConfigValueFactory.fromMap(execConfig1))
+//      .withValue("org.substeps.config.jmxPort", ConfigValueFactory.fromAnyRef(this.jmxPort))
+//      .withValue("org.substeps.config.vmArgs", ConfigValueFactory.fromAnyRef(this.vmArgs))
+      .withValue("org.substeps.config.executionResultsCollector", ConfigValueFactory.fromAnyRef("org.substeps.report.ExecutionResultsCollector"))
+      .withValue("org.substeps.config.reportBuilder", ConfigValueFactory.fromAnyRef("org.substeps.report.ReportBuilder"))
+
   }
 
   def threadLocalConfig() : Config = threadLocalContext.get()
@@ -99,6 +134,7 @@ case object NewSubstepsExecutionConfig {
 
   def getExecutionListenerClasses(cfg : Config) : java.util.List[Class[_ <: IExecutionListener]] = {
 
+    val configList =
     if (cfg.hasPath("org.substeps.config.executionListeners")) {
       val initClassNames = cfg.getStringList("org.substeps.config.executionListeners").asScala
 
@@ -112,11 +148,11 @@ case object NewSubstepsExecutionConfig {
         else {
           throw new SubstepsConfigurationException("Execution Listener does not extend com.technophobia.substeps.runner.IExecutionListener")
         }
-      }).toList.asJava
+      }).toList
     }
-    else null
+    else List()
 
-
+    configList.asJava
   }
 
   // TODO type bind this
@@ -164,7 +200,7 @@ case object NewSubstepsExecutionConfig {
 
   def getNonFatalTags(cfg : Config) : String = getOrNull(cfg, "org.substeps.config.executionConfig.nonFatalTags")
 
-  def getNonStrictKeywordPrecedence(cfg : Config) : java.util.List[String]  = getStringListOrNull(cfg, "nonStrictKeyWordPrecedence")
+  def getNonStrictKeywordPrecedence(cfg : Config) : java.util.List[String]  = getStringListOrNull(cfg, "org.substeps.config.executionConfig.nonStrictKeyWordPrecedence")
 
 
   def getSubStepsFileName(cfg : Config) : String = {
@@ -178,15 +214,11 @@ case object NewSubstepsExecutionConfig {
 
   def getFeatureFile(cfg : Config) : String = cfg.getString("org.substeps.config.executionConfig.featureFile")
 
-  def isStrict(cfg : Config) : Boolean = {
-    if (cfg.hasPath("nonStrictKeyWordPrecedence")){
-      false
-    }
-    else true
-  }
+  def isStrict(cfg : Config) : Boolean = !cfg.hasPath("org.substeps.config.executionConfig.nonStrictKeyWordPrecedence")
+
 
   def isFastFailParseErrors(cfg : Config) : Boolean = {
-    getBooleanOr(cfg, "fastFailParseErrors", true)
+    getBooleanOr(cfg, "org.substeps.config.executionConfig.fastFailParseErrors", true)
   }
 
   def getBooleanOr(cfg : Config, path: String, default : Boolean) : Boolean = {
@@ -196,7 +228,7 @@ case object NewSubstepsExecutionConfig {
     else default
   }
 
-  def isCheckForUncalledAndUnused(cfg : Config) : Boolean = getBooleanOr(cfg, "checkForUncalledAndUnused", true)
+  def isCheckForUncalledAndUnused(cfg : Config) : Boolean = getBooleanOr(cfg, "org.substeps.config.checkForUncalledAndUnused", false)
 
   def getDataOutputDirectory(cfg : Config) : File = {
     new File(cfg.getString("org.substeps.config.executionConfig.dataOutputDir"))

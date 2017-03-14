@@ -43,6 +43,7 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.substeps.report.IExecutionResultsCollector;
+import org.substeps.runner.NewSubstepsExecutionConfig;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -282,9 +283,12 @@ public class ExecutionNodeRunnerTest {
     private RootNode runExecutionTest(final IExecutionListener notifier,
                                       final SubstepsExecutionConfig executionConfig,
                                       final List<SubstepExecutionFailure> failures) {
+
+        Config cfg = NewSubstepsExecutionConfig.toConfig(executionConfig);
+
         runner.addNotifier(notifier);
 
-        runner.prepareExecutionConfig(executionConfig);
+        runner.prepareExecutionConfig(cfg);
 
         final RootNode rootNode = runner.run();
 
@@ -839,7 +843,10 @@ public class ExecutionNodeRunnerTest {
 
         executionConfig.setFastFailParseErrors(false);
 
-        final RootNode rootNode = runner.prepareExecutionConfig(executionConfig);
+
+        Config cfg = NewSubstepsExecutionConfig.toConfig(executionConfig);
+
+        final RootNode rootNode = runner.prepareExecutionConfig(cfg);
 
         Assert.assertThat(rootNode.getChildren().size(), is(1));
 

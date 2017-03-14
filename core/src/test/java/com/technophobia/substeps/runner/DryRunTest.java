@@ -22,11 +22,13 @@ import com.technophobia.substeps.execution.node.RootNode;
 import com.technophobia.substeps.model.SubSteps.StepImplementations;
 import com.technophobia.substeps.runner.setupteardown.Annotations.*;
 import com.technophobia.substeps.steps.TestStepImplementations;
+import com.typesafe.config.Config;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.substeps.report.IExecutionResultsCollector;
+import org.substeps.runner.NewSubstepsExecutionConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +64,10 @@ public class DryRunTest {
 
         theConfig.setStepImplementationClasses(stepImplementationClasses);
 
-        final RootNode rootNode = runner.prepareExecutionConfig(theConfig);
+        Config cfg = NewSubstepsExecutionConfig.toConfig(theConfig);
+
+
+        final RootNode rootNode = runner.prepareExecutionConfig(cfg);
 
         System.out.println("rootNode:\n" +
                 rootNode.toDebugString());

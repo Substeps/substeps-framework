@@ -1,5 +1,8 @@
 package org.substeps
 
+import java.util
+
+import com.technophobia.substeps.Data
 import org.scalatest.{FunSuite, Matchers}
 import com.typesafe.config.{ConfigFactory, ConfigRenderOptions, ConfigValueFactory}
 
@@ -8,6 +11,18 @@ import com.typesafe.config.{ConfigFactory, ConfigRenderOptions, ConfigValueFacto
   */
 class ConfigTest extends FunSuite with Matchers{
 
+
+  test("test arrays conversion"){
+    import scala.collection.JavaConversions._
+    import scala.collection.JavaConverters._
+
+    val keywordPrecedenceList = Data.ARRAY//.asScala//util.Arrays.asList(Data.ARRAY)
+
+    val list = keywordPrecedenceList.toList
+     // for (s <- Data.ARRAY) yield s
+
+    println("keywordPrecedenceList: " + list)
+  }
 
 
   test("test property substitution with env vars in conf files") {
