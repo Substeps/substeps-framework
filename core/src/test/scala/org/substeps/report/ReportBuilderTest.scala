@@ -39,12 +39,13 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
 
     val model = reportBuilder.readModel(new File("src/test/resources/sample-results-data"))
 
-    val rootNodeSummary = model._1
-    val featureSummaryAndNodeDetails = model._2
+    val rootNodeSummary = model.rootNodeSummary.head
+    val featureSummaryAndNodeDetails = model.features
 
     featureSummaryAndNodeDetails should have size (2)
 
-    featureSummaryAndNodeDetails(0)._1.scenarios should have size (2)
+    featureSummaryAndNodeDetails(0).nodeDetails should have size (2)
+
   }
 
 

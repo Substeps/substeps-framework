@@ -3,6 +3,7 @@ package org.substeps.runner
 import java.io.File
 import java.util
 
+import com.google.common.collect.Lists
 import com.technophobia.substeps.model.exception.SubstepsConfigurationException
 import com.technophobia.substeps.runner.{IExecutionListener, SubstepsExecutionConfig}
 import com.typesafe.config._
@@ -66,36 +67,63 @@ case object NewSubstepsExecutionConfig {
 
   def render(cfg : Config) : String = {
     // TODO - trim out bits of the config we're not interested in
-    cfg.root().render(options)
+    cfg.root()
+      .withoutKey("awt")
+      .withoutKey("java")
+      .withoutKey("line")
+      .withoutKey("os")
+      .withoutKey("sun")
+      .withoutKey("user")
+      .render(options)
   }
 
-  def loadConfig( cfgFile: String, mvnConfig : Config): List[Config] = {
+  def loadConfig( cfgFile: String, mvnConfigOption : Option[Config]): List[Config] = {
 
+    val base = ConfigFactory.load(cfgFile, ConfigParseOptions.defaults(), ConfigResolveOptions.defaults().setAllowUnresolved(true))
+
+    loadConfig(base, mvnConfigOption)
+  }
+
+  def loadMasterConfig( base: Config, mvnConfigOption : Option[Config]): Config = {
     val environment = System.getProperty("ENVIRONMENT", "localhost") + ".conf"
 
     val envConfig = ConfigFactory.load(environment)
 
-    ConfigFactory.load()
 
-    val base = ConfigFactory.load(cfgFile, ConfigParseOptions.defaults(), ConfigResolveOptions.defaults().setAllowUnresolved(true))
+    val masterConfig =
+      mvnConfigOption match {
+        case Some(mvnConfig) => {
+          log.debug("MAVEN CONFIG:\n" + render(mvnConfig))
 
-    log.debug("MAVEN CONFIG:\n" + render(mvnConfig))
+          envConfig.withFallback(base).withFallback(mvnConfig).resolve()
+        }
+        case None =>   envConfig.withFallback(base).resolve()
 
-    val initialConfig = envConfig.withFallback(base).withFallback(mvnConfig).resolve()
+      }
 
-    log.debug("LOADED INITIAL CONFIG:\n" + render(initialConfig))
+    log.debug("LOADED MASTER CONFIG:\n" + render(masterConfig))
+    masterConfig
+  }
 
-    // there might be multilple execonfigs in there - return multiple configs for each one
+  def splitConfig(masterConfig : Config): List[Config] = {
+    val exeConfigList = masterConfig.getConfigList("org.substeps.config.executionConfigs").asScala
 
-    val exeConfigList = initialConfig.getConfigList("org.substeps.config.executionConfigs").asScala
-
-    val baseConfig = initialConfig.withoutPath("org.substeps.config.executionConfigs")
+    val baseConfig = masterConfig.withoutPath("org.substeps.config.executionConfigs")
 
     exeConfigList.map(ec => {
       baseConfig.withValue("org.substeps.config.executionConfig", ec.root())
 
     }).toList
+
   }
+
+  def loadConfig( base: Config, mvnConfigOption : Option[Config]): List[Config] = {
+
+    val masterConfig = loadMasterConfig(base, mvnConfigOption)
+    // there might be multilple execonfigs in there - return multiple configs for each one
+    splitConfig(masterConfig)
+  }
+
 
 
 
@@ -103,7 +131,7 @@ case object NewSubstepsExecutionConfig {
 
     cfgFileList.asScala.flatMap(cfgFile =>{
 
-      loadConfig(cfgFile, mavenConfig)
+      loadConfig(cfgFile, Some(mavenConfig))
     }).asJava
   }
 
@@ -230,6 +258,11 @@ case object NewSubstepsExecutionConfig {
 
   def isCheckForUncalledAndUnused(cfg : Config) : Boolean = getBooleanOr(cfg, "org.substeps.config.checkForUncalledAndUnused", false)
 
+  def getRootDataDir(masterConfig: Config) : File = {
+    new File(masterConfig.getString("org.substeps.config.rootDataDir"))
+  }
+
+
   def getDataOutputDirectory(cfg : Config) : File = {
     new File(cfg.getString("org.substeps.config.executionConfig.dataOutputDir"))
   }
@@ -237,4 +270,14 @@ case object NewSubstepsExecutionConfig {
   def getReportDir(cfg: Config) : File = {
     new File(cfg.getString("org.substeps.config.reportDir"))
   }
+
+//  def buildInitialisationClassList(cfg: Config) : Array[Class[_]] = {
+//
+//    val stepImplementationClasses = NewSubstepsExecutionConfig.getStepImplementationClasses(cfg)
+//    val initialisationClasses = NewSubstepsExecutionConfig.getInitialisationClasses(cfg)
+//    var initClassList = null
+//    if (initialisationClasses != null) initClassList = Lists.newArrayList(initialisationClasses)
+//
+//    ExecutionConfigWrapper.buildInitialisationClassList(stepImplementationClasses, initClassList);
+//  }
 }

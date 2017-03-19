@@ -164,7 +164,6 @@ public class ExecutionNodeRunner implements SubstepsRunner {
             initClassList = Lists.newArrayList(initialisationClasses);
         }
 
-
         Class<?>[] finalInitClasses = ExecutionConfigWrapper.buildInitialisationClassList(stepImplementationClasses, initClassList);
 
         final SetupAndTearDown setupAndTearDown = new SetupAndTearDown(finalInitClasses,

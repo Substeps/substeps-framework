@@ -12,6 +12,25 @@ import com.typesafe.config.{ConfigFactory, ConfigRenderOptions, ConfigValueFacto
 class ConfigTest extends FunSuite with Matchers{
 
 
+  test("test subconfig"){
+
+    val src =
+      """org.substeps.webdriver{
+        |window{
+        | maximise=true
+        | height=2
+        | width=7
+        |}
+        |}
+      """.stripMargin
+
+    val cfg = ConfigFactory.parseString(src)
+
+    val c = cfg.getConfig("org.substeps.webdriver.window")
+
+    println("c:\n" + c.root().render())
+  }
+
   test("test arrays conversion"){
     import scala.collection.JavaConversions._
     import scala.collection.JavaConverters._

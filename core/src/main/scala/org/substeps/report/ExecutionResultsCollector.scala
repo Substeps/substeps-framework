@@ -350,8 +350,9 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
   def initOutputDirectories(rootNode: RootNode) {
 
     if (!dataDir.exists()){
-      if (!dataDir.mkdir()){
-        throw new SubstepsRuntimeException("Failed to create root execution results dir")
+
+      if (!dataDir.mkdirs()){
+        throw new SubstepsRuntimeException("Failed to create root execution results dir: " + dataDir.getAbsolutePath)
       }
     }
 

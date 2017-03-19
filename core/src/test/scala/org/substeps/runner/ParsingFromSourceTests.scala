@@ -13,6 +13,7 @@ import com.technophobia.substeps.runner._
 import com.technophobia.substeps.runner.builder.ExecutionNodeTreeBuilder
 import com.technophobia.substeps.runner.setupteardown.SetupAndTearDown
 import com.technophobia.substeps.runner.syntax._
+import com.typesafe.config.ConfigFactory
 import org.hamcrest.Matchers._
 import org.json4s.NoTypeHints
 import org.json4s.native.Serialization
@@ -518,7 +519,7 @@ Scenario: inline table
         | Feature: a simple feature
         | Scenario: A basic passing scenario
         |   PassingStepImpl
-        |   PassingSubstepDef
+        |   PassingSubstepDefExecutionNodeTreeBuilder
         |   WithParamsSubstepDef "a" and "b"
         |
         | Tags: scenario-level-tag
@@ -746,7 +747,214 @@ Scenario: inline table
 
 
 
+  "running the same features with multiple configurations" must "generate data in a way that the report builder can pick it up" in {
 
+    val simpleFeature =
+      """
+        | Feature: a simple feature
+        | Scenario: A basic passing scenario
+        |   PassingStepImpl
+        |   PassingSubstepDef
+        |   WithParamsSubstepDef "a" and "b"
+        |
+        | Scenario: A basic failing scenario
+        |   PassingSubstepDef
+        |   WithParamsSubstepDef "c" and "d"
+        |   FailingSubstepDef
+        |   NotRun
+      """.stripMargin
+
+    val substepDef =
+      """
+        |Define: PassingSubstepDef
+        |  AnotherPassingStepImpl
+        |
+        |Define: FailingSubstepDef
+        | GenerateFailure
+        |
+        |Define: WithParamsSubstepDef "<one>" and "<two>"
+        | WithParams "<one>" "<two>"
+        |
+      """.stripMargin
+
+    @StepImplementations
+    class StepImpls  extends ProvidesScreenshot {
+
+      @SubSteps.Step("PassingStepImpl")
+      def passingStepImpl() = log.debug("pass")
+
+      @SubSteps.Step("AnotherPassingStepImpl")
+      def anotherPassingStepImpl() = log.debug("pass")
+
+      @SubSteps.Step("NotRun")
+      def notRun() = log.debug("not run")
+
+      @SubSteps.Step("GenerateFailure")
+      def generateFailure() = throw new IllegalStateException("something went wrong")
+
+      @SubSteps.Step("PassingStepImpl with (.*)")
+      def passingStepImplWithParam(arg : String) = {
+        if (arg =="fail")   throw new IllegalStateException("something went wrong")
+      }
+
+      @SubSteps.Step("""WithParams "([^"]*)" "([^"]*)"""")
+      def twoParams(arg1 : String, arg2 : String) = {
+        log.debug(s"pass two params $arg1 $arg2")
+      }
+
+      override def getScreenshotBytes: Array[Byte] = "fake screenshot bytes".getBytes
+    }
+
+
+    val subStepParser: SubStepDefinitionParser = new SubStepDefinitionParser(true, new DefaultSyntaxErrorReporter)
+
+    val substepDeffileContentsFromSource = new FileContents(substepDef.split("\n").toList.asJava, new File("temp_substep_def.substeps"))
+
+    val parentMap = subStepParser.parseSubstepFileContents(substepDeffileContentsFromSource)
+
+
+    val featureFile = createFeatureFile(simpleFeature, "simple_feature_file.feature")
+
+
+
+    val stepImplementationClasses : List[java.lang.Class[_]] = List(classOf[StepImpls])
+
+    val stepImplClassName = new StepImpls().getClass.getName
+
+    // one data dir
+    val dataDir = ExecutionResultsCollector.getBaseDir(new File("target"))
+    val dataDirPath = dataDir.getAbsolutePath
+
+    val dataOutoutDir1 = """${org.substeps.config.rootDataDir}"/1""""
+    val dataOutoutDir2 = """${org.substeps.config.rootDataDir}"/2""""
+
+    val spare = """
+                  |"""
+
+    val cfgFileContents =
+      s"""
+        | org {
+        | substeps {
+        |   config {
+        |     executionConfigs=[
+        |         {
+        |         dataOutputDir=$dataOutoutDir1
+        |         description="Parsing from source Test Features 1"
+        |         executionListeners=[
+        |             "com.technophobia.substeps.runner.logger.StepExecutionLogger"
+        |             ]
+        |         featureFile="simple_feature_file.feature"
+        |
+        |         stepImplementationClassNames=[
+        |             "${stepImplClassName}"
+        |         ]
+        |         substepsFile="temp_substep_def.substeps"
+        |         },
+        |         {
+        |         dataOutputDir=$dataOutoutDir2
+        |         description="Parsing from source Test Features 2"
+        |         executionListeners=[
+        |             "com.technophobia.substeps.runner.logger.StepExecutionLogger"
+        |             ]
+        |         featureFile="simple_feature_file.feature"
+        |
+        |         stepImplementationClassNames=[
+        |             "${stepImplClassName}"
+        |         ]
+        |         substepsFile="temp_substep_def.substeps"
+        |         }
+        |        ]
+        |     executionListeners=[
+        |       "com.technophobia.substeps.runner.logger.StepExecutionLogger"
+        |     ]
+        |     executionResultsCollector="org.substeps.report.ExecutionResultsCollector"
+        |     jmxPort=9999
+        |     reportBuilder="org.substeps.report.ReportBuilder"
+        |     reportDir="target/substeps_report"
+        |     rootDataDir="${dataDirPath}"
+        |     }
+        |   }
+        | }
+      """.stripMargin
+
+    println("CONFIG contents\n" + cfgFileContents)
+
+    val baseCfg = ConfigFactory.parseString(cfgFileContents)
+
+    val masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(baseCfg, None)
+
+    val configs = NewSubstepsExecutionConfig.splitConfig(masterConfig)
+
+    val syntax: Syntax = SyntaxBuilder.buildSyntax(stepImplementationClasses.asJava, parentMap)
+
+    val parameters: TestParameters = new TestParameters(new TagManager(""), syntax, List(featureFile).asJava)
+
+    configs.foreach(cfg => {
+
+      val nodeTreeBuilder: ExecutionNodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, cfg)
+      // building the tree can throw critical failures if exceptions are found
+      val rootNode = nodeTreeBuilder.buildExecutionNodeTree("test description")
+
+      log.debug("rootNode 1:\n" + rootNode.toDebugString)
+
+      val executionCollector = new ExecutionResultsCollector
+
+      // TODO - different dirs for each execution config ? specify the different sub dirs in config ?
+
+      val dataDirForReportBuilder = NewSubstepsExecutionConfig.getDataOutputDirectory(cfg)
+
+      executionCollector.setDataDir(dataDirForReportBuilder)
+      executionCollector.setPretty(true)
+
+      val runner = new ExecutionNodeRunner()
+
+      runner.addNotifier(executionCollector)
+
+      val methodExecutorToUse = new ImplementationCache()
+      val stepImplementationClasses = NewSubstepsExecutionConfig.getStepImplementationClasses(cfg)
+      val initialisationClasses = NewSubstepsExecutionConfig.getInitialisationClasses(cfg)
+
+      val initClassList : java.util.List[Class[_]] =
+
+         if (initialisationClasses != null) initialisationClasses.toList.asJava else null
+
+      val finalInitClasses = ExecutionConfigWrapper.buildInitialisationClassList(stepImplementationClasses, initClassList)
+      val setupAndTearDown = new SetupAndTearDown(finalInitClasses, methodExecutorToUse)
+
+      val rootNode2 = runner.prepareExecutionConfig(cfg, syntax, parameters, setupAndTearDown, methodExecutorToUse, null)
+
+      executionCollector.initOutputDirectories(rootNode2)
+
+//      log.debug("rootNode 2:\n" + rootNode2.toDebugString)
+
+      val finalRootNode = runner.run()
+
+      log.debug("finalRootNode:\n" + finalRootNode.toDebugString)
+
+
+
+    })
+
+    val localReportBuilder = NewSubstepsExecutionConfig.getReportBuilder(masterConfig)
+    val reportDir = NewSubstepsExecutionConfig.getReportDir(masterConfig)
+
+    val rootDataDir = NewSubstepsExecutionConfig.getRootDataDir(masterConfig)
+
+    localReportBuilder.buildFromDirectory(rootDataDir, reportDir, null)
+
+
+    // TODO reportbuilder mods
+
+
+    // change where the reportbuilder looks for it's data
+    // look for subdirs ?  need a way to tie them together ?  additional results file ?
+       // cater for having two results trees of ids with duplicate ids - ie two vms
+
+
+
+
+
+  }
 }
 
 
