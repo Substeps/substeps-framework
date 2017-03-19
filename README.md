@@ -28,6 +28,7 @@ Requirements
 * escaped < and > in the glossary data
 * Corrected the path to the screenshot images to be relative so that they work when served off a server and locally.
 * various sonar fixes
+* Upgraded guava to 21.0 - required to support selenium 3.3 and latest firefox drivers
 
 1.0.5
 -----
