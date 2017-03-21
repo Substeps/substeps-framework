@@ -948,6 +948,9 @@ Scenario: inline table
 
     // change where the reportbuilder looks for it's data
     // look for subdirs ?  need a way to tie them together ?  additional results file ?
+
+    // --> looking in subsirs, only looking at first results though.  check the test
+
        // cater for having two results trees of ids with duplicate ids - ie two vms
 
 
