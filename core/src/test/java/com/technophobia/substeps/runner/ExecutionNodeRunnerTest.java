@@ -50,10 +50,11 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Matcher;
 
-import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+
 import static org.mockito.Mockito.*;
 
 /**
@@ -112,7 +113,7 @@ public class ExecutionNodeRunnerTest {
 
         Assert.assertThat(scenarioNode.getResult().getResult(), is(ExecutionResult.PARSE_FAILURE));
 
-        verify(notifier, times(1)).onNodeFailed(eq(scenarioNode), argThat(any(UnimplementedStepException.class)));
+        verify(notifier, times(1)).onNodeFailed(eq(scenarioNode), any(UnimplementedStepException.class));
 
         Assert.assertThat(failures.size(), is(2));
 
@@ -148,7 +149,7 @@ public class ExecutionNodeRunnerTest {
 
         Assert.assertThat(scenarioNode.getResult().getResult(), is(ExecutionResult.PARSE_FAILURE));
 
-        verify(notifier, times(1)).onNodeFailed(eq(scenarioNode), argThat(any(SubstepsConfigurationException.class)));
+        verify(notifier, times(1)).onNodeFailed(eq(scenarioNode), any(SubstepsConfigurationException.class));
 
         Assert.assertThat(failures.size(), is(2));
 
@@ -193,7 +194,7 @@ public class ExecutionNodeRunnerTest {
         Assert.assertThat(scenarioOutlineNode2.getResult().getResult(), is(ExecutionResult.PARSE_FAILURE));
 
         verify(notifier, times(1)).onNodeFailed(eq(scenarioOutlineNode2),
-                argThat(any(SubstepsConfigurationException.class)));
+                any(SubstepsConfigurationException.class));
 
     }
 
@@ -366,7 +367,7 @@ public class ExecutionNodeRunnerTest {
         runner.run();
         final List<SubstepExecutionFailure> failures = runner.getFailures();
 
-        verify(mockNotifer, times(1)).onNodeFailed(argThat(is(node)), argThat(any(NoTestsRunException.class)));
+        verify(mockNotifer, times(1)).onNodeFailed(eq(node), any(NoTestsRunException.class));
         // verify(mockNotifer, times(1)).onNodeFailed(argThat(is(node)), argThat(any(SubstepsRuntimeException.class)));
 
         Assert.assertFalse("expecting some failures", failures.isEmpty());
@@ -407,11 +408,11 @@ public class ExecutionNodeRunnerTest {
         // list contains just those nodes that have actually failed, not the
         // entire tree.
 
-        verify(mockNotifer, times(2)).onNodeFailed(argThat(is(rootNode)), argThat(any(Throwable.class)));
+        verify(mockNotifer, times(2)).onNodeFailed(eq(rootNode), any(Throwable.class));
 
-        verify(mockNotifer, times(1)).onNodeFailed(argThat(is(featureNode)), argThat(any(Throwable.class)));
+        verify(mockNotifer, times(1)).onNodeFailed(eq(featureNode), any(Throwable.class));
 
-        verify(mockNotifer, times(1)).onNodeFailed(argThat(is(outlineNode)), argThat(any(Throwable.class)));
+        verify(mockNotifer, times(1)).onNodeFailed(eq(outlineNode), any(Throwable.class));
 
         Assert.assertFalse("expecting some failures", failures.isEmpty());
 

@@ -25,11 +25,12 @@ import com.technophobia.substeps.runner.BuildFailureManager;
 import com.technophobia.substeps.runner.ExecutionConfig;
 import com.technophobia.substeps.runner.SubstepsRunnerMojo;
 import com.typesafe.config.Config;
-import junit.framework.Assert;
+
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 

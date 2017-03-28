@@ -19,7 +19,7 @@
 
 package com.technophobia.substeps.model;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;

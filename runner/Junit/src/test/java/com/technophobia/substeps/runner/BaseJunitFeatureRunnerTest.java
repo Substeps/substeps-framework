@@ -36,7 +36,6 @@ import static org.hamcrest.CoreMatchers.is;
  */
 public abstract class BaseJunitFeatureRunnerTest implements TestCallback {
     protected TestNotifier testNotifier = null;
-    // List<MethodInvocation> invocations = null;
 
     protected List<DescriptionSnapshot> descriptionSnapshots = null;
     protected int descriptionSnapshotsIdx = 0;
@@ -47,13 +46,12 @@ public abstract class BaseJunitFeatureRunnerTest implements TestCallback {
     @Before
     public void before() {
         testNotifier = new TestNotifier();
-        // invocations = new ArrayList<MethodInvocation>();
-        descriptionKeys = new ArrayList<String>();
+        descriptionKeys = new ArrayList<>();
 
-        descriptionSnapshots = new ArrayList<DescriptionSnapshot>();
+        descriptionSnapshots = new ArrayList<>();
         descriptionSnapshotsIdx = 0;
 
-        assertions = new ArrayList<AssertionError>();
+        assertions = new ArrayList<>();
     }
 
 
@@ -63,10 +61,6 @@ public abstract class BaseJunitFeatureRunnerTest implements TestCallback {
         try {
             final Field runnerField = runner.getClass().getDeclaredField("runner");
             runnerField.setAccessible(true);
-
-            // final Field runnerField =
-            // runner.getClass().getDeclaredField("scenarioRunner");
-            // runnerField.setAccessible(true);
 
             final Object runnerObject = runnerField.get(runner);
 
@@ -133,14 +127,6 @@ public abstract class BaseJunitFeatureRunnerTest implements TestCallback {
             assertions.add(ae);
         }
 
-        // final Description current = testNotifier.getCurrentlyRunning();
-        // if (current != null)
-        // {
-        // final String displayName = current.getDisplayName();
-        //
-        // final String key = displayName.split(" ")[0];
-        //
-        // }
 
         descriptionSnapshotsIdx++;
         // from this method name we want to get back to the description
@@ -183,7 +169,7 @@ public abstract class BaseJunitFeatureRunnerTest implements TestCallback {
     List<String> toKeyList(final List<Description> dess) {
         List<String> rtn = null;
         if (dess != null) {
-            rtn = new ArrayList<String>();
+            rtn = new ArrayList<>();
             for (final Description d : dess) {
                 rtn.add(d.getDisplayName().split(" ")[0]);
             }

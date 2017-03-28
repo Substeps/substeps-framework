@@ -21,7 +21,8 @@ package com.technophobia.substeps.stepimplementations;
 import com.technophobia.substeps.model.SubSteps.Step;
 import com.technophobia.substeps.model.SubSteps.StepImplementations;
 import com.technophobia.substeps.runner.TestCallback;
-import junit.framework.Assert;
+
+import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
