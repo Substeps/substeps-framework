@@ -162,7 +162,6 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
         catch (MalformedURLException e)
         {
             log.error("MalformedURLException adding outputdir", e);
-//            e.printStackTrace();
         }
 
 

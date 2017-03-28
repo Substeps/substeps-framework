@@ -4,9 +4,10 @@ import com.technophobia.substeps.execution.node.RootNode;
 import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
 import com.technophobia.substeps.report.ExecutionReportBuilder;
 import com.technophobia.substeps.runner.*;
-import junit.framework.Assert;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
