@@ -19,6 +19,7 @@
 package org.substeps.runner;
 
 import com.technophobia.substeps.model.Configuration;
+import com.typesafe.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,13 +42,15 @@ public enum CoreSubstepsPropertiesConfiguration implements CoreSubstepsConfigura
 
     private CoreSubstepsPropertiesConfiguration() {
 
-        stepDepthForDescription = Configuration.INSTANCE.getInt("step.depth.description");
+        Config substepsConfig = Configuration.INSTANCE.getSubstepsConfig();
 
-        logUncalledAndUnusedStepImpls = Configuration.INSTANCE.getBoolean("log.unused.uncalled");
+        stepDepthForDescription = substepsConfig.getInt("step.depth.description");
 
-        prettyPrintReportData = Configuration.INSTANCE.getBoolean("report.data.pretty.print");
+        logUncalledAndUnusedStepImpls = substepsConfig.getBoolean("log.unused.uncalled");
 
-        reportDataBaseDir = Configuration.INSTANCE.getString("report.data.base.dir");
+        prettyPrintReportData = substepsConfig.getBoolean("report.data.pretty.print");
+
+        reportDataBaseDir = substepsConfig.getString("report.data.base.dir");
 
         LOG.info("Using core properties:\n" + Configuration.INSTANCE.getConfigurationInfo());
     }

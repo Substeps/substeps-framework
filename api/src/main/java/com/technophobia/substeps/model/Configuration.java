@@ -45,6 +45,10 @@ public enum Configuration {
 
     }
 
+    public Config getSubstepsConfig(){
+        return config.getConfig("org.substeps.config");
+    }
+
     public Config getConfig(){
         return config;
     }

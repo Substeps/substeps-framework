@@ -13,7 +13,7 @@ import com.technophobia.substeps.runner._
 import com.technophobia.substeps.runner.builder.ExecutionNodeTreeBuilder
 import com.technophobia.substeps.runner.setupteardown.SetupAndTearDown
 import com.technophobia.substeps.runner.syntax._
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{Config, ConfigFactory, ConfigValueFactory}
 import org.hamcrest.Matchers._
 import org.json4s.NoTypeHints
 import org.json4s.native.Serialization
@@ -41,7 +41,7 @@ trait FeatureFilesFromSource {
 /**
   * Created by ian on 20/05/16.
   */
-class ParsingFromSourceTests extends FlatSpec with ShouldMatchers with FeatureFilesFromSource {
+class ParsingFromSourceTests extends FlatSpec with ShouldMatchers with FeatureFilesFromSource with WritesResultsData {
 
   val UTF8 = Charset.forName("UTF-8")
 
@@ -287,8 +287,12 @@ Scenario: inline table
 
     val parameters: TestParameters = new TestParameters(tagManager, syntax, List(featureFile).asJava)
 
-    val cfgWrapper = new ExecutionConfigWrapper(executionConfig)
-    val nodeTreeBuilder: ExecutionNodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, cfgWrapper)
+//    val cfgWrapper = new ExecutionConfigWrapper(executionConfig)
+
+    val cfg: Config = NewSubstepsExecutionConfig.toConfig(executionConfig)
+
+
+    val nodeTreeBuilder: ExecutionNodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, cfg)
 
     // building the tree can throw critical failures if exceptions are found
     val rootNode = nodeTreeBuilder.buildExecutionNodeTree("test description")
@@ -296,8 +300,8 @@ Scenario: inline table
     log.debug("rootNode 1:\n" + rootNode.toDebugString)
 
     val executionCollector = new ExecutionResultsCollector
-    val dataDir = ExecutionResultsCollector.getBaseDir(new File("target"))
-    executionCollector.setDataDir(dataDir)
+    val dataDir = getBaseDir(new File("target"))
+    executionCollector.setDataDir(new File(dataDir, "1"))
     executionCollector.setPretty(true)
 
     executionConfig.setDataOutputDirectory(dataDir)
@@ -311,8 +315,10 @@ Scenario: inline table
 
     val setupAndTearDown: SetupAndTearDown = new SetupAndTearDown(executionConfig.getInitialisationClasses, methodExecutorToUse)
 
+//    val cfg = NewSubstepsExecutionConfig.toConfig(executionConfig)
 
-    val rootNode2 = runner.prepareExecutionConfig(new ExecutionConfigWrapper(executionConfig), syntax, parameters, setupAndTearDown, methodExecutorToUse, nonFatalTAgManager)
+
+    val rootNode2 = runner.prepareExecutionConfig(cfg, syntax, parameters, setupAndTearDown, methodExecutorToUse, nonFatalTAgManager)
 
     executionCollector.initOutputDirectories(rootNode2)
 
@@ -365,6 +371,7 @@ Scenario: inline table
       """.stripMargin)
 
 
+    //noinspection TypeAnnotation
     @StepImplementations
     class StepImpls () extends ProvidesScreenshot {
 
@@ -468,8 +475,12 @@ Scenario: inline table
 
     val parameters: TestParameters = new TestParameters(new TagManager(tags.getOrElse(null)), syntax, featureFileList.asJava)
 
-    val cfgWrapper = new ExecutionConfigWrapper(executionConfig)
-    val nodeTreeBuilder: ExecutionNodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, cfgWrapper)
+//    val cfgWrapper = new ExecutionConfigWrapper(executionConfig)
+
+    val cfg = NewSubstepsExecutionConfig.toConfig(executionConfig)
+
+
+    val nodeTreeBuilder: ExecutionNodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, cfg)
 
     // building the tree can throw critical failures if exceptions are found
     val rootNode = nodeTreeBuilder.buildExecutionNodeTree(suiteDescription)
@@ -477,8 +488,8 @@ Scenario: inline table
     log.debug("node tree builder rootNode 1:\n" + rootNode.toDebugString)
 
     val executionCollector = new ExecutionResultsCollector
-    val dataDir = ExecutionResultsCollector.getBaseDir(new File("target"))
-    executionCollector.setDataDir(dataDir)
+    val dataDir = getBaseDir(new File("target"))
+    executionCollector.setDataDir(new File(dataDir, "1"))
     executionCollector.setPretty(true)
 
     executionConfig.setDataOutputDirectory(dataDir)
@@ -492,8 +503,10 @@ Scenario: inline table
 
     val setupAndTearDown: SetupAndTearDown = new SetupAndTearDown(executionConfig.getInitialisationClasses, methodExecutorToUse)
 
+//    val cfg = NewSubstepsExecutionConfig.toConfig(executionConfig)
 
-    val rootNode2 = runner.prepareExecutionConfig(new ExecutionConfigWrapper(executionConfig), syntax, parameters, setupAndTearDown, methodExecutorToUse, TagManager.fromTags(nonFatalTags.getOrElse(null)))
+
+    val rootNode2 = runner.prepareExecutionConfig(cfg, syntax, parameters, setupAndTearDown, methodExecutorToUse, TagManager.fromTags(nonFatalTags.getOrElse(null)))
 
     executionCollector.initOutputDirectories(rootNode2)
 
@@ -511,6 +524,15 @@ Scenario: inline table
     * NB. this is the test that generates the source data, then used to test out report building
     */
 
+  // TODO - think there's some stuff missing from here the config that's generated as a result is lacking..
+  // No configuration setting found for key 'org.substeps.config.executionConfig.dataOutputDir = "src/test/resources/sample-results-data/1"
+
+  // missing
+  // org.substeps.config.description
+  // org.substeps.config.executionConfigs[0].dataOutputDir
+
+
+
   "run some features to test the generation of raw report data" must "create the raw data files" in {
 
     val simpleFeature =
@@ -519,7 +541,7 @@ Scenario: inline table
         | Feature: a simple feature
         | Scenario: A basic passing scenario
         |   PassingStepImpl
-        |   PassingSubstepDefExecutionNodeTreeBuilder
+        |   PassingSubstepDef
         |   WithParamsSubstepDef "a" and "b"
         |
         | Tags: scenario-level-tag
@@ -563,6 +585,7 @@ Scenario: inline table
         |
       """.stripMargin
 
+    //noinspection TypeAnnotation
     @StepImplementations
     class StepImpls () extends ProvidesScreenshot {
 
@@ -614,8 +637,22 @@ Scenario: inline table
 
     val parameters: TestParameters = new TestParameters(new TagManager(""), syntax, List(featureFile, featureFile2).asJava)
 
-    val cfgWrapper = new ExecutionConfigWrapper(executionConfig)
-    val nodeTreeBuilder: ExecutionNodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, cfgWrapper)
+    val rootDataDir = getBaseDir(new File("target"))
+
+    val baseCfg = NewSubstepsExecutionConfig.toConfig(executionConfig).withValue("org.substeps.config.rootDataDir", ConfigValueFactory.fromAnyRef(rootDataDir.getPath))
+
+    val masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(baseCfg, None)
+
+    val configs = NewSubstepsExecutionConfig.splitConfig(masterConfig)
+
+
+    // write out the master config to the root data dir
+    ExecutionResultsCollector.writeMasterConfig(masterConfig, rootDataDir)
+
+    val cfg = configs.head
+
+
+    val nodeTreeBuilder: ExecutionNodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, cfg)
 
     // building the tree can throw critical failures if exceptions are found
     val rootNode = nodeTreeBuilder.buildExecutionNodeTree("test description")
@@ -623,11 +660,11 @@ Scenario: inline table
     log.debug("rootNode 1:\n" + rootNode.toDebugString)
 
     val executionCollector = new ExecutionResultsCollector
-    val dataDir = ExecutionResultsCollector.getBaseDir(new File("target"))
-    executionCollector.setDataDir(dataDir)
+    val configDataDir = new File(rootDataDir, "1")
+    executionCollector.setDataDir(configDataDir)
     executionCollector.setPretty(true)
 
-    executionConfig.setDataOutputDirectory(dataDir)
+    executionConfig.setDataOutputDirectory(rootDataDir)
 
     val runner = new ExecutionNodeRunner()
 
@@ -639,7 +676,8 @@ Scenario: inline table
     val setupAndTearDown: SetupAndTearDown = new SetupAndTearDown(executionConfig.getInitialisationClasses, methodExecutorToUse)
 
 
-    val rootNode2 = runner.prepareExecutionConfig(new ExecutionConfigWrapper(executionConfig), syntax, parameters, setupAndTearDown, methodExecutorToUse, null)
+
+    val rootNode2 = runner.prepareExecutionConfig(cfg, syntax, parameters, setupAndTearDown, methodExecutorToUse, null)
 
     executionCollector.initOutputDirectories(rootNode2)
 
@@ -648,10 +686,13 @@ Scenario: inline table
     val finalRootNode = runner.run()
 
     // what are we expecting now:
-//    val rootDir = executionCollector.getRootReportsDir
-    dataDir.exists() should be (true)
+    rootDataDir.exists() should be (true)
 
-    val featureDirs = dataDir.listFiles().toList.filter(f => f.isDirectory)
+    val masterConfigOption = rootDataDir.listFiles().toList.find(f => f.getName == "masterConfig.conf")
+
+    masterConfigOption shouldBe defined
+
+    val featureDirs = configDataDir.listFiles().toList.filter(f => f.isDirectory)
 
     featureDirs.size should be (2)
 
@@ -674,7 +715,7 @@ Scenario: inline table
 
     }
 
-    val resultSummaryFile = dataDir.listFiles().toList.filter(f => f.isFile)
+    val resultSummaryFile = configDataDir.listFiles().toList.filter(f => f.isFile)
 
     resultSummaryFile.size should be (1)
 
@@ -685,7 +726,7 @@ Scenario: inline table
 //    reportBuilder.buildReport()
   }
 
-  def validateSimpleFeatureResults(featureDir: File) = {
+  private def validateSimpleFeatureResults(featureDir: File) = {
 
     val featureResults = featureDir.listFiles().toList
     featureResults.length should be (4)
@@ -746,7 +787,7 @@ Scenario: inline table
   }
 
 
-
+  // TODO - failing
   "running the same features with multiple configurations" must "generate data in a way that the report builder can pick it up" in {
 
     val simpleFeature =
@@ -777,6 +818,7 @@ Scenario: inline table
         |
       """.stripMargin
 
+    //noinspection TypeAnnotation
     @StepImplementations
     class StepImpls  extends ProvidesScreenshot {
 
@@ -822,14 +864,12 @@ Scenario: inline table
     val stepImplClassName = new StepImpls().getClass.getName
 
     // one data dir
-    val dataDir = ExecutionResultsCollector.getBaseDir(new File("target"))
+    val dataDir = getBaseDir(new File("target"))
     val dataDirPath = dataDir.getAbsolutePath
 
     val dataOutoutDir1 = """${org.substeps.config.rootDataDir}"/1""""
     val dataOutoutDir2 = """${org.substeps.config.rootDataDir}"/2""""
 
-    val spare = """
-                  |"""
 
     val cfgFileContents =
       s"""
@@ -838,7 +878,7 @@ Scenario: inline table
         |   config {
         |     executionConfigs=[
         |         {
-        |         dataOutputDir=$dataOutoutDir1
+        |         dataOutputDir=1
         |         description="Parsing from source Test Features 1"
         |         executionListeners=[
         |             "com.technophobia.substeps.runner.logger.StepExecutionLogger"
@@ -851,7 +891,7 @@ Scenario: inline table
         |         substepsFile="temp_substep_def.substeps"
         |         },
         |         {
-        |         dataOutputDir=$dataOutoutDir2
+        |         dataOutputDir=2
         |         description="Parsing from source Test Features 2"
         |         executionListeners=[
         |             "com.technophobia.substeps.runner.logger.StepExecutionLogger"
@@ -864,14 +904,8 @@ Scenario: inline table
         |         substepsFile="temp_substep_def.substeps"
         |         }
         |        ]
-        |     executionListeners=[
-        |       "com.technophobia.substeps.runner.logger.StepExecutionLogger"
-        |     ]
-        |     executionResultsCollector="org.substeps.report.ExecutionResultsCollector"
-        |     jmxPort=9999
-        |     reportBuilder="org.substeps.report.ReportBuilder"
-        |     reportDir="target/substeps_report"
         |     rootDataDir="${dataDirPath}"
+        |     description="Parsing from source test suite"
         |     }
         |   }
         | }
@@ -881,13 +915,21 @@ Scenario: inline table
 
     val baseCfg = ConfigFactory.parseString(cfgFileContents)
 
-    val masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(baseCfg, None)
+    println("BASE CFG: " + baseCfg.root().render())
+
+    val masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(baseCfg, None).withValue("org.substeps.config.reportDir", ConfigValueFactory.fromAnyRef(getBaseDir(new File("target"), "substeps-report_").toString))
 
     val configs = NewSubstepsExecutionConfig.splitConfig(masterConfig)
 
     val syntax: Syntax = SyntaxBuilder.buildSyntax(stepImplementationClasses.asJava, parentMap)
 
     val parameters: TestParameters = new TestParameters(new TagManager(""), syntax, List(featureFile).asJava)
+
+    val rootDataDir: File = NewSubstepsExecutionConfig.getRootDataDir(masterConfig)
+
+    // write out the master config to the root data dir
+    ExecutionResultsCollector.writeMasterConfig(masterConfig, rootDataDir)
+
 
     configs.foreach(cfg => {
 
@@ -898,8 +940,6 @@ Scenario: inline table
       log.debug("rootNode 1:\n" + rootNode.toDebugString)
 
       val executionCollector = new ExecutionResultsCollector
-
-      // TODO - different dirs for each execution config ? specify the different sub dirs in config ?
 
       val dataDirForReportBuilder = NewSubstepsExecutionConfig.getDataOutputDirectory(cfg)
 
@@ -938,7 +978,7 @@ Scenario: inline table
     val localReportBuilder = NewSubstepsExecutionConfig.getReportBuilder(masterConfig)
     val reportDir = NewSubstepsExecutionConfig.getReportDir(masterConfig)
 
-    val rootDataDir = NewSubstepsExecutionConfig.getRootDataDir(masterConfig)
+
 
     localReportBuilder.buildFromDirectory(rootDataDir, reportDir, null)
 

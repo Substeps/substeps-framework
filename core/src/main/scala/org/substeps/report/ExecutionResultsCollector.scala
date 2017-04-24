@@ -12,6 +12,7 @@ import com.technophobia.substeps.execution.{ExecutionNodeResult, ExecutionResult
 import com.technophobia.substeps.execution.node._
 import com.technophobia.substeps.model.exception.SubstepsRuntimeException
 import com.technophobia.substeps.runner.IExecutionListener
+import com.typesafe.config.Config
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.JavaConversions._
@@ -19,6 +20,7 @@ import scala.collection.JavaConverters._
 import org.json4s._
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization.{write, writePretty}
+import org.substeps.runner.NewSubstepsExecutionConfig
 
 import scala.collection.mutable
 
@@ -26,13 +28,37 @@ import scala.collection.mutable
   * Created by ian on 05/05/16.
   */
 object ExecutionResultsCollector{
-  def getBaseDir(rootDir : File) = {
-    new File( rootDir, "substeps-results_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYYMMdd_HHmm_ss_SSS")))
+
+  val UTF8 = Charset.forName("UTF-8")
+
+  def writeMasterConfig(masterConfig: Config, rootDataDir: File) = {
+    val outFile = new File(rootDataDir, "masterConfig.conf")
+
+    mkdirOrException(rootDataDir)
+
+    Files.write(NewSubstepsExecutionConfig.render(masterConfig), outFile, UTF8)
   }
+
+  def mkdirOrException(dir : File) = {
+    if (!dir.exists()){
+
+      if (!dir.mkdirs()){
+        throw new SubstepsRuntimeException("Failed to create dir: " + dir.getAbsolutePath)
+      }
+    }
+
+  }
+
+
+
+
+
 }
 
 
 class ExecutionResultsCollector extends  IExecutionResultsCollector {
+
+  import ExecutionResultsCollector._
 
   @transient
   private lazy val log: Logger = LoggerFactory.getLogger(classOf[ExecutionResultsCollector])
@@ -47,8 +73,6 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
   def setDataDir(dir : File) = this.dataDir = dir
   def setPretty(pretty : Boolean) = this.pretty = pretty
 
-  @transient
-  lazy val UTF8 = Charset.forName("UTF-8")
 
   var featureToResultsDirMap: Map[Long, File] = Map()
 
@@ -57,6 +81,7 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
   def onNodeFailed(node: IExecutionNode, cause: Throwable): Unit = {
 
     log.debug("ExecutionResultsCollector nodeFailed: " + node.getId)
+
 
 
     node match {
@@ -349,12 +374,7 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
 
   def initOutputDirectories(rootNode: RootNode) {
 
-    if (!dataDir.exists()){
-
-      if (!dataDir.mkdirs()){
-        throw new SubstepsRuntimeException("Failed to create root execution results dir: " + dataDir.getAbsolutePath)
-      }
-    }
+    mkdirOrException(dataDir)
 
     log.info("collecting data into " + dataDir.getAbsolutePath)
 

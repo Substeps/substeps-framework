@@ -21,6 +21,7 @@ package com.technophobia.substeps.runner;
 import com.technophobia.substeps.execution.node.RootNode;
 import com.typesafe.config.Config;
 import org.apache.maven.plugin.logging.Log;
+import org.substeps.runner.NewSubstepsExecutionConfig;
 
 import java.util.List;
 
@@ -45,10 +46,10 @@ public class InProcessRunner implements MojoRunner {
         return executionNodeRunner.prepareExecutionConfig(theConfig);
     }
 
-    @Override
+//    @Override
     public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
 
-        return executionNodeRunner.prepareExecutionConfig(theConfig);
+        return executionNodeRunner.prepareExecutionConfig(NewSubstepsExecutionConfig.toConfig(theConfig));
     }
 
     @Override

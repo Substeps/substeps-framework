@@ -4,7 +4,7 @@
   "lineNumber":0,
   "result":"PASSED",
   "id":42,
-  "executionDurationMillis":3,
+  "executionDurationMillis":27,
   "description":"A basic passing scenario",
   "children":[
     {
@@ -13,9 +13,9 @@
       "lineNumber":5,
       "result":"PASSED",
       "id":37,
-      "executionDurationMillis":2,
+      "executionDurationMillis":15,
       "description":"PassingStepImpl",
-      "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.passingStepImpl()",
+      "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$5$StepImpls$3.passingStepImpl()",
       "children":[
         
       ],
@@ -27,7 +27,7 @@
       "lineNumber":2,
       "result":"PASSED",
       "id":39,
-      "executionDurationMillis":1,
+      "executionDurationMillis":3,
       "description":"PassingSubstepDef",
       "children":[
         {
@@ -38,7 +38,7 @@
           "id":38,
           "executionDurationMillis":0,
           "description":"AnotherPassingStepImpl",
-          "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.anotherPassingStepImpl()",
+          "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$5$StepImpls$3.anotherPassingStepImpl()",
           "children":[
             
           ],
@@ -53,7 +53,7 @@
       "lineNumber":8,
       "result":"PASSED",
       "id":41,
-      "executionDurationMillis":0,
+      "executionDurationMillis":7,
       "description":"WithParamsSubstepDef \"a\" and \"b\"",
       "children":[
         {
@@ -62,9 +62,9 @@
           "lineNumber":9,
           "result":"PASSED",
           "id":40,
-          "executionDurationMillis":0,
+          "executionDurationMillis":7,
           "description":"WithParams \"a\" \"b\"",
-          "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$3$StepImpls$1.twoParams(java.lang.String,java.lang.String)",
+          "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$5$StepImpls$3.twoParams(java.lang.String,java.lang.String)",
           "children":[
             
           ],

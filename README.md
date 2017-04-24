@@ -17,6 +17,11 @@ Requirements
 ------------
  * Java 8
 
+1.1.0
+-----
+* Moved substeps config to a single org.substeps hierarchy, existing overrides will still be used, but config should be updated
+* Moved maven pom configuration to config files (multiple).  Maven plugin will print out the new config from existing pom settings
+
 1.0.6
 -----
 * Redacted some of the output of the config

@@ -66,8 +66,11 @@ public class DryRunTest {
 
         Config cfg = NewSubstepsExecutionConfig.toConfig(theConfig);
 
+        Config masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(cfg);
 
-        final RootNode rootNode = runner.prepareExecutionConfig(cfg);
+        Config config = NewSubstepsExecutionConfig.splitConfigAsOne(masterConfig);
+
+        final RootNode rootNode = runner.prepareExecutionConfig(config);
 
         System.out.println("rootNode:\n" +
                 rootNode.toDebugString());

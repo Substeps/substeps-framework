@@ -351,10 +351,12 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
     @Override
     public RootNode prepareExecutionConfig(Config theConfig) {
 
+        // TODO
+
         throw new UnsupportedOperationException("sorry not yet implented!");
     }
 
-    @Override
+//    @Override
     public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
 
         byte[] bytes = substepsJmxClient.prepareExecutionConfigAsBytes(theConfig);

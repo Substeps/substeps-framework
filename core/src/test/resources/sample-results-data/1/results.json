@@ -1,9 +1,9 @@
 {
   "nodeType":"RootNode",
-  "description":null,
+  "description":"Substeps test execution description",
   "result":"FAILED",
   "id":72,
-  "executionDurationMillis":607,
+  "executionDurationMillis":640,
   "features":[
     {
       "nodeId":51,
@@ -16,6 +16,6 @@
       "result":"CHILD_FAILED"
     }
   ],
-  "timestamp":1475823914962,
+  "timestamp":1492636994076,
   "environment":"localhost"
 }

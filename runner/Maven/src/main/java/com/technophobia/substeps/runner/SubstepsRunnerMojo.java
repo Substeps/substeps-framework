@@ -278,29 +278,29 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
         this.buildFailureManager.addExecutionResult(rootNode);
     }
 
-    private void runExecutionConfig(final ExecutionConfig theConfig) throws MojoExecutionException {
-
-        final SubstepsExecutionConfig cfg =  theConfig.asSubstepsExecutionConfig();
-
-        this.getLog().info("SubstepsExecutionConfig: " + cfg.printParameters());
-
-        final RootNode iniitalRootNode = this.runner.prepareExecutionConfig(cfg);
-
-        this.executionResultsCollector.initOutputDirectories(iniitalRootNode);
-
-        this.runner.addNotifier(this.executionResultsCollector);
-
-        final RootNode rootNode = this.runner.run();
-
-        if (theConfig.getDescription() != null) {
-
-            rootNode.setLine(theConfig.getDescription());
-        }
-
-       addToLegacyReport(rootNode);
-
-        this.buildFailureManager.addExecutionResult(rootNode);
-    }
+//    private void runExecutionConfig(final ExecutionConfig theConfig) throws MojoExecutionException {
+//
+//        final SubstepsExecutionConfig cfg =  theConfig.asSubstepsExecutionConfig();
+//
+//        this.getLog().info("SubstepsExecutionConfig: " + cfg.printParameters());
+//
+//        final RootNode iniitalRootNode = this.runner.prepareExecutionConfig(cfg);
+//
+//        this.executionResultsCollector.initOutputDirectories(iniitalRootNode);
+//
+//        this.runner.addNotifier(this.executionResultsCollector);
+//
+//        final RootNode rootNode = this.runner.run();
+//
+//        if (theConfig.getDescription() != null) {
+//
+//            rootNode.setLine(theConfig.getDescription());
+//        }
+//
+//       addToLegacyReport(rootNode);
+//
+//        this.buildFailureManager.addExecutionResult(rootNode);
+//    }
 
 
 

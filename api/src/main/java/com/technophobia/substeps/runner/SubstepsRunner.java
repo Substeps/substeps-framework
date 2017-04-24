@@ -30,7 +30,7 @@ public interface SubstepsRunner {
 
     RootNode prepareExecutionConfig(final Config theConfig);
 
-    RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig);
+//    RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig);
 
     RootNode run();
 

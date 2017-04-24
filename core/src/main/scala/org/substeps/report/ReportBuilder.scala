@@ -8,15 +8,27 @@ import java.time.format.DateTimeFormatter
 import com.google.common.io.Files
 import com.technophobia.substeps.execution.ExecutionResult
 import com.technophobia.substeps.report.{DefaultExecutionReportBuilder, DetailedJsonBuilder}
+import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringEscapeUtils
 import org.json4s._
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization._
 import org.slf4j.{Logger, LoggerFactory}
+import org.substeps.runner.NewSubstepsExecutionConfig
 
 import scala.beans.BeanProperty
 
+abstract class RootNodeDescriptionProvider{
+
+   def describe(config : Config) : String
+}
+
+class DefaultDescriptionProvider extends RootNodeDescriptionProvider{
+  override def describe(config: Config): String = {
+    config.getString("org.substeps.config.executionConfig.description")
+  }
+}
 
 object ReportBuilder {
   def openStateFor(result: String) = {
@@ -33,6 +45,7 @@ object ReportBuilder {
   def iconFor(result: String): String = {
     icons.getOrElse(result, "PARSE_FAILURE")
   }
+
 
 
   val icons = Map("PASSED" -> "PASSED",
@@ -70,8 +83,8 @@ object ReportBuilder {
 
 case class FeatureDetails(summary : FeatureSummary, nodeDetails :  List[NodeDetail])
 
-case class SourceDataModel(rootNodeSummary : RootNodeSummary, featuresList : List[FeatureDetails]) {
-  def this(rootNodeSummary : RootNodeSummary, features : List[FeatureDetails]) = this(List(rootNodeSummary), List(features))
+case class SourceDataModel(rootNodeSummary : RootNodeSummary, featuresList : List[FeatureDetails], config : Config) {
+//  def this(rootNodeSummary : RootNodeSummary, features : List[FeatureDetails]) = this(List(rootNodeSummary), List(features))
 }
 
 case object SourceDataModel{
@@ -156,38 +169,46 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     safeCopy(new File(sourceDataDir, "uncalled.stepdefs.js"), new File(reportDir, "uncalled.stepdefs.js"))
     safeCopy(new File(sourceDataDir, "uncalled.stepimpls.js"), new File(reportDir, "uncalled.stepimpls.js"))
 
+
+
+    val cfgFile = new File(dataDir, "masterConfig.conf")
+
+    val masterConfig = ConfigFactory.parseFile(cfgFile)
+
+    val srcDataList: List[SourceDataModel] = readModels(masterConfig)
+
     val detailData = createFile( "detail_data.js")
-
-    val srcDataList: List[SourceDataModel] = readModels(dataDir)
-
-//    val srcData = SourceDataModel.merge(srcDataList)
 
     createDetailData(detailData,srcDataList)
 
     val resultsTreeJs = createFile( "substeps-results-tree.js")
 
-    createTreeData2(resultsTreeJs,srcData)
+    val suiteDescription = masterConfig.getString("org.substeps.config.description")
 
-    val reportFrameHTML = createFile( "report_frame.html")
+    createTreeData2(resultsTreeJs,srcDataList, suiteDescription)
+
+    val reportFrameHTMLFile = createFile( "report_frame.html")
 
 
-    val stats : ExecutionStats = buildExecutionStats(srcData)
+    val stats : ExecutionStats = buildExecutionStats(srcDataList)
 
-    // TODO - only taking the head element
-    val localDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(srcData.rootNodeSummary.head.timestamp), ZoneId.systemDefault())
+    // only taking the head element for the timestamp
+    val localDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(srcDataList.head.rootNodeSummary.timestamp), ZoneId.systemDefault())
     val dateTimeString = localDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss"))
 
 
     // TODO - only taking the head element
 
-    val reportFrameHtml = buildReportFrame(srcData.rootNodeSummary.head, stats, dateTimeString)
+    val rootNodeSummaries = srcDataList.map(_.rootNodeSummary)
+
+    val reportFrameHtml = buildReportFrame(masterConfig, rootNodeSummaries, stats, dateTimeString)
 
 
-    withWriter(reportFrameHTML, writer => writer.append(reportFrameHtml))
+    withWriter(reportFrameHTMLFile, writer => writer.append(reportFrameHtml))
 
     copyStaticResources()
 
-    val statsByTag = buildExecutionStatsByTag(srcData)
+    val statsByTag = buildExecutionStatsByTag(srcDataList)
 
     val statsJsFile = createFile("substeps-stats-by-tag.js")
     writeStatsJs(statsJsFile, statsByTag)
@@ -195,7 +216,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
     val usageTreeDataFile = createFile("substeps-usage-tree.js")
 
-    createUsageTree(usageTreeDataFile, srcData)
+    createUsageTree(usageTreeDataFile, srcDataList)
 
     val usageTreeHTMLFile  = createFile( "usage-tree.html")
 
@@ -244,29 +265,31 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     })
   }
 
-  def buildExecutionStats(srcData: SourceDataModel): ExecutionStats = { //(RootNodeSummary, List[(FeatureSummary, List[NodeDetail])])): ExecutionStats = {
+  def buildExecutionStats(srcDataList: List[SourceDataModel]): ExecutionStats = { //(RootNodeSummary, List[(FeatureSummary, List[NodeDetail])])): ExecutionStats = {
+
+    val combinedFeatureList = srcDataList.flatMap(s => s.featuresList)
 
     val featureAndScenarioCounters =
-    srcData.features.map(f => {
+      combinedFeatureList.map(f => {
 
-      val scenarioCounters =
-        f.nodeDetails.map(scenario => {
-          ReportBuilder.resultToCounters.get(scenario.result) match {
+        val scenarioCounters =
+          f.nodeDetails.map(scenario => {
+            ReportBuilder.resultToCounters.get(scenario.result) match {
 
-            case Some(counter) => counter
-            case _ => throw new IllegalStateException("unhandled result type in stats counter: " + scenario.result)
-          }
-        })
+              case Some(counter) => counter
+              case _ => throw new IllegalStateException("unhandled result type in stats counter: " + scenario.result)
+            }
+          })
 
-      val fCounters =
-      ReportBuilder.resultToCounters.get(f.summary.result) match {
+        val fCounters =
+        ReportBuilder.resultToCounters.get(f.summary.result) match {
 
-        case Some(counter) => counter
-        case _ => throw new IllegalStateException("unhandled result type in stats counter: " + f.summary.result)
-      }
+          case Some(counter) => counter
+          case _ => throw new IllegalStateException("unhandled result type in stats counter: " + f.summary.result)
+        }
 
-      (fCounters, scenarioCounters)
-    })
+        (fCounters, scenarioCounters)
+      })
 
     var featureCounter = Counters.ZERO
     featureAndScenarioCounters.foreach(fc => {
@@ -284,7 +307,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
 
     val allNodeDetails =
-    srcData.features.flatMap(f => {
+      combinedFeatureList.flatMap(f => {
       val scenarios = f.nodeDetails
 
       scenarios.flatMap(scenario => scenario.flattenTree())
@@ -316,14 +339,16 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
   }
 
 
-  def buildExecutionStatsByTag(srcData: SourceDataModel) = { //(RootNodeSummary, List[(FeatureSummary, List[NodeDetail])])) = {
+  def buildExecutionStatsByTag(srcDataList: List[SourceDataModel]) = { //(RootNodeSummary, List[(FeatureSummary, List[NodeDetail])])) = {
 
     val allNodeDetails =
-      srcData.features.flatMap(f => {
-        val scenarios = f.nodeDetails
-
-        scenarios.flatMap(scenario => scenario.flattenTree())
+      srcDataList.flatMap(srcData => {
+        srcData.featuresList.flatMap(f => {
+          val scenarios = f.nodeDetails
+          scenarios.flatMap(scenario => scenario.flattenTree())
+        })
       })
+
 
     val scenarioNodeDetails = allNodeDetails.filter(nd => nd.nodeType == "BasicScenarioNode")
 
@@ -345,7 +370,10 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
 
 
-    val featureSummaries = srcData.features.map(_.summary)
+    val featureSummaries = //srcData.features.map(_.summary)
+      srcDataList.flatMap(srcData => {
+        srcData.featuresList.map(_.summary)})
+
     val allFeatureTags = featureSummaries.flatMap(f => f.tags).distinct
 
     val featureCountersWithTags =
@@ -382,12 +410,20 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
   }
 
 
-  def createUsageTree(usageTreeDataFile: File, srcData: SourceDataModel) = { //(RootNodeSummary, List[(FeatureSummary, List[NodeDetail])])) = {
+  def createUsageTree(usageTreeDataFile: File, srcDataList: List[SourceDataModel]) = { //(RootNodeSummary, List[(FeatureSummary, List[NodeDetail])])) = {
+
+//    val allNodeDetails =
+//      srcData.features.flatMap(f => {
+//        val scenarios = f.nodeDetails
+//        scenarios.flatMap(scenario => scenario.flattenTree())
+//      })
 
     val allNodeDetails =
-      srcData.features.flatMap(f => {
-        val scenarios = f.nodeDetails
-        scenarios.flatMap(scenario => scenario.flattenTree())
+      srcDataList.flatMap(srcData => {
+        srcData.featuresList.flatMap(f => {
+          val scenarios = f.nodeDetails
+          scenarios.flatMap(scenario => scenario.flattenTree())
+        })
       })
 
 
@@ -584,22 +620,42 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
   }
 
-  def readModels(rootDir : File)(implicit reportDir : File) : List[SourceDataModel] = {
+  def readModels(masterConfig : Config)(implicit reportDir : File) : List[SourceDataModel] = {
 
-    val dirFiles = rootDir.listFiles().toList
-    val dirFileNames = dirFiles.map(f => f.getName)
+    val executionConfigs = NewSubstepsExecutionConfig.splitConfig(masterConfig)
 
-    // is there are results.json in there ?
-    if (dirFileNames.contains("results.json")){
-        List(readModel(rootDir))
-    }
-    else {
-      // go deeper
-      dirFiles.flatMap(f => readModels(f))
-    }
+    // each exec config will have an output dir
+    executionConfigs.map(cfg =>{
+
+      val dataDir = NewSubstepsExecutionConfig.getDataDirForConfig(cfg)
+
+      readModel(dataDir, cfg)
+    })
+
+
   }
 
-  def readModel(srcDir : File)(implicit reportDir : File) : SourceDataModel = {
+//  def readModels(rootDir : File)(implicit reportDir : File) : List[SourceDataModel] = {
+//
+//    val dirFiles = rootDir.listFiles().toList
+//    val dirFileNames = dirFiles.map(f => f.getName)
+//
+//    // is there are results.json in there ?
+//    if (dirFileNames.contains("results.json")){
+//        List(readModel(rootDir))
+//    }
+//
+//    else {
+//      val otherFiles = dirFiles.filterNot(f => f.getName == "masterConfig.conf")
+//
+//      // go deeper
+//
+//      otherFiles.flatMap(f => readModels(f))
+//
+//    }
+//  }
+
+  def readModel(srcDir : File, config : Config)(implicit reportDir : File) : SourceDataModel = {
 
     implicit val formats = Serialization.formats(NoTypeHints)
 
@@ -643,9 +699,9 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     }
 
     val featureDetailList =
-    featureSummaries.map(fs => new FeatureDetails(fs._1, fs._2))
+      featureSummaries.map(fs => new FeatureDetails(fs._1, fs._2))
 
-    new SourceDataModel(resultsFileOption.get, featureDetailList)
+    new SourceDataModel(resultsFileOption.get, featureDetailList, config)
     //(resultsFileOption.get, featureSummaries)
 
   }
@@ -660,60 +716,73 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
   }
 
+  // (RootNodeSummary, List[(FeatureSummary, List[NodeDetail])])
+  def createTreeData3(srcData : SourceDataModel) = {
 
-  def createTreeData2(file : File, srcData : SourceDataModel) = { //(RootNodeSummary, List[(FeatureSummary, List[NodeDetail])])) = {
+    val children =
+      srcData.featuresList.map(features => {
 
-    val rootChildren =
-    srcData.featuresList.map(features => {
-      val children =
-        features.map(feature => {
-          val featureScenarios = feature.nodeDetails.map(n => buildForJsonTreeNode(n))
+        val featureScenarios = features.nodeDetails.map(n => buildForJsonTreeNode(n))
 
-          val childrenOption = if (featureScenarios.isEmpty) None else Some(featureScenarios)
+        val childrenOption = if (featureScenarios.isEmpty) None else Some(featureScenarios)
 
-          // create a node for the feature:
-          // TODO - only taking the head element
+        // create a node for the feature:
+        val icon = ReportBuilder.iconFor(features.summary.result)
 
-          val icon = ReportBuilder.iconFor(feature.summary.result) //srcData.rootNodeSummary.head.result)
+        val state = State.forResult(features.summary.result)
 
-          val state = State.forResult(feature.summary.result)
+        JsTreeNode(features.summary.id.toString, features.summary.description, icon, childrenOption, state)
 
-          JsTreeNode(feature.summary.id.toString, feature.summary.description, icon, childrenOption, state)
+      })
 
-        })
+    val childrenOption = if (children.isEmpty) None else Some(children)
+
+    val icon = ReportBuilder.iconFor(srcData.rootNodeSummary.result)
+
+    val state = State.forResult(srcData.rootNodeSummary.result)
+
+    //val rootNode =
+    JsTreeNode(srcData.rootNodeSummary.id.toString, srcData.rootNodeSummary.description, icon, childrenOption, state)
+
+//    withWriter(file, writer =>{
+//      writer.append("var treeData = ")
+//
+//      implicit val formats = Serialization.formats(NoTypeHints)
+//
+//      writer.append(writePretty(rootNode))
+//    })
+
+  }
+
+  def consolidateResult(results : List[String]) : String = {
+
+    if (results.contains("FAILED")) "FAILED"
+    else if (results.contains("CHILD_FAILED")) "CHILD_FAILED"
+    else if (results.contains("PARSE_FAILURE")) "PARSE_FAILURE"
+    else "PASSED"
+  }
 
 
-      val childrenOption = if (children.isEmpty) None else Some(children)
+  def createTreeData2(file : File, srcDataList : List[SourceDataModel], rootDescription : String) = { //(RootNodeSummary, List[(FeatureSummary, List[NodeDetail])])) = {
 
-      // TODO - only taking the head element
+    val srcDataJsTreeNodes =
+      srcDataList.map(srcData => createTreeData3(srcData))
 
-      val icon = ReportBuilder.iconFor(srcData.rootNodeSummary.head.result)
+    val ooberRootNode : JsTreeNode =
+      if (srcDataJsTreeNodes.size > 1){
 
-      val state = State.forResult(srcData.rootNodeSummary.head.result)
+        val combinedResult = consolidateResult(srcDataList.map(s => s.rootNodeSummary.result))
 
-      val rootNode = JsTreeNode(srcData.rootNodeSummary.head.id.toString, srcData.rootNodeSummary.head.description, icon, childrenOption, state)
-      rootNode
-    })
+        val icon = ReportBuilder.iconFor(combinedResult)
 
+        val state = State.forResult(combinedResult)
 
-    val ooberRootNode =
-      if (rootChildren.size > 1){
-
-
-        // TODO - determine what the root icon should be...
-
-        val icon = ReportBuilder.iconFor(srcData.rootNodeSummary.head.result)
-
-        val state = State.forResult(srcData.rootNodeSummary.head.result)
-
-      JsTreeNode(srcData.rootNodeSummary.head.id.toString, srcData.rootNodeSummary.head.description, icon, Some(ooberRootNode), state)
+        JsTreeNode("-1", rootDescription, icon, Some(srcDataJsTreeNodes), state)
 
       }
       else {
-        rootChildren.head
+        srcDataJsTreeNodes.head
       }
-
-
 
     withWriter(file, writer =>{
       writer.append("var treeData = ")
@@ -791,11 +860,11 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
           val nodeDetailList = feature.nodeDetails //features.flatMap(f => f.nodeDetails)//  srcData._2.flatMap(_._2)
 
-          writeRootNode(writer, srcData.rootNodeSummary, featureSummaries)
+          writeRootNode(writer, srcData.rootNodeSummary, featureSummaries, srcData.config)
 
-          featureSummaries.foreach(f => {
-            writeFeatureNode(writer, f, nodeDetailList)
-          })
+//          featureSummaries.foreach(f => {
+            writeFeatureNode(writer, feature.summary, nodeDetailList)
+//          })
         })
 
       })
@@ -816,7 +885,11 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     val children =
     f.scenarios.map(sc => {
 
-      val nodeDetail = nodeDetailList.find(n => n.id == sc.nodeId).get
+      val nodeDetailOption = nodeDetailList.find(n => n.id == sc.nodeId)
+      if(nodeDetailOption.isEmpty){
+        println("stop")
+      }
+      val nodeDetail = nodeDetailOption.get
 
       s"""{"result":"${sc.result}","description":"${nodeDetail.description}"}"""
     })
@@ -863,15 +936,17 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
 
 
-  def writeRootNode(writer : BufferedWriter, rootNodeSummary : RootNodeSummary, featureSummaries : List[FeatureSummary]) = {
+  def writeRootNode(writer : BufferedWriter, rootNodeSummary : RootNodeSummary, featureSummaries : List[FeatureSummary], config : Config) = {
 
 //    "emessage":"At least one critical Feature failed",
 //    "stacktrace": "",
 // "description":null,
 
-//    rootNodeSummaries.foreach(rootNodeSummary => {
+    val descriptionProvider : RootNodeDescriptionProvider = NewSubstepsExecutionConfig.getRootNodeDescriptor(config)
 
-      writer.append(s"""detail[${rootNodeSummary.id}]={"nodetype":"RootNode","filename":"","result":"${rootNodeSummary.result}","id":${rootNodeSummary.id},"runningDurationMillis":${rootNodeSummary.executionDurationMillis.get},"runningDurationString":"${rootNodeSummary.executionDurationMillis.get} milliseconds","children":[""")
+    val rootNodeDescription = descriptionProvider.describe(config)
+
+    writer.append(s"""detail[${rootNodeSummary.id}]={"nodetype":"RootNode","description": "${rootNodeDescription}", "filename":"","result":"${rootNodeSummary.result}","id":${rootNodeSummary.id},"runningDurationMillis":${rootNodeSummary.executionDurationMillis.get},"runningDurationString":"${rootNodeSummary.executionDurationMillis.get} milliseconds","children":[""")
 
       writer.append(
         rootNodeSummary.features.map(f => {
@@ -883,6 +958,5 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
       writer.append("]};\n")
 
-//    })
   }
 }

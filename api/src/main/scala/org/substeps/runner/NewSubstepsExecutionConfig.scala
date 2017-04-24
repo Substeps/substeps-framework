@@ -16,6 +16,24 @@ import scala.collection.JavaConverters._
   * Created by ian on 05/03/17.
   */
 case object NewSubstepsExecutionConfig {
+  def getDataDirForConfig(cfg: Config) : File = {
+
+    if (!cfg.hasPath("org.substeps.config.rootDataDir")){
+      throw new SubstepsConfigurationException("org.substeps.config.rootDataDir must be defined")
+    }
+
+    if (!cfg.hasPath("org.substeps.config.executionConfig.dataOutputDir")){
+      throw new SubstepsConfigurationException("org.substeps.config.executionConfig.dataOutputDir must be defined as the relative path from org.substeps.config.rootDataDir")
+    }
+
+    val dir = new File(cfg.getString("org.substeps.config.rootDataDir"), cfg.getString("org.substeps.config.executionConfig.dataOutputDir"))
+
+//    if (!dir.exists()){
+//      throw new SubstepsConfigurationException(s"data dir ${dir.getAbsolutePath()} for execution config doesn't exist")
+//    }
+    dir
+  }
+
 
   private val log : Logger = LoggerFactory.getLogger("org.substeps.runner.NewSubstepsExecutionConfig")
 
@@ -33,13 +51,15 @@ case object NewSubstepsExecutionConfig {
     import com.google.common.collect.Lists
 
     val execConfig1 = new java.util.HashMap[String, AnyRef]
-    execConfig1.put("description", substepsConfig.getDescription)
+    execConfig1.put("description", Option(substepsConfig.getDescription).getOrElse("Substeps test execution description"))
     execConfig1.put("featureFile", substepsConfig.getFeatureFile)
     if (substepsConfig.getDataOutputDirectory != null) execConfig1.put("dataOutputDir", substepsConfig.getDataOutputDirectory.getPath)
     if (substepsConfig.getNonFatalTags != null) execConfig1.put("nonFatalTags", substepsConfig.getNonFatalTags)
     execConfig1.put("substepsFile", substepsConfig.getSubStepsFileName)
     execConfig1.put("tags", substepsConfig.getTags)
     execConfig1.put("fastFailParseErrors", Boolean.box(substepsConfig.isFastFailParseErrors))
+
+    if (substepsConfig.getScenarioName != null) execConfig1.put("scenarioName", substepsConfig.getScenarioName)
 
     if (substepsConfig.getNonStrictKeywordPrecedence != null)  execConfig1.put("nonStrictKeyWordPrecedence", substepsConfig.getNonStrictKeywordPrecedence.toList.asJava)
 
@@ -51,9 +71,11 @@ case object NewSubstepsExecutionConfig {
     if (substepsConfig.getExecutionListeners != null) execConfig1.put("executionListeners", substepsConfig.getExecutionListeners.toList.asJava)
 
 
+    execConfig1.put("dataOutputDir", "1")
+
 
     ConfigFactory.empty
-      .withValue("org.substeps.config.executionConfig", ConfigValueFactory.fromMap(execConfig1))
+      .withValue("org.substeps.config.executionConfigs", ConfigValueFactory.fromIterable(List(ConfigValueFactory.fromMap(execConfig1)).asJava) )
 //      .withValue("org.substeps.config.jmxPort", ConfigValueFactory.fromAnyRef(this.jmxPort))
 //      .withValue("org.substeps.config.vmArgs", ConfigValueFactory.fromAnyRef(this.vmArgs))
       .withValue("org.substeps.config.executionResultsCollector", ConfigValueFactory.fromAnyRef("org.substeps.report.ExecutionResultsCollector"))
@@ -77,11 +99,19 @@ case object NewSubstepsExecutionConfig {
       .render(options)
   }
 
-  def loadConfig( cfgFile: String, mvnConfigOption : Option[Config]): List[Config] = {
+  def loadConfig( cfgFile: String): List[Config] = {
+    loadConfig(cfgFile, None)
+  }
+
+    def loadConfig( cfgFile: String, mvnConfigOption : Option[Config]): List[Config] = {
 
     val base = ConfigFactory.load(cfgFile, ConfigParseOptions.defaults(), ConfigResolveOptions.defaults().setAllowUnresolved(true))
 
     loadConfig(base, mvnConfigOption)
+  }
+
+  def loadMasterConfig( base: Config): Config = {
+    loadMasterConfig(base, None)
   }
 
   def loadMasterConfig( base: Config, mvnConfigOption : Option[Config]): Config = {
@@ -105,6 +135,41 @@ case object NewSubstepsExecutionConfig {
     masterConfig
   }
 
+  val legacyConfigKeys = List("step.depth.description",
+    "log.unused.uncalled",
+    "report.data.pretty.print",
+    "report.data.base.dir",
+    "base.url",
+    "driver.type",
+    "default.webdriver.timeout.secs",
+    "webdriver.locale",
+    "htmlunit.disable.javascript",
+    "htmlunit.proxy.host",
+    "htmlunit.proxy.port",
+    "network.proxy.host",
+    "network.proxy.port",
+    "step.depth.description",
+    "log.pagesource.onerror",
+    "webdriver.manager.properties")
+
+  def checkMasterConfigForLegacyDefaults(masterConfig : Config) = {
+
+    legacyConfigKeys.find(key => masterConfig.hasPath(key)) match {
+      case Some(k) => {
+        log.warn(
+          "\n" +
+            "****************************************************************************\n" +
+            "*               YOUR CONFIG CONTAINS LEGACY OVERRIDE KEYS !!               *\n" +
+            "****************************************************************************\n" +
+            "\nAll Substeps keys have now moved under org.substeps and can be overriden like this:\n"
+            + NewSubstepsExecutionConfig.render(masterConfig.getConfig("org.substeps")))
+        log.warn("Overrides will currently still work but support for them will be removed in a subsequent release")
+      }
+      case _ =>
+    }
+
+  }
+
   def splitConfig(masterConfig : Config): List[Config] = {
     val exeConfigList = masterConfig.getConfigList("org.substeps.config.executionConfigs").asScala
 
@@ -114,7 +179,10 @@ case object NewSubstepsExecutionConfig {
       baseConfig.withValue("org.substeps.config.executionConfig", ec.root())
 
     }).toList
+  }
 
+  def splitConfigAsOne(masterConfig : Config): Config = {
+    splitConfig(masterConfig).head
   }
 
   def loadConfig( base: Config, mvnConfigOption : Option[Config]): List[Config] = {
@@ -153,6 +221,14 @@ case object NewSubstepsExecutionConfig {
 
       Class.forName(collector).newInstance().asInstanceOf[IExecutionResultsCollector]
   }
+
+
+  def getRootNodeDescriptor[T](cfg : Config) : T = {
+    val descriptorClass = cfg.getString("org.substeps.config.report.rootNodeDescriptionProvider")
+    Class.forName(descriptorClass).newInstance().asInstanceOf[T]
+  }
+
+
 
   def getReportBuilder(cfg : Config) : IReportBuilder = {
     val rb = cfg.getString("org.substeps.config.reportBuilder")
@@ -233,12 +309,15 @@ case object NewSubstepsExecutionConfig {
 
   def getSubStepsFileName(cfg : Config) : String = {
 
-    println("getSubStepsFileName cfg:\n" + cfg.root().render(options))
-
-    cfg.getString("org.substeps.config.executionConfig.substepsFile")
+    // it's possible not to have any substeps files..
+    if (cfg.hasPath("org.substeps.config.executionConfig.substepsFile")){
+      cfg.getString("org.substeps.config.executionConfig.substepsFile")
+    }
+    else
+      null
   }
 
-  def getScenarioName(cfg : Config) : String = getOrNull(cfg, "scenarioName")
+  def getScenarioName(cfg : Config) : String = getOrNull(cfg, "org.substeps.config.executionConfig.scenarioName")
 
   def getFeatureFile(cfg : Config) : String = cfg.getString("org.substeps.config.executionConfig.featureFile")
 
@@ -251,7 +330,7 @@ case object NewSubstepsExecutionConfig {
 
   def getBooleanOr(cfg : Config, path: String, default : Boolean) : Boolean = {
     if (cfg.hasPath(path)){
-      false
+      cfg.getBoolean(path)
     }
     else default
   }
@@ -264,7 +343,7 @@ case object NewSubstepsExecutionConfig {
 
 
   def getDataOutputDirectory(cfg : Config) : File = {
-    new File(cfg.getString("org.substeps.config.executionConfig.dataOutputDir"))
+    new File(getRootDataDir(cfg), cfg.getString("org.substeps.config.executionConfig.dataOutputDir"))
   }
 
   def getReportDir(cfg: Config) : File = {

@@ -20,11 +20,13 @@ package com.technophobia.substeps.runner;
 
 import com.google.common.base.Strings;
 import com.technophobia.substeps.execution.node.IExecutionNode;
+import com.typesafe.config.Config;
 import org.junit.Assert;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.substeps.runner.NewSubstepsExecutionConfig;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -153,7 +155,11 @@ public class JunitFeatureRunner extends org.junit.runner.Runner {
             executionConfig.setDescription(classContainingTheTests.getSimpleName());
         }
 
-        rootNode = runner.prepareExecutionConfig(executionConfig);
+        Config masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(NewSubstepsExecutionConfig.toConfig(executionConfig));
+
+        Config config = NewSubstepsExecutionConfig.splitConfigAsOne(masterConfig);
+
+        rootNode = runner.prepareExecutionConfig(config);
 
         log.debug("rootNode.toDebugString():\n" + rootNode.toDebugString());
 

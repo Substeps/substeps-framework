@@ -36,20 +36,20 @@ public class ExecutionNodeTreeBuilder {
 
     private final TestParameters parameters;
     private final FeatureNodeBuilder featureNodeBuilder;
-    private final ExecutionConfigWrapper configWrapper;
+//    private final ExecutionConfigWrapper configWrapper;
     private final Config config;
 
-    public ExecutionNodeTreeBuilder(final TestParameters parameters, ExecutionConfigWrapper configWrapper) {
-        this.parameters = parameters;
-        this.featureNodeBuilder = new FeatureNodeBuilder(parameters);
-        this.configWrapper = configWrapper;
-        this.config = null;
-    }
+//    public ExecutionNodeTreeBuilder(final TestParameters parameters, ExecutionConfigWrapper configWrapper) {
+//        this.parameters = parameters;
+//        this.featureNodeBuilder = new FeatureNodeBuilder(parameters);
+////        this.configWrapper = configWrapper;
+//        this.config = null;
+//    }
 
     public ExecutionNodeTreeBuilder(final TestParameters parameters, Config config) {
         this.parameters = parameters;
         this.featureNodeBuilder = new FeatureNodeBuilder(parameters);
-        this.configWrapper = null;
+//        this.configWrapper = null;
         this.config = config;
     }
 

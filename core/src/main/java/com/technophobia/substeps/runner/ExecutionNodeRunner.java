@@ -114,34 +114,34 @@ public class ExecutionNodeRunner implements SubstepsRunner {
     }
 
 
-    public RootNode prepareExecutionConfig(final ExecutionConfigWrapper configWrapper , final Syntax syntax, final TestParameters parameters,
-                                           final SetupAndTearDown setupAndTearDown ,
-                                           final MethodExecutor methodExecutorToUse,
-                                           TagManager nonFatalTagmanager ) {
-
-
-        final ExecutionNodeTreeBuilder nodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, configWrapper);
-
-        // building the tree can throw critical failures if exceptions are found
-        this.rootNode = nodeTreeBuilder.buildExecutionNodeTree(configWrapper.getExecutionConfig().getDescription());
-
-        setupExecutionListeners(configWrapper.getExecutionListenerClasses());
-
-        if (configWrapper.getExecutionConfig().isCheckForUncalledAndUnused()) {
-            processUncalledAndUnused(syntax, configWrapper.getExecutionConfig().getDataOutputDirectory());
-        }
-
-        ExecutionContext.put(Scope.SUITE, INotificationDistributor.NOTIFIER_DISTRIBUTOR_KEY,
-                this.notificationDistributor);
-
-
-        this.nodeExecutionContext = new RootNodeExecutionContext(this.notificationDistributor,
-                Lists.<SubstepExecutionFailure>newArrayList(), setupAndTearDown, nonFatalTagmanager,
-                methodExecutorToUse);
-
-        return this.rootNode;
-
-    }
+//    public RootNode prepareExecutionConfig(final ExecutionConfigWrapper configWrapper , final Syntax syntax, final TestParameters parameters,
+//                                           final SetupAndTearDown setupAndTearDown ,
+//                                           final MethodExecutor methodExecutorToUse,
+//                                           TagManager nonFatalTagmanager ) {
+//
+//
+//        final ExecutionNodeTreeBuilder nodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, configWrapper);
+//
+//        // building the tree can throw critical failures if exceptions are found
+//        this.rootNode = nodeTreeBuilder.buildExecutionNodeTree(configWrapper.getExecutionConfig().getDescription());
+//
+//        setupExecutionListeners(configWrapper.getExecutionListenerClasses());
+//
+//        if (configWrapper.getExecutionConfig().isCheckForUncalledAndUnused()) {
+//            processUncalledAndUnused(syntax, configWrapper.getExecutionConfig().getDataOutputDirectory());
+//        }
+//
+//        ExecutionContext.put(Scope.SUITE, INotificationDistributor.NOTIFIER_DISTRIBUTOR_KEY,
+//                this.notificationDistributor);
+//
+//
+//        this.nodeExecutionContext = new RootNodeExecutionContext(this.notificationDistributor,
+//                Lists.<SubstepExecutionFailure>newArrayList(), setupAndTearDown, nonFatalTagmanager,
+//                methodExecutorToUse);
+//
+//        return this.rootNode;
+//
+//    }
 
 
     @Override
@@ -196,53 +196,54 @@ public class ExecutionNodeRunner implements SubstepsRunner {
         return prepareExecutionConfig(cfg, syntax, parameters, setupAndTearDown, methodExecutorToUse, nonFatalTagmanager);
     }
 
-    @Override
-    public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
-
-        final ExecutionConfigWrapper configWrapper = new ExecutionConfigWrapper(theConfig);
-        configWrapper.initProperties();
-
-        SubstepsExecutionConfig config = configWrapper.getExecutionConfig();
-
-        final String dryRunProperty = System.getProperty(DRY_RUN_KEY);
-        final boolean dryRun = dryRunProperty != null && Boolean.parseBoolean(dryRunProperty);
-
-        final MethodExecutor methodExecutorToUse = dryRun ? new DryRunImplementationCache() : this.methodExecutor;
-
-        if (dryRun) {
-            log.info("**** DRY RUN ONLY **");
-        }
-
-
-        final SetupAndTearDown setupAndTearDown = new SetupAndTearDown(config.getInitialisationClasses(),
-                methodExecutorToUse);
-
-        final String loggingConfigName = config.getDescription() != null ? config.getDescription() : "SubStepsMojo";
-
-        setupAndTearDown.setLoggingConfigName(loggingConfigName);
-
-        final TagManager tagmanager = new TagManager(config.getTags());
-
-        final TagManager nonFatalTagmanager = config.getNonFatalTags() != null ? new TagManager(
-                config.getNonFatalTags()) : null;
-
-        File subStepsFile = null;
-
-        if (config.getSubStepsFileName() != null) {
-            subStepsFile = new File(config.getSubStepsFileName());
-        }
-
-        final Syntax syntax = SyntaxBuilder.buildSyntax(config.getStepImplementationClasses(), subStepsFile,
-                config.isStrict(), config.getNonStrictKeywordPrecedence());
-
-        final TestParameters parameters = new TestParameters(tagmanager, syntax, config.getFeatureFile(), config.getScenarioName());
-
-        parameters.setFailParseErrorsImmediately(config.isFastFailParseErrors());
-        parameters.init();
-
-        return prepareExecutionConfig(configWrapper, syntax, parameters, setupAndTearDown, methodExecutorToUse, nonFatalTagmanager);
-
-    }
+//    @Override
+//    @Deprecated
+//    public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
+//
+//        final ExecutionConfigWrapper configWrapper = new ExecutionConfigWrapper(theConfig);
+//        configWrapper.initProperties();
+//
+//        SubstepsExecutionConfig config = configWrapper.getExecutionConfig();
+//
+//        final String dryRunProperty = System.getProperty(DRY_RUN_KEY);
+//        final boolean dryRun = dryRunProperty != null && Boolean.parseBoolean(dryRunProperty);
+//
+//        final MethodExecutor methodExecutorToUse = dryRun ? new DryRunImplementationCache() : this.methodExecutor;
+//
+//        if (dryRun) {
+//            log.info("**** DRY RUN ONLY **");
+//        }
+//
+//
+//        final SetupAndTearDown setupAndTearDown = new SetupAndTearDown(config.getInitialisationClasses(),
+//                methodExecutorToUse);
+//
+//        final String loggingConfigName = config.getDescription() != null ? config.getDescription() : "SubStepsMojo";
+//
+//        setupAndTearDown.setLoggingConfigName(loggingConfigName);
+//
+//        final TagManager tagmanager = new TagManager(config.getTags());
+//
+//        final TagManager nonFatalTagmanager = config.getNonFatalTags() != null ? new TagManager(
+//                config.getNonFatalTags()) : null;
+//
+//        File subStepsFile = null;
+//
+//        if (config.getSubStepsFileName() != null) {
+//            subStepsFile = new File(config.getSubStepsFileName());
+//        }
+//
+//        final Syntax syntax = SyntaxBuilder.buildSyntax(config.getStepImplementationClasses(), subStepsFile,
+//                config.isStrict(), config.getNonStrictKeywordPrecedence());
+//
+//        final TestParameters parameters = new TestParameters(tagmanager, syntax, config.getFeatureFile(), config.getScenarioName());
+//
+//        parameters.setFailParseErrorsImmediately(config.isFastFailParseErrors());
+//        parameters.init();
+//
+//        return prepareExecutionConfig(configWrapper, syntax, parameters, setupAndTearDown, methodExecutorToUse, nonFatalTagmanager);
+//
+//    }
 
     private void setupExecutionListeners( final List<Class<? extends IExecutionListener>> executionListenerClasses) {
         // add any listeners (including the step execution logger)

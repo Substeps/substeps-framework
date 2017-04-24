@@ -311,12 +311,15 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
 
         List<Map<String, Object>> executionConfigList = this.executionConfigs.stream().map(ec -> toMap(ec)).collect(Collectors.toList());
 
+        String baseDescription = this.executionConfigs.get(0).getDescription();
+
         List<Map<String, Object>> execConfigs = new ArrayList<>();
         execConfigs.add(execConfig1);
 
         Config cfg =
                 ConfigFactory.empty().withValue("org.substeps.config.executionConfigs",
                         ConfigValueFactory.fromIterable(executionConfigList))
+                        .withValue("org.substeps.config.description", ConfigValueFactory.fromAnyRef(baseDescription))
                         .withValue("org.substeps.config.jmxPort", ConfigValueFactory.fromAnyRef(this.jmxPort))
                         .withValue("org.substeps.config.vmArgs", ConfigValueFactory.fromAnyRef(this.vmArgs))
                         .withValue("org.substeps.config.executionResultsCollector", ConfigValueFactory.fromAnyRef(this.executionResultsCollector.getClass().getName()))

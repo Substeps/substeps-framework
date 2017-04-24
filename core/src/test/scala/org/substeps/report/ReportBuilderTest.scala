@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter
 import com.google.common.base.Strings
 import com.google.common.io.Files
 import com.technophobia.substeps.glossary.StepImplementationsDescriptor
+import com.typesafe.config.ConfigFactory
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
@@ -37,10 +38,14 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
     val reportBuilder = new ReportBuilder
   //  reportBuilder.reportDir = outputDir
 
-    val model = reportBuilder.readModel(new File("src/test/resources/sample-results-data"))
+    val masterConfig = ConfigFactory.parseFile(new File("src/test/resources/sample-results-data/masterConfig.conf"))
 
-    val rootNodeSummary = model.rootNodeSummary.head
-    val featureSummaryAndNodeDetails = model.features
+    val modelList = reportBuilder readModels(masterConfig)
+
+    val model = modelList.head
+
+    val rootNodeSummary = model.rootNodeSummary
+    val featureSummaryAndNodeDetails = model.featuresList
 
     featureSummaryAndNodeDetails should have size (2)
 
@@ -49,36 +54,16 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
   }
 
 
-  "ReportBuilder" should "build the usage tree report from raw data input" in {
-
-
-    val outputDir = getOutputDir
-
-    val reportBuilder = new ReportBuilder
-//    reportBuilder.reportDir = outputDir
-
-    reportBuilder.buildFromDirectory(new File("src/test/resources/sample-results-data"), outputDir)
-
-    // TODO few more assertions please !
-  }
-
 
   "ReportBuilder" should "build a report from raw data input" in {
-
-    // TODO - could we create an object with reflection ? or a trait ?
 
     val now: LocalDateTime = LocalDateTime.now
 
     val outputDir = getOutputDir
 
     val reportBuilder = new ReportBuilder
-    //reportBuilder.reportDir = outputDir
-
 
     reportBuilder.buildFromDirectory(new File("src/test/resources/sample-results-data"), outputDir)
-
-
-
 
     outputDir.exists() should be (true)
 
@@ -122,6 +107,7 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
 
     substepsStatsjs shouldBe defined
 
+    // TODO - usage data exists ?
   }
 
 

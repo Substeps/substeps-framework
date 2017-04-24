@@ -284,7 +284,10 @@ public class ExecutionNodeRunnerTest {
                                       final SubstepsExecutionConfig executionConfig,
                                       final List<SubstepExecutionFailure> failures) {
 
-        Config cfg = NewSubstepsExecutionConfig.toConfig(executionConfig);
+        Config masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(NewSubstepsExecutionConfig.toConfig(executionConfig));
+
+        Config cfg = NewSubstepsExecutionConfig.splitConfigAsOne(masterConfig);
+
 
         runner.addNotifier(notifier);
 
@@ -843,8 +846,9 @@ public class ExecutionNodeRunnerTest {
 
         executionConfig.setFastFailParseErrors(false);
 
+        Config masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(NewSubstepsExecutionConfig.toConfig(executionConfig));
 
-        Config cfg = NewSubstepsExecutionConfig.toConfig(executionConfig);
+        Config cfg = NewSubstepsExecutionConfig.splitConfigAsOne(masterConfig);
 
         final RootNode rootNode = runner.prepareExecutionConfig(cfg);
 

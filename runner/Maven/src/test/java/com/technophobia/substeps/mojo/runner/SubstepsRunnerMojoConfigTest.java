@@ -53,7 +53,7 @@ public class SubstepsRunnerMojoConfigTest extends AbstractMojoTestCase {
         super.setUp();
     }
 
-    private static String version = "1.0.6-SNAPSHOT";
+    private static String version = "1.1.0-SNAPSHOT";
 
     private void actuallyRunTheTest() throws Exception{
 

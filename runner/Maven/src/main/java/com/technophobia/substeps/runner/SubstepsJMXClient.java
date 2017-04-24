@@ -177,7 +177,7 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
         }
     }
 
-    @Override
+//    @Override
     public RootNode prepareExecutionConfig(final SubstepsExecutionConfig cfg) {
 
         try {

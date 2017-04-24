@@ -31,6 +31,7 @@ import com.technophobia.substeps.runner.SubstepsExecutionConfig;
 import com.typesafe.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.substeps.runner.NewSubstepsExecutionConfig;
 
 import javax.management.Notification;
 import javax.management.NotificationBroadcasterSupport;
@@ -126,7 +127,9 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
 
     @Override
     public RootNode prepareExecutionConfig(Config theConfig) {
-        return null;
+
+        this.nodeRunner = new ExecutionNodeRunner();
+        return this.nodeRunner.prepareExecutionConfig(theConfig);
     }
 
     /*
@@ -136,11 +139,14 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
          * com.technopobia.substeps.jmx.SubstepsMBean#prepareExecutionConfig(com
          * .technophobia.substeps.runner.ExecutionConfig)
          */
-    @Override
+//    @Override
     public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
         // TODO - synchronise around the init call ?
         this.nodeRunner = new ExecutionNodeRunner();
-        return this.nodeRunner.prepareExecutionConfig(theConfig);
+
+        Config cfg = NewSubstepsExecutionConfig.toConfig(theConfig);
+
+        return this.nodeRunner.prepareExecutionConfig(cfg);
     }
 
     /*

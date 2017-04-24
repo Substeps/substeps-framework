@@ -9,6 +9,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.substeps.runner.NewSubstepsExecutionConfig;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -83,7 +84,7 @@ public class SubStepsTask extends Task {
                                         final List<SubstepExecutionFailure> failures) {
 
         final SubstepsRunner runner = ExecutionNodeRunnerFactory.createRunner();
-        runner.prepareExecutionConfig(theConfig);
+        runner.prepareExecutionConfig(NewSubstepsExecutionConfig.toConfig(theConfig));
         final RootNode rootNode = runner.run();
         final List<SubstepExecutionFailure> localFailures = runner.getFailures();
         failures.addAll(localFailures);

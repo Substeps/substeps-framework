@@ -40,13 +40,13 @@ import java.util.regex.Pattern;
 public final class Arguments {
     private static final Logger log = LoggerFactory.getLogger(Arguments.class);
 
-    private static final boolean substituteParameters = Configuration.INSTANCE.getConfig().getBoolean("parameter.substitution.enabled");
-    private static final String startDelimiter = Configuration.INSTANCE.getConfig().getString("parameter.substitution.start");
-    private static final String endDelimiter = Configuration.INSTANCE.getConfig().getString("parameter.substitution.end");
+    private static final boolean substituteParameters = Configuration.INSTANCE.getSubstepsConfig().getBoolean("parameter.substitution.enabled");
+    private static final String startDelimiter = Configuration.INSTANCE.getSubstepsConfig().getString("parameter.substitution.start");
+    private static final String endDelimiter = Configuration.INSTANCE.getSubstepsConfig().getString("parameter.substitution.end");
 
-    private static final boolean normalizeValues = Configuration.INSTANCE.getConfig().getBoolean("parameter.substitution.normalizeValue");
-    private static final String normalizeFrom = Configuration.INSTANCE.getConfig().getString("parameter.substitution.normalize.from");
-    private static final String normalizeTo = Configuration.INSTANCE.getConfig().getString("parameter.substitution.normalize.to");
+    private static final boolean normalizeValues = Configuration.INSTANCE.getSubstepsConfig().getBoolean("parameter.substitution.normalizeValue");
+    private static final String normalizeFrom = Configuration.INSTANCE.getSubstepsConfig().getString("parameter.substitution.normalize.from");
+    private static final String normalizeTo = Configuration.INSTANCE.getSubstepsConfig().getString("parameter.substitution.normalize.to");
 
     private static final JexlEngine jexl = new JexlBuilder().cache(512).strict(false).silent(false).create();
 
