@@ -18,7 +18,9 @@
  */
 package com.technophobia.substeps.runner;
 
+import com.google.common.io.Files;
 import com.technophobia.substeps.execution.node.RootNode;
+import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
 import com.typesafe.config.*;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -33,6 +35,9 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.substeps.runner.NewSubstepsExecutionConfig;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 /**
@@ -95,7 +100,7 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
     @Component
     private ArtifactMetadataSource artifactMetadataSource;
 
-    private MojoRunner runner;
+//    private MojoRunner runner;
 
 
 
@@ -123,19 +128,40 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
 
     @Override
     public void executeAfterAllConfigs(List<Config> configs) throws MojoExecutionException, MojoFailureException{
-        try {
-            processBuildData();
-        }
-        finally {
-            if (this.runner != null) {
-                this.runner.shutdown();
-            }
-        }
+        processBuildData();
     }
 
     @Override
-    public void executeBeforeAllConfigs(List<Config> configs) throws MojoExecutionException, MojoFailureException{
-        this.runner = this.runTestsInForkedVM ? createForkedRunner() : createInProcessRunner();
+    public void executeBeforeAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException{
+
+        // write out the master config to the root data dir
+        File rootDataDir = NewSubstepsExecutionConfig.getRootDataDir(masterConfig);
+
+        File outFile = new File(rootDataDir, "masterConfig.conf");
+
+        mkdirOrException(rootDataDir);
+
+        try {
+            Files.write(NewSubstepsExecutionConfig.render(masterConfig), outFile, Charset.forName("UTF-8"));
+        }
+        catch (IOException e){
+            throw new MojoExecutionException(e.getMessage(), e);
+        }
+
+
+
+
+//        this.runner = this.runTestsInForkedVM ? createForkedRunner() : createInProcessRunner();
+    }
+
+    private void mkdirOrException(File dir)  {
+        if (!dir.exists()){
+
+            if (!dir.mkdirs()){
+                throw new SubstepsRuntimeException("Failed to create dir: " + dir.getAbsolutePath());
+            }
+        }
+
     }
 
 //    private Config loadConfig(String cfgFile){
@@ -245,37 +271,52 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
 //    }
 
     @Override
-    public void executionConfig(final Config theConfig) throws MojoExecutionException {
+    public void executeConfig(final Config executionConfig) throws MojoExecutionException {
+        // executionConfig will be whole, self contained and already split and resolved from a masterConfig
 
 //        final SubstepsExecutionConfig cfg =  theConfig.asSubstepsExecutionConfig();
+//        Config masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(baseCfg, None);
+//        List<Config> configs = NewSubstepsExecutionConfig.splitConfigAsJava(masterConfig);
 
-        // TODO - print out the config concisely??
-        //this.getLog().info("SubstepsExecutionConfig: " + cfg.printParameters());
 
-        NewSubstepsExecutionConfig.addConfigToContext(theConfig);
+        MojoRunner runner = null;
 
-        final RootNode iniitalRootNode = this.runner.prepareExecutionConfig(theConfig);
+        try {
+            runner = NewSubstepsExecutionConfig.isRunInForkedVM(executionConfig) ? createForkedRunner() : createInProcessRunner();
 
-        this.executionResultsCollector = NewSubstepsExecutionConfig.getExecutionResultsCollector(theConfig);
+            // TODO - print out the config concisely??
+            //this.getLog().info("SubstepsExecutionConfig: " + cfg.printParameters());
 
-        this.executionResultsCollector.setDataDir(NewSubstepsExecutionConfig.getDataOutputDirectory(theConfig));
+            NewSubstepsExecutionConfig.addConfigToContext(executionConfig);
 
-        this.executionResultsCollector.initOutputDirectories(iniitalRootNode);
+            final RootNode iniitalRootNode = runner.prepareExecutionConfig(executionConfig);
 
-        this.runner.addNotifier(this.executionResultsCollector);
+            this.executionResultsCollector = NewSubstepsExecutionConfig.getExecutionResultsCollector(executionConfig);
 
-        final RootNode rootNode = this.runner.run();
+            this.executionResultsCollector.setDataDir(NewSubstepsExecutionConfig.getDataOutputDirectory(executionConfig));
 
-        String description = NewSubstepsExecutionConfig.getDescription(theConfig);
+            this.executionResultsCollector.initOutputDirectories(iniitalRootNode);
 
-        if (description != null) {
+            runner.addNotifier(this.executionResultsCollector);
 
-            rootNode.setLine(description);
+            final RootNode rootNode = runner.run();
+
+            String description = NewSubstepsExecutionConfig.getDescription(executionConfig);
+
+            if (description != null) {
+
+                rootNode.setLine(description);
+            }
+
+            addToLegacyReport(rootNode);
+
+            this.buildFailureManager.addExecutionResult(rootNode);
         }
-
-        addToLegacyReport(rootNode);
-
-        this.buildFailureManager.addExecutionResult(rootNode);
+        finally {
+            if (runner != null) {
+                runner.shutdown();
+            }
+        }
     }
 
 //    private void runExecutionConfig(final ExecutionConfig theConfig) throws MojoExecutionException {
@@ -439,12 +480,12 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
         this.artifactMetadataSource = artifactMetadataSource;
     }
 
-    public MojoRunner getRunner() {
-        return runner;
-    }
-
-    public void setRunner(MojoRunner runner) {
-        this.runner = runner;
-    }
+//    public MojoRunner getRunner() {
+//        return runner;
+//    }
+//
+//    public void setRunner(MojoRunner runner) {
+//        this.runner = runner;
+//    }
 
 }

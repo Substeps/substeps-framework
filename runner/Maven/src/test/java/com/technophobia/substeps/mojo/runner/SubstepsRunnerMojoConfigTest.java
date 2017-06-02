@@ -26,8 +26,10 @@ import com.typesafe.config.Config;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.execution.ReactorManager;
+import org.apache.maven.model.Build;
 import org.apache.maven.monitor.event.EventDispatcher;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
@@ -42,6 +44,8 @@ import java.util.List;
 import java.util.Properties;
 
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author ian
@@ -70,15 +74,29 @@ public class SubstepsRunnerMojoConfigTest extends AbstractMojoTestCase {
         final SubstepsRunnerMojo mojo = (SubstepsRunnerMojo)lookupMojo("run-features", testPom);
 
 
+        MavenProject project = mock(MavenProject.class);
+
+        when (project.getBasedir()).thenReturn(new File("."));
+        Build build = mock(Build.class);
+        when(build.getTestOutputDirectory()).thenReturn("testout");
+        when(build.getOutputDirectory()).thenReturn("out");
+        when(build.getDirectory()).thenReturn("dir");
+
+        when(project.getBuild()).thenReturn(build);
+        mojo.setProject(project);
+        mojo.setJmxPort(9999);
+
+
         Assert.assertNotNull("expecting a mojo", mojo);
 
         Config cfg = mojo.createExecutionConfigFromPom();
 
         Assert.assertNotNull("expecting config", cfg);
 
-        List<? extends Config> configList = cfg.getConfigList("org.substeps.config.executionConfigs");
+        List<? extends Config> configList = cfg.getConfigList("org.substeps.executionConfigs");
 
-        Assert.assertTrue(configList.get(0).hasPath("executionListeners"));
+        // this will only get created if it's different from the defaults
+//        Assert.assertTrue(configList.get(0).hasPath("executionListeners"));
 
 
         System.out.println("config:\n" + NewSubstepsExecutionConfig.render(cfg));

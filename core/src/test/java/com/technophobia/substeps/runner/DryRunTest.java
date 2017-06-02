@@ -27,6 +27,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.substeps.config.SubstepsConfigLoader;
 import org.substeps.report.IExecutionResultsCollector;
 import org.substeps.runner.NewSubstepsExecutionConfig;
 
@@ -64,11 +65,15 @@ public class DryRunTest {
 
         theConfig.setStepImplementationClasses(stepImplementationClasses);
 
-        Config cfg = NewSubstepsExecutionConfig.toConfig(theConfig);
+      //  Config cfg = NewSubstepsExecutionConfig.toConfig(theConfig);
 
-        Config masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(cfg);
+        Config masterConfig = NewSubstepsExecutionConfig.toConfig(theConfig);
+        Config config = SubstepsConfigLoader.splitMasterConfig(masterConfig).get(0);
 
-        Config config = NewSubstepsExecutionConfig.splitConfigAsOne(masterConfig);
+
+//        Config masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(cfg);
+//
+//        Config config = NewSubstepsExecutionConfig.splitConfigAsOne(masterConfig);
 
         final RootNode rootNode = runner.prepareExecutionConfig(config);
 

@@ -4,7 +4,7 @@
   "lineNumber":0,
   "result":"PASSED",
   "id":62,
-  "executionDurationMillis":3,
+  "executionDurationMillis":1,
   "description":"a basic scenario outline two",
   "children":[
     {

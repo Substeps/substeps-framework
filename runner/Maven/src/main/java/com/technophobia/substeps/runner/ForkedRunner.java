@@ -352,14 +352,7 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
     public RootNode prepareExecutionConfig(Config theConfig) {
 
         // TODO
-
-        throw new UnsupportedOperationException("sorry not yet implented!");
-    }
-
-//    @Override
-    public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
-
-        byte[] bytes = substepsJmxClient.prepareExecutionConfigAsBytes(theConfig);
+        byte[] bytes = substepsJmxClient.prepareExecutionConfigAsBytes(theConfig.root().render());
 
         RootNode rootNode = getRootNodeFromBytes(bytes);
 
@@ -367,11 +360,32 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
 
         List<IExecutionNode> nodes = flattenTree(rootNode);
         for (IExecutionNode n : nodes){
-           nodeMap.put(n.getId(), n);
+            nodeMap.put(n.getId(), n);
         }
 
         return rootNode;
+
+
+
+//        throw new UnsupportedOperationException("sorry not yet implented!");
     }
+
+//    @Override
+//    public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
+//
+//        byte[] bytes = substepsJmxClient.prepareExecutionConfigAsBytes(theConfig);
+//
+//        RootNode rootNode = getRootNodeFromBytes(bytes);
+//
+//        log.debug("rootNode.toDebugString():\n" + rootNode.toDebugString());
+//
+//        List<IExecutionNode> nodes = flattenTree(rootNode);
+//        for (IExecutionNode n : nodes){
+//           nodeMap.put(n.getId(), n);
+//        }
+//
+//        return rootNode;
+//    }
 
     @Override
     public RootNode run() {

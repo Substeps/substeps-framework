@@ -26,6 +26,7 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.substeps.config.SubstepsConfigLoader;
 import org.substeps.runner.NewSubstepsExecutionConfig;
 
 import java.lang.annotation.ElementType;
@@ -155,9 +156,8 @@ public class JunitFeatureRunner extends org.junit.runner.Runner {
             executionConfig.setDescription(classContainingTheTests.getSimpleName());
         }
 
-        Config masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(NewSubstepsExecutionConfig.toConfig(executionConfig));
-
-        Config config = NewSubstepsExecutionConfig.splitConfigAsOne(masterConfig);
+        Config masterConfig = NewSubstepsExecutionConfig.toConfig(executionConfig);
+        Config config = SubstepsConfigLoader.splitMasterConfig(masterConfig).get(0);
 
         rootNode = runner.prepareExecutionConfig(config);
 

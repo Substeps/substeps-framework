@@ -13,7 +13,7 @@ import com.technophobia.substeps.runner._
 import com.technophobia.substeps.runner.builder.ExecutionNodeTreeBuilder
 import com.technophobia.substeps.runner.setupteardown.SetupAndTearDown
 import com.technophobia.substeps.runner.syntax._
-import com.typesafe.config.{Config, ConfigFactory, ConfigValueFactory}
+import com.typesafe.config._
 import org.hamcrest.Matchers._
 import org.json4s.NoTypeHints
 import org.json4s.native.Serialization
@@ -21,6 +21,7 @@ import org.json4s.native.Serialization.read
 import org.junit.Assert
 import org.scalatest._
 import org.slf4j.LoggerFactory
+import org.substeps.config.SubstepsConfigLoader
 import org.substeps.report.{ExecutionResultsCollector, NodeDetail}
 
 import scala.collection.JavaConverters._
@@ -639,15 +640,17 @@ Scenario: inline table
 
     val rootDataDir = getBaseDir(new File("target"))
 
-    val baseCfg = NewSubstepsExecutionConfig.toConfig(executionConfig).withValue("org.substeps.config.rootDataDir", ConfigValueFactory.fromAnyRef(rootDataDir.getPath))
+    println("foor the tests, setting root data dir to be " + rootDataDir.getAbsolutePath)
 
-    val masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(baseCfg, None)
+    val masterConfig = NewSubstepsExecutionConfig.toConfig(executionConfig).withValue("org.substeps.config.rootDataDir", ConfigValueFactory.fromAnyRef(rootDataDir.getPath))
 
-    val configs = NewSubstepsExecutionConfig.splitConfig(masterConfig)
+    //val masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(baseCfg, None)
+
+    val configs = SubstepsConfigLoader.splitMasterConfig(masterConfig).asScala
 
 
     // write out the master config to the root data dir
-    ExecutionResultsCollector.writeMasterConfig(masterConfig, rootDataDir)
+    ExecutionResultsCollector.writeMasterConfig(masterConfig)
 
     val cfg = configs.head
 
@@ -787,7 +790,6 @@ Scenario: inline table
   }
 
 
-  // TODO - failing
   "running the same features with multiple configurations" must "generate data in a way that the report builder can pick it up" in {
 
     val simpleFeature =
@@ -875,39 +877,26 @@ Scenario: inline table
       s"""
         | org {
         | substeps {
-        |   config {
+        | baseExecutionConfig {
+        |         featureFile="simple_feature_file.feature"
+        |         stepImplementationClassNames=[ "${stepImplClassName}"]
+        |         substepsFile="temp_substep_def.substeps"
+        | }
         |     executionConfigs=[
         |         {
         |         dataOutputDir=1
         |         description="Parsing from source Test Features 1"
-        |         executionListeners=[
-        |             "com.technophobia.substeps.runner.logger.StepExecutionLogger"
-        |             ]
-        |         featureFile="simple_feature_file.feature"
-        |
-        |         stepImplementationClassNames=[
-        |             "${stepImplClassName}"
-        |         ]
-        |         substepsFile="temp_substep_def.substeps"
         |         },
         |         {
         |         dataOutputDir=2
         |         description="Parsing from source Test Features 2"
-        |         executionListeners=[
-        |             "com.technophobia.substeps.runner.logger.StepExecutionLogger"
-        |             ]
-        |         featureFile="simple_feature_file.feature"
-        |
-        |         stepImplementationClassNames=[
-        |             "${stepImplClassName}"
-        |         ]
-        |         substepsFile="temp_substep_def.substeps"
         |         }
         |        ]
+        |  config {
         |     rootDataDir="${dataDirPath}"
         |     description="Parsing from source test suite"
         |     }
-        |   }
+        |  }
         | }
       """.stripMargin
 
@@ -917,9 +906,20 @@ Scenario: inline table
 
     println("BASE CFG: " + baseCfg.root().render())
 
-    val masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(baseCfg, None).withValue("org.substeps.config.reportDir", ConfigValueFactory.fromAnyRef(getBaseDir(new File("target"), "substeps-report_").toString))
 
-    val configs = NewSubstepsExecutionConfig.splitConfig(masterConfig)
+
+
+    val masterConfig =
+      baseCfg.withFallback(ConfigFactory.load(ConfigParseOptions.defaults(), ConfigResolveOptions.noSystem().setAllowUnresolved(true)))
+      //NewSubstepsExecutionConfig.loadMasterConfig(baseCfg, None)
+        .withValue("org.substeps.config.reportDir", ConfigValueFactory.fromAnyRef(getBaseDir(new File("target"), "substeps-report_").toString))
+
+    //val masterConfig = NewSubstepsExecutionConfig.toConfig(executionConfig).withValue("org.substeps.config.rootDataDir", ConfigValueFactory.fromAnyRef(rootDataDir.getPath))
+
+    val configs = SubstepsConfigLoader.splitMasterConfig(masterConfig).asScala
+
+
+    //val configs = NewSubstepsExecutionConfig.splitConfig(masterConfig)
 
     val syntax: Syntax = SyntaxBuilder.buildSyntax(stepImplementationClasses.asJava, parentMap)
 
@@ -928,7 +928,7 @@ Scenario: inline table
     val rootDataDir: File = NewSubstepsExecutionConfig.getRootDataDir(masterConfig)
 
     // write out the master config to the root data dir
-    ExecutionResultsCollector.writeMasterConfig(masterConfig, rootDataDir)
+    ExecutionResultsCollector.writeMasterConfig(masterConfig)
 
 
     configs.foreach(cfg => {

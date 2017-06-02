@@ -29,6 +29,7 @@ import com.technophobia.substeps.runner.IExecutionListener;
 import com.technophobia.substeps.runner.SubstepExecutionFailure;
 import com.technophobia.substeps.runner.SubstepsExecutionConfig;
 import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.substeps.runner.NewSubstepsExecutionConfig;
@@ -61,10 +62,15 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
 
 
     @Override
-    public byte[] prepareExecutionConfigAsBytes(final SubstepsExecutionConfig theConfig) {
+    public byte[] prepareExecutionConfigAsBytes(final String configString) {
+
+        Config theConfig = ConfigFactory.parseString(configString);
+
+
 
         RootNode rtn;
         try {
+
             rtn = prepareExecutionConfig(theConfig);
             log.debug("execution config prepared");
         }
@@ -73,10 +79,9 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
 
             List<FeatureNode> empty = Collections.emptyList();
 
-
             String env = System.getProperty("environment", "localhost");
 
-            rtn = new RootNode("Substeps Test", empty, env, theConfig.getTags(), theConfig.getNonFatalTags());
+            rtn = new RootNode("Substeps Test", empty, env, NewSubstepsExecutionConfig.getTags(theConfig), NewSubstepsExecutionConfig.getNonFatalTags(theConfig));
             ExecutionNodeResult result = rtn.getResult();
             result.setThrown(e);
             result.setResult(ExecutionResult.PARSE_FAILURE);

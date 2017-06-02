@@ -4,7 +4,7 @@
   "lineNumber":0,
   "result":"PASSED",
   "id":42,
-  "executionDurationMillis":27,
+  "executionDurationMillis":9,
   "description":"A basic passing scenario",
   "children":[
     {
@@ -13,7 +13,7 @@
       "lineNumber":5,
       "result":"PASSED",
       "id":37,
-      "executionDurationMillis":15,
+      "executionDurationMillis":6,
       "description":"PassingStepImpl",
       "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$5$StepImpls$3.passingStepImpl()",
       "children":[
@@ -27,7 +27,7 @@
       "lineNumber":2,
       "result":"PASSED",
       "id":39,
-      "executionDurationMillis":3,
+      "executionDurationMillis":0,
       "description":"PassingSubstepDef",
       "children":[
         {
@@ -53,7 +53,7 @@
       "lineNumber":8,
       "result":"PASSED",
       "id":41,
-      "executionDurationMillis":7,
+      "executionDurationMillis":2,
       "description":"WithParamsSubstepDef \"a\" and \"b\"",
       "children":[
         {
@@ -62,7 +62,7 @@
           "lineNumber":9,
           "result":"PASSED",
           "id":40,
-          "executionDurationMillis":7,
+          "executionDurationMillis":2,
           "description":"WithParams \"a\" \"b\"",
           "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$5$StepImpls$3.twoParams(java.lang.String,java.lang.String)",
           "children":[

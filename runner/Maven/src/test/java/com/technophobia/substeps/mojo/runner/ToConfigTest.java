@@ -1,21 +1,28 @@
 package com.technophobia.substeps.mojo.runner;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 import com.technophobia.substeps.execution.node.IExecutionNode;
 import com.technophobia.substeps.execution.node.RootNode;
 import com.technophobia.substeps.runner.ExecutionConfig;
 import com.technophobia.substeps.runner.SubstepsRunnerMojo;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigRenderOptions;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.model.Build;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.substeps.report.IExecutionResultsCollector;
 import org.substeps.report.IReportBuilder;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
-import static org.mockito.Mockito.*;
+import java.nio.charset.Charset;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * Created by ian on 01/03/17.
  */
@@ -82,6 +89,19 @@ public class ToConfigTest {
     public void testMojoConfigToTypesfaeConfig() throws Exception {
 
         SubstepsRunnerMojo mojo = new SubstepsRunnerMojo();
+
+        MavenProject project = mock(MavenProject.class);
+
+        when (project.getBasedir()).thenReturn(new File("."));
+        Build build = mock(Build.class);
+        when(build.getTestOutputDirectory()).thenReturn("testout");
+        when(build.getOutputDirectory()).thenReturn("out");
+        when(build.getDirectory()).thenReturn("dir");
+
+        when(project.getBuild()).thenReturn(build);
+        mojo.setProject(project);
+        mojo.setJmxPort(9999);
+
 
 
         ExecutionConfig ec = new ExecutionConfig();

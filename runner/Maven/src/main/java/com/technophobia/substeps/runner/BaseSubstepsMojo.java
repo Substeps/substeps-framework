@@ -1,14 +1,18 @@
 package com.technophobia.substeps.runner;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 import com.technophobia.substeps.model.Configuration;
+import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
 import com.technophobia.substeps.report.ExecutionReportBuilder;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigRenderOptions;
 import com.typesafe.config.ConfigValueFactory;
 //import org.apache.maven.execution.MavenSession;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -18,11 +22,14 @@ import org.apache.maven.project.MavenProject;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.substeps.config.SubstepsConfigLoader;
 import org.substeps.report.IExecutionResultsCollector;
 import org.substeps.report.IReportBuilder;
 import org.substeps.runner.NewSubstepsExecutionConfig;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,8 +76,8 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
     protected List<String> stepImplementationArtifacts;
 
 
-    @Parameter
-    protected List<String> executionConfigFiles = null;
+//    @Parameter
+//    protected List<String> executionConfigFiles = null;
 
     /**
      */
@@ -210,9 +217,11 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
 
         Config cfg =
                 ConfigFactory.empty()
-                        .withValue("project.build.directory",
-                                ConfigValueFactory.fromAnyRef(this.project.getBuild().getDirectory()))
-                        .withValue("basedir", ConfigValueFactory.fromAnyRef(this.project.getBasedir().getAbsolutePath()));
+                        .withValue("project.build.directory", ConfigValueFactory.fromAnyRef(this.project.getBuild().getDirectory()))
+                        .withValue("basedir", ConfigValueFactory.fromAnyRef(this.project.getBasedir().getAbsolutePath()))
+                        .withValue("project.build.testOutputDirectory", ConfigValueFactory.fromAnyRef(this.project.getBuild().getTestOutputDirectory()))
+                        .withValue("project.build.outputDirectory", ConfigValueFactory.fromAnyRef(this.project.getBuild().getDirectory()))
+                ;
 
         return cfg;
     }
@@ -230,10 +239,16 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
 
         Config mavenConfigSettings = buildMavenFallbackConfig();
 
-        List<Config> configs = NewSubstepsExecutionConfig.toConfigList(executionConfigFiles, mavenConfigSettings);
+        Config masterConfig = SubstepsConfigLoader.loadResolvedConfig(mavenConfigSettings);
+
+        this.getLog().info("\n\n *** USING COMBINED CONFIG:\n\n" +
+        NewSubstepsExecutionConfig.render(masterConfig) + "\n\n");
+
+        List<Config> configs = SubstepsConfigLoader.splitMasterConfig(masterConfig);
+            //NewSubstepsExecutionConfig.toConfigList(executionConfigFiles, mavenConfigSettings);
 
         try {
-            executeBeforeAllConfigs(configs);
+            executeBeforeAllConfigs(masterConfig);
 
             executeNewConfigs(configs);
             //executeConfigs();
@@ -252,8 +267,16 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
 
 
         for (Config executionConfig : configs){
+
+            try{
+                NewSubstepsExecutionConfig.validateExecutionConfig(executionConfig);
+
+            }
+            catch (SubstepsConfigurationException e){
+                throw new MojoExecutionException("Substeps configuration problem", e);
+            }
             try {
-                executionConfig(executionConfig);
+                executeConfig(executionConfig);
 
             } catch (final Exception e) {
 
@@ -265,9 +288,9 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
         }
     }
 
-    public abstract void executionConfig(Config cfg) throws MojoExecutionException, MojoFailureException;
+    public abstract void executeConfig(Config cfg) throws MojoExecutionException, MojoFailureException;
 
-    public abstract void executeBeforeAllConfigs(List<Config> configs) throws MojoExecutionException, MojoFailureException;
+    public abstract void executeBeforeAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException;
 
     public abstract void executeAfterAllConfigs(List<Config> configs) throws MojoExecutionException, MojoFailureException;
 
@@ -289,18 +312,54 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
 
 
     protected void checkPomSettings() throws MojoExecutionException{
-        if (executionConfigFiles == null) {
+        if (executionConfigs != null && !executionConfigs.isEmpty()) {
             Config cfg = createExecutionConfigFromPom();
 
             ConfigRenderOptions options =
                     ConfigRenderOptions.defaults().setComments(false).setFormatted(true).setJson(false).setOriginComments(false);
 
-            throw new MojoExecutionException(this, "Substeps execution config has changed and moved to a config file",
+            String configSrc = sanitize(cfg.root().render(options));
 
-                    "Create a config file on the classpath with the following content:\n\n" + cfg.root().render(options) + "\n\n" +
-                            "And replace the configuration section:\n\n" +
-                            " <configuration>\n\t<executionConfigFiles>\n\t\t<param> ** config file ** </param>\n\t</executionConfigFiles>\n</configuration>"
-            );
+            try {
+                List<Resource> testResources = this.project.getTestResources();
+
+                String resourcesDir = "";
+
+                if (testResources != null && !testResources.isEmpty()) {
+                    this.getLog().info("test resources src root: " + testResources.get(0).getDirectory());
+                    resourcesDir = testResources.get(0).getDirectory();
+                }
+
+
+                if (resourcesDir == null) {
+
+                    List<Resource> resources = this.project.getResources();
+                    if (resources != null && !resources.isEmpty()) {
+                        this.getLog().info("resources src root: " + resources.get(0).getDirectory());
+                        resourcesDir = resources.get(0).getDirectory();
+                    }
+                }
+
+                File out = new File(resourcesDir, "migrated-application.conf");
+
+                Files.write(configSrc, out , Charset.defaultCharset());
+
+                throw new MojoExecutionException(this, "Substeps execution config has changed and moved to a config file", "A new config file has been written to: " + out.getAbsolutePath() + ",\n this will need checking and renaming to application.conf");
+
+            } catch (IOException e) {
+
+                this.getLog().info("failed to write application.conf file");
+
+                throw new MojoExecutionException(this, "Substeps execution config has changed and moved to a config file",
+
+                        "Create a config file on the classpath with the following content:\n\n" + configSrc + "\n\n" +
+                                "And replace the configuration section:\n\n" +
+                                " <configuration>\n\t<executionConfigFiles>\n\t\t<param> ** config file ** </param>\n\t</executionConfigFiles>\n</configuration>"
+                );
+
+            }
+
+
         }
 
     }
@@ -309,33 +368,105 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
 
         Map execConfig1 = new HashMap();
 
+        if (this.executionConfigs.size() > 1){
+            this.getLog().debug("\n\n ** There are multiple execution configs, the generated config may need some manual editing **\n\n");
+        }
+
         List<Map<String, Object>> executionConfigList = this.executionConfigs.stream().map(ec -> toMap(ec)).collect(Collectors.toList());
 
         String baseDescription = this.executionConfigs.get(0).getDescription();
 
+
         List<Map<String, Object>> execConfigs = new ArrayList<>();
         execConfigs.add(execConfig1);
 
-        Config cfg =
-                ConfigFactory.empty().withValue("org.substeps.config.executionConfigs",
-                        ConfigValueFactory.fromIterable(executionConfigList))
-                        .withValue("org.substeps.config.description", ConfigValueFactory.fromAnyRef(baseDescription))
-                        .withValue("org.substeps.config.jmxPort", ConfigValueFactory.fromAnyRef(this.jmxPort))
-                        .withValue("org.substeps.config.vmArgs", ConfigValueFactory.fromAnyRef(this.vmArgs))
-                        .withValue("org.substeps.config.executionResultsCollector", ConfigValueFactory.fromAnyRef(this.executionResultsCollector.getClass().getName()))
-                        .withValue("org.substeps.config.reportBuilder", ConfigValueFactory.fromAnyRef(this.getReportBuilder().getClass().getName()));
+        Config cfg = ConfigFactory.empty()
+                        .withValue("org.substeps.config.description", ConfigValueFactory.fromAnyRef(baseDescription));
+
+        if (this.vmArgs != null){
+            cfg = cfg.withValue("org.substeps.config.vmArgs", ConfigValueFactory.fromAnyRef(this.vmArgs));
+        }
+
+        if (this.jmxPort != 9999){
+            cfg = cfg.withValue("org.substeps.config.jmxPort", ConfigValueFactory.fromAnyRef(this.jmxPort));
+        }
+
+        // this should hopefully cater for when the data is being written elsewhere..
+        if (!executionConfigList.get(0).containsKey("dataOutputDir")){
+            cfg = cfg.withValue("org.substeps.config.rootDataDir", ConfigValueFactory.fromAnyRef(deClutter(this.executionConfigs.get(0).getDataOutputDirectory().getPath())));
+
+            executionConfigList.get(0).put("dataOutputDir", "");
+        }
+
+        cfg = cfg.withValue("org.substeps.executionConfigs", ConfigValueFactory.fromIterable(executionConfigList));
+
+
+        if (!this.executionResultsCollector.getClass().getName().equals("org.substeps.report.ExecutionResultsCollector")){
+            cfg = cfg.withValue("org.substeps.config.executionResultsCollector", ConfigValueFactory.fromAnyRef(this.executionResultsCollector.getClass().getName()));
+        }
+
+        if (!this.getReportBuilder().getClass().getName().equals("org.substeps.report.ReportBuilder")){
+            cfg = cfg.withValue("org.substeps.config.reportBuilder", ConfigValueFactory.fromAnyRef(this.getReportBuilder().getClass().getName()));
+        }
+
+
         return cfg;
     }
 
+    // necessary so that the variables get substituted correctly
+    private String sanitize(String src){
+        src = StringUtils.replace(src, "\"${project.build.testOutputDirectory}", "${project.build.testOutputDirectory}\"");
+        src = StringUtils.replace(src, "\"${project.build.outputDirectory}", "${project.build.outputDirectory}\"");
+        src = StringUtils.replace(src, "\"${project.build.directory}", "${project.build.directory}\"");
+        src = StringUtils.replace(src, "\"${basedir}", "${basedir}\"");
 
-    private static Map<String, Object> toMap(ExecutionConfig executionConfig){
+        return src;
+    }
+
+    private String deClutter(String value){
+        String baseDir = this.project.getBasedir().getAbsolutePath();
+        String testOut = this.project.getBuild().getTestOutputDirectory();
+        String srcOut = this.project.getBuild().getOutputDirectory();
+        String target = this.project.getBuild().getDirectory();
+
+        this.getLog().info("declutter value: " + value);
+
+        String rtn = value;
+        if (value.startsWith(testOut)){
+            rtn = "${project.build.testOutputDirectory}" + StringUtils.removeStart(value, testOut);
+        }
+        else if (value.startsWith(srcOut)){
+            rtn = "${project.build.outputDirectory}" + StringUtils.removeStart(value, target);
+
+        }
+        else if (value.startsWith(target)){
+            rtn = "${project.build.directory}" +  StringUtils.removeStart(value, target);
+        }
+        else if (value.startsWith(baseDir)){
+            rtn = "${basedir}" + StringUtils.removeStart(value, target);
+
+        }
+        return rtn;
+    }
+
+    private Map<String, Object> toMap(ExecutionConfig executionConfig){
         Map<String, Object> execConfig1 = new HashMap<>();
 
         execConfig1.put("description", executionConfig.getDescription());
-        execConfig1.put("featureFile", executionConfig.getFeatureFile());
-        execConfig1.put("dataOutputDir", executionConfig.getDataOutputDirectory().getPath());
+        execConfig1.put("featureFile", deClutter(executionConfig.getFeatureFile()));
+
+        // this is the default root data dir
+
+        String rootDataDir =         this.project.getBuild().getDirectory() + File.separator + "substeps_data";
+
+        if (StringUtils.startsWith(executionConfig.getDataOutputDirectory().getPath(), rootDataDir)){
+            execConfig1.put("dataOutputDir",StringUtils.removeStart(executionConfig.getDataOutputDirectory().getPath(), rootDataDir));
+        }
+        // else the root data dir is being somewhere else, so we'll set the root data value accordingly
+
+
         execConfig1.put("nonFatalTags", executionConfig.getNonFatalTags());
-        execConfig1.put("substepsFile", executionConfig.getSubStepsFileName());
+        execConfig1.put("substepsFile", deClutter(executionConfig.getSubStepsFileName()));
         execConfig1.put("tags", executionConfig.getTags());
 
         if (executionConfig.getNonStrictKeywordPrecedence() != null) {
@@ -343,15 +474,19 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
         }
 
         execConfig1.put("stepImplementationClassNames", Lists.newArrayList(executionConfig.getStepImplementationClassNames()));
-        execConfig1.put("executionListeners", Lists.newArrayList(executionConfig.getExecutionListeners()));
+
+        if (executionConfig.getExecutionListeners().length > 1 || !executionConfig.getExecutionListeners()[0].equals("com.technophobia.substeps.runner.logger.StepExecutionLogger")){
+            execConfig1.put("executionListeners", Lists.newArrayList(executionConfig.getExecutionListeners()));
+        }
+
 
         if (executionConfig.getInitialisationClass() != null) {
             execConfig1.put("initialisationClasses", Lists.newArrayList(executionConfig.getInitialisationClass()));
         }
 
-        if (executionConfig.getExecutionListeners() != null) {
-            execConfig1.put("executionListeners", Lists.newArrayList(executionConfig.getExecutionListeners()));
-        }
+//        if (executionConfig.getExecutionListeners() != null) {
+//            execConfig1.put("executionListeners", Lists.newArrayList(executionConfig.getExecutionListeners()));
+//        }
 
         return execConfig1;
     }

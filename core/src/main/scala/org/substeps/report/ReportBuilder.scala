@@ -15,6 +15,7 @@ import org.json4s._
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization._
 import org.slf4j.{Logger, LoggerFactory}
+import org.substeps.config.SubstepsConfigLoader
 import org.substeps.runner.NewSubstepsExecutionConfig
 
 import scala.beans.BeanProperty
@@ -26,7 +27,7 @@ abstract class RootNodeDescriptionProvider{
 
 class DefaultDescriptionProvider extends RootNodeDescriptionProvider{
   override def describe(config: Config): String = {
-    config.getString("org.substeps.config.executionConfig.description")
+    config.getString("org.substeps.executionConfig.description")
   }
 }
 
@@ -111,9 +112,9 @@ case object SourceDataModel{
   */
 class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTreeTemplate with GlossaryTemplate {
 
-  // TODO need to leave here as legacy to ensure old behaviour still works, although new structure will mandate change ??
-//  @BeanProperty
-//  var reportDir : File = new File(".")
+  // TODO need to leave here as legacy to ensure maven is able to inject in parameter, mojo fails otherwise
+  @BeanProperty
+  var reportDir : File = new File(".")
 
   private val log: Logger = LoggerFactory.getLogger(classOf[ReportBuilder])
 
@@ -622,7 +623,9 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
   def readModels(masterConfig : Config)(implicit reportDir : File) : List[SourceDataModel] = {
 
-    val executionConfigs = NewSubstepsExecutionConfig.splitConfig(masterConfig)
+    import scala.collection.JavaConverters._
+
+    val executionConfigs = SubstepsConfigLoader.splitMasterConfig(masterConfig).asScala.toList
 
     // each exec config will have an output dir
     executionConfigs.map(cfg =>{

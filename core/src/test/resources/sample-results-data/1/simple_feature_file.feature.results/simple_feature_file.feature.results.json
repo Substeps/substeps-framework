@@ -3,7 +3,7 @@
   "filename":"simple_feature_file.feature",
   "result":"CHILD_FAILED",
   "id":51,
-  "executionDurationMillis":533,
+  "executionDurationMillis":456,
   "description":"a simple feature",
   "scenarios":[
     {

@@ -13,7 +13,7 @@
       "lineNumber":2,
       "result":"PASSED",
       "id":44,
-      "executionDurationMillis":1,
+      "executionDurationMillis":0,
       "description":"PassingSubstepDef",
       "children":[
         {
@@ -39,7 +39,7 @@
       "lineNumber":8,
       "result":"PASSED",
       "id":46,
-      "executionDurationMillis":0,
+      "executionDurationMillis":1,
       "description":"WithParamsSubstepDef \"c\" and \"d\"",
       "children":[
         {
@@ -48,7 +48,7 @@
           "lineNumber":9,
           "result":"PASSED",
           "id":45,
-          "executionDurationMillis":0,
+          "executionDurationMillis":1,
           "description":"WithParams \"c\" \"d\"",
           "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$5$StepImpls$3.twoParams(java.lang.String,java.lang.String)",
           "children":[
@@ -90,7 +90,7 @@
           ],
           "exceptionMessage":"something went wrong",
           "stackTrace":[
-            "org.substeps.runner.ParsingFromSourceTests$$anonfun$5$StepImpls$3.generateFailure(ParsingFromSourceTests.scala:602)",
+            "org.substeps.runner.ParsingFromSourceTests$$anonfun$5$StepImpls$3.generateFailure(ParsingFromSourceTests.scala:603)",
             "sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)",
             "sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)",
             "sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)",
@@ -121,9 +121,9 @@
             "com.technophobia.substeps.runner.node.RootNodeRunner.execute(RootNodeRunner.java:33)",
             "com.technophobia.substeps.runner.node.AbstractNodeRunner.run(AbstractNodeRunner.java:48)",
             "com.technophobia.substeps.runner.ExecutionNodeRunner.run(ExecutionNodeRunner.java:394)",
-            "org.substeps.runner.ParsingFromSourceTests$$anonfun$5.apply$mcV$sp(ParsingFromSourceTests.scala:686)",
-            "org.substeps.runner.ParsingFromSourceTests$$anonfun$5.apply(ParsingFromSourceTests.scala:536)",
-            "org.substeps.runner.ParsingFromSourceTests$$anonfun$5.apply(ParsingFromSourceTests.scala:536)",
+            "org.substeps.runner.ParsingFromSourceTests$$anonfun$5.apply$mcV$sp(ParsingFromSourceTests.scala:689)",
+            "org.substeps.runner.ParsingFromSourceTests$$anonfun$5.apply(ParsingFromSourceTests.scala:537)",
+            "org.substeps.runner.ParsingFromSourceTests$$anonfun$5.apply(ParsingFromSourceTests.scala:537)",
             "org.scalatest.Transformer$$anonfun$apply$1.apply$mcV$sp(Transformer.scala:22)",
             "org.scalatest.OutcomeOf$class.outcomeOf(OutcomeOf.scala:85)",
             "org.scalatest.OutcomeOf$.outcomeOf(OutcomeOf.scala:104)",
@@ -174,7 +174,7 @@
             "org.jetbrains.plugins.scala.testingSupport.scalaTest.ScalaTestRunner.runScalaTest2(ScalaTestRunner.java:138)",
             "org.jetbrains.plugins.scala.testingSupport.scalaTest.ScalaTestRunner.main(ScalaTestRunner.java:28)"
           ],
-          "screenshot":"/simple_feature_file.feature.results/A_basic_failing_scenario/N7dOOmwDBK",
+          "screenshot":"/simple_feature_file.feature.results/A_basic_failing_scenario/rbkYQ3sYTG",
           "source":"GenerateFailure"
         }
       ],

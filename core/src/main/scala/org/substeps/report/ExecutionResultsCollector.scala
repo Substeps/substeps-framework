@@ -31,7 +31,10 @@ object ExecutionResultsCollector{
 
   val UTF8 = Charset.forName("UTF-8")
 
-  def writeMasterConfig(masterConfig: Config, rootDataDir: File) = {
+  // TODO - only called in tests
+  def writeMasterConfig(masterConfig: Config) = {
+
+    val rootDataDir: File = NewSubstepsExecutionConfig.getRootDataDir(masterConfig)
     val outFile = new File(rootDataDir, "masterConfig.conf")
 
     mkdirOrException(rootDataDir)

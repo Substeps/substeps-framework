@@ -57,11 +57,6 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
         this.notificiationHandler = notificiationHandler;
     }
 
-    @Override
-    public RootNode prepareExecutionConfig(Config theConfig) {
-
-        throw new UnsupportedOperationException("sorry not yet implented!");
-    }
 
 
     private ExecutionNodeResultNotificationHandler notificiationHandler = null;
@@ -166,10 +161,21 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
         return connector;
     }
 
-    public byte[] prepareExecutionConfigAsBytes(final SubstepsExecutionConfig cfg) {
+//    public byte[] prepareExecutionConfigAsBytes(final SubstepsExecutionConfig cfg) {
+//
+//        try {
+//            return this.mbean.prepareExecutionConfigAsBytes(cfg);
+//        }
+//        catch (SubstepsConfigurationException ex){
+//            log.error("Failed to init tests: " + ex.getMessage());
+//            return null;
+//        }
+//    }
+
+    public byte[] prepareExecutionConfigAsBytes(final String theConfig) {
 
         try {
-            return this.mbean.prepareExecutionConfigAsBytes(cfg);
+            return this.mbean.prepareExecutionConfigAsBytes(theConfig);
         }
         catch (SubstepsConfigurationException ex){
             log.error("Failed to init tests: " + ex.getMessage());
@@ -177,14 +183,14 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
         }
     }
 
-//    @Override
-    public RootNode prepareExecutionConfig(final SubstepsExecutionConfig cfg) {
+    @Override
+    public RootNode prepareExecutionConfig(Config theConfig) {
 
         try {
             final ObjectName objectName = new ObjectName(SubstepsServerMBean.SUBSTEPS_JMX_MBEAN_NAME);
             Object  rootNode = mbsc.invoke(objectName,
                     "prepareExecutionConfig",
-                    new Object[]{cfg},
+                    new Object[]{theConfig},
                     new String[]{SubstepsExecutionConfig.class.getName()});
             return (RootNode)rootNode;
 
@@ -192,7 +198,27 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
             log.error("Exception thrown preparing exectionConfig", e);
         }
         return null;
+
+      //  throw new UnsupportedOperationException("sorry not yet implented!");
     }
+
+
+//    @Override
+//    public RootNode prepareExecutionConfig(final SubstepsExecutionConfig cfg) {
+//
+//        try {
+//            final ObjectName objectName = new ObjectName(SubstepsServerMBean.SUBSTEPS_JMX_MBEAN_NAME);
+//            Object  rootNode = mbsc.invoke(objectName,
+//                    "prepareExecutionConfig",
+//                    new Object[]{cfg},
+//                    new String[]{SubstepsExecutionConfig.class.getName()});
+//            return (RootNode)rootNode;
+//
+//        } catch (Exception e) {
+//            log.error("Exception thrown preparing exectionConfig", e);
+//        }
+//        return null;
+//    }
 
 	@Override
     public List<SubstepExecutionFailure> getFailures() {

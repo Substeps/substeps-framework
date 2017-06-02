@@ -38,7 +38,11 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
     val reportBuilder = new ReportBuilder
   //  reportBuilder.reportDir = outputDir
 
-    val masterConfig = ConfigFactory.parseFile(new File("src/test/resources/sample-results-data/masterConfig.conf"))
+    val uri = this.getClass.getClassLoader.getResource("sample-results-data/masterConfig.conf")
+
+    val masterConfig = ConfigFactory.parseFile(new File(uri.getFile))//"src/test/resources/sample-results-data/masterConfig.conf"))
+
+    Option(masterConfig) shouldBe defined
 
     val modelList = reportBuilder readModels(masterConfig)
 
@@ -63,7 +67,10 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
 
     val reportBuilder = new ReportBuilder
 
-    reportBuilder.buildFromDirectory(new File("src/test/resources/sample-results-data"), outputDir)
+    val uri = this.getClass.getClassLoader.getResource("sample-results-data")
+
+    // "src/test/resources/sample-results-data"
+    reportBuilder.buildFromDirectory(new File(uri.getFile), outputDir)
 
     outputDir.exists() should be (true)
 

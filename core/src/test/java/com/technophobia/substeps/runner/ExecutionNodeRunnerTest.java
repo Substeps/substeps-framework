@@ -42,6 +42,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.substeps.config.SubstepsConfigLoader;
 import org.substeps.report.IExecutionResultsCollector;
 import org.substeps.runner.NewSubstepsExecutionConfig;
 
@@ -284,9 +285,13 @@ public class ExecutionNodeRunnerTest {
                                       final SubstepsExecutionConfig executionConfig,
                                       final List<SubstepExecutionFailure> failures) {
 
-        Config masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(NewSubstepsExecutionConfig.toConfig(executionConfig));
 
-        Config cfg = NewSubstepsExecutionConfig.splitConfigAsOne(masterConfig);
+        Config masterConfig = NewSubstepsExecutionConfig.toConfig(executionConfig);
+        Config cfg = SubstepsConfigLoader.splitMasterConfig(masterConfig).get(0);
+
+
+//        Config masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(NewSubstepsExecutionConfig.toConfig(executionConfig));
+//        Config cfg = NewSubstepsExecutionConfig.splitConfigAsOne(masterConfig);
 
 
         runner.addNotifier(notifier);
@@ -846,9 +851,12 @@ public class ExecutionNodeRunnerTest {
 
         executionConfig.setFastFailParseErrors(false);
 
-        Config masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(NewSubstepsExecutionConfig.toConfig(executionConfig));
+        Config masterConfig = NewSubstepsExecutionConfig.toConfig(executionConfig);
+        Config cfg = SubstepsConfigLoader.splitMasterConfig(masterConfig).get(0);
 
-        Config cfg = NewSubstepsExecutionConfig.splitConfigAsOne(masterConfig);
+
+//        Config masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(NewSubstepsExecutionConfig.toConfig(executionConfig));
+//        Config cfg = NewSubstepsExecutionConfig.splitConfigAsOne(masterConfig);
 
         final RootNode rootNode = runner.prepareExecutionConfig(cfg);
 

@@ -41,12 +41,12 @@ public class SubstepsReportBuilderMojo extends BaseSubstepsMojo {
 
 
     @Override
-    public void executionConfig(Config cfg) throws MojoExecutionException, MojoFailureException{
+    public void executeConfig(Config cfg) throws MojoExecutionException, MojoFailureException {
 
     }
 
     @Override
-    public void executeBeforeAllConfigs(List<Config> configs) throws MojoExecutionException, MojoFailureException{
+    public void executeBeforeAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException{
 
     }
 
