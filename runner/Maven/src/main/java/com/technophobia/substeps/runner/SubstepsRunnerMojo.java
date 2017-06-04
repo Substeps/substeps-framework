@@ -287,7 +287,7 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
             // TODO - print out the config concisely??
             //this.getLog().info("SubstepsExecutionConfig: " + cfg.printParameters());
 
-            NewSubstepsExecutionConfig.addConfigToContext(executionConfig);
+            NewSubstepsExecutionConfig.setThreadLocalConfig(executionConfig);
 
             final RootNode iniitalRootNode = runner.prepareExecutionConfig(executionConfig);
 

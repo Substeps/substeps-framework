@@ -630,6 +630,8 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     // each exec config will have an output dir
     executionConfigs.map(cfg =>{
 
+      NewSubstepsExecutionConfig.setThreadLocalConfig(cfg)
+
       val dataDir = NewSubstepsExecutionConfig.getDataDirForConfig(cfg)
 
       readModel(dataDir, cfg)

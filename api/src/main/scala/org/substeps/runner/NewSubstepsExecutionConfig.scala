@@ -4,6 +4,7 @@ import java.io.File
 import java.util
 
 import com.google.common.collect.Lists
+import com.technophobia.substeps.model.Configuration
 import com.technophobia.substeps.model.exception.SubstepsConfigurationException
 import com.technophobia.substeps.runner.{IExecutionListener, SubstepsExecutionConfig}
 import com.typesafe.config._
@@ -15,17 +16,30 @@ import scala.collection.JavaConverters._
 /**
   * Created by ian on 05/03/17.
   */
-case object NewSubstepsExecutionConfig {
+
+trait SubstepsConfigKeys{
+  val `stepDepthDescriptionKey` = "step.depth.description"
+  val `logUncallEdAndUnusedStepImplsKey` =   "log.unused.uncalled"
+  val `prettyPrintReportDataKey` = "report.data.pretty.print"
+  val `reportDataBaseDirKey` = "report.data.base.dir"
+
+}
+
+object JSubstepsConfigKeys extends SubstepsConfigKeys
+
+object NewSubstepsExecutionConfig extends SubstepsConfigKeys {
 
   private val log : Logger = LoggerFactory.getLogger("org.substeps.runner.NewSubstepsExecutionConfig")
 
   // TODO - could use an execution context to scope this
   private val threadLocalContext = new ThreadLocal[Config]
 
-  def addConfigToContext(cfg :Config) = {
-    // TODO add to a threadlocal context
+  def setThreadLocalConfig(cfg :Config) = {
     threadLocalContext.set(cfg)
   }
+
+  def threadLocalConfig() : Config = threadLocalContext.get()
+
 
   def validateExecutionConfig(implicit cfg : Config) : Unit = {
 
@@ -119,7 +133,6 @@ case object NewSubstepsExecutionConfig {
   }
 
 
-  def threadLocalConfig() : Config = threadLocalContext.get()
 
   val options: ConfigRenderOptions = ConfigRenderOptions.defaults.setComments(false).setFormatted(true).setJson(false).setOriginComments(false)
 
@@ -132,6 +145,10 @@ case object NewSubstepsExecutionConfig {
       .withoutKey("os")
       .withoutKey("sun")
       .withoutKey("user")
+      .withValue("remote.token",  ConfigValueFactory.fromAnyRef("******"))
+      .withValue("remote.username",  ConfigValueFactory.fromAnyRef("******"))
+      // TODO - correct the webdriver paths here or work out how to mask certain fields - surely some config ?
+
       .render(options)
   }
 
@@ -415,4 +432,16 @@ case object NewSubstepsExecutionConfig {
 //
 //    ExecutionConfigWrapper.buildInitialisationClassList(stepImplementationClasses, initClassList);
 //  }
+
+
+  def substepsConfig: Config = threadLocalConfig()
+
+  def stepDepthForDescription = substepsConfig.getInt(`stepDepthDescriptionKey`)
+
+  def logUncalledAndUnusedStepImpls = substepsConfig.getBoolean(`logUncallEdAndUnusedStepImplsKey`)
+
+  def prettyPrintReportData = substepsConfig.getBoolean(`prettyPrintReportDataKey`)
+
+  def reportDataBaseDir = substepsConfig.getString(`reportDataBaseDirKey`)
+
 }

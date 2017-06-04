@@ -11,8 +11,10 @@ import com.technophobia.substeps.runner._
 import com.technophobia.substeps.runner.builder.ExecutionNodeTreeBuilder
 import com.technophobia.substeps.runner.setupteardown.SetupAndTearDown
 import com.technophobia.substeps.runner.syntax.SyntaxBuilder
+import com.typesafe.config.Config
 import org.scalatest.{FlatSpec, ShouldMatchers}
 import org.slf4j.LoggerFactory
+import org.substeps.config.SubstepsConfigLoader
 import org.substeps.report.ExecutionResultsCollector
 
 import scala.collection.JavaConverters._
@@ -99,7 +101,11 @@ class ExpressionEvaluationTest extends FlatSpec with ShouldMatchers with Feature
 
 //    val cfgWrapper = new ExecutionConfigWrapper(executionConfig)
 
-    val cfg = NewSubstepsExecutionConfig.toConfig(executionConfig)
+//    val cfg = NewSubstepsExecutionConfig.toConfig(executionConfig)
+
+    val cfg = SubstepsConfigLoader.splitMasterConfig(SubstepsConfigLoader.loadResolvedConfig).get(0)
+    NewSubstepsExecutionConfig.setThreadLocalConfig(cfg)
+
 
     val nodeTreeBuilder: ExecutionNodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, cfg)
 

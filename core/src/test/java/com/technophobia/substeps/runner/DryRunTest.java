@@ -69,7 +69,7 @@ public class DryRunTest {
 
         Config masterConfig = NewSubstepsExecutionConfig.toConfig(theConfig);
         Config config = SubstepsConfigLoader.splitMasterConfig(masterConfig).get(0);
-
+        NewSubstepsExecutionConfig.setThreadLocalConfig(config);
 
 //        Config masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(cfg);
 //

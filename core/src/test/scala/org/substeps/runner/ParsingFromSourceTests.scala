@@ -654,6 +654,8 @@ Scenario: inline table
 
     val cfg = configs.head
 
+    NewSubstepsExecutionConfig.setThreadLocalConfig(cfg)
+
 
     val nodeTreeBuilder: ExecutionNodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, cfg)
 
@@ -932,6 +934,9 @@ Scenario: inline table
 
 
     configs.foreach(cfg => {
+
+      NewSubstepsExecutionConfig.setThreadLocalConfig(cfg)
+
 
       val nodeTreeBuilder: ExecutionNodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, cfg)
       // building the tree can throw critical failures if exceptions are found

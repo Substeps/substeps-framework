@@ -159,6 +159,8 @@ public class JunitFeatureRunner extends org.junit.runner.Runner {
         Config masterConfig = NewSubstepsExecutionConfig.toConfig(executionConfig);
         Config config = SubstepsConfigLoader.splitMasterConfig(masterConfig).get(0);
 
+        NewSubstepsExecutionConfig.setThreadLocalConfig(config);
+
         rootNode = runner.prepareExecutionConfig(config);
 
         log.debug("rootNode.toDebugString():\n" + rootNode.toDebugString());

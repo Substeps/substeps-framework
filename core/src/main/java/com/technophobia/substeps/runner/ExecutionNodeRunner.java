@@ -30,20 +30,13 @@ import com.technophobia.substeps.runner.builder.ExecutionNodeTreeBuilder;
 import com.technophobia.substeps.runner.node.RootNodeRunner;
 import com.technophobia.substeps.runner.setupteardown.SetupAndTearDown;
 import com.technophobia.substeps.runner.syntax.SyntaxBuilder;
-
 import com.typesafe.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.substeps.report.ExecutionResultsCollector;
-import org.substeps.report.IExecutionResultsCollector;
 import org.substeps.report.ReportingUtil;
-import org.substeps.runner.CoreSubstepsPropertiesConfiguration;
 import org.substeps.runner.NewSubstepsExecutionConfig;
-import org.substeps.runner.UsageTreeBuilder;
 
 import java.io.File;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
 

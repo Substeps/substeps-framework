@@ -25,9 +25,7 @@ import com.technophobia.substeps.runner.description.DescriptionBuilder;
 import com.technophobia.substeps.runner.description.DescriptorStatus;
 import com.technophobia.substeps.runner.description.JunitVersionedDescriptionBuilder;
 import org.junit.runner.Description;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.substeps.runner.CoreSubstepsPropertiesConfiguration;
+import org.substeps.runner.JSubstepsConfigKeys;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +66,7 @@ public class EclipseDescriptionProvider implements DescriptionProvider {
 
             NodeWithChildren<?> nodeWithChildren = (NodeWithChildren<?>) node;
 
-            if (nodeWithChildren.hasChildren() && nodeWithChildren.getDepth() < CoreSubstepsPropertiesConfiguration.INSTANCE.getStepDepthForDescription()) {
+            if (nodeWithChildren.hasChildren() && nodeWithChildren.getDepth() < Configuration.INSTANCE.getSubstepsConfig().getInt(JSubstepsConfigKeys.stepDepthDescriptionKey())) {
 
                 for (final IExecutionNode child : nodeWithChildren.getChildren()) {
 

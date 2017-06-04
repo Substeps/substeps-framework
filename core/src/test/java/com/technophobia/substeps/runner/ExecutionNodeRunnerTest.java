@@ -289,9 +289,7 @@ public class ExecutionNodeRunnerTest {
         Config masterConfig = NewSubstepsExecutionConfig.toConfig(executionConfig);
         Config cfg = SubstepsConfigLoader.splitMasterConfig(masterConfig).get(0);
 
-
-//        Config masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(NewSubstepsExecutionConfig.toConfig(executionConfig));
-//        Config cfg = NewSubstepsExecutionConfig.splitConfigAsOne(masterConfig);
+        NewSubstepsExecutionConfig.setThreadLocalConfig(cfg);
 
 
         runner.addNotifier(notifier);
@@ -718,7 +716,11 @@ public class ExecutionNodeRunnerTest {
     @Test
     public void testArgSubstituion() {
 
-        Config cfg = ConfigFactory.load("localhost.conf");
+
+        Config cfg = SubstepsConfigLoader.splitMasterConfig(SubstepsConfigLoader.loadResolvedConfig()).get(0);
+        NewSubstepsExecutionConfig.setThreadLocalConfig(cfg);
+
+//        Config cfg2 = ConfigFactory.load("localhost.conf");
 
         String parameterFromConfig = cfg.getString("users.default.name");
         Assert.assertThat(parameterFromConfig, is("bob"));
@@ -854,9 +856,7 @@ public class ExecutionNodeRunnerTest {
         Config masterConfig = NewSubstepsExecutionConfig.toConfig(executionConfig);
         Config cfg = SubstepsConfigLoader.splitMasterConfig(masterConfig).get(0);
 
-
-//        Config masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(NewSubstepsExecutionConfig.toConfig(executionConfig));
-//        Config cfg = NewSubstepsExecutionConfig.splitConfigAsOne(masterConfig);
+        NewSubstepsExecutionConfig.setThreadLocalConfig(cfg);
 
         final RootNode rootNode = runner.prepareExecutionConfig(cfg);
 

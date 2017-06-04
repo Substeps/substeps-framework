@@ -268,6 +268,8 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
 
         for (Config executionConfig : configs){
 
+            NewSubstepsExecutionConfig.setThreadLocalConfig(executionConfig);
+
             try{
                 NewSubstepsExecutionConfig.validateExecutionConfig(executionConfig);
 
