@@ -27,6 +27,9 @@ import org.apache.commons.jexl3.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.substeps.runner.JSubstepsConfigKeys;
+import org.substeps.runner.NewSubstepsExecutionConfig;
+import org.substeps.runner.ParameterSubstitution;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -40,13 +43,7 @@ import java.util.regex.Pattern;
 public final class Arguments {
     private static final Logger log = LoggerFactory.getLogger(Arguments.class);
 
-    private static final boolean substituteParameters = Configuration.INSTANCE.getSubstepsConfig().getBoolean("parameter.substitution.enabled");
-    private static final String startDelimiter = Configuration.INSTANCE.getSubstepsConfig().getString("parameter.substitution.start");
-    private static final String endDelimiter = Configuration.INSTANCE.getSubstepsConfig().getString("parameter.substitution.end");
-
-    private static final boolean normalizeValues = Configuration.INSTANCE.getSubstepsConfig().getBoolean("parameter.substitution.normalizeValue");
-    private static final String normalizeFrom = Configuration.INSTANCE.getSubstepsConfig().getString("parameter.substitution.normalize.from");
-    private static final String normalizeTo = Configuration.INSTANCE.getSubstepsConfig().getString("parameter.substitution.normalize.to");
+    String x = JSubstepsConfigKeys.substepsReportDir();
 
     private static final JexlEngine jexl = new JexlBuilder().cache(512).strict(false).silent(false).create();
 
@@ -57,6 +54,8 @@ public final class Arguments {
 
     public static Object evaluateExpression(String expressionWithDelimiters){
 
+        ParameterSubstitution parameterSubstituionConfig = NewSubstepsExecutionConfig.getParameterSubstituionConfig();
+
         // TODO - check that the expression doesn't contain any of the bad words
         // or and eq ne lt gt le ge div mod not null true false new var return
         // any of those words need to be qutoed or ['  ']
@@ -66,8 +65,10 @@ public final class Arguments {
 
         // TODO check flag to see whether we can evaluate things from the ec
 
-        if (expressionWithDelimiters != null && substituteParameters && expressionWithDelimiters.startsWith(startDelimiter)) {
-            String expression = StringUtils.stripStart(StringUtils.stripEnd(expressionWithDelimiters, endDelimiter), startDelimiter);
+        if (expressionWithDelimiters != null && parameterSubstituionConfig.substituteParameters()
+                && expressionWithDelimiters.startsWith(parameterSubstituionConfig.startDelimiter())) {
+            String expression = StringUtils.stripStart(StringUtils.stripEnd(expressionWithDelimiters, parameterSubstituionConfig.endDelimiter()),
+                    parameterSubstituionConfig.startDelimiter());
 
             JexlContext context = new MapContext(ExecutionContext.flatten());
 
@@ -82,8 +83,12 @@ public final class Arguments {
 
     public static String substituteValues(String src) {
 
-        if (src != null && substituteParameters && src.startsWith(startDelimiter)){
-            String key = StringUtils.stripStart(StringUtils.stripEnd(src, endDelimiter), startDelimiter);
+        ParameterSubstitution parameterSubstituionConfig = NewSubstepsExecutionConfig.getParameterSubstituionConfig();
+
+        if (src != null && parameterSubstituionConfig.substituteParameters() &&
+                src.startsWith(parameterSubstituionConfig.startDelimiter())){
+            String key = StringUtils.stripStart(StringUtils.stripEnd(src, parameterSubstituionConfig.endDelimiter()),
+                    parameterSubstituionConfig.startDelimiter());
 
             String normalizedValue = src;
 
@@ -94,10 +99,10 @@ public final class Arguments {
                     throw new SubstepsRuntimeException("Failed to resolve property " + src + " to be substituted ");
                 }
                 normalizedValue = substitute;
-                if (normalizeValues) {
+                if (parameterSubstituionConfig.normalizeValues()) {
                     // This part will support the conversion of properties files containing accented characters
                     try {
-                        normalizedValue = new String(substitute.getBytes(normalizeFrom), normalizeTo);
+                        normalizedValue = new String(substitute.getBytes(parameterSubstituionConfig.normalizeFrom()), parameterSubstituionConfig.normalizeTo());
                     } catch (UnsupportedEncodingException e) {
                         log.error("error substituting accented characters", e);
                     }

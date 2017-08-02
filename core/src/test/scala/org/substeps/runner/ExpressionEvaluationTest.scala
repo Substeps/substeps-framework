@@ -12,7 +12,7 @@ import com.technophobia.substeps.runner.builder.ExecutionNodeTreeBuilder
 import com.technophobia.substeps.runner.setupteardown.SetupAndTearDown
 import com.technophobia.substeps.runner.syntax.SyntaxBuilder
 import com.typesafe.config.Config
-import org.scalatest.{FlatSpec, ShouldMatchers}
+import org.scalatest.{FlatSpec, Matchers}
 import org.slf4j.LoggerFactory
 import org.substeps.config.SubstepsConfigLoader
 import org.substeps.report.ExecutionResultsCollector
@@ -29,7 +29,7 @@ trait WritesResultsData{
 /**
   * Created by ian on 13/01/17.
   */
-class ExpressionEvaluationTest extends FlatSpec with ShouldMatchers with FeatureFilesFromSource with WritesResultsData{
+class ExpressionEvaluationTest extends FlatSpec with Matchers with FeatureFilesFromSource with WritesResultsData{
 
   private val log = LoggerFactory.getLogger(classOf[ParsingFromSourceTests])
 

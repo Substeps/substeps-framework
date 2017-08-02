@@ -1,13 +1,13 @@
 package org.substeps.config
 
 import com.typesafe.config.ConfigFactory
-import org.scalatest.{FlatSpec, ShouldMatchers}
+import org.scalatest.{FlatSpec,Matchers}
 import org.substeps.runner.NewSubstepsExecutionConfig
 
 /**
   * Created by ian on 03/04/17.
   */
-class ConfigTest extends FlatSpec with ShouldMatchers{
+class ConfigTest extends FlatSpec with Matchers{
 
   "loading config" must "use legacy values as fallback" in {
 

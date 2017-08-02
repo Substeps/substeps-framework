@@ -1,9 +1,12 @@
 package org.substeps.config
 
+import java.io.File
+
 import com.technophobia.substeps.model.Configuration
 import com.technophobia.substeps.model.exception.SubstepsConfigurationException
 import com.typesafe.config._
 import org.slf4j.LoggerFactory
+import org.substeps.runner.NewSubstepsExecutionConfig
 
 import scala.collection.JavaConverters._
 
@@ -20,37 +23,63 @@ import scala.collection.JavaConverters._
   */
 object SubstepsConfigLoader {
 
-  val logger = LoggerFactory.getLogger("org.substeps.config.SubstepsConfigLoader")
+  val log = LoggerFactory.getLogger("org.substeps.config.SubstepsConfigLoader")
   val options: ConfigRenderOptions = ConfigRenderOptions.defaults.setComments(false).setFormatted(true).setJson(false).setOriginComments(false)
 
   def render(cfg: Config): String = cfg.withOnlyPath("org.substeps").root().render(options)
 
   def loadResolvedConfig(): Config = {
-    loadResolvedConfig(ConfigFactory.empty())
+
+    // TODO - a switch to be able to use another set of defaults - sbt perhaps ?
+    loadResolvedConfig(defaultMavenLikeFallbackConfig)
   }
 
+  def loadResolvedConfig(mavenConfigSettings: Config, environmentConfigFile : File): Config = {
+
+    val envConfig = ConfigFactory.parseFile(environmentConfigFile, ConfigParseOptions.defaults().setAllowMissing(true))
+
+    log.debug("Env config from file (" + environmentConfigFile.getAbsolutePath() + "):\n" + NewSubstepsExecutionConfig.render(envConfig))
+
+
+    loadResolvedConfig(mavenConfigSettings, envConfig)
+  }
+
+
   def loadResolvedConfig(mavenConfigSettings: Config): Config = {
+    val envConfig = loadEnvironmentOverrides()
+
+    loadResolvedConfig(mavenConfigSettings, envConfig)
+  }
+
+  private def loadResolvedConfig(mavenConfigSettings: Config, envConfig : Config): Config = {
+
+    val masterCfg =
+      ConfigFactory.load(ConfigParseOptions.defaults(), ConfigResolveOptions.noSystem().setAllowUnresolved(true))
+
+    log.debug("master config:\n" + NewSubstepsExecutionConfig.render(masterCfg))
+
+
+    resolveConfig(masterCfg, mavenConfigSettings, envConfig)
+//    loadResolvedConfig(mavenConfigSettings)
+  }
+
+  def environmentConfigFile() = {
+    System.getProperty("ENVIRONMENT", "localhost") + ".conf"
+  }
+
+  def loadEnvironmentOverrides() = {
 
     val useProps = System.getProperty("substeps.use.dot.properties")
     if (useProps != null && useProps.toBoolean) {
       throw new SubstepsConfigurationException("Using legacy properties has been deprecated, please use a .conf file and HOCON syntax for greater functionality")
     }
 
+    val envConfig = ConfigFactory.parseResources(environmentConfigFile(), ConfigParseOptions.defaults().setAllowMissing(true))
 
-    val environment = System.getProperty("ENVIRONMENT", "localhost") + ".conf"
-    loadResolvedConfig(environment, mavenConfigSettings)
+    log.debug("Env config:\n" + NewSubstepsExecutionConfig.render(envConfig))
+    envConfig
   }
 
-
-  def loadResolvedConfig(environmentOverrides: String, mavenConfigSettings: Config): Config = {
-
-    val envConfig = ConfigFactory.parseResources(environmentOverrides, ConfigParseOptions.defaults().setAllowMissing(true))
-
-    val masterCfg =
-      ConfigFactory.load(ConfigParseOptions.defaults(), ConfigResolveOptions.noSystem().setAllowUnresolved(true))
-
-    resolveConfig(masterCfg, mavenConfigSettings, envConfig)
-  }
 
 
   def splitMasterConfig(masterConfig: Config): java.util.List[Config] = {
@@ -72,25 +101,47 @@ object SubstepsConfigLoader {
 
   def resolveConfig(initialMasterConfig: Config, mavenConfigSettings: Config, envConfig: Config): Config = {
 
-    val masterConfig = envConfig.withFallback(initialMasterConfig)
+    log.debug("resolveConfig")
 
-    val exeConfigList = masterConfig.getConfigList("org.substeps.executionConfigs").asScala
+    val masterConfig = envConfig.withFallback(initialMasterConfig).resolve(ConfigResolveOptions.defaults().setAllowUnresolved(true))
+
+    log.debug("masterConfig:\n" + NewSubstepsExecutionConfig.render(masterConfig))
 
     val baseExecutionConfig = masterConfig.getConfig("org.substeps.baseExecutionConfig")
 
     val resolvedExecutionConfigs =
+
+    if (masterConfig.hasPath("org.substeps.executionConfigs")){
+      val exeConfigList = masterConfig.getConfigList("org.substeps.executionConfigs").asScala
+
       exeConfigList.map(exeCfg => {
 
         val thisExecConfig = exeCfg.withFallback(baseExecutionConfig)
 
         thisExecConfig.resolve(ConfigResolveOptions.defaults().setAllowUnresolved(true)).root()
 
-      }).toList.asJava
+      })
+    }
+    else {
+      List(baseExecutionConfig.resolve(ConfigResolveOptions.defaults().setAllowUnresolved(true)).root())
+    }
+
 
     masterConfig.withoutPath("org.substeps.executionConfigs")
-    .withValue("org.substeps.executionConfigs", ConfigValueFactory.fromIterable(resolvedExecutionConfigs))
+    .withValue("org.substeps.executionConfigs", ConfigValueFactory.fromIterable(resolvedExecutionConfigs.toList.asJava))
     .resolve(ConfigResolveOptions.defaults().setAllowUnresolved(true))
     .resolveWith(mavenConfigSettings, ConfigResolveOptions.defaults().setAllowUnresolved(true))
+  }
+
+  def defaultMavenLikeFallbackConfig : Config = {
+    buildMavenFallbackConfig("target", ".", "target")
+  }
+
+  def buildMavenFallbackConfig(projectBuildDir : String, baseDir : String, testOutputDir : String ) : Config= {
+      ConfigFactory.empty.withValue("project.build.directory", ConfigValueFactory.fromAnyRef(projectBuildDir))
+      .withValue("basedir", ConfigValueFactory.fromAnyRef(baseDir))
+        .withValue("project.build.testOutputDirectory", ConfigValueFactory.fromAnyRef(testOutputDir))
+          .withValue("project.build.outputDirectory", ConfigValueFactory.fromAnyRef(projectBuildDir))
   }
 
 

@@ -100,34 +100,9 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
     @Component
     private ArtifactMetadataSource artifactMetadataSource;
 
-//    private MojoRunner runner;
-
-
-
-//    @Override
-//    public void execute() throws MojoExecutionException, MojoFailureException {
-//
-//        checkPomSettings();
-//
-//        ensureValidConfiguration();
-//
-//        setupBuildEnvironmentInfo();
-//
-//        this.runner = this.runTestsInForkedVM ? createForkedRunner() : createInProcessRunner();
-//
-//        try {
-//            executeNewConfigs();
-//            //executeConfigs();
-//
-//            processBuildData();
-//        }
-//        finally {
-//            this.runner.shutdown();
-//        }
-//    }
 
     @Override
-    public void executeAfterAllConfigs(List<Config> configs) throws MojoExecutionException, MojoFailureException{
+    public void executeAfterAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException{
         processBuildData();
     }
 
@@ -142,16 +117,14 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
         mkdirOrException(rootDataDir);
 
         try {
-            Files.write(NewSubstepsExecutionConfig.render(masterConfig), outFile, Charset.forName("UTF-8"));
+            String renderedConfig = NewSubstepsExecutionConfig.render(masterConfig);
+            this.getLog().info("\n\n *** USING COMBINED CONFIG:\n\n" + renderedConfig + "\n\n");
+
+            Files.write(renderedConfig, outFile, Charset.forName("UTF-8"));
         }
         catch (IOException e){
             throw new MojoExecutionException(e.getMessage(), e);
         }
-
-
-
-
-//        this.runner = this.runTestsInForkedVM ? createForkedRunner() : createInProcessRunner();
     }
 
     private void mkdirOrException(File dir)  {
@@ -164,64 +137,6 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
 
     }
 
-//    private Config loadConfig(String cfgFile){
-//
-//        String environment = System.getProperty("ENVIRONMENT");
-//
-//        Config envConfig;
-//        if (environment == null){
-//            envConfig = ConfigFactory.load("localhost.conf");
-//        }
-//        else {
-//            envConfig = ConfigFactory.load(environment + ".conf");
-//
-//        }
-//
-//        Config base = ConfigFactory.load(cfgFile);
-//
-//        return envConfig.withFallback(base);
-//        // .withFallback(ConfigFactory.load("executionConfig.conf"));
-//
-//    }
-
-    // TODO
-//    private void executeConfig(String cfgFile){
-//
-//        // TODO - load up the config file
-//        Config cfg = loadConfig(cfgFile);
-//
-//        //final SubstepsExecutionConfig cfg =  theConfig.asSubstepsExecutionConfig();
-//
-//        // TODO print out nice config
-//        //this.getLog().info("SubstepsExecutionConfig: " + cfg.printParameters());
-//
-//        final RootNode iniitalRootNode = this.runner.prepareExecutionConfig(cfg);
-//
-//        this.executionResultsCollector.initOutputDirectories(iniitalRootNode);
-//
-//        this.runner.addNotifier(this.executionResultsCollector);
-//
-//        final RootNode rootNode = this.runner.run();
-//
-//        if (theConfig.getDescription() != null) {
-//
-//            rootNode.setLine(theConfig.getDescription());
-//        }
-//
-//
-//
-//        addToLegacyReport(rootNode);
-//
-//
-//        this.buildFailureManager.addExecutionResult(rootNode);
-//
-//
-//    }
-
-
-
-
-
 
     private ForkedRunner createForkedRunner() throws MojoExecutionException {
 
@@ -230,7 +145,8 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
             if (this.project == null) {
                 this.getLog().error("this.project is null");
             }
-            return new ForkedRunner(getLog(), getJmxPort(), getVmArgs(), this.project.getTestClasspathElements(),
+
+            return new ForkedRunner(getLog(), NewSubstepsExecutionConfig.getJmxPort(), NewSubstepsExecutionConfig.getVMArgs(), this.project.getTestClasspathElements(),
                     this.stepImplementationArtifacts, this.artifactResolver, this.artifactFactory,
                     this.projectBuilder, this.localRepository, this.remoteRepositories,
                     this.artifactMetadataSource);
@@ -248,46 +164,15 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
 
 
 
-//    private void executeConfigs() throws MojoExecutionException {
-//
-//        if (this.executionConfigs == null || this.executionConfigs.isEmpty()) {
-//
-//            throw new MojoExecutionException("executionConfigs cannot be null or empty");
-//        }
-//
-//        try {
-//            for (final ExecutionConfig executionConfig : this.executionConfigs) {
-//
-//
-//
-//                runExecutionConfig(executionConfig);
-//            }
-//        } catch (final Exception e) {
-//
-//            // to cater for any odd exceptions thrown out.. at least this way
-//            // jvm shouldn't just die, unless it was going to die anyway
-//            throw new MojoExecutionException("Unhandled exception: " + e.getMessage(), e);
-//        }
-//    }
 
     @Override
     public void executeConfig(final Config executionConfig) throws MojoExecutionException {
         // executionConfig will be whole, self contained and already split and resolved from a masterConfig
 
-//        final SubstepsExecutionConfig cfg =  theConfig.asSubstepsExecutionConfig();
-//        Config masterConfig = NewSubstepsExecutionConfig.loadMasterConfig(baseCfg, None);
-//        List<Config> configs = NewSubstepsExecutionConfig.splitConfigAsJava(masterConfig);
-
-
         MojoRunner runner = null;
 
         try {
             runner = NewSubstepsExecutionConfig.isRunInForkedVM(executionConfig) ? createForkedRunner() : createInProcessRunner();
-
-            // TODO - print out the config concisely??
-            //this.getLog().info("SubstepsExecutionConfig: " + cfg.printParameters());
-
-            NewSubstepsExecutionConfig.setThreadLocalConfig(executionConfig);
 
             final RootNode iniitalRootNode = runner.prepareExecutionConfig(executionConfig);
 
@@ -318,33 +203,6 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
             }
         }
     }
-
-//    private void runExecutionConfig(final ExecutionConfig theConfig) throws MojoExecutionException {
-//
-//        final SubstepsExecutionConfig cfg =  theConfig.asSubstepsExecutionConfig();
-//
-//        this.getLog().info("SubstepsExecutionConfig: " + cfg.printParameters());
-//
-//        final RootNode iniitalRootNode = this.runner.prepareExecutionConfig(cfg);
-//
-//        this.executionResultsCollector.initOutputDirectories(iniitalRootNode);
-//
-//        this.runner.addNotifier(this.executionResultsCollector);
-//
-//        final RootNode rootNode = this.runner.run();
-//
-//        if (theConfig.getDescription() != null) {
-//
-//            rootNode.setLine(theConfig.getDescription());
-//        }
-//
-//       addToLegacyReport(rootNode);
-//
-//        this.buildFailureManager.addExecutionResult(rootNode);
-//    }
-
-
-
 
     private void addToLegacyReport(final RootNode rootNode) {
 
@@ -479,13 +337,5 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
     public void setArtifactMetadataSource(ArtifactMetadataSource artifactMetadataSource) {
         this.artifactMetadataSource = artifactMetadataSource;
     }
-
-//    public MojoRunner getRunner() {
-//        return runner;
-//    }
-//
-//    public void setRunner(MojoRunner runner) {
-//        this.runner = runner;
-//    }
 
 }

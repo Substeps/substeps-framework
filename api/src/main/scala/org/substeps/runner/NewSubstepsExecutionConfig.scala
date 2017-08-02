@@ -1,10 +1,9 @@
 package org.substeps.runner
 
 import java.io.File
-import java.util
 
 import com.google.common.collect.Lists
-import com.technophobia.substeps.model.Configuration
+import com.technophobia.substeps.model.{Configuration, SubSteps}
 import com.technophobia.substeps.model.exception.SubstepsConfigurationException
 import com.technophobia.substeps.runner.{IExecutionListener, SubstepsExecutionConfig}
 import com.typesafe.config._
@@ -17,12 +16,72 @@ import scala.collection.JavaConverters._
   * Created by ian on 05/03/17.
   */
 
-trait SubstepsConfigKeys{
+trait SubstepsConfigKeys {
+
   val `stepDepthDescriptionKey` = "step.depth.description"
   val `logUncallEdAndUnusedStepImplsKey` =   "log.unused.uncalled"
   val `prettyPrintReportDataKey` = "report.data.pretty.print"
-  val `reportDataBaseDirKey` = "report.data.base.dir"
 
+  val `rootDataDirKey` = "org.substeps.config.rootDataDir"
+  val `substepsReportDir` = "org.substeps.config.reportDir"
+
+  val `executionConfigDataOutputDir` = "org.substeps.executionConfig.dataOutputDir"
+
+  val `checkForUncalledAndUnused` = "org.substeps.config.checkForUncalledAndUnused"
+
+  val `substepsConfigKey` = "org.substeps.config"
+
+  val `substepsFileKey` = "org.substeps.executionConfig.substepsFile"
+
+  val `initialisationClassesKey` = "org.substeps.executionConfig.initialisationClasses"
+
+  val `executionResultsCollectorKey` = "org.substeps.config.executionResultsCollector"
+
+  val `runTestsInForkedVMKey` = "org.substeps.config.runTestsInForkedVM"
+
+  val `rootNodeDescriptionProviderKey` = "org.substeps.config.report.rootNodeDescriptionProvider"
+
+  val `reportBuilderKey` = "org.substeps.config.reportBuilder"
+
+  val `executionListenersKey` = "org.substeps.executionConfig.executionListeners"
+
+  val `stepImplementationClassNamesKey` = "org.substeps.executionConfig.stepImplementationClassNames"
+
+  val `stepImplementationsExcludedInGloosary` = "org.substeps.config.glossary.excludeStepImplementationClassNames"
+
+
+  val `executionConfigDescriptionKey` = "org.substeps.executionConfig.description"
+
+  val `executionConfigTagsKey` = "org.substeps.executionConfig.tags"
+
+  val `executionConfigNonFatalTagsKey` = "org.substeps.executionConfig.nonFatalTags"
+
+  val `nonStrictKeyWordPrecedenceKey` = "org.substeps.executionConfig.nonStrictKeyWordPrecedence"
+
+  val `scenarioNameKey` = "org.substeps.executionConfig.scenarioName"
+
+  val `featureFileKey` = "org.substeps.executionConfig.featureFile"
+
+  val `fastFailParseErrorsKey` = "org.substeps.executionConfig.fastFailParseErrors"
+
+  val `jmxPortKey` = "org.substeps.config.jmxPort"
+  val `vmArgsKey` = "org.substeps.config.vmArgs"
+
+}
+
+case class ParameterSubstitution(substituteParameters: Boolean, startDelimiter: String, endDelimiter: String, normalizeValues: Boolean, normalizeFrom: String, normalizeTo: String )
+
+object ParameterSubstitution{
+  def apply(cfg : Config) : ParameterSubstitution = {
+
+    ParameterSubstitution(
+    cfg.getBoolean("parameter.substitution.enabled"),
+    cfg.getString("parameter.substitution.start"),
+    cfg.getString("parameter.substitution.end"),
+    cfg.getBoolean("parameter.substitution.normalizeValue"),
+    cfg.getString("parameter.substitution.normalize.from"),
+    cfg.getString("parameter.substitution.normalize.to"))
+  }
 }
 
 object JSubstepsConfigKeys extends SubstepsConfigKeys
@@ -38,12 +97,27 @@ object NewSubstepsExecutionConfig extends SubstepsConfigKeys {
     threadLocalContext.set(cfg)
   }
 
+  def getJmxPort() : Int = {
+    threadLocalConfig().getInt(`jmxPortKey`)
+  }
+
+  def getVMArgs() : String = {
+    getOrNull(threadLocalConfig(), `vmArgsKey`)
+  }
+
   def threadLocalConfig() : Config = threadLocalContext.get()
 
+  def getParameterSubstituionConfig() : ParameterSubstitution = {
+
+    val cfg = threadLocalConfig().getConfig(`substepsConfigKey`)
+
+    ParameterSubstitution(cfg)
+
+  }
 
   def validateExecutionConfig(implicit cfg : Config) : Unit = {
 
-    val substepsFile = getStringOrThrow("org.substeps.executionConfig.substepsFile", "no substeps file or directory specified")
+    val substepsFile = getStringOrThrow(`substepsFileKey`, "no substeps file or directory specified")
     validateFile(substepsFile, s"Substeps file path $substepsFile doesn't exist" )
 
 
@@ -64,17 +138,21 @@ object NewSubstepsExecutionConfig extends SubstepsConfigKeys {
       throw new SubstepsConfigurationException(msg)
   }
 
+  def getDataSubdir(cfg: Config) : String = {
+    cfg.getString(`executionConfigDataOutputDir`)
+  }
+
   def getDataDirForConfig(cfg: Config) : File = {
 
-    if (!cfg.hasPath("org.substeps.config.rootDataDir")){
+    if (!cfg.hasPath(`rootDataDirKey`)){
       throw new SubstepsConfigurationException("org.substeps.config.rootDataDir must be defined")
     }
 
-    if (!cfg.hasPath("org.substeps.executionConfig.dataOutputDir")){
+    if (!cfg.hasPath(`executionConfigDataOutputDir`)){
       throw new SubstepsConfigurationException("org.substeps.config.executionConfig.dataOutputDir must be defined as the relative path from org.substeps.config.rootDataDir")
     }
 
-    val dir = new File(cfg.getString("org.substeps.config.rootDataDir"), cfg.getString("org.substeps.executionConfig.dataOutputDir"))
+    val dir = new File(cfg.getString(`rootDataDirKey`), cfg.getString(`executionConfigDataOutputDir`))
 
 //    if (!dir.exists()){
 //      throw new SubstepsConfigurationException(s"data dir ${dir.getAbsolutePath()} for execution config doesn't exist")
@@ -100,10 +178,20 @@ object NewSubstepsExecutionConfig extends SubstepsConfigKeys {
 
     if (substepsConfig.getScenarioName != null) execConfig1.put("scenarioName", substepsConfig.getScenarioName)
 
-    if (substepsConfig.getNonStrictKeywordPrecedence != null)  execConfig1.put("nonStrictKeyWordPrecedence", substepsConfig.getNonStrictKeywordPrecedence.toList.asJava)
+    // this isn't used directly - it's inferred
+    // substepsConfig.isStrict
+    if (substepsConfig.getNonStrictKeywordPrecedence != null && !substepsConfig.getNonStrictKeywordPrecedence.isEmpty)  execConfig1.put("nonStrictKeyWordPrecedence", substepsConfig.getNonStrictKeywordPrecedence.toList.asJava)
 
-//
-    execConfig1.put("stepImplementationClassNames", substepsConfig.getStepImplementationClasses.asScala.map(c => c.getName).asJava)
+    val stepImplClassNameList =
+      if (Option(substepsConfig.getStepImplementationClasses).isEmpty){
+        substepsConfig.getStepImplementationClassNames.toList
+      }
+      else {
+        substepsConfig.getStepImplementationClasses.asScala.map(c => c.getName)
+      }
+
+
+    execConfig1.put("stepImplementationClassNames", stepImplClassNameList.asJava)
 //
     if (substepsConfig.getExecutionListeners != null) execConfig1.put("executionListeners", substepsConfig.getExecutionListeners.toList.asJava)
     if (substepsConfig.getInitialisationClass != null) execConfig1.put("initialisationClasses", substepsConfig.getInitialisationClass.toList.asJava)
@@ -111,8 +199,8 @@ object NewSubstepsExecutionConfig extends SubstepsConfigKeys {
 
     if (!substepsConfig.isFastFailParseErrors) execConfig1.put("fastFailParseErrors", Boolean.box(substepsConfig.isFastFailParseErrors))
 
-    substepsConfig.isStrict
-    substepsConfig.getNonStrictKeywordPrecedence
+
+
 
 
     execConfig1.put("dataOutputDir", "1")
@@ -274,8 +362,8 @@ object NewSubstepsExecutionConfig extends SubstepsConfigKeys {
 
   def getInitialisationClasses(cfg : Config) :  Array[Class[_]]= {
 
-    if (cfg.hasPath("org.substeps.executionConfig.initialisationClasses")) {
-      val initClassNames = cfg.getStringList("org.substeps.executionConfig.initialisationClasses").asScala
+    if (cfg.hasPath(`initialisationClassesKey`)) {
+      val initClassNames = cfg.getStringList(`initialisationClassesKey`).asScala
 
       initClassNames.map(className => {
         Class.forName(className)
@@ -286,25 +374,25 @@ object NewSubstepsExecutionConfig extends SubstepsConfigKeys {
 
 
   def getExecutionResultsCollector(cfg : Config) : IExecutionResultsCollector = {
-      val collector = cfg.getString("org.substeps.config.executionResultsCollector")
+      val collector = cfg.getString(`executionResultsCollectorKey`)
 
       Class.forName(collector).newInstance().asInstanceOf[IExecutionResultsCollector]
   }
 
   def isRunInForkedVM(cfg : Config) : Boolean = {
-    cfg.getBoolean("org.substeps.config.runTestsInForkedVM")
+    cfg.getBoolean(`runTestsInForkedVMKey`)
   }
 
 
   def getRootNodeDescriptor[T](cfg : Config) : T = {
-    val descriptorClass = cfg.getString("org.substeps.config.report.rootNodeDescriptionProvider")
+    val descriptorClass = cfg.getString(`rootNodeDescriptionProviderKey`)
     Class.forName(descriptorClass).newInstance().asInstanceOf[T]
   }
 
 
 
   def getReportBuilder(cfg : Config) : IReportBuilder = {
-    val rb = cfg.getString("org.substeps.config.reportBuilder")
+    val rb = cfg.getString(`reportBuilderKey`)
 
     Class.forName(rb).newInstance().asInstanceOf[IReportBuilder]
   }
@@ -312,8 +400,8 @@ object NewSubstepsExecutionConfig extends SubstepsConfigKeys {
   def getExecutionListenerClasses(cfg : Config) : java.util.List[Class[_ <: IExecutionListener]] = {
 
     val configList =
-    if (cfg.hasPath("org.substeps.executionConfig.executionListeners")) {
-      val initClassNames = cfg.getStringList("org.substeps.executionConfig.executionListeners").asScala
+    if (cfg.hasPath(`executionListenersKey`)) {
+      val initClassNames = cfg.getStringList(`executionListenersKey`).asScala
 
       initClassNames.map(className => {
 
@@ -333,9 +421,11 @@ object NewSubstepsExecutionConfig extends SubstepsConfigKeys {
   }
 
   // TODO type bind this
-  def getStepImplementationClasses(cfg : Config) : java.util.List[Class[_]] = getClassList(cfg, "org.substeps.executionConfig.stepImplementationClassNames")
+  def getStepImplementationClasses(cfg : Config) : java.util.List[Class[_]] = getClassList(cfg, `stepImplementationClassNamesKey`)
 
-  def getStepImplementationClassNames (cfg : Config) = getStringListOrNull(cfg, "org.substeps.executionConfig.stepImplementationClassNames")
+  def getStepImplementationClassNames (cfg : Config) = getStringListOrNull(cfg, `stepImplementationClassNamesKey`)
+
+  def getStepImplementationClassNamesGlossaryExcluded(cfg : Config) = getStringListOrNull(cfg, `stepImplementationsExcludedInGloosary`)
 
   def getClassList(cfg : Config, path : String) : java.util.List[Class[_]] = {
 
@@ -351,8 +441,8 @@ object NewSubstepsExecutionConfig extends SubstepsConfigKeys {
 
   def getDescription(cfg : Config) : String ={
 
-    if (cfg.hasPath("org.substeps.executionConfig.description")){
-      cfg.getString("org.substeps.executionConfig.description")
+    if (cfg.hasPath(`executionConfigDescriptionKey`)){
+      cfg.getString(`executionConfigDescriptionKey`)
     }
     else "SubStepsMojo"
 
@@ -373,32 +463,28 @@ object NewSubstepsExecutionConfig extends SubstepsConfigKeys {
   }
 
 
-  def getTags(cfg : Config) : String = getOrNull(cfg, "org.substeps.executionConfig.tags")
+  def getTags(cfg : Config) : String = getOrNull(cfg, `executionConfigTagsKey`)
 
-  def getNonFatalTags(cfg : Config) : String = getOrNull(cfg, "org.substeps.executionConfig.nonFatalTags")
+  def getNonFatalTags(cfg : Config) : String = getOrNull(cfg, `executionConfigNonFatalTagsKey`)
 
-  def getNonStrictKeywordPrecedence(cfg : Config) : java.util.List[String]  = getStringListOrNull(cfg, "org.substeps.executionConfig.nonStrictKeyWordPrecedence")
+  def getNonStrictKeywordPrecedence(cfg : Config) : java.util.List[String]  = getStringListOrNull(cfg, `nonStrictKeyWordPrecedenceKey`)
 
 
   def getSubStepsFileName(cfg : Config) : String = {
-
     // it's possible not to have any substeps files..
-    if (cfg.hasPath("org.substeps.executionConfig.substepsFile")) {
-      cfg.getString("org.substeps.executionConfig.substepsFile")
-    }
-    else
-      null
+    getOrNull(cfg, `substepsFileKey`)
   }
 
-  def getScenarioName(cfg : Config) : String = getOrNull(cfg, "org.substeps.executionConfig.scenarioName")
+  // for use when running a single scenario
+  def getScenarioName(cfg : Config) : String = getOrNull(cfg, `scenarioNameKey`)
 
-  def getFeatureFile(cfg : Config) : String = cfg.getString("org.substeps.executionConfig.featureFile")
+  def getFeatureFile(cfg : Config) : String = cfg.getString(`featureFileKey`)
 
-  def isStrict(cfg : Config) : Boolean = !cfg.hasPath("org.substeps.executionConfig.nonStrictKeyWordPrecedence")
+  def isStrict(cfg : Config) : Boolean = !cfg.hasPath(`nonStrictKeyWordPrecedenceKey`)
 
 
   def isFastFailParseErrors(cfg : Config) : Boolean = {
-    getBooleanOr(cfg, "org.substeps.executionConfig.fastFailParseErrors", true)
+    getBooleanOr(cfg, `fastFailParseErrorsKey`, true)
   }
 
   def getBooleanOr(cfg : Config, path: String, default : Boolean) : Boolean = {
@@ -408,19 +494,19 @@ object NewSubstepsExecutionConfig extends SubstepsConfigKeys {
     else default
   }
 
-  def isCheckForUncalledAndUnused(cfg : Config) : Boolean = getBooleanOr(cfg, "org.substeps.config.checkForUncalledAndUnused", false)
+  def isCheckForUncalledAndUnused(cfg : Config) : Boolean = getBooleanOr(cfg, `checkForUncalledAndUnused`, false)
 
   def getRootDataDir(masterConfig: Config) : File = {
-    new File(masterConfig.getString("org.substeps.config.rootDataDir"))
+    new File(masterConfig.getString(`rootDataDirKey`))
   }
 
 
   def getDataOutputDirectory(cfg : Config) : File = {
-    new File(getRootDataDir(cfg), cfg.getString("org.substeps.executionConfig.dataOutputDir"))
+    new File(getRootDataDir(cfg), cfg.getString(`executionConfigDataOutputDir`))
   }
 
   def getReportDir(cfg: Config) : File = {
-    new File(cfg.getString("org.substeps.config.reportDir"))
+    new File(cfg.getString(`substepsReportDir`))
   }
 
 //  def buildInitialisationClassList(cfg: Config) : Array[Class[_]] = {
@@ -442,6 +528,6 @@ object NewSubstepsExecutionConfig extends SubstepsConfigKeys {
 
   def prettyPrintReportData = substepsConfig.getBoolean(`prettyPrintReportDataKey`)
 
-  def reportDataBaseDir = substepsConfig.getString(`reportDataBaseDirKey`)
+//  def reportDataBaseDir = substepsConfig.getString(`reportDataBaseDirKey`)
 
 }

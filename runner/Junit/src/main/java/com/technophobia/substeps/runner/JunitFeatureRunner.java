@@ -21,6 +21,7 @@ package com.technophobia.substeps.runner;
 import com.google.common.base.Strings;
 import com.technophobia.substeps.execution.node.IExecutionNode;
 import com.typesafe.config.Config;
+import com.typesafe.config.ConfigValueFactory;
 import org.junit.Assert;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -34,6 +35,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -63,8 +65,6 @@ public class JunitFeatureRunner extends org.junit.runner.Runner {
     }
 
     private final SubstepsRunner runner = ExecutionNodeRunnerFactory.createRunner();
-
-    private SubstepsExecutionConfig executionConfig = null;
 
     private DescriptionProvider descriptionProvider = null;
 
@@ -142,24 +142,12 @@ public class JunitFeatureRunner extends org.junit.runner.Runner {
 
         classContainingTheTests = reportedClass;
 
-        executionConfig = new SubstepsExecutionConfig();
-        executionConfig.setTags(tags);
-        executionConfig.setFeatureFile(featureFile);
-        executionConfig.setSubStepsFileName(subStepsFileName);
-        executionConfig.setStrict(strict);
-        executionConfig.setNonStrictKeywordPrecedence(nonStrictKeywordPrecedence);
-        executionConfig.setStepImplementationClasses(stepImplementationClasses);
-
-        executionConfig.setInitialisationClasses(beforeAndAfterImplementations);
-
-        if (classContainingTheTests != null) {
-            executionConfig.setDescription(classContainingTheTests.getSimpleName());
-        }
-
-        Config masterConfig = NewSubstepsExecutionConfig.toConfig(executionConfig);
-        Config config = SubstepsConfigLoader.splitMasterConfig(masterConfig).get(0);
+        Config config = buildConfig(stepImplementationClasses, featureFile, tags, subStepsFileName, strict, nonStrictKeywordPrecedence, beforeAndAfterImplementations, classContainingTheTests.getSimpleName());//SubstepsConfigLoader.splitMasterConfig(masterConfig).get(0);
 
         NewSubstepsExecutionConfig.setThreadLocalConfig(config);
+
+        log.debug("Config to be used for the junit runner:\n" +
+            NewSubstepsExecutionConfig.render(config));
 
         rootNode = runner.prepareExecutionConfig(config);
 
@@ -174,6 +162,62 @@ public class JunitFeatureRunner extends org.junit.runner.Runner {
         runner.addNotifier(notifier);
 
     }
+
+    private Config buildConfig(final List<Class<?>> stepImplementationClasses,
+                               final String featureFile, final String tags, final String subStepsFileName, final boolean strict,
+                               final String[] nonStrictKeywordPrecedence,
+                               final Class<?>[] beforeAndAfterImplementations,
+                               String description) {
+
+        Config mvnConfig = SubstepsConfigLoader.buildMavenFallbackConfig("target",
+                ".",
+                "target/test-classes");
+
+
+        Config masterConfig = SubstepsConfigLoader.loadResolvedConfig(mvnConfig);
+
+        List<Config> configs = SubstepsConfigLoader.splitMasterConfig(masterConfig);
+
+        Config theConfig = configs.get(0);
+
+        theConfig = theConfig.withValue("org.substeps.executionConfig.featureFile", ConfigValueFactory.fromAnyRef(featureFile))
+                .withValue("org.substeps.config.description", ConfigValueFactory.fromAnyRef(description))
+        .withoutPath("org.substeps.executionConfig.nonFatalTags")
+                .withValue("org.substeps.executionConfig.substepsFile", ConfigValueFactory.fromAnyRef(subStepsFileName))
+                .withValue("org.substeps.executionConfig.tags", ConfigValueFactory.fromAnyRef(tags))
+                .withValue("org.substeps.config.fastFailParseErrors", ConfigValueFactory.fromAnyRef(true))
+        ;
+
+        if (!strict){
+
+            theConfig = theConfig.withValue("org.substeps.executionConfig.nonStrictKeyWordPrecedence", ConfigValueFactory.fromIterable(Arrays.asList(nonStrictKeywordPrecedence)));
+        }
+
+        if (stepImplementationClasses != null && !stepImplementationClasses.isEmpty()){
+
+            List<String> classNames = new ArrayList<>();
+            for (Class c : stepImplementationClasses){
+                classNames.add(c.getName());
+            }
+
+            theConfig = theConfig.withValue("org.substeps.executionConfig.stepImplementationClassNames", ConfigValueFactory.fromIterable(classNames));
+        }
+
+        if (beforeAndAfterImplementations != null && beforeAndAfterImplementations.length > 0){
+
+            List<String> classNames = new ArrayList<>();
+            for (Class c : beforeAndAfterImplementations){
+                classNames.add(c.getName());
+            }
+
+            theConfig = theConfig.withValue("org.substeps.executionConfig.initialisationClasses", ConfigValueFactory.fromIterable(classNames));
+        }
+
+        log.debug("prepareRemoteExecutionConfig with config:\n" + NewSubstepsExecutionConfig.render(theConfig));
+
+        return theConfig;
+    }
+
 
     /*
      * (non-Javadoc)
@@ -209,8 +253,6 @@ public class JunitFeatureRunner extends org.junit.runner.Runner {
         log.debug("Description tree:\n" + printDescription(thisDescription, 0));
 
         notifier.setJunitRunNotifier(junitNotifier);
-
-        Assert.assertNotNull("execution config has not been initialised", executionConfig);
 
         runner.run();
     }

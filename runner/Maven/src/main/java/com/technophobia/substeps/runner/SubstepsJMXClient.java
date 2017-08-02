@@ -37,7 +37,6 @@ import javax.naming.ServiceUnavailableException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -56,8 +55,6 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
     public void setNotificiationHandler(ExecutionNodeResultNotificationHandler notificiationHandler) {
         this.notificiationHandler = notificiationHandler;
     }
-
-
 
     private ExecutionNodeResultNotificationHandler notificiationHandler = null;
 
@@ -161,17 +158,6 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
         return connector;
     }
 
-//    public byte[] prepareExecutionConfigAsBytes(final SubstepsExecutionConfig cfg) {
-//
-//        try {
-//            return this.mbean.prepareExecutionConfigAsBytes(cfg);
-//        }
-//        catch (SubstepsConfigurationException ex){
-//            log.error("Failed to init tests: " + ex.getMessage());
-//            return null;
-//        }
-//    }
-
     public byte[] prepareExecutionConfigAsBytes(final String theConfig) {
 
         try {
@@ -198,27 +184,7 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
             log.error("Exception thrown preparing exectionConfig", e);
         }
         return null;
-
-      //  throw new UnsupportedOperationException("sorry not yet implented!");
     }
-
-
-//    @Override
-//    public RootNode prepareExecutionConfig(final SubstepsExecutionConfig cfg) {
-//
-//        try {
-//            final ObjectName objectName = new ObjectName(SubstepsServerMBean.SUBSTEPS_JMX_MBEAN_NAME);
-//            Object  rootNode = mbsc.invoke(objectName,
-//                    "prepareExecutionConfig",
-//                    new Object[]{cfg},
-//                    new String[]{SubstepsExecutionConfig.class.getName()});
-//            return (RootNode)rootNode;
-//
-//        } catch (Exception e) {
-//            log.error("Exception thrown preparing exectionConfig", e);
-//        }
-//        return null;
-//    }
 
 	@Override
     public List<SubstepExecutionFailure> getFailures() {

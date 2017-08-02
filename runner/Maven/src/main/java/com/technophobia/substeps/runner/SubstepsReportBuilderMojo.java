@@ -36,7 +36,8 @@ import java.util.List;
 @Mojo(name = "build-report",
         defaultPhase = LifecyclePhase.VERIFY,
         requiresDependencyResolution = ResolutionScope.TEST,
-        requiresProject = true)
+        requiresProject = true,
+        configurator = "include-project-dependencies")
 public class SubstepsReportBuilderMojo extends BaseSubstepsMojo {
 
 
@@ -51,56 +52,37 @@ public class SubstepsReportBuilderMojo extends BaseSubstepsMojo {
     }
 
     @Override
-    public void executeAfterAllConfigs(List<Config> configs) throws MojoExecutionException, MojoFailureException{
+    public void executeAfterAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException{
 
         setupBuildEnvironmentInfo();
 
-        for (Config cfg : configs){
-            File dataDir = NewSubstepsExecutionConfig.getDataOutputDirectory(cfg);
 
+        IReportBuilder localReportBuilder = NewSubstepsExecutionConfig.getReportBuilder(masterConfig);
 
-            getLog().info("Building substeps report from data in: " + dataDir.toString());
+        File rootDataDir = NewSubstepsExecutionConfig.getRootDataDir(masterConfig);
+        File stepImplsJsonFile = new File(outputDirectory, STEP_IMPLS_JSON_FILENAME);
 
-            StringBuilder buf = new StringBuilder();
-            for (String s : this.session.getGoals()){
-                buf.append(s);
-                buf.append(" ");
-            }
+        File reportDir = NewSubstepsExecutionConfig.getReportDir(masterConfig);
 
-            this.getLog().info("this.session.getGoals(): " + buf.toString());
+        // "src/test/resources/sample-results-data"
+        localReportBuilder.buildFromDirectory(rootDataDir, reportDir, stepImplsJsonFile);
 
-            File stepImplsJsonFile = new File(outputDirectory, STEP_IMPLS_JSON_FILENAME);
+        List<Throwable> exceptions = this.session.getResult().getExceptions();
 
-            IReportBuilder localReportBuilder = NewSubstepsExecutionConfig.getReportBuilder(cfg);
+        if (exceptions != null && !exceptions.isEmpty()){
+            getLog().info("got exceptions");
+            for (Throwable t : exceptions){
+                if (t instanceof MojoFailureException){
+                    MojoFailureException failure = (MojoFailureException)t;
+                    // remove the exception otherwise it will get logged twice
+                    this.session.getResult().getExceptions().remove(t);
 
-            File reportDir = NewSubstepsExecutionConfig.getReportDir(cfg);;
-
-            localReportBuilder.buildFromDirectory(dataDir, reportDir, stepImplsJsonFile);
-
-
-
-            List<Throwable> exceptions = this.session.getResult().getExceptions();
-
-            if (exceptions != null && !exceptions.isEmpty()){
-                getLog().info("got exceptions");
-                for (Throwable t : exceptions){
-                    if (t instanceof MojoFailureException){
-                        MojoFailureException failure = (MojoFailureException)t;
-                        // remove the exception otherwise it will get logged twice
-                        this.session.getResult().getExceptions().remove(t);
-
-                        throw failure;
-
-                    }
+                    throw failure;
                 }
             }
-            else {
-                getLog().info("All good, no failures");
-            }
-
         }
-
+        else {
+            getLog().info("All good, no failures");
+        }
     }
-
-
 }

@@ -21,7 +21,6 @@ package com.technophobia.substeps.jmx;
 
 import com.technophobia.substeps.runner.SubstepsExecutionConfig;
 import com.technophobia.substeps.runner.SubstepsRunner;
-import com.typesafe.config.Config;
 
 /**
  * @author ian
@@ -32,10 +31,15 @@ public interface SubstepsServerMBean extends SubstepsRunner {
 
     void shutdown();
 
-//    byte[] prepareExecutionConfigAsBytes(final SubstepsExecutionConfig theConfig);
+    byte[] prepareExecutionConfigAsBytes(final SubstepsExecutionConfig theConfig);
 
     byte[] prepareExecutionConfigAsBytes(final String theConfig);
 
+    byte[] prepareRemoteExecutionConfig(final String mavenFallbackConfig, String featureFile, String scenarioName);
+
+
     byte[] runAsBytes();
+
+    String getProjectSubstepsVersion();
 
 }

@@ -42,7 +42,7 @@ trait FeatureFilesFromSource {
 /**
   * Created by ian on 20/05/16.
   */
-class ParsingFromSourceTests extends FlatSpec with ShouldMatchers with FeatureFilesFromSource with WritesResultsData {
+class ParsingFromSourceTests extends FlatSpec with Matchers with FeatureFilesFromSource with WritesResultsData {
 
   val UTF8 = Charset.forName("UTF-8")
 
@@ -525,7 +525,7 @@ Scenario: inline table
     * NB. this is the test that generates the source data, then used to test out report building
     */
 
-  // TODO - think there's some stuff missing from here the config that's generated as a result is lacking..
+  // TODO - missing the config to generate the unused and unimplemented - which then gets included in the report
   // No configuration setting found for key 'org.substeps.config.executionConfig.dataOutputDir = "src/test/resources/sample-results-data/1"
 
   // missing
@@ -963,7 +963,7 @@ Scenario: inline table
 
          if (initialisationClasses != null) initialisationClasses.toList.asJava else null
 
-      val finalInitClasses = ExecutionConfigWrapper.buildInitialisationClassList(stepImplementationClasses, initClassList)
+      val finalInitClasses = ExecutionNodeRunner.buildInitialisationClassList(stepImplementationClasses, initClassList)
       val setupAndTearDown = new SetupAndTearDown(finalInitClasses, methodExecutorToUse)
 
       val rootNode2 = runner.prepareExecutionConfig(cfg, syntax, parameters, setupAndTearDown, methodExecutorToUse, null)

@@ -18,7 +18,6 @@
  */
 package com.technophobia.substeps.glossary;
 
-import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -36,10 +35,10 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.substeps.config.SubstepsConfigLoader;
 import org.substeps.runner.NewSubstepsExecutionConfig;
 
 import java.io.File;
@@ -148,16 +147,16 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
 
     @Override
     public void executeConfig(Config cfg) throws MojoExecutionException, MojoFailureException {
-
+        // no op
     }
 
     @Override
     public void executeBeforeAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException{
-
+        // no op
     }
 
     @Override
-    public void executeAfterAllConfigs(List<Config> configs) throws MojoExecutionException, MojoFailureException{
+    public void executeAfterAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException{
 
         setupBuildEnvironmentInfo();
 
@@ -175,14 +174,23 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
         catch (MalformedURLException e)
         {
             log.error("MalformedURLException adding outputdir", e);
-//            e.printStackTrace();
         }
 
-        if (configs != null) {
+        if (masterConfig != null){
+            List<Config> configs = SubstepsConfigLoader.splitMasterConfig(masterConfig);
+
             for (Config executionConfig : configs) {
 
                 List<String> stepImplementationClassNames = NewSubstepsExecutionConfig.getStepImplementationClassNames(executionConfig);
+
+                List<String> stepImplsToExclude = NewSubstepsExecutionConfig.getStepImplementationClassNamesGlossaryExcluded(executionConfig);
+
+                if (stepImplsToExclude != null ) {
+                    stepImplementationClassNames.removeAll(stepImplsToExclude);
+                }
+
                 for (final String classToDocument : stepImplementationClassNames) {
+
                     classStepTags.addAll(getStepTags(loadedClasses, classRealm, classToDocument));
                 }
             }

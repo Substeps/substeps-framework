@@ -39,7 +39,7 @@ public class ReportingUtil {
         }
     }
 
-    private static class UncalledStepDef {
+    public static class UncalledStepDef {
 
         private String line, source;
         private int lineNumber;
@@ -98,13 +98,11 @@ public class ReportingUtil {
             log.warn("** Substep definitions not called in current substep execution scope...\n\n" + buf.toString());
         }
 
-        String json = "var uncalledStepDefs=" + gson().toJson(uncalled) ;
-
         File out = new File(outputDir, "uncalled.stepdefs.js");
 
         log.info("writing uncalledStepDefs to " + out.getAbsolutePath());
 
-        write(json, out);
+        write(gson().toJson(uncalled), out);
     }
 
 
@@ -124,13 +122,11 @@ public class ReportingUtil {
         }
 
 
-        String json = "var uncalledStepImplementations=" + gson().toJson(uncalledStepImplementations);
-
         File out = new File(outputDir, "uncalled.stepimpls.js");
 
         log.info("writing uncalledStepImplementations to " + out.getAbsolutePath());
 
-        write(json, out);
+        write(gson().toJson(uncalledStepImplementations), out);
     }
 
 

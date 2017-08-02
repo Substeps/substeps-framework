@@ -28,10 +28,10 @@ import com.technophobia.substeps.runner.ExecutionNodeRunner;
 import com.technophobia.substeps.runner.IExecutionListener;
 import com.technophobia.substeps.runner.SubstepExecutionFailure;
 import com.technophobia.substeps.runner.SubstepsExecutionConfig;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
+import com.typesafe.config.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.substeps.config.SubstepsConfigLoader;
 import org.substeps.runner.NewSubstepsExecutionConfig;
 
 import javax.management.Notification;
@@ -60,14 +60,30 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
 
     }
 
-
+    // TODO - used ?
     @Override
-    public byte[] prepareExecutionConfigAsBytes(final String configString) {
+    public byte[] prepareExecutionConfigAsBytes(SubstepsExecutionConfig theConfig) {
 
-        Config theConfig = ConfigFactory.parseString(configString);
+        Config fallback =
+                ConfigFactory.load(ConfigParseOptions.defaults(), ConfigResolveOptions.noSystem().setAllowUnresolved(true));
+
+        Config masterConfig = NewSubstepsExecutionConfig.toConfig(theConfig).withFallback(fallback);
 
 
+        log.debug("MASTER CONFIG:\n" + NewSubstepsExecutionConfig.render(masterConfig) + "\n\n\n");
 
+        Config cfg = SubstepsConfigLoader.splitMasterConfig(masterConfig).get(0);
+
+        NewSubstepsExecutionConfig.setThreadLocalConfig(cfg);
+
+        log.debug("SPLIT CONFIG:\n" + NewSubstepsExecutionConfig.render(cfg));
+
+
+        return prepareExecutionConfigAsBytes(cfg);
+
+    }
+
+    private byte[] prepareExecutionConfigAsBytes(final Config theConfig) {
         RootNode rtn;
         try {
 
@@ -88,6 +104,39 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
         }
         return getBytes(rtn);
 
+    }
+
+    @Override
+    public byte[] prepareExecutionConfigAsBytes(final String configString) {
+
+        Config theConfig = ConfigFactory.parseString(configString);
+
+        return prepareExecutionConfigAsBytes(theConfig);
+    }
+
+    @Override
+    public byte[] prepareRemoteExecutionConfig(String mavenFallbackConfig, String featureFile, String scenarioName) {
+
+        Config mvnConfig = ConfigFactory.parseString(mavenFallbackConfig);
+
+        Config masterConfig = SubstepsConfigLoader.loadResolvedConfig(mvnConfig);
+
+        List<Config> configs = SubstepsConfigLoader.splitMasterConfig(masterConfig);
+
+        Config theConfig = configs.get(0);
+
+        if (scenarioName != null){
+            theConfig = theConfig.withValue("org.substeps.executionConfig.scenarioName", ConfigValueFactory.fromAnyRef(scenarioName));
+        }
+
+        if (featureFile != null){
+            theConfig = theConfig.withValue("org.substeps.executionConfig.featureFile", ConfigValueFactory.fromAnyRef(featureFile));
+        }
+
+        log.debug("prepareRemoteExecutionConfig with config:\n" + NewSubstepsExecutionConfig.render(theConfig));
+
+
+        return prepareExecutionConfigAsBytes(theConfig);
     }
 
     private byte[] getBytes(Object rtn) {
@@ -123,12 +172,20 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
         return getBytes(rtn);
     }
 
+    @Override
+    public String getProjectSubstepsVersion() {
+
+        log.info("getProjectSubstepsVersion called");
+        return "SUBSTEPS_1.1";
+
+    }
 
 
     @Override
     public void shutdown() {
         this.shutdownSignal.countDown();
     }
+
 
     @Override
     public RootNode prepareExecutionConfig(Config theConfig) {
@@ -149,7 +206,17 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
         // TODO - synchronise around the init call ?
         this.nodeRunner = new ExecutionNodeRunner();
 
-        Config cfg = NewSubstepsExecutionConfig.toConfig(theConfig);
+        Config masterConfig = NewSubstepsExecutionConfig.toConfig(theConfig);
+
+
+        System.out.println("MASTER CONFIG:\n" + NewSubstepsExecutionConfig.render(masterConfig) + "\n\n\n");
+
+        Config cfg = SubstepsConfigLoader.splitMasterConfig(masterConfig).get(0);
+
+        NewSubstepsExecutionConfig.setThreadLocalConfig(cfg);
+
+        System.out.println("SPLIT CONFIG:\n" + NewSubstepsExecutionConfig.render(cfg));
+
 
         return this.nodeRunner.prepareExecutionConfig(cfg);
     }

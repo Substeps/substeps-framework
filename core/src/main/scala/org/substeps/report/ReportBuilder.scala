@@ -1,11 +1,13 @@
 package org.substeps.report
 
-import java.io.{BufferedWriter, File, FileNotFoundException}
+import java.{io, util}
+import java.io.{BufferedWriter, File, FileNotFoundException, FileReader}
 import java.nio.charset.Charset
 import java.time.{Instant, LocalDateTime, ZoneId, ZoneOffset}
 import java.time.format.DateTimeFormatter
 
 import com.google.common.io.Files
+import com.google.gson.reflect.TypeToken
 import com.technophobia.substeps.execution.ExecutionResult
 import com.technophobia.substeps.report.{DefaultExecutionReportBuilder, DetailedJsonBuilder}
 import com.typesafe.config.{Config, ConfigFactory}
@@ -84,28 +86,16 @@ object ReportBuilder {
 
 case class FeatureDetails(summary : FeatureSummary, nodeDetails :  List[NodeDetail])
 
-case class SourceDataModel(rootNodeSummary : RootNodeSummary, featuresList : List[FeatureDetails], config : Config) {
-//  def this(rootNodeSummary : RootNodeSummary, features : List[FeatureDetails]) = this(List(rootNodeSummary), List(features))
-}
+case class SourceDataModel(rootNodeSummary : RootNodeSummary, featuresList : List[FeatureDetails], config : Config)
 
 case object SourceDataModel{
 
-//  def merge (list : List[SourceDataModel]) : SourceDataModel = {
-//
-//    val rootNodeSummaries =
-//    list.flatMap(srcData => {
-//      srcData.rootNodeSummary
-//    })
-//
-//    val allFeatures =
-//      list.flatMap(srcData => {
-//        srcData.featuresList
-//      })
-//
-//    SourceDataModel(rootNodeSummaries, allFeatures)
-//  }
 
 }
+
+case class UncalledStepDef(line: String, source: String, lineNumber: Int)
+case class UncalledStepImpl(value:String, implementedIn: String, keyword: String, method:String)
+
 
 /**
   * Created by ian on 30/06/16.
@@ -116,10 +106,10 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
   @BeanProperty
   var reportDir : File = new File(".")
 
-  private val log: Logger = LoggerFactory.getLogger(classOf[ReportBuilder])
+  private val log: Logger = LoggerFactory.getLogger("org.substeps.report.ReportBuilder")
 
 
-  def safeCopy(src : File, dest : File) = {
+  def safeCopy(src : File, dest : File): Unit = {
     try {
       FileUtils.copyFile(src, dest)
     }
@@ -128,7 +118,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     }
   }
 
-  def buildGlossaryData(sourceJsonFile : File) = {
+  def buildGlossaryData(sourceJsonFile : File): List[GlossaryElement] = {
     implicit val formats = Serialization.formats(NoTypeHints)
 
     val glossaryElements =
@@ -154,11 +144,62 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     buildFromDirectory(sourceDataDir, reportDir, null)
   }
 
+
+  import org.json4s._
+  import org.json4s.native.JsonMethods._
+
+
+  private def processUncalledAndUnusedDataFiles(reportRootDataDir : File, executionConfigs : List[Config]) (implicit reportDir : File) = {
+
+    log.debug("processUncalledAndUnusedDataFiles")
+
+    implicit val formats = DefaultFormats
+
+    val uncalledStepDefs  =
+    executionConfigs.flatMap(cfg =>{
+
+      val dataDir = new File(reportRootDataDir, NewSubstepsExecutionConfig.getDataSubdir(cfg))
+
+      val dataFile = new File(dataDir, "uncalled.stepdefs.js")
+
+      if (dataFile.exists()) {
+        val rawUncalledStepDefs = Files.toString(dataFile, Charset.forName("UTF-8"))
+
+        parse(rawUncalledStepDefs).extract[List[UncalledStepDef]]
+      }
+      else List()
+    }).distinct
+
+
+    val uncalledStepImpls =
+    executionConfigs.flatMap(cfg =>{
+
+      val dataDir = new File(reportRootDataDir, NewSubstepsExecutionConfig.getDataSubdir(cfg))
+
+      val dataFile = new File(dataDir, "uncalled.stepimpls.js")
+      if (dataFile.exists()) {
+        val rawUncalledStepImpls = Files.toString(dataFile, Charset.forName("UTF-8"))
+
+        parse(rawUncalledStepImpls).extract[List[UncalledStepImpl]]
+      }
+      else
+        List()
+    }).distinct
+
+
+    Files.write("var uncalledStepDefs=" + write(uncalledStepDefs), new File(reportDir, "uncalled.stepdefs.js"), Charset.forName("UTF-8"))
+
+    Files.write("var uncalledStepImplementations=" + write(uncalledStepImpls), new File(reportDir, "uncalled.stepimpls.js"), Charset.forName("UTF-8"))
+//    safeCopy(new File(sourceDataDir, "uncalled.stepdefs.js"), )
+//    safeCopy(new File(sourceDataDir, "uncalled.stepimpls.js"), new File(reportDir, "uncalled.stepimpls.js"))
+
+  }
+
   override def buildFromDirectory(sourceDataDir: File, reportDir : File, stepImplsJson : File): Unit = {
 
     val created = reportDir.mkdir()
 
-    log.debug("creating report in " + reportDir.getAbsolutePath + " create returns: " + created)
+    log.info("creating report in " + reportDir.getAbsolutePath + " create returns: " + created)
 
     implicit val rDir : File = reportDir
 
@@ -167,16 +208,18 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
     FileUtils.copyDirectory(new File(sourceDataDir.getPath), dataDir)
 
-    safeCopy(new File(sourceDataDir, "uncalled.stepdefs.js"), new File(reportDir, "uncalled.stepdefs.js"))
-    safeCopy(new File(sourceDataDir, "uncalled.stepimpls.js"), new File(reportDir, "uncalled.stepimpls.js"))
-
-
 
     val cfgFile = new File(dataDir, "masterConfig.conf")
 
     val masterConfig = ConfigFactory.parseFile(cfgFile)
 
-    val srcDataList: List[SourceDataModel] = readModels(masterConfig)
+    import scala.collection.JavaConverters._
+
+    val executionConfigs = SubstepsConfigLoader.splitMasterConfig(masterConfig).asScala.toList
+
+    processUncalledAndUnusedDataFiles( dataDir, executionConfigs)
+
+    val srcDataList: List[SourceDataModel] = readModels(dataDir, executionConfigs)
 
     val detailData = createFile( "detail_data.js")
 
@@ -242,7 +285,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     }
   }
 
-  def writeGlossaryJs(glossaryJSFile : File, glossaryData : List[GlossaryElement]) = {
+  def writeGlossaryJs(glossaryJSFile : File, glossaryData : List[GlossaryElement]): Unit = {
 
     withWriter(glossaryJSFile, writer => {
       implicit val formats = Serialization.formats(NoTypeHints)
@@ -266,7 +309,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     })
   }
 
-  def buildExecutionStats(srcDataList: List[SourceDataModel]): ExecutionStats = { //(RootNodeSummary, List[(FeatureSummary, List[NodeDetail])])): ExecutionStats = {
+  def buildExecutionStats(srcDataList: List[SourceDataModel]): ExecutionStats = {
 
     val combinedFeatureList = srcDataList.flatMap(s => s.featuresList)
 
@@ -340,7 +383,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
   }
 
 
-  def buildExecutionStatsByTag(srcDataList: List[SourceDataModel]) = { //(RootNodeSummary, List[(FeatureSummary, List[NodeDetail])])) = {
+  def buildExecutionStatsByTag(srcDataList: List[SourceDataModel]): (List[Counters], List[Counters]) = {
 
     val allNodeDetails =
       srcDataList.flatMap(srcData => {
@@ -411,13 +454,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
   }
 
 
-  def createUsageTree(usageTreeDataFile: File, srcDataList: List[SourceDataModel]) = { //(RootNodeSummary, List[(FeatureSummary, List[NodeDetail])])) = {
-
-//    val allNodeDetails =
-//      srcData.features.flatMap(f => {
-//        val scenarios = f.nodeDetails
-//        scenarios.flatMap(scenario => scenario.flattenTree())
-//      })
+  def createUsageTree(usageTreeDataFile: File, srcDataList: List[SourceDataModel]): Unit = {
 
     val allNodeDetails =
       srcDataList.flatMap(srcData => {
@@ -586,20 +623,20 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
 
 
-  def copyStaticResources()(implicit reportDir : File) = {
+  def copyStaticResources()(implicit reportDir : File): Unit = {
 
     val defaultBuilder = new DefaultExecutionReportBuilder
 
     defaultBuilder.copyStaticResources(reportDir)
   }
 
-  def createFile(name : String)(implicit reportDir : File) = {
+  def createFile(name : String)(implicit reportDir : File): File = {
     val f = new File(reportDir, name)
     f.createNewFile()
     f
   }
 
-  def writeResultSummary(resultsFile: RootNodeSummary)(implicit reportDir : File) = {
+  def writeResultSummary(resultsFile: RootNodeSummary)(implicit reportDir : File): Unit = {
 
     val file = createFile("results-summary.js")
 
@@ -621,44 +658,20 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
   }
 
-  def readModels(masterConfig : Config)(implicit reportDir : File) : List[SourceDataModel] = {
-
-    import scala.collection.JavaConverters._
-
-    val executionConfigs = SubstepsConfigLoader.splitMasterConfig(masterConfig).asScala.toList
+  def readModels(reportRootDataDir : File, executionConfigs : List[Config])(implicit reportDir : File) : List[SourceDataModel] = {
 
     // each exec config will have an output dir
     executionConfigs.map(cfg =>{
 
       NewSubstepsExecutionConfig.setThreadLocalConfig(cfg)
 
-      val dataDir = NewSubstepsExecutionConfig.getDataDirForConfig(cfg)
+      val dataDir = new File(reportRootDataDir, NewSubstepsExecutionConfig.getDataSubdir(cfg))
 
       readModel(dataDir, cfg)
     })
 
 
   }
-
-//  def readModels(rootDir : File)(implicit reportDir : File) : List[SourceDataModel] = {
-//
-//    val dirFiles = rootDir.listFiles().toList
-//    val dirFileNames = dirFiles.map(f => f.getName)
-//
-//    // is there are results.json in there ?
-//    if (dirFileNames.contains("results.json")){
-//        List(readModel(rootDir))
-//    }
-//
-//    else {
-//      val otherFiles = dirFiles.filterNot(f => f.getName == "masterConfig.conf")
-//
-//      // go deeper
-//
-//      otherFiles.flatMap(f => readModels(f))
-//
-//    }
-//  }
 
   def readModel(srcDir : File, config : Config)(implicit reportDir : File) : SourceDataModel = {
 
@@ -691,6 +704,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
                 val scenarioResultsFile = new File(featureFileResultsDir, scenarioSummary.filename)
 
                 read[NodeDetail](Files.toString(scenarioResultsFile, Charset.defaultCharset()))
+
               })
 
               Some(f, scenarioDetails)
@@ -704,14 +718,13 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     }
 
     val featureDetailList =
-      featureSummaries.map(fs => new FeatureDetails(fs._1, fs._2))
+      featureSummaries.map(fs => FeatureDetails(fs._1, fs._2))
 
     new SourceDataModel(resultsFileOption.get, featureDetailList, config)
-    //(resultsFileOption.get, featureSummaries)
 
   }
 
-  def loadFeatureData(srcDir : File) = {
+  def loadFeatureData(srcDir : File): Option[FeatureSummary] = {
 
     implicit val formats = Serialization.formats(NoTypeHints)
 
@@ -721,8 +734,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
   }
 
-  // (RootNodeSummary, List[(FeatureSummary, List[NodeDetail])])
-  def createTreeData3(srcData : SourceDataModel) = {
+  def createTreeData3(srcData : SourceDataModel): JsTreeNode = {
 
     val children =
       srcData.featuresList.map(features => {
@@ -746,16 +758,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
     val state = State.forResult(srcData.rootNodeSummary.result)
 
-    //val rootNode =
     JsTreeNode(srcData.rootNodeSummary.id.toString, srcData.rootNodeSummary.description, icon, childrenOption, state)
-
-//    withWriter(file, writer =>{
-//      writer.append("var treeData = ")
-//
-//      implicit val formats = Serialization.formats(NoTypeHints)
-//
-//      writer.append(writePretty(rootNode))
-//    })
 
   }
 
@@ -768,7 +771,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
   }
 
 
-  def createTreeData2(file : File, srcDataList : List[SourceDataModel], rootDescription : String) = { //(RootNodeSummary, List[(FeatureSummary, List[NodeDetail])])) = {
+  def createTreeData2(file : File, srcDataList : List[SourceDataModel], rootDescription : String): Unit = {
 
     val srcDataJsTreeNodes =
       srcDataList.map(srcData => createTreeData3(srcData))
@@ -800,7 +803,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
   }
 
 
-  def withWriter(file: File, op: BufferedWriter => Any) = {
+  def withWriter(file: File, op: BufferedWriter => Any): Unit = {
     val writer = Files.newWriter(file, Charset.defaultCharset)
     op(writer)
     writer.flush()
@@ -850,7 +853,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
 
 
-  def createDetailData(file : File, srcDataList : List[SourceDataModel]) = {
+  def createDetailData(file : File, srcDataList : List[SourceDataModel]): Unit = {
 
     withWriter(file, writer => {
 
@@ -863,13 +866,13 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
         srcData.featuresList.foreach(feature =>{
 
 
-          val nodeDetailList = feature.nodeDetails //features.flatMap(f => f.nodeDetails)//  srcData._2.flatMap(_._2)
+          val nodeDetailList = feature.nodeDetails
 
           writeRootNode(writer, srcData.rootNodeSummary, featureSummaries, srcData.config)
 
-//          featureSummaries.foreach(f => {
-            writeFeatureNode(writer, feature.summary, nodeDetailList)
-//          })
+          val dataSubdir = NewSubstepsExecutionConfig.getDataSubdir(srcData.config)
+
+            writeFeatureNode(writer, feature.summary, nodeDetailList, dataSubdir)
         })
 
       })
@@ -878,7 +881,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
   }
 
 
-  def writeFeatureNode(writer: BufferedWriter, f: FeatureSummary, nodeDetailList: List[NodeDetail]) = {
+  def writeFeatureNode(writer: BufferedWriter, f: FeatureSummary, nodeDetailList: List[NodeDetail], dataSubdir : String): Unit = {
 
     writer.append(s"""detail[${f.id}]={"nodetype":"FeatureNode","filename":"${f.filename}","result":"${f.result}","id":${f.id},
        |"runningDurationMillis":${f.executionDurationMillis.getOrElse(-1)},"runningDurationString":"${f.executionDurationMillis.getOrElse(-1)} milliseconds",
@@ -906,11 +909,11 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
       val scenarioNodeDetail = nodeDetailList.find(n => n.id == sc.nodeId).get
 
-      writeNodeDetail(writer, scenarioNodeDetail)
+      writeNodeDetail(writer, scenarioNodeDetail, dataSubdir)
     })
   }
 
-  def writeNodeDetail(writer: BufferedWriter, nodeDetail: NodeDetail) : Unit = {
+  def writeNodeDetail(writer: BufferedWriter, nodeDetail: NodeDetail, dataSubdir : String) : Unit = {
 
     writer.append(s"""detail[${nodeDetail.id}]={"nodetype":"${nodeDetail.nodeType}","filename":"${nodeDetail.filename}","result":"${nodeDetail.result}","id":${nodeDetail.id},
     |"runningDurationMillis":${nodeDetail.executionDurationMillis.getOrElse(-1)},
@@ -922,8 +925,10 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
     nodeDetail.exceptionMessage.map(s => writer.append(s""""emessage":"${StringEscapeUtils.escapeEcmaScript(s)}",""") )
 
+    nodeDetail.screenshot.map(s => {
 
-    nodeDetail.screenshot.map(s => writer.append(s"""screenshot:"data${s}",""") )
+      writer.append(s"""screenshot:"data/${dataSubdir}${s}",""")
+    } )
     nodeDetail.stackTrace.map(s => writer.append(s"""stacktrace:[${s.mkString("\"", "\",\n\"", "\"")}],"""))
 
     writer.append(s""""children":[""")
@@ -935,17 +940,13 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     writer.append("]};\n")
 
     nodeDetail.children.foreach(child => {
-      writeNodeDetail(writer, child)
+      writeNodeDetail(writer, child, dataSubdir)
     })
   }
 
 
 
-  def writeRootNode(writer : BufferedWriter, rootNodeSummary : RootNodeSummary, featureSummaries : List[FeatureSummary], config : Config) = {
-
-//    "emessage":"At least one critical Feature failed",
-//    "stacktrace": "",
-// "description":null,
+  def writeRootNode(writer : BufferedWriter, rootNodeSummary : RootNodeSummary, featureSummaries : List[FeatureSummary], config : Config): io.Writer = {
 
     val descriptionProvider : RootNodeDescriptionProvider = NewSubstepsExecutionConfig.getRootNodeDescriptor(config)
 

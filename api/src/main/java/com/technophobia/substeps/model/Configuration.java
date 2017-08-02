@@ -33,22 +33,8 @@ public enum Configuration {
 
     INSTANCE;
 
-//    private transient final Logger logger;
-
-    // Config is now in a thread local, use that instead.
-//    private transient final Config config;
-
-//    Configuration() {
-//        logger = LoggerFactory.getLogger(Configuration.class);
-////        final String resourceBundleName = resourceBundleName();
-////        config = ConfigFactory.load(resourceBundleName);
-//
-//    }
-
     public Config getSubstepsConfig(){
-
         return NewSubstepsExecutionConfig.threadLocalConfig().getConfig("org.substeps.config");
-
     }
 
     public Config getConfig(){
@@ -67,46 +53,6 @@ public enum Configuration {
     public void addDefaultProperties(final URL url, final String name) {
         throw new IllegalArgumentException("method no longer supported, rename default substep library properties to reference.conf and they will be loaded by Typesafe config");
     }
-
-
-
-//    public String getConfigurationInfo() {
-//
-//        ConfigRenderOptions options =
-//                ConfigRenderOptions.defaults().setComments(false).setFormatted(true).setJson(false).setOriginComments(false);
-//
-//        return config
-//                .withoutPath("java")
-//                .withoutPath("sun")
-//                .withoutPath("awt")
-//                .withoutPath("idea")
-//                .withoutPath("line.separator")
-//                .withoutPath("os")
-//                .withoutPath("path.separator")
-//                .withValue("remote.token",  ConfigValueFactory.fromAnyRef("******"))
-//                .withValue("remote.username",  ConfigValueFactory.fromAnyRef("******"))
-//
-//                .root().render(options);
-//    }
-
-
-//    private String resourceBundleName() {
-//
-//        String useProps = System.getProperty("substeps.use.dot.properties");
-//        String ext;
-//        if (useProps != null && Boolean.parseBoolean(useProps)){
-//            logger.info("Using legacy properties for configuration, use .conf for greater functionality");
-//            ext = ".properties";
-//        }
-//        else {
-//            ext = ".conf";
-//        }
-//
-//        String resourceBundle = System.getProperty("environment", "localhost") + ext;
-//
-//        System.out.println("loading config from resource bundle: " + resourceBundle);
-//        return  resourceBundle;
-//    }
 
 
     public String getString(final String key) {

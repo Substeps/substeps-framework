@@ -14,11 +14,13 @@ import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import org.scalatest._
 import org.hamcrest.text.IsEqualIgnoringWhiteSpace.equalToIgnoringWhiteSpace
+import org.json4s.native.JsonMethods.parse
+import org.substeps.config.SubstepsConfigLoader
 
 /**
   * Created by ian on 30/06/16.
   */
-class ReportBuilderTest extends FlatSpec with ShouldMatchers{
+class ReportBuilderTest extends FlatSpec with Matchers{
 
   val UTF8 = Charset.forName("UTF-8")
 
@@ -29,6 +31,20 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
     f
   }
 
+  "reading of uncalled step impls" must "deserialize" in {
+    import org.json4s._
+    import org.json4s.native.JsonMethods._
+
+    implicit val formats = DefaultFormats
+
+
+    val rawUncalledStepDefs = Files.toString(new File( "/home/ian/projects/github/substeps-webdriver/target/substeps_data/1/uncalled.stepdefs.js"), Charset.forName("UTF-8"))
+
+    val uncalledStepDefs: List[UncalledStepDef] = parse(rawUncalledStepDefs).extract[List[UncalledStepDef]]
+
+    println("done")
+  }
+
 
   "ReportBuilder" should "read a correct model from the source data dir" in {
 
@@ -36,15 +52,19 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
 
     implicit val outputDir = getOutputDir
     val reportBuilder = new ReportBuilder
-  //  reportBuilder.reportDir = outputDir
 
-    val uri = this.getClass.getClassLoader.getResource("sample-results-data/masterConfig.conf")
+    val uri = this.getClass.getClassLoader.getResource("sample-results-data")
 
-    val masterConfig = ConfigFactory.parseFile(new File(uri.getFile))//"src/test/resources/sample-results-data/masterConfig.conf"))
+    val dataDir = new File(uri.getFile)
+    val masterConfig = ConfigFactory.parseFile(new File(dataDir, "masterConfig.conf"))//"src/test/resources/sample-results-data/masterConfig.conf"))
 
     Option(masterConfig) shouldBe defined
 
-    val modelList = reportBuilder readModels(masterConfig)
+
+    val executionConfigs = SubstepsConfigLoader.splitMasterConfig(masterConfig).asScala.toList
+
+
+    val modelList = reportBuilder readModels(dataDir, executionConfigs)
 
     val model = modelList.head
 
@@ -57,8 +77,21 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
 
   }
 
+  "ReportBuilder" should "build a report from real raw data input" in {
+    val outputDir = getOutputDir
 
+    val reportBuilder = new ReportBuilder
 
+    reportBuilder.buildFromDirectory(new File("/home/ian/projects/github/substeps-webdriver/target/substeps_data"), outputDir)
+
+  }
+
+  /**
+    * @see ParsingFromSourceTests line 537:
+    *      "run some features to test the generation of raw report data" must "create the raw data files"
+    *
+    *      for the test that generates the sampple data
+    */
   "ReportBuilder" should "build a report from raw data input" in {
 
     val now: LocalDateTime = LocalDateTime.now

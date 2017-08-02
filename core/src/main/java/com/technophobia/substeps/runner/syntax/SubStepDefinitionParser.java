@@ -19,8 +19,6 @@
 package com.technophobia.substeps.runner.syntax;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Collections2;
-import com.google.common.io.Files;
 import com.technophobia.substeps.model.ParentStep;
 import com.technophobia.substeps.model.PatternMap;
 import com.technophobia.substeps.model.Step;
@@ -31,12 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author ian

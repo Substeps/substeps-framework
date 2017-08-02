@@ -364,28 +364,7 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
         }
 
         return rootNode;
-
-
-
-//        throw new UnsupportedOperationException("sorry not yet implented!");
     }
-
-//    @Override
-//    public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
-//
-//        byte[] bytes = substepsJmxClient.prepareExecutionConfigAsBytes(theConfig);
-//
-//        RootNode rootNode = getRootNodeFromBytes(bytes);
-//
-//        log.debug("rootNode.toDebugString():\n" + rootNode.toDebugString());
-//
-//        List<IExecutionNode> nodes = flattenTree(rootNode);
-//        for (IExecutionNode n : nodes){
-//           nodeMap.put(n.getId(), n);
-//        }
-//
-//        return rootNode;
-//    }
 
     @Override
     public RootNode run() {
@@ -433,8 +412,6 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
         nodeResult.setStartedAt(resultNotification.getStartedAt());
         nodeResult.setCompletedAt(resultNotification.getCompletedAt());
         nodeResult.setScreenshot(resultNotification.getScreenshot());
-
-
 
 
         if (resultNotification.getResult().isFailure()){

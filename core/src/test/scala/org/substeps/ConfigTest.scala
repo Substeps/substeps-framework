@@ -12,6 +12,32 @@ import com.typesafe.config.{ConfigFactory, ConfigRenderOptions, ConfigValueFacto
 class ConfigTest extends FunSuite with Matchers{
 
 
+  test("config merging of arrays"){
+
+    val base =
+      """test{
+        | arrayKey=["one", "two"]
+        |}
+      """.stripMargin
+
+    val baseConfig = ConfigFactory.parseString(base)
+
+    val fallback =       """test{
+                           | simpleFallback="basefallback"
+                           | arrayKey=["base"]
+                           |}
+                         """.stripMargin
+
+
+    val fallBackConfig = ConfigFactory.parseString(fallback)
+
+//    val cfg = baseConfig.withFallback(fallBackConfig.)
+//
+//    println("config:\n" + cfg.root().render())
+
+
+  }
+
   test("test subconfig"){
 
     val src =
