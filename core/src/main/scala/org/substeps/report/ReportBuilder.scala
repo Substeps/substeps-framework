@@ -1,18 +1,19 @@
 package org.substeps.report
 
 import java.{io, util}
-import java.io.{BufferedWriter, File, FileNotFoundException, FileReader}
+import java.io.{BufferedWriter, File, FileNotFoundException}
+import java.net.{JarURLConnection, URISyntaxException, URL}
 import java.nio.charset.Charset
-import java.time.{Instant, LocalDateTime, ZoneId, ZoneOffset}
 import java.time.format.DateTimeFormatter
+import java.time.{Instant, LocalDateTime, ZoneId}
+import java.util.Collections
 
-import com.google.common.io.Files
+import com.google.common.io.{FileWriteMode, Files}
 import com.google.gson.reflect.TypeToken
-import com.technophobia.substeps.execution.ExecutionResult
-import com.technophobia.substeps.report.{DefaultExecutionReportBuilder, DetailedJsonBuilder}
+import com.technophobia.substeps.model.exception.SubstepsException
 import com.typesafe.config.{Config, ConfigFactory}
-import org.apache.commons.io.FileUtils
-import org.apache.commons.lang3.StringEscapeUtils
+import org.apache.commons.io.{FileUtils, IOUtils}
+import org.apache.commons.lang3.{StringEscapeUtils, StringUtils}
 import org.json4s._
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization._

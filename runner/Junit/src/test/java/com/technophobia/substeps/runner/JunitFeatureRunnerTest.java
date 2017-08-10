@@ -23,29 +23,24 @@ import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
 import com.technophobia.substeps.stepimplementations.MockStepImplementations;
 import com.technophobia.substeps.steps.TestStepImplementations;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.any;
-import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
  * @author imoore
  */
 public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
-
-//    private static final String SUBSTEPS_RESOURCES_BASE_DIRECTORY = "../../core/src/test/resources/";
 
     private File baseResourcesDir;
     
@@ -56,12 +51,7 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
 
         while (!found){
 
-            File[] children = coreDir.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.endsWith("core");
-                }
-            });
+            File[] children = coreDir.listFiles((dir, name) -> name.endsWith("core"));
 
             if (children != null && children.length > 0){
                 found = true;
@@ -70,7 +60,6 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
             else {
                 coreDir = coreDir.getAbsoluteFile().getParentFile();
             }
-            
         }
     }
     
@@ -87,7 +76,7 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
 
         final JunitFeatureRunner runner = new JunitFeatureRunner();
 
-        final List<Class<?>> stepImplsList = new ArrayList<Class<?>>();
+        final List<Class<?>> stepImplsList = new ArrayList<>();
         stepImplsList.add(TestStepImplementations.class);
 
         runner.init(this.getClass(), stepImplsList, feature, tag, substeps, null);
@@ -102,7 +91,7 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
 
         final JunitFeatureRunner runner = new JunitFeatureRunner();
 
-        final List<Class<?>> stepImplsList = new ArrayList<Class<?>>();
+        final List<Class<?>> stepImplsList = new ArrayList<>();
         stepImplsList.add(TestStepImplementations.class);
 
         runner.init(this.getClass(), stepImplsList, feature, tag, substeps, null);
@@ -117,7 +106,7 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
 
         final JunitFeatureRunner runner = new JunitFeatureRunner();
 
-        final List<Class<?>> stepImplsList = new ArrayList<Class<?>>();
+        final List<Class<?>> stepImplsList = new ArrayList<>();
         stepImplsList.add(TestStepImplementations.class);
 
         runner.init(this.getClass(), stepImplsList, feature, tag, substeps, null);
@@ -133,9 +122,9 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
 
         runner.run(notifier);
 
-        final List<Map<String, String>> expectedTableParameter = new ArrayList<Map<String, String>>();
+        final List<Map<String, String>> expectedTableParameter = new ArrayList<>();
 
-        final Map<String, String> row = new HashMap<String, String>();
+        final Map<String, String> row = new HashMap<>();
         expectedTableParameter.add(row);
 
         row.put("column1", "one");
@@ -153,7 +142,7 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
 
         final JunitFeatureRunner runner = new JunitFeatureRunner();
 
-        final List<Class<?>> stepImplsList = new ArrayList<Class<?>>();
+        final List<Class<?>> stepImplsList = new ArrayList<>();
         stepImplsList.add(TestStepImplementations.class);
 
         runner.init(this.getClass(), stepImplsList,
@@ -178,7 +167,7 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
     public void testRunFeaturesInFolders() {
         final JunitFeatureRunner runner = new JunitFeatureRunner();
 
-        final List<Class<?>> stepImplsList = new ArrayList<Class<?>>();
+        final List<Class<?>> stepImplsList = new ArrayList<>();
         stepImplsList.add(TestStepImplementations.class);
 
         runner.init(this.getClass(), stepImplsList, getResourcePath( "features_dir"), null,
@@ -206,7 +195,7 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
     public void testRunWithNoTags() {
         final JunitFeatureRunner runner = new JunitFeatureRunner();
 
-        final List<Class<?>> stepImplsList = new ArrayList<Class<?>>();
+        final List<Class<?>> stepImplsList = new ArrayList<>();
         stepImplsList.add(MockStepImplementations.class);
 
         // pass in the stuff that would normally be placed in the annotation
@@ -251,8 +240,8 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
         verify(spy, times(1)).meth8("something in quotes");
         verify(spy, times(1)).meth9();
 
-        final List<Map<String, String>> table = new ArrayList<Map<String, String>>();
-        final Map<String, String> row = new HashMap<String, String>();
+        final List<Map<String, String>> table = new ArrayList<>();
+        final Map<String, String> row = new HashMap<>();
         row.put("param1", "W");
         row.put("param2", "X");
         row.put("param3", "Y");
@@ -268,11 +257,11 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
         int failed = 6;
         Assert.assertEquals(started, failed + finished);
 
-        verify(notifier, times(started)).fireTestStarted(argThat(any(Description.class)));
+        verify(notifier, times(started)).fireTestStarted(any(Description.class));
         // this is now up to 25 as more of a hierarchy with outlines
 
-        verify(notifier, times(finished)).fireTestFinished(argThat(any(Description.class)));
-        verify(notifier, times(failed)).fireTestFailure(argThat(any(Failure.class)));
+        verify(notifier, times(finished)).fireTestFinished(any(Description.class));
+        verify(notifier, times(failed)).fireTestFailure(any(Failure.class));
         // test failures now cascade upwards
 
         verify(spy, times(1)).meth4("#quoted parameter");
@@ -289,7 +278,7 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
 
         final JunitFeatureRunner runner = new JunitFeatureRunner();
 
-        final List<Class<?>> stepImplsList = new ArrayList<Class<?>>();
+        final List<Class<?>> stepImplsList = new ArrayList<>();
         stepImplsList.add(MockStepImplementations.class);
 
         // pass in the stuff that would normally be placed in the annotation
@@ -315,14 +304,11 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
 
         verifyNotifications(notifier, rootDescription);
 
-        verify(notifier, never()).fireTestFailure(argThat(any(Failure.class)));
+        verify(notifier, never()).fireTestFailure(any(Failure.class));
 
     }
 
-    /**
-     * @param notifier
-     * @param rootDescription
-     */
+
     private void verifyNotifications(final RunNotifier notifier, final Description rootDescription) {
         int idx = 1;
 
@@ -361,7 +347,7 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
 
         final JunitFeatureRunner runner = new JunitFeatureRunner();
 
-        final List<Class<?>> stepImplsList = new ArrayList<Class<?>>();
+        final List<Class<?>> stepImplsList = new ArrayList<>();
         stepImplsList.add(MockStepImplementations.class);
 
         // pass in the stuff that would normally be placed in the annotation
@@ -382,8 +368,8 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
 
         // now verify that what was run was indeed run
 
-        final List<Map<String, String>> table = new ArrayList<Map<String, String>>();
-        final Map<String, String> row = new HashMap<String, String>();
+        final List<Map<String, String>> table = new ArrayList<>();
+        final Map<String, String> row = new HashMap<>();
         row.put("param1", "W");
         row.put("param2", "X");
         row.put("param3", "Y");
@@ -398,7 +384,7 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
     public void testSubStepFailureHandledCorrectly() {
         final JunitFeatureRunner runner = new JunitFeatureRunner();
 
-        final List<Class<?>> stepImplsList = new ArrayList<Class<?>>();
+        final List<Class<?>> stepImplsList = new ArrayList<>();
         stepImplsList.add(MockStepImplementations.class);
 
         // pass in the stuff that would normally be placed in the annotation
@@ -427,9 +413,9 @@ public class JunitFeatureRunnerTest extends BaseJunitFeatureRunnerTest {
         verify(spy, never()).meth9();
         verify(spy, never()).meth6();
 
-        verify(notifier, times(6)).fireTestStarted(argThat(any(Description.class)));
+        verify(notifier, times(6)).fireTestStarted(any(Description.class));
 
-        verify(notifier, times(5)).fireTestFailure(argThat(any(Failure.class)));
+        verify(notifier, times(5)).fireTestFailure(any(Failure.class));
 
     }
 

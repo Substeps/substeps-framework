@@ -29,12 +29,11 @@ import org.junit.Test;
 import java.io.File;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.fail;
-import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -59,7 +58,7 @@ public class SubStepDefinitionParserTest {
         this.parser.parseSubStepFile(new File(
                 "./target/test-classes/com/technophobia/substeps/runner/syntax/duplicate-definition.substeps"));
 
-        verify(this.errorReporter).reportSubstepsError(argThat(is(any(SubstepsParsingException.class))));
+        verify(this.errorReporter).reportSubstepsError(any(SubstepsParsingException.class));
     }
 
     @Test
@@ -69,7 +68,7 @@ public class SubStepDefinitionParserTest {
         this.parser.parseSubStepFile(new File(
                 "./target/test-classes/com/technophobia/substeps/runner/syntax/empty-definition.substeps"));
 
-        verify(this.errorReporter).reportSubstepsError(argThat(is(any(SubstepsParsingException.class))));
+        verify(this.errorReporter).reportSubstepsError(any(SubstepsParsingException.class));
     }
 
     @Test
