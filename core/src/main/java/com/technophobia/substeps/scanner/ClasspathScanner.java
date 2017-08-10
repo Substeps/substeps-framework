@@ -137,14 +137,16 @@ public class ClasspathScanner {
 
         if (root.exists()) {
             final File[] children = root.listFiles(filter);
-            for (final File child : children) {
-                if (child != null && child.exists()) {
-                    if (child.isDirectory()) {
-                        // recurse
-                        final List<File> childsFiles = getAllFiles(child, extension);
-                        files.addAll(childsFiles);
-                    } else {
-                        files.add(child);
+            if (children != null) {
+                for (final File child : children) {
+                    if (child != null && child.exists()) {
+                        if (child.isDirectory()) {
+                            // recurse
+                            final List<File> childsFiles = getAllFiles(child, extension);
+                            files.addAll(childsFiles);
+                        } else {
+                            files.add(child);
+                        }
                     }
                 }
             }

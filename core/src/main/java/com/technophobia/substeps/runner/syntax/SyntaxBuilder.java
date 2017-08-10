@@ -36,14 +36,14 @@ public final class SyntaxBuilder {
     }
 
 
-    public static List<Class<?>> getStepImplementationClasses(final ClassLoader classLoader, final String[] classpath) {
-        final ClasspathScanner cpScanner = new ClasspathScanner();
-
-        final List<Class<?>> implClassList = cpScanner.getClassesWithAnnotation(SubSteps.StepImplementations.class,
-                classLoader, classpath);
-
-        return implClassList;
-    }
+//    public static List<Class<?>> getStepImplementationClasses(final ClassLoader classLoader, final String[] classpath) {
+//        final ClasspathScanner cpScanner = new ClasspathScanner();
+//
+//        final List<Class<?>> implClassList = cpScanner.getClassesWithAnnotation(SubSteps.StepImplementations.class,
+//                classLoader, classpath);
+//
+//        return implClassList;
+//    }
 
 
     public static Syntax buildSyntax(final List<Class<?>> stepImplementationClasses, final File subStepsFile) {
