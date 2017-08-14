@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.substeps</groupId>
 	<artifactId>mojo-sample</artifactId>
-	<version>1.0.4-SNAPSHOT</version>
+	<version>1.1.0-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 	<name>pom sample</name>
@@ -29,7 +29,7 @@
         <dependency>
             <groupId>org.substeps</groupId>
             <artifactId>substeps-core</artifactId>
-            <version>1.0.4-SNAPSHOT</version>
+            <version>1.0.6-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -49,10 +49,11 @@
             <plugin>
                 <groupId>org.substeps</groupId>
                 <artifactId>substeps-maven-plugin</artifactId>
-<!--
-                <version>1.0.4-SNAPSHOT</version>
--->
+<!---->
+                <version>1.1.0-SNAPSHOT</version>
 
+
+<!--
                 <executions>
                     <execution>
                         <id>SubSteps Test</id>
@@ -60,14 +61,7 @@
                         <goals>
                             <goal>run-features</goal>
                         </goals>
-                        <!--<configuration>-->
 
-                            <!--&lt;!&ndash; not actually in the runner yet!-->
-                            <!--<jvmArgs>-->
-                                <!--<jvmArg>-javaagent:${sonar.jacoco.jar}=destfile=${sonar.jacoco.itReportPath},includes=com.technophobia.substeps.*</jvmArg>-->
-                            <!--</jvmArgs> &ndash;&gt;-->
-
-                        <!--</configuration>-->
                     </execution>
 
                     <execution>
@@ -79,6 +73,7 @@
                     </execution>
 
                 </executions>
+-->
 
                 <configuration>
 
@@ -96,6 +91,8 @@
                             <fastFailParseErrors>false</fastFailParseErrors>
                             <featureFile>/target/test-classes/features</featureFile> <!-- typically you'd use ${basedir} here, no need to for test purposes -->
                             <subStepsFileName>/target/test-classes/substeps</subStepsFileName> <!-- ditto -->
+
+                            <dataOutputDirectory>${project.build.directory}/substeps_data</dataOutputDirectory>
 
                             <stepImplementationClassNames>
                                 <param>com.technophobia.webdriver.substeps.impl.BaseWebdriverSubStepImplementations</param>

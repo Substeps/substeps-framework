@@ -28,8 +28,6 @@ import com.technophobia.substeps.runner.SubstepExecutionFailure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
 public class RootNodeRunner extends AbstractNodeRunner<RootNode, Void> {
 
     FeatureNodeRunner featureNodeRunner = new FeatureNodeRunner();

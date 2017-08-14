@@ -33,6 +33,13 @@ public interface SubstepsServerMBean extends SubstepsRunner {
 
     byte[] prepareExecutionConfigAsBytes(final SubstepsExecutionConfig theConfig);
 
+    byte[] prepareExecutionConfigAsBytes(final String theConfig);
+
+    byte[] prepareRemoteExecutionConfig(final String mavenFallbackConfig, String featureFile, String scenarioName);
+
+
     byte[] runAsBytes();
+
+    String getProjectSubstepsVersion();
 
 }

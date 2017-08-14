@@ -19,11 +19,7 @@
 package com.technophobia.substeps.parser;
 
 import com.google.common.io.Files;
-import com.technophobia.substeps.model.exception.SubstepsParsingException;
 import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
-import com.technophobia.substeps.runner.FeatureFileParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;

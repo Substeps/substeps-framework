@@ -22,16 +22,20 @@ import com.technophobia.substeps.report.ExecutionReportBuilder;
 import com.technophobia.substeps.runner.ExecutionConfig;
 import com.technophobia.substeps.runner.SubstepsReportBuilderMojo;
 import com.technophobia.substeps.runner.SubstepsRunnerMojo;
+import com.typesafe.config.Config;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.execution.ReactorManager;
+import org.apache.maven.model.Build;
 import org.apache.maven.monitor.event.EventDispatcher;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.junit.Assert;
 import org.junit.Ignore;
+import org.substeps.runner.NewSubstepsExecutionConfig;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,6 +44,8 @@ import java.util.List;
 import java.util.Properties;
 
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author ian
@@ -51,6 +57,8 @@ public class SubstepsRunnerMojoConfigTest extends AbstractMojoTestCase {
         super.setUp();
     }
 
+    private static String version = "1.1.0-SNAPSHOT";
+
     private void actuallyRunTheTest() throws Exception{
 
         File testPom = new File(getBasedir(), "src/test/resources/sample-pom.xml");
@@ -59,9 +67,36 @@ public class SubstepsRunnerMojoConfigTest extends AbstractMojoTestCase {
         Assert.assertTrue(testPom.exists());
 
         PlexusConfiguration pluginConfiguration = this.extractPluginConfiguration("substeps-maven-plugin", testPom);
-        final SubstepsRunnerMojo mojo = (SubstepsRunnerMojo)lookupMojo("org.substeps", "substeps-maven-plugin", "1.0.4-SNAPSHOT", "run-features", pluginConfiguration);
+
+        // NB. for this call to work, the maven-plugin-plugin generates the role, which this look up needs.  so a mvn clean or a rebuild of the project
+        // will then make this test fail...  this has taken me ages to find!
+
+        final SubstepsRunnerMojo mojo = (SubstepsRunnerMojo)lookupMojo("run-features", testPom);
+
+
+        MavenProject project = mock(MavenProject.class);
+
+        when (project.getBasedir()).thenReturn(new File("."));
+        Build build = mock(Build.class);
+        when(build.getTestOutputDirectory()).thenReturn("testout");
+        when(build.getOutputDirectory()).thenReturn("out");
+        when(build.getDirectory()).thenReturn("dir");
+
+        when(project.getBuild()).thenReturn(build);
+        mojo.setProject(project);
+        mojo.setJmxPort(9999);
+
 
         Assert.assertNotNull("expecting a mojo", mojo);
+
+//        Config cfg = mojo.createExecutionConfigFromPom();
+//
+//        Assert.assertNotNull("expecting config", cfg);
+//
+//        List<? extends Config> configList = cfg.getConfigList("org.substeps.executionConfigs");
+//
+//        System.out.println("config:\n" + NewSubstepsExecutionConfig.render(cfg));
+
 
         ExecutionConfig executionConfig = mojo.getExecutionConfigs().get(0);
         Assert.assertNotNull(executionConfig);
@@ -90,7 +125,7 @@ public class SubstepsRunnerMojoConfigTest extends AbstractMojoTestCase {
 
         Assert.assertThat(stub.getOutputDirectory(), is(new File("/some/folder")));
 
-        Assert.assertThat(mojo.isRunTestsInForkedVM(), is(false));
+//        Assert.assertThat(mojo.isRunTestsInForkedVM(), is(false));
 
         Assert.assertThat((FakeExecutionReportBuilder) mojo.getExecutionResultsCollector(), isA(FakeExecutionReportBuilder.class));
 
@@ -99,7 +134,7 @@ public class SubstepsRunnerMojoConfigTest extends AbstractMojoTestCase {
         Assert.assertThat( ((FakeExecutionReportBuilder) mojo.getExecutionResultsCollector()).getDataDir(), is(new File("/home/somewhere")));
 
 
-        SubstepsReportBuilderMojo mojo2 = (SubstepsReportBuilderMojo)lookupMojo("org.substeps", "substeps-maven-plugin", "1.0.2-SNAPSHOT", "build-report", pluginConfiguration);
+        SubstepsReportBuilderMojo mojo2 = (SubstepsReportBuilderMojo)lookupMojo("org.substeps", "substeps-maven-plugin", version, "build-report", pluginConfiguration);
 
         Assert.assertNotNull("expecting another mojo", mojo2);
 
@@ -116,7 +151,7 @@ public class SubstepsRunnerMojoConfigTest extends AbstractMojoTestCase {
     public void testMojoConfig() throws Exception {
 
         // no op, can't get this test to work in release, when the version gets bumped
-        //actuallyRunTheTest();
+        actuallyRunTheTest();
     }
 
 

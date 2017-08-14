@@ -18,9 +18,12 @@
  */
 package com.technophobia.substeps.runner;
 
+import com.typesafe.config.Config;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.*;
+import org.substeps.report.IReportBuilder;
+import org.substeps.runner.NewSubstepsExecutionConfig;
 
 import java.io.File;
 import java.util.List;
@@ -33,30 +36,36 @@ import java.util.List;
 @Mojo(name = "build-report",
         defaultPhase = LifecyclePhase.VERIFY,
         requiresDependencyResolution = ResolutionScope.TEST,
-        requiresProject = true)
+        requiresProject = true,
+        configurator = "include-project-dependencies")
 public class SubstepsReportBuilderMojo extends BaseSubstepsMojo {
 
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void executeConfig(Config cfg) throws MojoExecutionException, MojoFailureException {
+
+    }
+
+    @Override
+    public void executeBeforeAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException{
+
+    }
+
+    @Override
+    public void executeAfterAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException{
 
         setupBuildEnvironmentInfo();
 
-        getLog().info("Building substeps report from data in: " + this.executionResultsCollector.getDataDir().toString());
 
-        StringBuilder buf = new StringBuilder();
-        for (String s : this.session.getGoals()){
-            buf.append(s);
-            buf.append(" ");
-        }
+        IReportBuilder localReportBuilder = NewSubstepsExecutionConfig.getReportBuilder(masterConfig);
 
-        this.getLog().info("this.session.getGoals(): " + buf.toString());
-
+        File rootDataDir = NewSubstepsExecutionConfig.getRootDataDir(masterConfig);
         File stepImplsJsonFile = new File(outputDirectory, STEP_IMPLS_JSON_FILENAME);
 
-        reportBuilder.buildFromDirectory(this.executionResultsCollector.getDataDir(), stepImplsJsonFile);
+        File reportDir = NewSubstepsExecutionConfig.getReportDir(masterConfig);
 
-
+        // "src/test/resources/sample-results-data"
+        localReportBuilder.buildFromDirectory(rootDataDir, reportDir, stepImplsJsonFile);
 
         List<Throwable> exceptions = this.session.getResult().getExceptions();
 
@@ -69,7 +78,6 @@ public class SubstepsReportBuilderMojo extends BaseSubstepsMojo {
                     this.session.getResult().getExceptions().remove(t);
 
                     throw failure;
-
                 }
             }
         }

@@ -8,16 +8,19 @@ import java.time.format.DateTimeFormatter
 import com.google.common.base.Strings
 import com.google.common.io.Files
 import com.technophobia.substeps.glossary.StepImplementationsDescriptor
+import com.typesafe.config.ConfigFactory
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import org.scalatest._
 import org.hamcrest.text.IsEqualIgnoringWhiteSpace.equalToIgnoringWhiteSpace
+import org.json4s.native.JsonMethods.parse
+import org.substeps.config.SubstepsConfigLoader
 
 /**
   * Created by ian on 30/06/16.
   */
-class ReportBuilderTest extends FlatSpec with ShouldMatchers{
+class ReportBuilderTest extends FlatSpec with Matchers{
 
   val UTF8 = Charset.forName("UTF-8")
 
@@ -28,56 +31,84 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
     f
   }
 
+  "reading of uncalled step impls" must "deserialize" in {
+    import org.json4s._
+    import org.json4s.native.JsonMethods._
+
+    implicit val formats = DefaultFormats
+
+    val uri = this.getClass.getClassLoader.getResource("uncalled/uncalled.stepdefs.js")
+
+    Option(uri) shouldBe defined
+
+    println("uri get file: " + uri.getFile)
+    
+    val rawUncalledStepDefs = Files.toString(new File( uri.getFile), Charset.forName("UTF-8"))
+
+    val uncalledStepDefs: List[UncalledStepDef] = parse(rawUncalledStepDefs).extract[List[UncalledStepDef]]
+
+    println("done")
+  }
+
 
   "ReportBuilder" should "read a correct model from the source data dir" in {
 
     val now: LocalDateTime = LocalDateTime.now
 
-    val outputDir = getOutputDir
+    implicit val outputDir = getOutputDir
     val reportBuilder = new ReportBuilder
-    reportBuilder.reportDir = outputDir
 
-    val model = reportBuilder.readModel(new File("src/test/resources/sample-results-data"))
+    val uri = this.getClass.getClassLoader.getResource("sample-results-data")
 
-    val rootNodeSummary = model._1
-    val featureSummaryAndNodeDetails = model._2
+    val dataDir = new File(uri.getFile)
+    val masterConfig = ConfigFactory.parseFile(new File(dataDir, "masterConfig.conf"))//"src/test/resources/sample-results-data/masterConfig.conf"))
+
+    Option(masterConfig) shouldBe defined
+
+
+    val executionConfigs = SubstepsConfigLoader.splitMasterConfig(masterConfig).asScala.toList
+
+
+    val modelList = reportBuilder readModels(dataDir, executionConfigs)
+
+    val model = modelList.head
+
+    val rootNodeSummary = model.rootNodeSummary
+    val featureSummaryAndNodeDetails = model.featuresList
 
     featureSummaryAndNodeDetails should have size (2)
 
-    featureSummaryAndNodeDetails(0)._1.scenarios should have size (2)
+    featureSummaryAndNodeDetails(0).nodeDetails should have size (2)
+
   }
 
+//  "ReportBuilder" should "build a report from real raw data input" in {
+//    val outputDir = getOutputDir
+//
+//    val reportBuilder = new ReportBuilder
+//
+//    reportBuilder.buildFromDirectory(new File("/home/ian/projects/github/substeps-webdriver/target/substeps_data"), outputDir)
+//
+//  }
 
-  "ReportBuilder" should "build the usage tree report from raw data input" in {
-
-
-    val outputDir = getOutputDir
-
-    val reportBuilder = new ReportBuilder
-    reportBuilder.reportDir = outputDir
-
-    reportBuilder.buildFromDirectory(new File("src/test/resources/sample-results-data"))
-
-    // TODO few more assertions please !
-  }
-
-
+  /**
+    * @see ParsingFromSourceTests line 537:
+    *      "run some features to test the generation of raw report data" must "create the raw data files"
+    *
+    *      for the test that generates the sampple data
+    */
   "ReportBuilder" should "build a report from raw data input" in {
-
-    // TODO - could we create an object with reflection ? or a trait ?
 
     val now: LocalDateTime = LocalDateTime.now
 
     val outputDir = getOutputDir
 
     val reportBuilder = new ReportBuilder
-    reportBuilder.reportDir = outputDir
 
+    val uri = this.getClass.getClassLoader.getResource("sample-results-data")
 
-    reportBuilder.buildFromDirectory(new File("src/test/resources/sample-results-data"))
-
-
-
+    // "src/test/resources/sample-results-data"
+    reportBuilder.buildFromDirectory(new File(uri.getFile), outputDir)
 
     outputDir.exists() should be (true)
 
@@ -121,6 +152,7 @@ class ReportBuilderTest extends FlatSpec with ShouldMatchers{
 
     substepsStatsjs shouldBe defined
 
+    // TODO - usage data exists ?
   }
 
 

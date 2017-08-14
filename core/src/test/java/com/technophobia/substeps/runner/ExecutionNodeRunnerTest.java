@@ -42,7 +42,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.substeps.config.SubstepsConfigLoader;
 import org.substeps.report.IExecutionResultsCollector;
+import org.substeps.runner.NewSubstepsExecutionConfig;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -283,9 +285,17 @@ public class ExecutionNodeRunnerTest {
     private RootNode runExecutionTest(final IExecutionListener notifier,
                                       final SubstepsExecutionConfig executionConfig,
                                       final List<SubstepExecutionFailure> failures) {
+
+
+        Config masterConfig = NewSubstepsExecutionConfig.toConfig(executionConfig);
+        Config cfg = SubstepsConfigLoader.splitMasterConfig(masterConfig).get(0);
+
+        NewSubstepsExecutionConfig.setThreadLocalConfig(cfg);
+
+
         runner.addNotifier(notifier);
 
-        runner.prepareExecutionConfig(executionConfig);
+        runner.prepareExecutionConfig(cfg);
 
         final RootNode rootNode = runner.run();
 
@@ -707,7 +717,11 @@ public class ExecutionNodeRunnerTest {
     @Test
     public void testArgSubstituion() {
 
-        Config cfg = ConfigFactory.load("localhost.conf");
+
+        Config cfg = SubstepsConfigLoader.splitMasterConfig(SubstepsConfigLoader.loadResolvedConfig()).get(0);
+        NewSubstepsExecutionConfig.setThreadLocalConfig(cfg);
+
+//        Config cfg2 = ConfigFactory.load("localhost.conf");
 
         String parameterFromConfig = cfg.getString("users.default.name");
         Assert.assertThat(parameterFromConfig, is("bob"));
@@ -840,7 +854,12 @@ public class ExecutionNodeRunnerTest {
 
         executionConfig.setFastFailParseErrors(false);
 
-        final RootNode rootNode = runner.prepareExecutionConfig(executionConfig);
+        Config masterConfig = NewSubstepsExecutionConfig.toConfig(executionConfig);
+        Config cfg = SubstepsConfigLoader.splitMasterConfig(masterConfig).get(0);
+
+        NewSubstepsExecutionConfig.setThreadLocalConfig(cfg);
+
+        final RootNode rootNode = runner.prepareExecutionConfig(cfg);
 
         Assert.assertThat(rootNode.getChildren().size(), is(1));
 

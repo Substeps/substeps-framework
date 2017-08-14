@@ -25,6 +25,7 @@ import com.technophobia.substeps.execution.ExecutionNodeResult;
 import com.technophobia.substeps.execution.ExecutionResult;
 import com.technophobia.substeps.execution.node.IExecutionNode;
 import com.technophobia.substeps.execution.node.RootNode;
+import com.typesafe.config.Config;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -35,9 +36,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.*;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.substeps.execution.ExecutionNodeResultNotificationHandler;
 
@@ -69,7 +68,7 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
 
     private final ArtifactFactory artifactFactory;
 
-    private final MavenProjectBuilder mavenProjectBuilder;
+    private final ProjectBuilder projectBuilder;
 
     private final ArtifactRepository localRepository;
 
@@ -90,7 +89,7 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
 
     ForkedRunner(final Log log, final int jmxPort, final String vmArgs, final List<String> testClasspathElements,
                  final List<String> stepImplementationArtifacts, final ArtifactResolver artifactResolver,
-                 final ArtifactFactory artifactFactory, final MavenProjectBuilder mavenProjectBuilder,
+                 final ArtifactFactory artifactFactory, final ProjectBuilder projectBuilder,
                  final ArtifactRepository localRepository, final List<ArtifactRepository> remoteRepositories,
                  final ArtifactMetadataSource artifactMetadataSource) throws MojoExecutionException {
 
@@ -101,7 +100,7 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
         this.stepImplementationArtifacts = stepImplementationArtifacts;
         this.artifactResolver = artifactResolver;
         this.artifactFactory = artifactFactory;
-        this.mavenProjectBuilder = mavenProjectBuilder;
+        this.projectBuilder = projectBuilder;
         this.localRepository = localRepository;
         this.remoteRepositories = remoteRepositories;
         this.artifactMetadataSource = artifactMetadataSource;
@@ -271,8 +270,14 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
                             artifactDetails[0], artifactDetails[1], artifactDetails[2], "test", "pom");
                     this.artifactResolver.resolve(stepImplementationPomArtifact, this.remoteRepositories,
                             this.localRepository);
-                    final MavenProject stepImplementationProject = this.mavenProjectBuilder.buildFromRepository(
-                            stepImplementationPomArtifact, this.remoteRepositories, this.localRepository);
+
+                    DefaultProjectBuildingRequest request = new DefaultProjectBuildingRequest();
+                    request.setRemoteRepositories(remoteRepositories);
+                    request.setLocalRepository(this.localRepository);
+
+                    ProjectBuildingResult buildResult = this.projectBuilder.build(stepImplementationPomArtifact, request);
+
+                    final MavenProject stepImplementationProject = buildResult.getProject();
 
                     final Set<Artifact> stepImplArtifacts = stepImplementationProject.createArtifacts(
                             this.artifactFactory, null, null);
@@ -344,9 +349,10 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
 
 
     @Override
-    public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
+    public RootNode prepareExecutionConfig(Config theConfig) {
 
-        byte[] bytes = substepsJmxClient.prepareExecutionConfigAsBytes(theConfig);
+        // TODO
+        byte[] bytes = substepsJmxClient.prepareExecutionConfigAsBytes(theConfig.root().render());
 
         RootNode rootNode = getRootNodeFromBytes(bytes);
 
@@ -354,7 +360,7 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
 
         List<IExecutionNode> nodes = flattenTree(rootNode);
         for (IExecutionNode n : nodes){
-           nodeMap.put(n.getId(), n);
+            nodeMap.put(n.getId(), n);
         }
 
         return rootNode;
@@ -406,8 +412,6 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
         nodeResult.setStartedAt(resultNotification.getStartedAt());
         nodeResult.setCompletedAt(resultNotification.getCompletedAt());
         nodeResult.setScreenshot(resultNotification.getScreenshot());
-
-
 
 
         if (resultNotification.getResult().isFailure()){

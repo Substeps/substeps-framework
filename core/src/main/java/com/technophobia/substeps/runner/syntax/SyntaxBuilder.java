@@ -36,18 +36,18 @@ public final class SyntaxBuilder {
     }
 
 
-    public static List<Class<?>> getStepImplementationClasses(final ClassLoader classLoader, final String[] classpath) {
-        final ClasspathScanner cpScanner = new ClasspathScanner();
-
-        final List<Class<?>> implClassList = cpScanner.getClassesWithAnnotation(SubSteps.StepImplementations.class,
-                classLoader, classpath);
-
-        return implClassList;
-    }
+//    public static List<Class<?>> getStepImplementationClasses(final ClassLoader classLoader, final String[] classpath) {
+//        final ClasspathScanner cpScanner = new ClasspathScanner();
+//
+//        final List<Class<?>> implClassList = cpScanner.getClassesWithAnnotation(SubSteps.StepImplementations.class,
+//                classLoader, classpath);
+//
+//        return implClassList;
+//    }
 
 
     public static Syntax buildSyntax(final List<Class<?>> stepImplementationClasses, final File subStepsFile) {
-        return buildSyntax(stepImplementationClasses, subStepsFile, true, null);
+        return buildSyntax(stepImplementationClasses, subStepsFile, true, (String[])null);
     }
 
 
@@ -57,6 +57,15 @@ public final class SyntaxBuilder {
                 new ClassAnalyser());
     }
 
+    public static Syntax buildSyntax(final List<Class<?>> stepImplementationClasses, final File subStepsFile,
+                                     final boolean strict, final List<String> nonStrictKeywordPrecedence) {
+
+        String[] array = null;
+        if (nonStrictKeywordPrecedence != null){
+            array = nonStrictKeywordPrecedence.toArray(new String[nonStrictKeywordPrecedence.size()]);
+        }
+        return buildSyntax(stepImplementationClasses, subStepsFile, strict,array , new ClassAnalyser());
+    }
 
     public static Syntax buildSyntax(final List<Class<?>> stepImplementationClasses, final File subStepsFile,
                                      final boolean strict, final String[] nonStrictKeywordPrecedence, final ClassAnalyser classAnalyser) {

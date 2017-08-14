@@ -18,7 +18,6 @@
  */
 package com.technophobia.substeps.glossary;
 
-import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -27,6 +26,7 @@ import com.sun.tools.javadoc.Main;
 import com.technophobia.substeps.model.SubSteps;
 import com.technophobia.substeps.runner.BaseSubstepsMojo;
 import com.technophobia.substeps.runner.ExecutionConfig;
+import com.typesafe.config.Config;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -35,10 +35,11 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.substeps.config.SubstepsConfigLoader;
+import org.substeps.runner.NewSubstepsExecutionConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -143,8 +144,19 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
         return fullpath;
     }
 
+
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void executeConfig(Config cfg) throws MojoExecutionException, MojoFailureException {
+        // no op
+    }
+
+    @Override
+    public void executeBeforeAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException{
+        // no op
+    }
+
+    @Override
+    public void executeAfterAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException{
 
         setupBuildEnvironmentInfo();
 
@@ -164,52 +176,31 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
             log.error("MalformedURLException adding outputdir", e);
         }
 
+        if (masterConfig != null){
+            List<Config> configs = SubstepsConfigLoader.splitMasterConfig(masterConfig);
 
-        for(ExecutionConfig cfg : executionConfigs) {
+            for (Config executionConfig : configs) {
 
+                List<String> stepImplementationClassNames = NewSubstepsExecutionConfig.getStepImplementationClassNames(executionConfig);
 
-            for (final String classToDocument : cfg.getStepImplementationClassNames()) {
+                List<String> stepImplsToExclude = NewSubstepsExecutionConfig.getStepImplementationClassNamesGlossaryExcluded(executionConfig);
 
-                log.debug("documenting: " + classToDocument);
+                if (stepImplsToExclude != null ) {
+                    stepImplementationClassNames.removeAll(stepImplsToExclude);
+                }
 
-                // have we loaded info for this class already ?
-                if (!loadedClasses.contains(classToDocument)) {
+                for (final String classToDocument : stepImplementationClassNames) {
 
-                    // where is this class ?
-                    final JarFile jarFileForClass = getJarFileForClass(classToDocument);
-                    if (jarFileForClass != null) {
+                    classStepTags.addAll(getStepTags(loadedClasses, classRealm, classToDocument));
+                }
+            }
+        }
+        else {
 
-                        log.debug("loading info from jar");
+            for (ExecutionConfig cfg : executionConfigs) {
 
-                        // look for the xml file in the jar, load up from
-                        // there
-                        loadStepTagsFromJar(jarFileForClass, classStepTags, loadedClasses);
-                    } else {
-                        log.debug("loading step info from paths");
-                        // if it's in the project, run the javadoc and collect the
-                        // details
-
-                        // TODO - if this class is annotated with AdditionalStepImplementations, lookup those instead..
-
-                        try {
-                            Class<?> stepImplClass = classRealm.loadClass(classToDocument);
-
-                            SubSteps.AdditionalStepImplementations additionalStepImpls = stepImplClass.getDeclaredAnnotation(SubSteps.AdditionalStepImplementations.class);
-
-                            if (additionalStepImpls != null){
-                                for(Class c : additionalStepImpls.value()){
-
-                                    classStepTags.addAll(runJavaDoclet(c.getCanonicalName()));
-                                }
-                            }
-
-                        } catch (ClassNotFoundException e) {
-                            log.error("failed to load class: " + classToDocument, e);
-
-                        }
-
-                        classStepTags.addAll(runJavaDoclet(classToDocument));
-                    }
+                for (final String classToDocument : cfg.getStepImplementationClassNames()) {
+                    classStepTags.addAll(getStepTags(loadedClasses, classRealm, classToDocument));
                 }
             }
         }
@@ -227,6 +218,57 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
         } else {
             log.error("no results to write out");
         }
+
+    }
+
+
+    private List<StepImplementationsDescriptor> getStepTags(HashSet<String> loadedClasses, ClassRealm classRealm, String classToDocument) {
+
+        final List<StepImplementationsDescriptor> classStepTags = new ArrayList<StepImplementationsDescriptor>();
+
+
+        log.debug("documenting: " + classToDocument);
+
+        // have we loaded info for this class already ?
+        if (!loadedClasses.contains(classToDocument)) {
+
+            // where is this class ?
+            final JarFile jarFileForClass = getJarFileForClass(classToDocument);
+            if (jarFileForClass != null) {
+
+                log.debug("loading info from jar");
+
+                // look for the xml file in the jar, load up from
+                // there
+                loadStepTagsFromJar(jarFileForClass, classStepTags, loadedClasses);
+            } else {
+                log.debug("loading step info from paths");
+                // if it's in the project, run the javadoc and collect the
+                // details
+
+                // TODO - if this class is annotated with AdditionalStepImplementations, lookup those instead..
+
+                try {
+                    Class<?> stepImplClass = classRealm.loadClass(classToDocument);
+
+                    SubSteps.AdditionalStepImplementations additionalStepImpls = stepImplClass.getDeclaredAnnotation(SubSteps.AdditionalStepImplementations.class);
+
+                    if (additionalStepImpls != null) {
+                        for (Class c : additionalStepImpls.value()) {
+
+                            classStepTags.addAll(runJavaDoclet(c.getCanonicalName()));
+                        }
+                    }
+
+                } catch (ClassNotFoundException e) {
+                    log.error("failed to load class: " + classToDocument, e);
+
+                }
+
+                classStepTags.addAll(runJavaDoclet(classToDocument));
+            }
+        }
+        return classStepTags;
     }
 
     /**

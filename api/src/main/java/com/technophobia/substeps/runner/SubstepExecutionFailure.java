@@ -22,7 +22,6 @@ package com.technophobia.substeps.runner;
 import com.google.common.base.Function;
 import com.technophobia.substeps.execution.ExecutionResult;
 import com.technophobia.substeps.execution.node.IExecutionNode;
-import com.technophobia.substeps.execution.node.StepImplementationNode;
 
 import java.io.Serializable;
 

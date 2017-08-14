@@ -18,7 +18,10 @@
  */
 package com.technophobia.substeps.runner;
 
+import com.google.common.io.Files;
 import com.technophobia.substeps.execution.node.RootNode;
+import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
+import com.typesafe.config.*;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -29,8 +32,12 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuilder;
+import org.substeps.runner.NewSubstepsExecutionConfig;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 /**
@@ -44,20 +51,6 @@ import java.util.List;
         requiresProject = true,
         configurator = "include-project-dependencies")
 public class SubstepsRunnerMojo extends BaseSubstepsMojo {
-
-    /**
-     * When running in forked mode, a port is required to communicate between
-     * maven and substeps, to set explicitly use -DjmxPort=9999
-     */
-    @Parameter(defaultValue = "9999")
-    private Integer jmxPort;
-
-    /**
-     * A space delimited string of vm arguments to pass to the forked jvm
-     */
-    @Parameter
-    private String vmArgs = null;
-
 
 
     private final BuildFailureManager buildFailureManager = new BuildFailureManager();
@@ -80,7 +73,7 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
      */
     @Component
 
-    private MavenProjectBuilder mavenProjectBuilder;
+    private ProjectBuilder projectBuilder;
 
     /**
      */
@@ -107,28 +100,42 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
     @Component
     private ArtifactMetadataSource artifactMetadataSource;
 
-    private MojoRunner runner;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void executeAfterAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException{
+        processBuildData();
+    }
 
-        ensureValidConfiguration();
+    @Override
+    public void executeBeforeAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException{
 
-        setupBuildEnvironmentInfo();
+        // write out the master config to the root data dir
+        File rootDataDir = NewSubstepsExecutionConfig.getRootDataDir(masterConfig);
 
-        this.runner = this.runTestsInForkedVM ? createForkedRunner() : createInProcessRunner();
+        File outFile = new File(rootDataDir, "masterConfig.conf");
+
+        mkdirOrException(rootDataDir);
 
         try {
-            executeConfigs();
+            String renderedConfig = NewSubstepsExecutionConfig.render(masterConfig);
+            this.getLog().info("\n\n *** USING COMBINED CONFIG:\n\n" + renderedConfig + "\n\n");
 
-            processBuildData();
+            Files.write(renderedConfig, outFile, Charset.forName("UTF-8"));
         }
-        finally {
-            this.runner.shutdown();
+        catch (IOException e){
+            throw new MojoExecutionException(e.getMessage(), e);
         }
     }
 
+    private void mkdirOrException(File dir)  {
+        if (!dir.exists()){
 
+            if (!dir.mkdirs()){
+                throw new SubstepsRuntimeException("Failed to create dir: " + dir.getAbsolutePath());
+            }
+        }
+
+    }
 
 
     private ForkedRunner createForkedRunner() throws MojoExecutionException {
@@ -138,9 +145,10 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
             if (this.project == null) {
                 this.getLog().error("this.project is null");
             }
-            return new ForkedRunner(getLog(), this.jmxPort, this.vmArgs, this.project.getTestClasspathElements(),
+
+            return new ForkedRunner(getLog(), NewSubstepsExecutionConfig.getJmxPort(), NewSubstepsExecutionConfig.getVMArgs(), this.project.getTestClasspathElements(),
                     this.stepImplementationArtifacts, this.artifactResolver, this.artifactFactory,
-                    this.mavenProjectBuilder, this.localRepository, this.remoteRepositories,
+                    this.projectBuilder, this.localRepository, this.remoteRepositories,
                     this.artifactMetadataSource);
         } catch (final DependencyResolutionRequiredException e) {
 
@@ -155,56 +163,46 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
     }
 
 
-    private void executeConfigs() throws MojoExecutionException {
 
-        if (this.executionConfigs == null || this.executionConfigs.isEmpty()) {
 
-            throw new MojoExecutionException("executionConfigs cannot be null or empty");
-        }
+    @Override
+    public void executeConfig(final Config executionConfig) throws MojoExecutionException {
+        // executionConfig will be whole, self contained and already split and resolved from a masterConfig
+
+        MojoRunner runner = null;
 
         try {
-            for (final ExecutionConfig executionConfig : this.executionConfigs) {
+            runner = NewSubstepsExecutionConfig.isRunInForkedVM(executionConfig) ? createForkedRunner() : createInProcessRunner();
 
-                runExecutionConfig(executionConfig);
+            final RootNode iniitalRootNode = runner.prepareExecutionConfig(executionConfig);
+
+            this.executionResultsCollector = NewSubstepsExecutionConfig.getExecutionResultsCollector(executionConfig);
+
+            this.executionResultsCollector.setDataDir(NewSubstepsExecutionConfig.getDataOutputDirectory(executionConfig));
+
+            this.executionResultsCollector.initOutputDirectories(iniitalRootNode);
+
+            runner.addNotifier(this.executionResultsCollector);
+
+            final RootNode rootNode = runner.run();
+
+            String description = NewSubstepsExecutionConfig.getDescription(executionConfig);
+
+            if (description != null) {
+
+                rootNode.setLine(description);
             }
-        } catch (final Exception e) {
 
-            // to cater for any odd exceptions thrown out.. at least this way
-            // jvm shouldn't just die, unless it was going to die anyway
-            throw new MojoExecutionException("Unhandled exception: " + e.getMessage(), e);
+            addToLegacyReport(rootNode);
+
+            this.buildFailureManager.addExecutionResult(rootNode);
+        }
+        finally {
+            if (runner != null) {
+                runner.shutdown();
+            }
         }
     }
-
-
-    private void runExecutionConfig(final ExecutionConfig theConfig) throws MojoExecutionException {
-
-        final SubstepsExecutionConfig cfg =  theConfig.asSubstepsExecutionConfig();
-
-        this.getLog().info("SubstepsExecutionConfig: " + cfg.printParameters());
-
-        final RootNode iniitalRootNode = this.runner.prepareExecutionConfig(cfg);
-
-        this.executionResultsCollector.initOutputDirectories(iniitalRootNode);
-
-        this.runner.addNotifier(this.executionResultsCollector);
-
-        final RootNode rootNode = this.runner.run();
-
-        if (theConfig.getDescription() != null) {
-
-            rootNode.setLine(theConfig.getDescription());
-        }
-
-
-
-       addToLegacyReport(rootNode);
-
-
-        this.buildFailureManager.addExecutionResult(rootNode);
-    }
-
-
-
 
     private void addToLegacyReport(final RootNode rootNode) {
 
@@ -266,39 +264,9 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
     }
 
 
-    private void ensureValidConfiguration() throws MojoExecutionException {
-
-        ensureForkedIfStepImplementationArtifactsSpecified();
-    }
-
-
-    private void ensureForkedIfStepImplementationArtifactsSpecified() throws MojoExecutionException {
-
-        if (this.stepImplementationArtifacts != null && !this.stepImplementationArtifacts.isEmpty()
-                && !this.runTestsInForkedVM) {
-            throw new MojoExecutionException(
-                    "Invalid configuration of substeps runner, if stepImplementationArtifacts are specified runTestsInForkedVM must be true");
-        }
-
-    }
 
 
 
-    public Integer getJmxPort() {
-        return jmxPort;
-    }
-
-    public void setJmxPort(Integer jmxPort) {
-        this.jmxPort = jmxPort;
-    }
-
-    public String getVmArgs() {
-        return vmArgs;
-    }
-
-    public void setVmArgs(String vmArgs) {
-        this.vmArgs = vmArgs;
-    }
 
 
 
@@ -330,12 +298,12 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
         this.artifactFactory = artifactFactory;
     }
 
-    public MavenProjectBuilder getMavenProjectBuilder() {
-        return mavenProjectBuilder;
+    public ProjectBuilder getProjectBuilder() {
+        return projectBuilder;
     }
 
-    public void setMavenProjectBuilder(MavenProjectBuilder mavenProjectBuilder) {
-        this.mavenProjectBuilder = mavenProjectBuilder;
+    public void setProjectBuilder(ProjectBuilder projectBuilder) {
+        this.projectBuilder = projectBuilder;
     }
 
     public ArtifactRepository getLocalRepository() {
@@ -368,14 +336,6 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
 
     public void setArtifactMetadataSource(ArtifactMetadataSource artifactMetadataSource) {
         this.artifactMetadataSource = artifactMetadataSource;
-    }
-
-    public MojoRunner getRunner() {
-        return runner;
-    }
-
-    public void setRunner(MojoRunner runner) {
-        this.runner = runner;
     }
 
 }

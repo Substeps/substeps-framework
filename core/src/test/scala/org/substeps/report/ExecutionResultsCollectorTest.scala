@@ -11,14 +11,14 @@ import com.technophobia.substeps.parser.FileContents
 import com.technophobia.substeps.runner.FeatureFileParser
 import org.hamcrest.Matchers._
 import org.junit.Assert
-import org.scalatest.{FlatSpec, FunSpec, ShouldMatchers}
+import org.scalatest.{FlatSpec, FunSpec, Matchers}
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 /**
   * Created by ian on 19/05/16.
   */
-class ExecutionResultsCollectorTest extends FlatSpec with ShouldMatchers{
+class ExecutionResultsCollectorTest extends FlatSpec with Matchers{
 
   lazy val singleFeatureSingleScenario = {
 

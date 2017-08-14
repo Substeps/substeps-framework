@@ -23,6 +23,7 @@ import com.technophobia.substeps.execution.ExecutionNodeResult;
 import com.technophobia.substeps.execution.node.RootNode;
 import com.technophobia.substeps.jmx.SubstepsServerMBean;
 import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
+import com.typesafe.config.Config;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,6 @@ import javax.naming.ServiceUnavailableException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -158,10 +158,10 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
         return connector;
     }
 
-    public byte[] prepareExecutionConfigAsBytes(final SubstepsExecutionConfig cfg) {
+    public byte[] prepareExecutionConfigAsBytes(final String theConfig) {
 
         try {
-            return this.mbean.prepareExecutionConfigAsBytes(cfg);
+            return this.mbean.prepareExecutionConfigAsBytes(theConfig);
         }
         catch (SubstepsConfigurationException ex){
             log.error("Failed to init tests: " + ex.getMessage());
@@ -170,13 +170,13 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
     }
 
     @Override
-    public RootNode prepareExecutionConfig(final SubstepsExecutionConfig cfg) {
+    public RootNode prepareExecutionConfig(Config theConfig) {
 
         try {
             final ObjectName objectName = new ObjectName(SubstepsServerMBean.SUBSTEPS_JMX_MBEAN_NAME);
             Object  rootNode = mbsc.invoke(objectName,
                     "prepareExecutionConfig",
-                    new Object[]{cfg},
+                    new Object[]{theConfig},
                     new String[]{SubstepsExecutionConfig.class.getName()});
             return (RootNode)rootNode;
 

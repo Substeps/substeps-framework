@@ -122,10 +122,6 @@ public class ExecutionConfigTest {
     @Test
     public void testDeterminInitialisationClasses() {
 
-        SubstepsExecutionConfig config = new SubstepsExecutionConfig();
-
-        final ExecutionConfigWrapper configWrapper = new ExecutionConfigWrapper(config);
-
         final List<Class<?>> stepImplClasses = new ArrayList<Class<?>>();
 
         stepImplClasses.add(StepImplsClass1_2_3.class);
@@ -133,9 +129,8 @@ public class ExecutionConfigTest {
         stepImplClasses.add(StepImplsClass1_4.class);
         stepImplClasses.add(StepImplsClass1_5_2.class);
 
-        config.setStepImplementationClasses(stepImplClasses);
-
-        final List<Class<?>> initialisationClasses = Arrays.asList(configWrapper.determineInitialisationClasses());
+        final List<Class<?>> initialisationClasses = Arrays.asList(
+            ExecutionNodeRunner.buildInitialisationClassList(stepImplClasses, null));
 
         Assert.assertThat(initialisationClasses.size(), is(5));
 
@@ -157,10 +152,6 @@ public class ExecutionConfigTest {
     @Test(expected = SubstepsConfigurationException.class)
     public void testIncompatibleDeterminInitialisationClasses() {
 
-        SubstepsExecutionConfig config = new SubstepsExecutionConfig();
-
-        final ExecutionConfigWrapper configWrapper = new ExecutionConfigWrapper(config);
-
         final List<Class<?>> stepImplClasses = new ArrayList<Class<?>>();
 
         stepImplClasses.add(StepImplsClass1_2_3.class);
@@ -169,10 +160,8 @@ public class ExecutionConfigTest {
         stepImplClasses.add(StepImplsClass1_5_2.class);
         stepImplClasses.add(StepImplsClass2_5.class);
 
-        config.setStepImplementationClasses(stepImplClasses);
-
         try {
-            configWrapper.determineInitialisationClasses();
+            ExecutionNodeRunner.buildInitialisationClassList(stepImplClasses, null);
 
         } catch (final SubstepsConfigurationException exception) {
 
@@ -185,19 +174,13 @@ public class ExecutionConfigTest {
     @Test
     public void testDeterminInitialisationClasses2() {
 
-        SubstepsExecutionConfig config = new SubstepsExecutionConfig();
-
-        final ExecutionConfigWrapper configWrapper = new ExecutionConfigWrapper(config);
-
         final List<Class<?>> stepImplClasses = new ArrayList<Class<?>>();
 
         stepImplClasses.add(StepImplsClass1.class);
         stepImplClasses.add(StepImplsClass2_1.class);
         stepImplClasses.add(StepImplsClass3_2.class);
 
-        config.setStepImplementationClasses(stepImplClasses);
-
-        final Class<?>[] initialisationClasses = configWrapper.determineInitialisationClasses();
+        final Class<?>[] initialisationClasses = ExecutionNodeRunner.buildInitialisationClassList(stepImplClasses, null);
 
         Assert.assertThat(initialisationClasses.length, is(3));
 
@@ -208,27 +191,7 @@ public class ExecutionConfigTest {
     }
 
     @Test
-    public void testDeterminInitialisationClassesTheOldWay() {
-
-        final SubstepsExecutionConfig configImpl = new SubstepsExecutionConfig();
-        final ExecutionConfigWrapper config = new ExecutionConfigWrapper(configImpl);
-
-        final String[] initClasses = {"java.lang.String", "java.math.BigDecimal"};
-
-        configImpl.setInitialisationClass(initClasses);
-        final Class<?>[] initialisationClasses = config.determineInitialisationClasses();
-
-        Assert.assertEquals(initialisationClasses[0], String.class);
-        Assert.assertEquals(initialisationClasses[1], BigDecimal.class);
-
-    }
-
-    @Test
     public void testDermineClassesForTPCLA223() {
-
-        SubstepsExecutionConfig config = new SubstepsExecutionConfig();
-
-        final ExecutionConfigWrapper configWrapper = new ExecutionConfigWrapper(config);
 
         final List<Class<?>> stepImplClasses = new ArrayList<Class<?>>();
 
@@ -236,9 +199,7 @@ public class ExecutionConfigTest {
         stepImplClasses.add(StepImplsClass2_5_6.class);
         stepImplClasses.add(StepImplsClass3_6.class);
 
-        config.setStepImplementationClasses(stepImplClasses);
-
-        final List<Class<?>> initialisationClasses = Arrays.asList(configWrapper.determineInitialisationClasses());
+        final List<Class<?>> initialisationClasses = Arrays.asList(ExecutionNodeRunner.buildInitialisationClassList(stepImplClasses, null));
 
         Assert.assertThat(initialisationClasses.size(), is(6));
 
@@ -255,27 +216,20 @@ public class ExecutionConfigTest {
     @Test(expected = SubstepsConfigurationException.class)
     public void testDetermineClassesForInvalidLoop() {
 
-        SubstepsExecutionConfig config = new SubstepsExecutionConfig();
-
-        final ExecutionConfigWrapper configWrapper = new ExecutionConfigWrapper(config);
-
         final List<Class<?>> stepImplClasses = new ArrayList<Class<?>>();
 
         stepImplClasses.add(StepImplsClass1_2_3.class);
         stepImplClasses.add(StepImplsClass3_4_5.class);
         stepImplClasses.add(StepImplsClass5_6_1.class);
 
-        config.setStepImplementationClasses(stepImplClasses);
-
         try {
-            configWrapper.determineInitialisationClasses();
+            ExecutionNodeRunner.buildInitialisationClassList(stepImplClasses, null);
         } catch (final SubstepsConfigurationException sce) {
 
             Assert.assertEquals(THE_ORDER_IS_INVALID_AS + InitClass1.class.getName() + MUST_COME_BEFORE_AND_AFTER
                     + InitClass6.class.getName(), sce.getMessage());
             throw sce;
         }
-
     }
 
     @Test
@@ -284,7 +238,5 @@ public class ExecutionConfigTest {
         final Class<?> clazz = AnsiColourExecutionLogger.class;
 
         Assert.assertTrue(IExecutionListener.class.isAssignableFrom(clazz));
-
     }
-
 }

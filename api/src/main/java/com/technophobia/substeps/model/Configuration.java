@@ -22,6 +22,7 @@ package com.technophobia.substeps.model;
 import com.typesafe.config.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.substeps.runner.NewSubstepsExecutionConfig;
 
 import java.net.URL;
 
@@ -32,21 +33,12 @@ public enum Configuration {
 
     INSTANCE;
 
-    private transient final Logger logger;
-
-    private transient final Config config;
-
-    Configuration() {
-        logger = LoggerFactory.getLogger(Configuration.class);
-        final String resourceBundleName = resourceBundleName();
-
-
-        config = ConfigFactory.load(resourceBundleName);
-
+    public Config getSubstepsConfig(){
+        return NewSubstepsExecutionConfig.threadLocalConfig().getConfig("org.substeps.config");
     }
 
     public Config getConfig(){
-        return config;
+        return NewSubstepsExecutionConfig.threadLocalConfig();
     }
 
 
@@ -63,62 +55,22 @@ public enum Configuration {
     }
 
 
-
-    public String getConfigurationInfo() {
-
-        ConfigRenderOptions options =
-                ConfigRenderOptions.defaults().setComments(false).setFormatted(true).setJson(false).setOriginComments(false);
-
-        return config
-                .withoutPath("java")
-                .withoutPath("sun")
-                .withoutPath("awt")
-                .withoutPath("idea")
-                .withoutPath("line.separator")
-                .withoutPath("os")
-                .withoutPath("path.separator")
-                .withValue("remote.token",  ConfigValueFactory.fromAnyRef("******"))
-                .withValue("remote.username",  ConfigValueFactory.fromAnyRef("******"))
-
-                .root().render(options);
-    }
-
-
-    private String resourceBundleName() {
-
-        String useProps = System.getProperty("substeps.use.dot.properties");
-        String ext;
-        if (useProps != null && Boolean.parseBoolean(useProps)){
-            logger.info("Using legacy properties for configuration, use .conf for greater functionality");
-            ext = ".properties";
-        }
-        else {
-            ext = ".conf";
-        }
-
-        String resourceBundle = System.getProperty("environment", "localhost") + ext;
-
-        System.out.println("loading config from resource bundle: " + resourceBundle);
-        return  resourceBundle;
-    }
-
-
     public String getString(final String key) {
-        return config.getString(key);
+        return getConfig().getString(key);
     }
 
 
     public int getInt(final String key) {
-        return config.getInt(key);
+        return getConfig().getInt(key);
     }
 
 
     public long getLong(final String key) {
-        return config.getLong(key);
+        return getConfig().getLong(key);
     }
 
 
     public boolean getBoolean(final String key) {
-        return config.getBoolean(key);
+        return getConfig().getBoolean(key);
     }
 }

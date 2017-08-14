@@ -30,18 +30,13 @@ import com.technophobia.substeps.runner.builder.ExecutionNodeTreeBuilder;
 import com.technophobia.substeps.runner.node.RootNodeRunner;
 import com.technophobia.substeps.runner.setupteardown.SetupAndTearDown;
 import com.technophobia.substeps.runner.syntax.SyntaxBuilder;
-
+import com.typesafe.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.substeps.report.ExecutionResultsCollector;
-import org.substeps.report.IExecutionResultsCollector;
 import org.substeps.report.ReportingUtil;
-import org.substeps.runner.CoreSubstepsPropertiesConfiguration;
-import org.substeps.runner.UsageTreeBuilder;
+import org.substeps.runner.NewSubstepsExecutionConfig;
 
 import java.io.File;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -80,21 +75,23 @@ public class ExecutionNodeRunner implements SubstepsRunner {
         this.notificationDistributor.addListener(notifier);
     }
 
-    public RootNode prepareExecutionConfig(final ExecutionConfigWrapper configWrapper , final Syntax syntax, final TestParameters parameters,
+    public RootNode prepareExecutionConfig(final Config config , final Syntax syntax, final TestParameters parameters,
                                            final SetupAndTearDown setupAndTearDown ,
                                            final MethodExecutor methodExecutorToUse,
                                            TagManager nonFatalTagmanager ) {
 
 
-        final ExecutionNodeTreeBuilder nodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, configWrapper);
+        final ExecutionNodeTreeBuilder nodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, config);
 
         // building the tree can throw critical failures if exceptions are found
-        this.rootNode = nodeTreeBuilder.buildExecutionNodeTree(configWrapper.getExecutionConfig().getDescription());
+        this.rootNode = nodeTreeBuilder.buildExecutionNodeTree(NewSubstepsExecutionConfig.getDescription(config));
 
-        setupExecutionListeners(configWrapper);
+        setupExecutionListeners(NewSubstepsExecutionConfig.getExecutionListenerClasses(config));
 
-        if (configWrapper.getExecutionConfig().isCheckForUncalledAndUnused()) {
-            processUncalledAndUnused(syntax, configWrapper.getExecutionConfig().getDataOutputDirectory());
+
+
+        if (NewSubstepsExecutionConfig.isCheckForUncalledAndUnused(config)) {
+            processUncalledAndUnused(syntax, NewSubstepsExecutionConfig.getDataOutputDirectory(config));
         }
 
         ExecutionContext.put(Scope.SUITE, INotificationDistributor.NOTIFIER_DISTRIBUTOR_KEY,
@@ -109,14 +106,47 @@ public class ExecutionNodeRunner implements SubstepsRunner {
 
     }
 
+    public static Class<?>[] buildInitialisationClassList(List<Class<?>> stepImplClassList, List<Class<?>> initialisationClassList){
+
+        List<Class<?>> finalInitialisationClassList = null;
+        if (stepImplClassList != null) {
+
+            final InitialisationClassSorter orderer = new InitialisationClassSorter();
+
+            for (final Class<?> c : stepImplClassList) {
+
+                final SubSteps.StepImplementations annotation = c.getAnnotation(SubSteps.StepImplementations.class);
+
+                if (annotation != null) {
+                    final Class<?>[] initClasses = annotation.requiredInitialisationClasses();
+
+                    if (initClasses != null) {
+
+                        orderer.addOrderedInitialisationClasses(initClasses);
+                    }
+                }
+            }
+
+            finalInitialisationClassList = orderer.getOrderedList();
+        }
+        if (finalInitialisationClassList == null && initialisationClassList != null) {
+            finalInitialisationClassList = initialisationClassList;
+        }
+
+        if (finalInitialisationClassList != null) {
+            return finalInitialisationClassList.toArray(new Class<?>[]{});
+        }
+        else {
+            return null;
+        }
+    }
+
 
     @Override
-    public RootNode prepareExecutionConfig(final SubstepsExecutionConfig theConfig) {
+    public RootNode prepareExecutionConfig(Config cfg) {
 
-        final ExecutionConfigWrapper configWrapper = new ExecutionConfigWrapper(theConfig);
-        configWrapper.initProperties();
+        NewSubstepsExecutionConfig.setThreadLocalConfig(cfg);
 
-        SubstepsExecutionConfig config = configWrapper.getExecutionConfig();
 
         final String dryRunProperty = System.getProperty(DRY_RUN_KEY);
         final boolean dryRun = dryRunProperty != null && Boolean.parseBoolean(dryRunProperty);
@@ -127,41 +157,49 @@ public class ExecutionNodeRunner implements SubstepsRunner {
             log.info("**** DRY RUN ONLY **");
         }
 
+        List<Class<?>> stepImplementationClasses = NewSubstepsExecutionConfig.getStepImplementationClasses(cfg);
+        Class<?>[] initialisationClasses = NewSubstepsExecutionConfig.getInitialisationClasses(cfg);
 
-        final SetupAndTearDown setupAndTearDown = new SetupAndTearDown(config.getInitialisationClasses(),
+        ArrayList<Class<?>> initClassList = null;
+        if (initialisationClasses != null) {
+            initClassList = Lists.newArrayList(initialisationClasses);
+        }
+
+        Class<?>[] finalInitClasses = buildInitialisationClassList(stepImplementationClasses, initClassList);
+
+        final SetupAndTearDown setupAndTearDown = new SetupAndTearDown(finalInitClasses,
                 methodExecutorToUse);
 
-        final String loggingConfigName = config.getDescription() != null ? config.getDescription() : "SubStepsMojo";
+
+        final String loggingConfigName = NewSubstepsExecutionConfig.getDescription(cfg);
 
         setupAndTearDown.setLoggingConfigName(loggingConfigName);
 
-        final TagManager tagmanager = new TagManager(config.getTags());
+        final TagManager tagmanager = new TagManager(NewSubstepsExecutionConfig.getTags(cfg));
 
-        final TagManager nonFatalTagmanager = config.getNonFatalTags() != null ? new TagManager(
-                config.getNonFatalTags()) : null;
+        final TagManager nonFatalTagmanager = TagManager.fromTags(NewSubstepsExecutionConfig.getNonFatalTags(cfg));
 
         File subStepsFile = null;
 
-        if (config.getSubStepsFileName() != null) {
-            subStepsFile = new File(config.getSubStepsFileName());
+        if (NewSubstepsExecutionConfig.getSubStepsFileName(cfg) != null) {
+            subStepsFile = new File(NewSubstepsExecutionConfig.getSubStepsFileName(cfg));
         }
 
-        final Syntax syntax = SyntaxBuilder.buildSyntax(config.getStepImplementationClasses(), subStepsFile,
-                config.isStrict(), config.getNonStrictKeywordPrecedence());
+        final Syntax syntax = SyntaxBuilder.buildSyntax(stepImplementationClasses, subStepsFile,
+                NewSubstepsExecutionConfig.isStrict(cfg), NewSubstepsExecutionConfig.getNonStrictKeywordPrecedence(cfg));
 
-        final TestParameters parameters = new TestParameters(tagmanager, syntax, config.getFeatureFile(), config.getScenarioName());
+        final TestParameters parameters = new TestParameters(tagmanager, syntax, NewSubstepsExecutionConfig.getFeatureFile(cfg),
+                NewSubstepsExecutionConfig.getScenarioName(cfg));
 
-        parameters.setFailParseErrorsImmediately(config.isFastFailParseErrors());
+        parameters.setFailParseErrorsImmediately(NewSubstepsExecutionConfig.isFastFailParseErrors(cfg));
         parameters.init();
 
-        return prepareExecutionConfig(configWrapper, syntax, parameters, setupAndTearDown, methodExecutorToUse, nonFatalTagmanager);
-
+        return prepareExecutionConfig(cfg, syntax, parameters, setupAndTearDown, methodExecutorToUse, nonFatalTagmanager);
     }
 
-    private void setupExecutionListeners(ExecutionConfigWrapper configWrapper) {
-        // add any listeners (including the step execution logger)
 
-        final List<Class<? extends IExecutionListener>> executionListenerClasses = configWrapper.getExecutionListenerClasses();
+    private void setupExecutionListeners( final List<Class<? extends IExecutionListener>> executionListenerClasses) {
+        // add any listeners (including the step execution logger)
 
         // TODO - pass the base dir in or get from config
 

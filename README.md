@@ -17,6 +17,12 @@ Requirements
 ------------
  * Java 8
 
+1.1.0
+-----
+* Moved substeps config to a single org.substeps hierarchy, existing overrides will still be used, but config should be updated
+* Moved maven pom configuration to config files (multiple).  Maven plugin will print out the new config from existing pom settings, see [1.1.0 Upgrade notes](1.1.0 Upgrade.md) for further details
+* Added an exclusion filter to the config for the glossary builder under `org.substeps.config.glossary.excludeStepImplementationClassNames`
+
 1.0.6
 -----
 * Redacted some of the output of the config

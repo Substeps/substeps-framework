@@ -3,6 +3,8 @@ package org.substeps.report
 import java.time.{Instant, LocalDateTime, ZoneId}
 import java.time.format.DateTimeFormatter
 
+import com.typesafe.config.Config
+
 /**
   * Created by ian on 18/08/16.
   */
@@ -34,14 +36,19 @@ trait ReportFrameTemplate {
 
   }
 
-  def buildReportFrame(rootNodeSummary: RootNodeSummary, stats : ExecutionStats, dateTimeString : String) = {
+  def buildReportFrame(masterConfig : Config, rootNodeSummaries: List[RootNodeSummary], stats : ExecutionStats, dateTimeString : String) = {
 
     val featureProgressBlock = buildStatsBlock("Features", stats.featuresCounter)
     val scenarioProgressBlock = buildStatsBlock("Scenarios", stats.scenarioCounters)
     val scenarioStepProgressBlock = buildStatsBlock("Scenario steps", stats.stepCounters)
     val stepImplBlock = buildStatsBlock("Step Impls", stats.stepImplCounters)
 
-    val reportTitle = Option(rootNodeSummary.description).getOrElse("Substeps Test Report")
+    val rootNodeSummary = rootNodeSummaries.head
+
+    val suiteDescription = masterConfig.getString("org.substeps.config.description")
+
+
+    val reportTitle = Option(suiteDescription).getOrElse("Substeps Test Report")
 
 
     // TODO pull out some of the other things from the node summary - tags, nonfatal tags and environment
@@ -56,6 +63,15 @@ trait ReportFrameTemplate {
 
     val tags = rootNodeSummary.tags.getOrElse("")
 
+    val envHeader =
+      if(rootNodeSummaries.size == 1) {
+        s""" <p class="navbar-text navbar-left">Environment: ${env}</p>
+            <p class="navbar-text navbar-left">Tags: ${tags}</p>
+            ${nonFatalTags}"""
+      }
+      else {
+        ""
+      }
 
 
     s"""
@@ -85,11 +101,7 @@ trait ReportFrameTemplate {
  |        <div class="navbar-header">
        |            <span class="navbar-brand" href="#">${reportTitle}</span>
        |            <span class="navbar-brand" >${dateTimeString}</span>
-       |            <p class="navbar-text navbar-left">Environment: ${env}</p>
-       |            <p class="navbar-text navbar-left">Tags: ${tags}</p>
-       |            ${nonFatalTags}
-       |
-       |
+       |            ${envHeader}
  |        </div>
        |
  |        <div class="collapse navbar-collapse">
