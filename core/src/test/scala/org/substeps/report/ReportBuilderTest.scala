@@ -39,6 +39,10 @@ class ReportBuilderTest extends FlatSpec with Matchers{
 
     val uri = this.getClass.getClassLoader.getResource("uncalled/uncalled.stepdefs.js")
 
+    Option(uri) shouldBe defined
+
+    println("uri get file: " + uri.getFile)
+    
     val rawUncalledStepDefs = Files.toString(new File( uri.getFile), Charset.forName("UTF-8"))
 
     val uncalledStepDefs: List[UncalledStepDef] = parse(rawUncalledStepDefs).extract[List[UncalledStepDef]]
