@@ -111,7 +111,9 @@ Scenario: inline table
 
     val fileContentsFromSource = new FileContents(theFeature.split("\n").toList.asJava, new File("temp_feature_file.feature"))
 
-    val fileContentsFromFile = FileContents.fromFile(new File("./target/test-classes/features/lineNumbers.feature"))
+    val uri = this.getClass.getClassLoader.getResource("features/lineNumbers.feature")
+
+    val fileContentsFromFile = FileContents.fromFile(new File(uri.getFile))
 
     fileContentsFromSource.getLines.size() should be (fileContentsFromFile.getLines.size())
 

@@ -37,8 +37,9 @@ class ReportBuilderTest extends FlatSpec with Matchers{
 
     implicit val formats = DefaultFormats
 
+    val uri = this.getClass.getClassLoader.getResource("uncalled/uncalled.stepdefs.js")
 
-    val rawUncalledStepDefs = Files.toString(new File( "/home/ian/projects/github/substeps-webdriver/target/substeps_data/1/uncalled.stepdefs.js"), Charset.forName("UTF-8"))
+    val rawUncalledStepDefs = Files.toString(new File( uri.getFile), Charset.forName("UTF-8"))
 
     val uncalledStepDefs: List[UncalledStepDef] = parse(rawUncalledStepDefs).extract[List[UncalledStepDef]]
 
@@ -77,14 +78,14 @@ class ReportBuilderTest extends FlatSpec with Matchers{
 
   }
 
-  "ReportBuilder" should "build a report from real raw data input" in {
-    val outputDir = getOutputDir
-
-    val reportBuilder = new ReportBuilder
-
-    reportBuilder.buildFromDirectory(new File("/home/ian/projects/github/substeps-webdriver/target/substeps_data"), outputDir)
-
-  }
+//  "ReportBuilder" should "build a report from real raw data input" in {
+//    val outputDir = getOutputDir
+//
+//    val reportBuilder = new ReportBuilder
+//
+//    reportBuilder.buildFromDirectory(new File("/home/ian/projects/github/substeps-webdriver/target/substeps_data"), outputDir)
+//
+//  }
 
   /**
     * @see ParsingFromSourceTests line 537:

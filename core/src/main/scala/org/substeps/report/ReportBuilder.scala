@@ -1,7 +1,7 @@
 package org.substeps.report
 
 import java.{io, util}
-import java.io.{BufferedWriter, File, FileNotFoundException}
+import java.io.{BufferedWriter, File, FileNotFoundException, IOException}
 import java.net.{JarURLConnection, URISyntaxException, URL}
 import java.nio.charset.Charset
 import java.time.format.DateTimeFormatter
@@ -196,15 +196,15 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
   }
 
-  override def buildFromDirectory(sourceDataDir: File, reportDir : File, stepImplsJson : File): Unit = {
+  override def buildFromDirectory(sourceDataDir: File, repDir : File, stepImplsJson : File): Unit = {
 
-    val created = reportDir.mkdir()
+    val created = repDir.mkdir()
 
-    log.info("creating report in " + reportDir.getAbsolutePath + " create returns: " + created)
+    log.info("creating report in " + repDir.getAbsolutePath + " create returns: " + created)
 
-    implicit val rDir : File = reportDir
+    implicit val rDir : File = repDir
 
-    val dataDir = new File(reportDir, "data")
+    val dataDir = new File(repDir, "data")
     dataDir.mkdir()
 
     FileUtils.copyDirectory(new File(sourceDataDir.getPath), dataDir)
@@ -623,13 +623,51 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
   }
 
 
+  @throws[URISyntaxException]
+  @throws[IOException]
+  def copyStaticResources()(implicit repDir : File): Unit = {
 
-  def copyStaticResources()(implicit reportDir : File): Unit = {
-
-    val defaultBuilder = new DefaultExecutionReportBuilder
-
-    defaultBuilder.copyStaticResources(reportDir)
+    this.log.debug("Copying old_static resources to: " + repDir.getAbsolutePath)
+    val staticURL = getClass.getResource("/static")
+    if (staticURL == null) throw new IllegalStateException("Failed to copy old_static resources for report.  URL for resources is null.")
+    copyResourcesRecursively(staticURL, repDir)
   }
+
+
+  @throws[IOException]
+  def copyResourcesRecursively(originUrl: URL, destination: File): Unit = {
+    val urlConnection = originUrl.openConnection
+    if (urlConnection.isInstanceOf[JarURLConnection]) copyJarResourcesRecursively(destination, urlConnection.asInstanceOf[JarURLConnection])
+    else if (originUrl.getProtocol.toLowerCase.startsWith("file")) FileUtils.copyDirectory(new File(originUrl.getPath), destination)
+    else throw new SubstepsException("URLConnection[" + urlConnection.getClass.getSimpleName + "] is not a recognized/implemented connection type.")
+  }
+
+  @throws[IOException]
+  def copyJarResourcesRecursively(destination: File, jarConnection: JarURLConnection): Unit = {
+    val jarFile = jarConnection.getJarFile
+    import scala.collection.JavaConversions._
+    for (entry <- Collections.list(jarFile.entries)) {
+      if (entry.getName.startsWith(jarConnection.getEntryName)) {
+        val fileName = StringUtils.removeStart(entry.getName, jarConnection.getEntryName)
+        if (!entry.isDirectory) {
+
+          val entryInputStream = jarFile.getInputStream(entry)
+          try {
+            val byteSink = Files.asByteSink(new File(destination, fileName), FileWriteMode.APPEND)
+            byteSink.writeFrom(entryInputStream)
+            // FileUtils.copyInputStreamToFile(entryInputStream, new File(destination, fileName))
+          }
+          finally {
+
+            IOUtils.closeQuietly(entryInputStream)
+
+          }
+        }
+        else new File(destination, fileName).mkdirs
+      }
+    }
+  }
+
 
   def createFile(name : String)(implicit reportDir : File): File = {
     val f = new File(reportDir, name)
