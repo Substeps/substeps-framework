@@ -87,7 +87,7 @@ public class ExecutionNodeRunnerTest {
 
         final List<SubstepExecutionFailure> failures = new ArrayList<>();
 
-        final RootNode rootNode = runExecutionTest(feature, tags, substeps, notifier, failures);
+        final RootNode rootNode = runExecutionTest(feature, tags, substeps, notifier, failures, false);
 
         Assert.assertThat(rootNode.getResult().getResult(), is(ExecutionResult.PASSED));
 
@@ -105,7 +105,7 @@ public class ExecutionNodeRunnerTest {
 
         final List<SubstepExecutionFailure> failures = new ArrayList<>();
 
-        final RootNode rootNode = runExecutionTest(feature, tags, substeps, notifier, failures);
+        final RootNode rootNode = runExecutionTest(feature, tags, substeps, notifier, failures, true);
 
         // check the rootNode tree is in the state we expect
         Assert.assertThat(rootNode.getResult().getResult(), is(ExecutionResult.FAILED));
@@ -141,7 +141,7 @@ public class ExecutionNodeRunnerTest {
 
         final List<SubstepExecutionFailure> failures = new ArrayList<>();
 
-        final RootNode rootNode = runExecutionTest(feature, tags, substeps, notifier, failures);
+        final RootNode rootNode = runExecutionTest(feature, tags, substeps, notifier, failures, false);
 
         // check the rootNode tree is in the state we expect
         Assert.assertThat(rootNode.getResult().getResult(), is(ExecutionResult.FAILED));
@@ -182,7 +182,7 @@ public class ExecutionNodeRunnerTest {
 
         // TODO - checkfailures - test currently ignored anyway..
         final List<SubstepExecutionFailure> failures = new ArrayList<>();
-        final RootNode rootNode = runExecutionTest(feature, tags, substeps, notifier, failures);
+        final RootNode rootNode = runExecutionTest(feature, tags, substeps, notifier, failures, false);
 
         System.out.println("\n\n\n\n\n*************\n\n" + rootNode.toDebugString());
 
@@ -230,7 +230,7 @@ public class ExecutionNodeRunnerTest {
      */
     private RootNode runExecutionTest(final String feature, final String tags, final String substeps,
                                       final IExecutionListener notifier, final Class<?>[] initialisationClasses,
-                                      final List<SubstepExecutionFailure> failures, final List<Class<?>> stepImplementationClasses) {
+                                      final List<SubstepExecutionFailure> failures, final List<Class<?>> stepImplementationClasses, boolean fastFailParseErrors) {
         final SubstepsExecutionConfig executionConfig = new SubstepsExecutionConfig();
 
         Assert.assertTrue(failures.isEmpty());
@@ -308,12 +308,12 @@ public class ExecutionNodeRunnerTest {
     }
 
     private RootNode runExecutionTest(final String feature, final String tags, final String substeps,
-                                      final IExecutionListener notifier, final List<SubstepExecutionFailure> failures) {
+                                      final IExecutionListener notifier, final List<SubstepExecutionFailure> failures, boolean fastFailParseErrors) {
 
         final List<Class<?>> stepImplementationClasses = new ArrayList<>();
         stepImplementationClasses.add(TestStepImplementations.class);
 
-        return runExecutionTest(feature, tags, substeps, notifier, null, failures, stepImplementationClasses);
+        return runExecutionTest(feature, tags, substeps, notifier, null, failures, stepImplementationClasses, fastFailParseErrors);
     }
 
     private void setPrivateField(final Object target, final String fieldName, final Object value) {
