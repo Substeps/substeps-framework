@@ -64,7 +64,15 @@ object SubstepsConfigLoader {
   }
 
   def environmentConfigFile() = {
-    System.getProperty("ENVIRONMENT", "localhost") + ".conf"
+
+    val envConfigFile =
+      Option(System.getProperty("ENVIRONMENT")) match {
+      case None => System.getProperty("environment", "localhost") + ".conf"
+      case Some(env) => env + ".conf"
+    }
+
+    log.debug("Loading environment config file: " + envConfigFile)
+    envConfigFile
   }
 
   def loadEnvironmentOverrides() = {
@@ -115,7 +123,7 @@ object SubstepsConfigLoader {
       val exeConfigList = masterConfig.getConfigList("org.substeps.executionConfigs").asScala
 
       exeConfigList.map(exeCfg => {
-
+        // local exe config blocks should override the base.
         val thisExecConfig = exeCfg.withFallback(baseExecutionConfig)
 
         thisExecConfig.resolve(ConfigResolveOptions.defaults().setAllowUnresolved(true)).root()
