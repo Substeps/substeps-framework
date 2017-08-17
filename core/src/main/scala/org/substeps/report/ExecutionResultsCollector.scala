@@ -20,6 +20,7 @@ import scala.collection.JavaConverters._
 import org.json4s._
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization.{write, writePretty}
+import org.substeps.config.SubstepsConfigLoader
 import org.substeps.runner.NewSubstepsExecutionConfig
 
 import scala.collection.mutable
@@ -39,7 +40,8 @@ object ExecutionResultsCollector{
 
     mkdirOrException(rootDataDir)
 
-    Files.write(NewSubstepsExecutionConfig.render(masterConfig), outFile, UTF8)
+    Files.write(SubstepsConfigLoader
+      .render(masterConfig), outFile, UTF8)
   }
 
   def mkdirOrException(dir : File) = {

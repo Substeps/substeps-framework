@@ -33,6 +33,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
+import org.substeps.config.SubstepsConfigLoader;
 import org.substeps.runner.NewSubstepsExecutionConfig;
 
 import java.io.File;
@@ -117,7 +118,7 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
         mkdirOrException(rootDataDir);
 
         try {
-            String renderedConfig = NewSubstepsExecutionConfig.render(masterConfig);
+            String renderedConfig = SubstepsConfigLoader.render(masterConfig);
             this.getLog().info("\n\n *** USING COMBINED CONFIG:\n\n" + renderedConfig + "\n\n");
 
             Files.write(renderedConfig, outFile, Charset.forName("UTF-8"));

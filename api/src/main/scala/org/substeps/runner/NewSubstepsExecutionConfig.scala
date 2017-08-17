@@ -2,12 +2,11 @@ package org.substeps.runner
 
 import java.io.File
 
-import com.google.common.collect.Lists
-import com.technophobia.substeps.model.{Configuration, SubSteps}
 import com.technophobia.substeps.model.exception.SubstepsConfigurationException
 import com.technophobia.substeps.runner.{IExecutionListener, SubstepsExecutionConfig}
 import com.typesafe.config._
 import org.slf4j.{Logger, LoggerFactory}
+import org.substeps.config.SubstepsConfigLoader
 import org.substeps.report.{IExecutionResultsCollector, IReportBuilder}
 
 import scala.collection.JavaConverters._
@@ -154,9 +153,6 @@ object NewSubstepsExecutionConfig extends SubstepsConfigKeys {
 
     val dir = new File(cfg.getString(`rootDataDirKey`), cfg.getString(`executionConfigDataOutputDir`))
 
-//    if (!dir.exists()){
-//      throw new SubstepsConfigurationException(s"data dir ${dir.getAbsolutePath()} for execution config doesn't exist")
-//    }
     dir
   }
 
@@ -164,8 +160,6 @@ object NewSubstepsExecutionConfig extends SubstepsConfigKeys {
 
   // transitional method
   def toConfig(substepsConfig : SubstepsExecutionConfig) : Config = {
-
-    import com.google.common.collect.Lists
 
     val execConfig1 = new java.util.HashMap[String, AnyRef]
     execConfig1.put("description", Option(substepsConfig.getDescription).getOrElse("Substeps test execution description"))
@@ -199,22 +193,10 @@ object NewSubstepsExecutionConfig extends SubstepsConfigKeys {
 
     if (!substepsConfig.isFastFailParseErrors) execConfig1.put("fastFailParseErrors", Boolean.box(substepsConfig.isFastFailParseErrors))
 
-
-
-
-
     execConfig1.put("dataOutputDir", "1")
-
 
     val cfg = ConfigFactory.empty
       .withValue("org.substeps.executionConfigs", ConfigValueFactory.fromIterable(List(ConfigValueFactory.fromMap(execConfig1)).asJava) )
-//      .withValue("org.substeps.config.jmxPort", ConfigValueFactory.fromAnyRef(this.jmxPort))
-//      .withValue("org.substeps.config.vmArgs", ConfigValueFactory.fromAnyRef(this.vmArgs))
-
-      // these are provided in ref.conf
-      //.withValue("org.substeps.config.executionResultsCollector", ConfigValueFactory.fromAnyRef("org.substeps.report.ExecutionResultsCollector"))
-      //.withValue("org.substeps.config.reportBuilder", ConfigValueFactory.fromAnyRef("org.substeps.report.ReportBuilder"))
-
 
     // this is to pick up the reference.conf
     cfg.withFallback(ConfigFactory.load(ConfigParseOptions.defaults(), ConfigResolveOptions.noSystem().setAllowUnresolved(true)))
@@ -222,80 +204,7 @@ object NewSubstepsExecutionConfig extends SubstepsConfigKeys {
 
 
 
-  val options: ConfigRenderOptions = ConfigRenderOptions.defaults.setComments(false).setFormatted(true).setJson(false).setOriginComments(false)
 
-  def render(cfg : Config) : String = {
-    // TODO - trim out bits of the config we're not interested in
-    cfg.root()
-      .withoutKey("awt")
-      .withoutKey("java")
-      .withoutKey("line")
-      .withoutKey("os")
-      .withoutKey("sun")
-      .withoutKey("user")
-      .withValue("remote.token",  ConfigValueFactory.fromAnyRef("******"))
-      .withValue("remote.username",  ConfigValueFactory.fromAnyRef("******"))
-      // TODO - correct the webdriver paths here or work out how to mask certain fields - surely some config ?
-
-      .render(options)
-  }
-
-
-
-
-//  def toConfigList(cfgFileList : java.util.List[String], mavenConfig : Config) = {
-//
-//    cfgFileList.asScala.flatMap(cfgFile =>{
-//
-//      loadConfig(cfgFile, Some(mavenConfig))
-//    }).asJava
-//  }
-
-//  def loadConfig( cfgFile: String): List[Config] = {
-//    loadConfig(cfgFile, None)
-//  }
-
-//  def loadConfig( cfgFile: String, mvnConfigOption : Option[Config]): List[Config] = {
-//
-//    val base = ConfigFactory.load(cfgFile, ConfigParseOptions.defaults(), ConfigResolveOptions.defaults().setAllowUnresolved(true))
-//
-//    loadConfig(base, mvnConfigOption)
-//  }
-//
-//
-//  def loadConfig( base: Config, mvnConfigOption : Option[Config]): List[Config] = {
-//
-//    val masterConfig = loadMasterConfig(base, mvnConfigOption)
-//    // there might be multilple execonfigs in there - return multiple configs for each one
-//    splitConfig(masterConfig)
-//  }
-
-
-
-//  def loadMasterConfig( base: Config): Config = {
-//    loadMasterConfig(base, None)
-//  }
-//
-//  def loadMasterConfig( base: Config, mvnConfigOption : Option[Config]): Config = {
-//    val environment = System.getProperty("ENVIRONMENT", "localhost") + ".conf"
-//
-//    val envConfig = ConfigFactory.load(environment)
-//
-//
-//    val masterConfig =
-//      mvnConfigOption match {
-//        case Some(mvnConfig) => {
-//          log.debug("MAVEN CONFIG:\n" + render(mvnConfig))
-//
-//          envConfig.withFallback(base).withFallback(mvnConfig).resolve()
-//        }
-//        case None =>   envConfig.withFallback(base).resolve()
-//
-//      }
-//
-//    log.debug("LOADED MASTER CONFIG:\n" + render(masterConfig))
-//    masterConfig
-//  }
 
   val legacyConfigKeys = List("step.depth.description",
     "log.unused.uncalled",
@@ -324,40 +233,13 @@ object NewSubstepsExecutionConfig extends SubstepsConfigKeys {
             "*               YOUR CONFIG CONTAINS LEGACY OVERRIDE KEYS !!               *\n" +
             "****************************************************************************\n" +
             "\nAll Substeps keys have now moved under org.substeps and can be overriden like this:\n"
-            + NewSubstepsExecutionConfig.render(masterConfig.getConfig("org.substeps")))
+            + SubstepsConfigLoader.render(masterConfig.getConfig("org.substeps")))
         log.warn("Overrides will currently still work but support for them will be removed in a subsequent release")
       }
       case _ =>
     }
 
   }
-
-
-
-
-//  def splitConfigAsJava(masterConfig : Config) = {
-//    splitConfig(masterConfig).asJava
-//  }
-//
-//  def splitConfig(masterConfig : Config): List[Config] = {
-//    val exeConfigList = masterConfig.getConfigList("org.substeps.config.executionConfigs").asScala
-//
-//    val baseConfig = masterConfig.withoutPath("org.substeps.config.executionConfigs")
-//
-//    exeConfigList.map(ec => {
-//      baseConfig.withValue("org.substeps.config.executionConfig", ec.root())
-//
-//    }).toList
-//  }
-//
-//  def splitConfigAsOne(masterConfig : Config): Config = {
-//    splitConfig(masterConfig).head
-//  }
-
-
-
-
-
 
 
   def getInitialisationClasses(cfg : Config) :  Array[Class[_]]= {
@@ -509,17 +391,6 @@ object NewSubstepsExecutionConfig extends SubstepsConfigKeys {
     new File(cfg.getString(`substepsReportDir`))
   }
 
-//  def buildInitialisationClassList(cfg: Config) : Array[Class[_]] = {
-//
-//    val stepImplementationClasses = NewSubstepsExecutionConfig.getStepImplementationClasses(cfg)
-//    val initialisationClasses = NewSubstepsExecutionConfig.getInitialisationClasses(cfg)
-//    var initClassList = null
-//    if (initialisationClasses != null) initClassList = Lists.newArrayList(initialisationClasses)
-//
-//    ExecutionConfigWrapper.buildInitialisationClassList(stepImplementationClasses, initClassList);
-//  }
-
-
   def substepsConfig: Config = threadLocalConfig()
 
   def stepDepthForDescription = substepsConfig.getInt(`stepDepthDescriptionKey`)
@@ -527,7 +398,5 @@ object NewSubstepsExecutionConfig extends SubstepsConfigKeys {
   def logUncalledAndUnusedStepImpls = substepsConfig.getBoolean(`logUncallEdAndUnusedStepImplsKey`)
 
   def prettyPrintReportData = substepsConfig.getBoolean(`prettyPrintReportDataKey`)
-
-//  def reportDataBaseDir = substepsConfig.getString(`reportDataBaseDirKey`)
 
 }
