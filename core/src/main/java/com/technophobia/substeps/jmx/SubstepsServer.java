@@ -70,13 +70,13 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
         Config masterConfig = NewSubstepsExecutionConfig.toConfig(theConfig).withFallback(fallback);
 
 
-        log.debug("MASTER CONFIG:\n" + NewSubstepsExecutionConfig.render(masterConfig) + "\n\n\n");
+        log.debug("MASTER CONFIG:\n" + SubstepsConfigLoader.render(masterConfig));
 
         Config cfg = SubstepsConfigLoader.splitMasterConfig(masterConfig).get(0);
 
         NewSubstepsExecutionConfig.setThreadLocalConfig(cfg);
 
-        log.debug("SPLIT CONFIG:\n" + NewSubstepsExecutionConfig.render(cfg));
+        log.debug("SPLIT CONFIG[0]:\n" + SubstepsConfigLoader.render(cfg));
 
 
         return prepareExecutionConfigAsBytes(cfg);
@@ -133,7 +133,7 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
             theConfig = theConfig.withValue("org.substeps.executionConfig.featureFile", ConfigValueFactory.fromAnyRef(featureFile));
         }
 
-        log.debug("prepareRemoteExecutionConfig with config:\n" + NewSubstepsExecutionConfig.render(theConfig));
+        log.debug("prepareRemoteExecutionConfig with config:\n" + SubstepsConfigLoader.render(theConfig));
 
 
         return prepareExecutionConfigAsBytes(theConfig);
@@ -208,14 +208,13 @@ public class SubstepsServer extends NotificationBroadcasterSupport implements Su
 
         Config masterConfig = NewSubstepsExecutionConfig.toConfig(theConfig);
 
-
-        System.out.println("MASTER CONFIG:\n" + NewSubstepsExecutionConfig.render(masterConfig) + "\n\n\n");
+        log.debug("MASTER CONFIG:\n" + SubstepsConfigLoader.render(masterConfig));
 
         Config cfg = SubstepsConfigLoader.splitMasterConfig(masterConfig).get(0);
 
         NewSubstepsExecutionConfig.setThreadLocalConfig(cfg);
 
-        System.out.println("SPLIT CONFIG:\n" + NewSubstepsExecutionConfig.render(cfg));
+        log.debug("SPLIT CONFIG[0]:\n" + SubstepsConfigLoader.render(cfg));
 
 
         return this.nodeRunner.prepareExecutionConfig(cfg);

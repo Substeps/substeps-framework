@@ -147,7 +147,7 @@ public class JunitFeatureRunner extends org.junit.runner.Runner {
         NewSubstepsExecutionConfig.setThreadLocalConfig(config);
 
         log.debug("Config to be used for the junit runner:\n" +
-            NewSubstepsExecutionConfig.render(config));
+                SubstepsConfigLoader.render(config));
 
         rootNode = runner.prepareExecutionConfig(config);
 
@@ -213,7 +213,7 @@ public class JunitFeatureRunner extends org.junit.runner.Runner {
             theConfig = theConfig.withValue("org.substeps.executionConfig.initialisationClasses", ConfigValueFactory.fromIterable(classNames));
         }
 
-        log.debug("prepareRemoteExecutionConfig with config:\n" + NewSubstepsExecutionConfig.render(theConfig));
+        log.debug("prepareRemoteExecutionConfig with config:\n" + SubstepsConfigLoader.render(theConfig));
 
         return theConfig;
     }

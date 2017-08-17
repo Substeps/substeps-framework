@@ -26,7 +26,42 @@ object SubstepsConfigLoader {
   val log = LoggerFactory.getLogger("org.substeps.config.SubstepsConfigLoader")
   val options: ConfigRenderOptions = ConfigRenderOptions.defaults.setComments(false).setFormatted(true).setJson(false).setOriginComments(false)
 
-  def render(cfg: Config): String = cfg.withOnlyPath("org.substeps").root().render(options)
+  def render(c: Config): String = {
+
+    val cfg = c.resolve(ConfigResolveOptions.defaults().setAllowUnresolved(true))
+
+    val cleaned =
+    if (cfg.hasPath("org.substeps.webdriver.remote.credentials.username")){
+
+      val remoteUserName = cfg.getString("org.substeps.webdriver.remote.credentials.username")
+      val remoteToken = cfg.getString("org.substeps.webdriver.remote.credentials.token")
+
+      (cfg.withoutPath("org.substeps.webdriver.remote.credentials")
+        .withValue("org.substeps.webdriver.remote.credentials", ConfigValueFactory.fromMap(Map("username" -> "*****", "token" -> "*****").asJava)),
+        Some(remoteUserName),
+        Some(remoteToken))
+
+    }
+    else {
+      (cfg, None, None)
+    }
+
+    val rendered =
+      cleaned match {
+        case (cleanedConfig, Some(userName), Some(token)) => {
+
+            cleanedConfig.withOnlyPath("org.substeps")
+              .root().render(options).replaceAll(userName, "******").replaceAll(token, "******")
+
+        }
+        case   (cleanedConfig, _, _) => {
+            cleanedConfig.withOnlyPath("org.substeps")
+              .root().render(options)
+
+        }
+      }
+    rendered
+  }
 
   def loadResolvedConfig(): Config = {
 
@@ -38,7 +73,7 @@ object SubstepsConfigLoader {
 
     val envConfig = ConfigFactory.parseFile(environmentConfigFile, ConfigParseOptions.defaults().setAllowMissing(true))
 
-    log.debug("Env config from file (" + environmentConfigFile.getAbsolutePath() + "):\n" + NewSubstepsExecutionConfig.render(envConfig))
+    log.debug("Env config from file (" + environmentConfigFile.getAbsolutePath() + "):\n" + SubstepsConfigLoader.render(envConfig))
 
 
     loadResolvedConfig(mavenConfigSettings, envConfig)
@@ -56,11 +91,7 @@ object SubstepsConfigLoader {
     val masterCfg =
       ConfigFactory.load(ConfigParseOptions.defaults(), ConfigResolveOptions.noSystem().setAllowUnresolved(true))
 
-    log.debug("master config:\n" + NewSubstepsExecutionConfig.render(masterCfg))
-
-
     resolveConfig(masterCfg, mavenConfigSettings, envConfig)
-//    loadResolvedConfig(mavenConfigSettings)
   }
 
   def environmentConfigFile() = {
@@ -84,7 +115,7 @@ object SubstepsConfigLoader {
 
     val envConfig = ConfigFactory.parseResources(environmentConfigFile(), ConfigParseOptions.defaults().setAllowMissing(true))
 
-    log.debug("Env config:\n" + NewSubstepsExecutionConfig.render(envConfig))
+    log.debug("Env config:\n" + SubstepsConfigLoader.render(envConfig))
     envConfig
   }
 
@@ -113,7 +144,7 @@ object SubstepsConfigLoader {
 
     val masterConfig = envConfig.withFallback(initialMasterConfig).resolve(ConfigResolveOptions.defaults().setAllowUnresolved(true))
 
-    log.debug("masterConfig:\n" + NewSubstepsExecutionConfig.render(masterConfig))
+    log.debug("masterConfig:\n" + SubstepsConfigLoader.render(masterConfig))
 
     val baseExecutionConfig = masterConfig.getConfig("org.substeps.baseExecutionConfig")
 
