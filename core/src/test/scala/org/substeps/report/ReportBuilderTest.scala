@@ -81,22 +81,13 @@ class ReportBuilderTest extends FlatSpec with Matchers{
 
   }
 
-  "ReportBuilder" should "build a report from real raw data input" in {
-    val outputDir = getOutputDir
-
-    val reportBuilder = new ReportBuilder
-
-    reportBuilder.buildFromDirectory(new File("/home/ian/temp/substeps_error_data_2/target/substeps_data"), outputDir)
-
-
-    /**
-      * issue here is that the feature node is reporting 2 children, id's 4 and 9, but only 9 exists in the lower level json
-      *
-      * why ?
-      */
-
-
-  }
+//  "ReportBuilder" should "build a report from real raw data input" in {
+//    val outputDir = getOutputDir
+//
+//    val reportBuilder = new ReportBuilder
+//
+//    reportBuilder.buildFromDirectory(new File("/home/ian/temp/substeps_error_data_2/target/substeps_data"), outputDir)
+//  }
 
   /**
     * @see ParsingFromSourceTests line 537:
