@@ -22,6 +22,8 @@ Requirements
 * Moved substeps config to a single org.substeps hierarchy, existing overrides will still be used, but config should be updated
 * Moved maven pom configuration to config files (multiple).  Maven plugin will print out the new config from existing pom settings, see [1.1.0 Upgrade notes](1.1.0 Upgrade.md) for further details
 * Added an exclusion filter to the config for the glossary builder under `org.substeps.config.glossary.excludeStepImplementationClassNames`
+* Scenario and Outline results files appended with their offset to enable outlines that don't include a dynamic name parameter or duplicate named scenarios. Issue #49 and #53
+* Added an annotated config file for reference
 
 1.0.6
 -----

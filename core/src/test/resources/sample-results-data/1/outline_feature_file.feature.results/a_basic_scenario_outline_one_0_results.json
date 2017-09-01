@@ -4,7 +4,7 @@
   "lineNumber":0,
   "result":"PASSED",
   "id":56,
-  "executionDurationMillis":0,
+  "executionDurationMillis":1,
   "description":"a basic scenario outline one",
   "children":[
     {
@@ -15,7 +15,7 @@
       "id":52,
       "executionDurationMillis":0,
       "description":"PassingStepImpl",
-      "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$5$StepImpls$3.passingStepImpl()",
+      "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$11$StepImpls$3.passingStepImpl()",
       "children":[
         
       ],
@@ -38,7 +38,7 @@
           "id":53,
           "executionDurationMillis":0,
           "description":"AnotherPassingStepImpl",
-          "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$5$StepImpls$3.anotherPassingStepImpl()",
+          "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$11$StepImpls$3.anotherPassingStepImpl()",
           "children":[
             
           ],
@@ -55,7 +55,7 @@
       "id":55,
       "executionDurationMillis":0,
       "description":"PassingStepImpl with param 1",
-      "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$5$StepImpls$3.passingStepImplWithParam(java.lang.String)",
+      "method":"public void org.substeps.runner.ParsingFromSourceTests$$anonfun$11$StepImpls$3.passingStepImplWithParam(java.lang.String)",
       "children":[
         
       ],

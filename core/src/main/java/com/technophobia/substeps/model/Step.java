@@ -120,9 +120,9 @@ public class Step {
 
             // TODO no need to to do if no parameter to the annotation..?
 
-            log.debug("Step ctor() for line: " + this.line + " isSubstep: " + isSubstep);
+            log.trace("Step ctor() for line: " + this.line + " isSubstep: " + isSubstep);
             if (this.isSubstep) {
-                log.debug("calling setParamAndParamNames");
+                log.trace("calling setParamAndParamNames");
                 setParamAndParamNames();
             }
 
@@ -163,24 +163,24 @@ public class Step {
                 this.paramNames = new ArrayList<String>();
             }
             final String s = matcher.group(2);
-            log.debug("adding " + s + " as a paramname");
+            log.trace("adding " + s + " as a paramname");
             this.paramNames.add(s);
             findIdx = matcher.end(2);
         }
 
         // replace the params with a reg ex, a quoted and non quoted variant
-        log.debug("line pre replace: " + line + "\npattern: " + pattern);
+        log.trace("line pre replace:[" + line + "] pattern: " + pattern);
 
         this.pattern = this.line.replaceAll("(<[^>]*>)", "\"?([^\"]*)\"?");
 
-        log.debug("line post replace: " + line + "\npattern: " + pattern);
+        log.trace("line post replace: [" + line + "] pattern: " + pattern);
 
 
     }
 
     public String toDebugString() {
         if (this.keyword == null) {
-            this.log.debug("annot of step is null: " + this.getClass().getSimpleName());
+            this.log.trace("annot of step is null: " + this.getClass().getSimpleName());
         }
 
         return " [" + this.line + "]";

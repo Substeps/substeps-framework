@@ -86,8 +86,7 @@ class ReportBuilderTest extends FlatSpec with Matchers{
 //
 //    val reportBuilder = new ReportBuilder
 //
-//    reportBuilder.buildFromDirectory(new File("/home/ian/projects/github/substeps-webdriver/target/substeps_data"), outputDir)
-//
+//    reportBuilder.buildFromDirectory(new File("/home/ian/temp/substeps_error_data_2/target/substeps_data"), outputDir)
 //  }
 
   /**
@@ -119,9 +118,9 @@ class ReportBuilderTest extends FlatSpec with Matchers{
 
     detail_data shouldBe defined
 
-    val newDetailDatajs = Files.toString(detail_data.get, UTF8)
-
-    val baselineDetailDatajs = Files.toString(new File("src/test/resources/sample_feature_report_data/detail_data.js"), UTF8)
+//    val newDetailDatajs = Files.toString(detail_data.get, UTF8)
+//
+//    val baselineDetailDatajs = Files.toString(new File("src/test/resources/sample_feature_report_data/detail_data.js"), UTF8)
 
 
     //println(s"DIFF: baseline\n\n${baselineDetailDatajs}\n\n\ntestoutput:\n\n${newDetailDatajs}")
