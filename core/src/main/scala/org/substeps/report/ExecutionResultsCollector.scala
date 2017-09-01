@@ -102,9 +102,11 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
           }
           case Some(dir) => {
 
+            val name: String = getScenarioName(node, scenarioNode)
+
             // write out a results file for this scenario
-            val resultsFile = new File(dir, scenarioNode.getScenarioName.replaceAllLiterally(" ", "_") + "_results.json")
-            val screenshotsDir = new File(dir, scenarioNode.getScenarioName.replaceAllLiterally(" ", "_"))
+            val resultsFile = new File(dir, name + "_results.json")
+            val screenshotsDir = new File(dir, name)
 
             scenarioSummaryMap += scenarioNode.getId -> (scenarioNode, resultsFile)
 
@@ -174,10 +176,12 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
           }
           case Some(dir) => {
 
-            // write out a results file for this scenario
-            val resultsFile = new File(dir, scenarioNode.getScenarioName.replaceAllLiterally(" ", "_") + "_results.json")
+            val name: String = getScenarioName(node, scenarioNode)
 
-            val screenshotsDir = new File(dir, scenarioNode.getScenarioName.replaceAllLiterally(" ", "_"))
+            // write out a results file for this scenario
+            val resultsFile = new File(dir, name + "_results.json")
+
+            val screenshotsDir = new File(dir, name)
 
             scenarioSummaryMap += scenarioNode.getId -> (scenarioNode, resultsFile)
 
@@ -216,6 +220,17 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
       case _ => log.debug("other node finished")
     }
 
+  }
+
+  private def getScenarioName(node: IExecutionNode, scenarioNode: BasicScenarioNode) = {
+    val idx =
+      node.getParent match {
+        case row: OutlineScenarioRowNode => row.getParent.asInstanceOf[OutlineScenarioNode].getChildren.indexOf(row)
+        case featureNode : FeatureNode => featureNode.getChildren.indexOf(node)
+        case _ => 0
+      }
+    val name = scenarioNode.getScenarioName.replaceAllLiterally(" ", "_") + "_" + idx
+    name
   }
 
   def onNodeIgnored(node: IExecutionNode): Unit = {

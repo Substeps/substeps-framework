@@ -3,12 +3,12 @@
   "filename":"outline_feature_file.feature",
   "result":"CHILD_FAILED",
   "id":71,
-  "executionDurationMillis":24,
+  "executionDurationMillis":62,
   "description":"an outline feature",
   "scenarios":[
     {
       "nodeId":56,
-      "filename":"a_basic_scenario_outline_one_results.json",
+      "filename":"a_basic_scenario_outline_one_0_results.json",
       "result":"PASSED",
       "tags":[
         "scenario-level-tag",
@@ -17,7 +17,7 @@
     },
     {
       "nodeId":62,
-      "filename":"a_basic_scenario_outline_two_results.json",
+      "filename":"a_basic_scenario_outline_two_1_results.json",
       "result":"PASSED",
       "tags":[
         "scenario-level-tag",
@@ -26,7 +26,7 @@
     },
     {
       "nodeId":68,
-      "filename":"a_basic_scenario_outline_three_results.json",
+      "filename":"a_basic_scenario_outline_three_2_results.json",
       "result":"CHILD_FAILED",
       "tags":[
         "scenario-level-tag",

@@ -81,14 +81,22 @@ class ReportBuilderTest extends FlatSpec with Matchers{
 
   }
 
-//  "ReportBuilder" should "build a report from real raw data input" in {
-//    val outputDir = getOutputDir
-//
-//    val reportBuilder = new ReportBuilder
-//
-//    reportBuilder.buildFromDirectory(new File("/home/ian/projects/github/substeps-webdriver/target/substeps_data"), outputDir)
-//
-//  }
+  "ReportBuilder" should "build a report from real raw data input" in {
+    val outputDir = getOutputDir
+
+    val reportBuilder = new ReportBuilder
+
+    reportBuilder.buildFromDirectory(new File("/home/ian/temp/substeps_error_data_2/target/substeps_data"), outputDir)
+
+
+    /**
+      * issue here is that the feature node is reporting 2 children, id's 4 and 9, but only 9 exists in the lower level json
+      *
+      * why ?
+      */
+
+
+  }
 
   /**
     * @see ParsingFromSourceTests line 537:
@@ -119,9 +127,9 @@ class ReportBuilderTest extends FlatSpec with Matchers{
 
     detail_data shouldBe defined
 
-    val newDetailDatajs = Files.toString(detail_data.get, UTF8)
-
-    val baselineDetailDatajs = Files.toString(new File("src/test/resources/sample_feature_report_data/detail_data.js"), UTF8)
+//    val newDetailDatajs = Files.toString(detail_data.get, UTF8)
+//
+//    val baselineDetailDatajs = Files.toString(new File("src/test/resources/sample_feature_report_data/detail_data.js"), UTF8)
 
 
     //println(s"DIFF: baseline\n\n${baselineDetailDatajs}\n\n\ntestoutput:\n\n${newDetailDatajs}")
