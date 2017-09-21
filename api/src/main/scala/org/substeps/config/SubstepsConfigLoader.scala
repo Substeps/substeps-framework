@@ -102,7 +102,7 @@ object SubstepsConfigLoader {
       case Some(env) => env + ".conf"
     }
 
-    log.debug("Loading environment config file: " + envConfigFile)
+    log.info("Loading environment config file: " + envConfigFile)
     envConfigFile
   }
 

@@ -12,7 +12,7 @@
     <name>Substeps Core</name>
 
     <properties>
-            <json4s.version>3.3.0</json4s.version>
+            <json4s.version>3.5.3</json4s.version>
     </properties>
 
     <dependencies>
@@ -33,7 +33,7 @@
 
         <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.11</artifactId>
+            <artifactId>scalatest_2.12</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -76,7 +76,7 @@
 
         <dependency>
             <groupId>org.json4s</groupId>
-            <artifactId>json4s-native_2.11</artifactId>
+            <artifactId>json4s-native_2.12</artifactId>
             <version>${json4s.version}</version>
         </dependency>
 

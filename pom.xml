@@ -137,7 +137,7 @@
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 
         <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
-        <scala.version>2.11.7</scala.version>
+        <scala.version>2.12.3</scala.version>
         <scala-test.version>3.0.1</scala-test.version>
         <scala-mock.version>3.6.0</scala-mock.version>
         <!-- Configuration to enable SCM access via Travis-CI -->
@@ -287,14 +287,14 @@
 
             <dependency>
                 <groupId>org.scalatest</groupId>
-                <artifactId>scalatest_2.11</artifactId>
+                <artifactId>scalatest_2.12</artifactId>
                 <version>${scala-test.version}</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.scalamock</groupId>
-                <artifactId>scalamock-scalatest-support_2.11</artifactId>
+                <artifactId>scalamock-scalatest-support_2.12</artifactId>
                 <version>${scala-mock.version}</version>
                 <scope>test</scope>
             </dependency>
