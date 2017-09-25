@@ -47,10 +47,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -179,20 +176,23 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
         if (masterConfig != null){
             List<Config> configs = SubstepsConfigLoader.splitMasterConfig(masterConfig);
 
+            Set<String> stepImplementationClassNames = new LinkedHashSet<>();
+            Set<String> stepImplsToExclude = new LinkedHashSet<>();
+
             for (Config executionConfig : configs) {
 
-                List<String> stepImplementationClassNames = NewSubstepsExecutionConfig.getStepImplementationClassNames(executionConfig);
+                stepImplementationClassNames.addAll(NewSubstepsExecutionConfig.getStepImplementationClassNames(executionConfig));
 
-                List<String> stepImplsToExclude = NewSubstepsExecutionConfig.getStepImplementationClassNamesGlossaryExcluded(executionConfig);
+                stepImplsToExclude.addAll(NewSubstepsExecutionConfig.getStepImplementationClassNamesGlossaryExcluded(executionConfig));
+            }
 
-                if (stepImplsToExclude != null ) {
-                    stepImplementationClassNames.removeAll(stepImplsToExclude);
-                }
+            if (stepImplsToExclude != null ) {
+                stepImplementationClassNames.removeAll(stepImplsToExclude);
+            }
 
-                for (final String classToDocument : stepImplementationClassNames) {
+            for (final String classToDocument : stepImplementationClassNames) {
 
-                    classStepTags.addAll(getStepTags(loadedClasses, classRealm, classToDocument));
-                }
+                classStepTags.addAll(getStepTags(loadedClasses, classRealm, classToDocument));
             }
         }
         else {
