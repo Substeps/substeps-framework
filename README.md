@@ -17,6 +17,10 @@ Requirements
 ------------
  * Java 8
 
+1.1.1
+-----
+* Prevent duplicate step implementations being created in the glossary json file. Fixes #62
+
 1.1.0
 -----
 * Moved substeps config to a single org.substeps hierarchy, existing overrides will still be used, but config should be updated
