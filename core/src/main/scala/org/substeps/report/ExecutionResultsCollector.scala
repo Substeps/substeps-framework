@@ -138,7 +138,11 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
         Files.write(generateJson(rootNode), summaryFile, UTF8)
       }
 
-      case _ => log.debug("other node failed")
+      case _ => {
+
+        // outlinescenariorownode
+        log.warn("other node failed " + node.getClass)
+      }
     }
 
   }
@@ -444,7 +448,12 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
       featureNode.getId -> featureResultsDir
     }).toMap
   }
+
+
+
 }
+
+
 
 case class FeatureSummary(nodeType: String, filename: String, result : String, id : Long,
                           executionDurationMillis : Option[Long], description : String, scenarios: List[ScenarioSummary], tags : List[String])
@@ -456,6 +465,33 @@ case class FeatureSummaryForRootNode(nodeId : Long, resultsDir: String, result :
 
 case class RootNodeSummary(nodeType: String, description: String, result : String, id : Long,
                            executionDurationMillis : Option[Long], features : List[FeatureSummaryForRootNode], tags : Option[String], nonFatalTags : Option[String], timestamp : Long, environment : String)
+
+
+case class SubstepsNode(id : Long, nodeType: String, description: String, children : List[SubstepsNode])
+
+object SubstepsNode {
+
+  def toSubstepNodeTree(rootNode: NodeWithChildren, nodeType = "RootNode") : SubstepsNode= {
+
+    val children = rootNode.getChildren
+
+    val substepNodeChildren =
+      if (children == null) List() else {
+
+        val childList = children.asScala.toList
+        childList.map(c => {
+          toSubstepNodeTree(c)
+        })
+      }
+    SubstepsNode(rootNode.getId, nodeType, rootNode.getDescription, substepNodeChildren)
+  }
+
+  def toSubstepNodeTree(featureNode: FeatureNode) : SubstepsNode = {
+    ???
+  }
+
+}
+
 
 
 import scala.collection.JavaConverters._

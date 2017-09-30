@@ -138,7 +138,7 @@
 
         <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
         <scala.version>2.12.3</scala.version>
-        <scala-test.version>3.0.1</scala-test.version>
+        <scala-test.version>3.0.4</scala-test.version>
         <scala-mock.version>3.6.0</scala-mock.version>
         <!-- Configuration to enable SCM access via Travis-CI -->
         <project.scm.id>scm.credentials</project.scm.id>

@@ -1005,6 +1005,237 @@ Scenario: inline table
 
 
   }
+
+
+  "various failure scenarios" must "result in data being captured to be able to create the report" in {
+
+    // need a single feature, with a background, scenario, scenario outline + failing step impls + fail setup
+
+
+    val theFeature =
+"""
+Feature: failing feature
+
+Scenario Outline: a failing scenario
+  TheStep <idx>
+
+Examples:
+  |idx |
+  |1   |"""
+//  |2   |
+//  |3   |
+//"""
+
+
+    object Fail{
+      var counter = 0
+      var failCount = -1
+      var failType = "none"
+      var beforeFail = true
+      var failingParameter = "2"
+
+      def isFailure(arg : String) = {
+
+        println("isFail arg:" + arg)
+
+        if (arg == failingParameter) throw new IllegalStateException("something went wrong")
+      }
+
+      def isSetupFail(isBefore : Boolean, name : String) = {
+        counter = counter + 1
+        println(s"is setup before: $isBefore type: $name counter: $counter is fail? ")
+
+        if (isBefore == beforeFail && name == failType && ( (failCount != -1 && counter == failCount) || failCount == -1) ) throw new IllegalStateException(s"setup fail on iteration $counter")
+      }
+
+      def reset = counter = 0
+    }
+
+    class InitClass {
+
+      import com.technophobia.substeps.runner.setupteardown.Annotations._
+
+
+      @AfterEveryScenario
+      def afterEveryScenario () = Fail.isSetupFail(false, "scenario")
+
+      @AfterEveryFeature
+      def afterEveryFeature () = Fail.isSetupFail(false, "feature")
+
+      @BeforeEveryScenario
+      def beforeEveryScenario () = Fail.isSetupFail(true, "scenario")
+
+      @BeforeEveryFeature
+      def beforeEveryFeature () = Fail.isSetupFail(true, "feature")
+
+      @AfterAllFeatures
+      def afterAllFeatures () = Fail.isSetupFail(false, "suite")
+
+      @BeforeAllFeatures
+      def beforeAllFeatures () = Fail.isSetupFail(true, "suite")
+
+    }
+
+    //noinspection TypeAnnotation
+    @StepImplementations
+    class StepImpls2  extends ProvidesScreenshot {
+
+      @SubSteps.Step("TheStep (.*)")
+      def theStep(arg : String) = {
+        Fail.isFailure(arg)
+    //    if (arg == failingParameter)   throw new IllegalStateException("something went wrong")
+      }
+
+      override def getScreenshotBytes: Array[Byte] = "fake screenshot bytes".getBytes
+    }
+
+    val subStepParser: SubStepDefinitionParser = new SubStepDefinitionParser(true, new DefaultSyntaxErrorReporter)
+
+
+    val featureFile = createFeatureFile(theFeature, "failing_feature_file.feature")
+
+
+
+    val stepImplementationClasses : List[java.lang.Class[_]] = List(classOf[StepImpls2])
+
+    val implementation = new StepImpls2()
+    val setup = new InitClass()
+
+    val stepImplClassName = implementation.getClass.getName
+
+    val methodExecutorToUse = new TestImplementationCache()
+    methodExecutorToUse.addImpl(implementation.getClass, implementation)
+    methodExecutorToUse.addImpl(setup.getClass, setup)
+
+    // one data dir
+    val dataDir = getBaseDir(new File("target"))
+    val dataDirPath = dataDir.getAbsolutePath
+
+    val dataOutoutDir1 = """${org.substeps.config.rootDataDir}"/1""""
+    val dataOutoutDir2 = """${org.substeps.config.rootDataDir}"/2""""
+
+    Fail.failingParameter = "NONE"
+    Fail.failType = "scenario"
+    Fail.beforeFail = true
+    Fail.failCount = 3 // all, feature, scenario 1 setup, scenario 1 tear down, scenario 2
+
+    val cfgFileContents =
+      s"""
+         | org {
+         | substeps {
+         | baseExecutionConfig {
+         |         featureFile="failing_feature_file.feature"
+         |         stepImplementationClassNames=[ "${stepImplClassName}"]
+         |  initialisationClasses=[
+         |    "${setup.getClass.getName}"
+         |  ]
+         |
+         | }
+         |     executionConfigs=[
+         |         {
+         |         dataOutputDir=1
+         |         description="Parsing from source Test Features 1"
+         |         }
+         |        ]
+         |  config {
+         |     rootDataDir="${dataDirPath}"
+         |     description="Parsing from source test suite"
+         |     }
+         |  }
+         | }
+      """.stripMargin
+
+    println("CONFIG contents\n" + cfgFileContents)
+
+    val baseCfg = ConfigFactory.parseString(cfgFileContents)
+
+    println("BASE CFG: " + baseCfg.root().render())
+
+
+
+
+    val masterConfig =
+      baseCfg.withFallback(ConfigFactory.load(ConfigParseOptions.defaults(), ConfigResolveOptions.noSystem().setAllowUnresolved(true)))
+        //NewSubstepsExecutionConfig.loadMasterConfig(baseCfg, None)
+        .withValue("org.substeps.config.reportDir", ConfigValueFactory.fromAnyRef(getBaseDir(new File("target"), "substeps-report_").toString))
+
+    val configs = SubstepsConfigLoader.splitMasterConfig(masterConfig).asScala
+
+    val syntax: Syntax = SyntaxBuilder.buildSyntax(stepImplementationClasses.asJava, new PatternMap[ParentStep])
+
+    val parameters: TestParameters = new TestParameters(new TagManager(""), syntax, List(featureFile).asJava)
+
+    val rootDataDir: File = NewSubstepsExecutionConfig.getRootDataDir(masterConfig)
+
+    // write out the master config to the root data dir, the report builder needs to pick it up
+    ExecutionResultsCollector.writeMasterConfig(masterConfig)
+
+
+    configs.foreach(cfg => {
+
+      NewSubstepsExecutionConfig.setThreadLocalConfig(cfg)
+
+      val nodeTreeBuilder: ExecutionNodeTreeBuilder = new ExecutionNodeTreeBuilder(parameters, cfg)
+
+
+      // TODO begin loop, start checking scenarios where it might fail - this might need to be higher to acommodate different folders
+
+
+      // building the tree can throw critical failures if exceptions are found
+      val rootNode = nodeTreeBuilder.buildExecutionNodeTree("test description")
+
+      log.debug("rootNode 1:\n" + rootNode.toDebugString)
+
+      val executionCollector = new ExecutionResultsCollector
+
+      val dataDirForReportBuilder = NewSubstepsExecutionConfig.getDataOutputDirectory(cfg)
+
+      executionCollector.setDataDir(dataDirForReportBuilder)
+      executionCollector.setPretty(true)
+
+      val runner = new ExecutionNodeRunner()
+
+      runner.addNotifier(executionCollector)
+
+      val stepImplementationClasses = NewSubstepsExecutionConfig.getStepImplementationClasses(cfg)
+      val initialisationClasses = NewSubstepsExecutionConfig.getInitialisationClasses(cfg)
+
+      val initClassList : java.util.List[Class[_]] =
+
+        if (initialisationClasses != null) initialisationClasses.toList.asJava else null
+
+      val finalInitClasses = ExecutionNodeRunner.buildInitialisationClassList(stepImplementationClasses, initClassList)
+      val setupAndTearDown = new SetupAndTearDown(finalInitClasses, methodExecutorToUse)
+
+      val rootNode2 = runner.prepareExecutionConfig(cfg, syntax, parameters, setupAndTearDown, methodExecutorToUse, null)
+
+      executionCollector.initOutputDirectories(rootNode2)
+
+      //      log.debug("rootNode 2:\n" + rootNode2.toDebugString)
+
+      val finalRootNode = runner.run()
+
+      log.debug("finalRootNode:\n" + finalRootNode.toDebugString)
+
+
+
+    })
+
+    val localReportBuilder = NewSubstepsExecutionConfig.getReportBuilder(masterConfig)
+    val reportDir = NewSubstepsExecutionConfig.getReportDir(masterConfig)
+
+
+
+    localReportBuilder.buildFromDirectory(rootDataDir, reportDir, null)
+
+
+  }
 }
 
+class TestImplementationCache extends ImplementationCache{
+
+  def addImpl(key : Class[_], instance : Object) = {
+    instanceMap.put(key, instance)
+  }
+}
 

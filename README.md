@@ -17,6 +17,13 @@ Requirements
 ------------
  * Java 8
 
+1.1.2
+-----
+* Initialisation classes added through config were being ignored
+* Updated the annotated conf example
+
+
+
 1.1.1
 -----
 * Prevent duplicate step implementations being created in the glossary json file. Fixes #62

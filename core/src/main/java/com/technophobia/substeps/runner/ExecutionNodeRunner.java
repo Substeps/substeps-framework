@@ -132,6 +132,9 @@ public class ExecutionNodeRunner implements SubstepsRunner {
         if (finalInitialisationClassList == null && initialisationClassList != null) {
             finalInitialisationClassList = initialisationClassList;
         }
+        else {
+            finalInitialisationClassList.addAll(initialisationClassList);
+        }
 
         if (finalInitialisationClassList != null) {
             return finalInitialisationClassList.toArray(new Class<?>[]{});
@@ -325,12 +328,13 @@ public class ExecutionNodeRunner implements SubstepsRunner {
             log.trace("no uses already for node...");
             immediateParents = new ArrayList<ExecutionNodeUsage>();
             callerHierarchy.put(usage, immediateParents);
-        } else {
-            log.trace("got existing usages of node: ");
-            for (final ExecutionNodeUsage u : immediateParents) {
-                log.trace("already found: " + u.toString());
-            }
         }
+//        else {
+//            log.trace("got existing usages of node: ");
+//            for (final ExecutionNodeUsage u : immediateParents) {
+//                log.trace("already found: " + u.toString());
+//            }
+//        }
         log.trace("adding used by descr: " + node.getParent().getDescription() + " line: " + node.getParent().getLine());
 
         immediateParents.add(new ExecutionNodeUsage(node.getParent()));
