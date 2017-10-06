@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 
 /**
@@ -211,6 +212,28 @@ public class ExecutionConfigTest {
         assertThat(initialisationClasses, InitClass6.class, InitClass3.class);
 
         System.out.println(initialisationClasses);
+    }
+
+    @Test
+    public void testInitialisationClassesInStepImplsAndExplicit(){
+
+        final List<Class<?>> stepImplClasses = new ArrayList<Class<?>>();
+
+        stepImplClasses.add(StepImplsClass2_5_6.class);
+
+        final List<Class<?>> explicitInitClasses = new ArrayList<>();
+        explicitInitClasses.add(InitClass3.class);
+
+
+        final List<Class<?>> initialisationClasses = Arrays.asList(ExecutionNodeRunner.buildInitialisationClassList(stepImplClasses, explicitInitClasses));
+
+        Assert.assertThat(initialisationClasses.size(), is(4));
+
+        Assert.assertThat(initialisationClasses.get(0), equalTo(InitClass3.class));
+        Assert.assertThat(initialisationClasses.get(1), equalTo(InitClass2.class));
+        Assert.assertThat(initialisationClasses.get(2), equalTo(InitClass5.class));
+        Assert.assertThat(initialisationClasses.get(3), equalTo(InitClass6.class));
+
     }
 
     @Test(expected = SubstepsConfigurationException.class)
