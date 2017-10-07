@@ -113,13 +113,9 @@
         <module>api</module>
         <module>core</module>
         <module>runner</module>
-<!--        <module>glossary</module>-->
     </modules>
 
     <properties>
-<!--
-        <substeps.version>1.0.2-IM-SNAPSHOT</substeps.version>
--->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
 
