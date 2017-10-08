@@ -183,7 +183,11 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
 
                 stepImplementationClassNames.addAll(NewSubstepsExecutionConfig.getStepImplementationClassNames(executionConfig));
 
-                stepImplsToExclude.addAll(NewSubstepsExecutionConfig.getStepImplementationClassNamesGlossaryExcluded(executionConfig));
+                List<String> excluded = NewSubstepsExecutionConfig.getStepImplementationClassNamesGlossaryExcluded(executionConfig);
+
+                if (excluded != null) {
+                    stepImplsToExclude.addAll(excluded);
+                }
             }
 
             if (stepImplsToExclude != null ) {

@@ -2,8 +2,10 @@ package org.substeps.runner
 
 import java.io.File
 import java.nio.charset.Charset
+import java.nio.file.{Path, Paths}
+import java.util
 
-import com.google.common.io.Files
+import com.google.common.io.{Files, MoreFiles}
 import com.technophobia.substeps.execution.node.{ExecutionNode, IExecutionNode}
 import com.technophobia.substeps.execution.{ExecutionResult, ImplementationCache}
 import com.technophobia.substeps.model.SubSteps.StepImplementations
@@ -1005,6 +1007,420 @@ Scenario: inline table
 
 
   }
+
+
+  def checkNumberOfFiles(dataDirPath: String, expected: Int) = {
+
+    val dir = new File(dataDirPath)
+    val files =
+      getFilesRecursively(dir.toPath)
+
+
+    files.size should be (expected)
+
+    files
+  }
+
+  def getFilesRecursively(path : Path) : List[Path]= {
+
+    MoreFiles.listFiles(path).asScala.toList.flatMap(p => {
+
+      if (p.toFile.isDirectory){
+        p :: getFilesRecursively(p)
+      }
+      else List(p)
+
+    })
+  }
+
+  "various failure scenarios" must "result in data being captured to be able to create the report" in {
+
+    // need a single feature, with a background, scenario, scenario outline + failing step impls + fail setup
+
+
+    val theFeature =
+"""
+Feature: failing outline feature
+
+Scenario Outline: a failing outline scenario idx <idx>
+  TheStep <idx>
+
+Examples:
+  |idx |
+  |1   |
+  |2   |
+  |3   |
+"""
+
+    val standardFeature =
+      """
+Feature: failing feature
+
+Scenario: a failing scenario
+  TheStep 1
+
+Scenario: another failing scenario
+   TheStep 2
+
+"""
+
+    object Fail{
+      var counter = 0
+      var failCount = -1
+      var failType = "none"
+      var beforeFail = true
+      var failingParameter = "2"
+
+      def isFailure(arg : String) = {
+
+        println("isFail arg:" + arg)
+
+        if (arg == failingParameter) throw new IllegalStateException("something went wrong")
+      }
+
+      def isSetupFail(isBefore : Boolean, name : String) = {
+        counter = counter + 1
+        println(s"is setup before: $isBefore type: $name counter: $counter is fail? ")
+
+        if (isBefore == beforeFail && name == failType && ( (failCount != -1 && counter == failCount) || failCount == -1) ) throw new IllegalStateException(s"setup fail on iteration $counter")
+      }
+
+      def reset = counter = 0
+    }
+
+    class InitClass {
+
+      import com.technophobia.substeps.runner.setupteardown.Annotations._
+
+
+      @AfterEveryScenario
+      def afterEveryScenario () = Fail.isSetupFail(false, "scenario")
+
+      @AfterEveryFeature
+      def afterEveryFeature () = Fail.isSetupFail(false, "feature")
+
+      @BeforeEveryScenario
+      def beforeEveryScenario () = Fail.isSetupFail(true, "scenario")
+
+      @BeforeEveryFeature
+      def beforeEveryFeature () = Fail.isSetupFail(true, "feature")
+
+      @AfterAllFeatures
+      def afterAllFeatures () = Fail.isSetupFail(false, "suite")
+
+      @BeforeAllFeatures
+      def beforeAllFeatures () = Fail.isSetupFail(true, "suite")
+
+    }
+
+    //noinspection TypeAnnotation
+    @StepImplementations
+    class StepImpls2  extends ProvidesScreenshot {
+
+      @SubSteps.Step("TheStep (.*)")
+      def theStep(arg : String) = {
+        Fail.isFailure(arg)
+    //    if (arg == failingParameter)   throw new IllegalStateException("something went wrong")
+      }
+
+      override def getScreenshotBytes: Array[Byte] = "fake screenshot bytes".getBytes
+    }
+
+    val subStepParser: SubStepDefinitionParser = new SubStepDefinitionParser(true, new DefaultSyntaxErrorReporter)
+
+    val outlineFeatureFile = createFeatureFile(theFeature, "failing_outline_feature_file.feature")
+    val standardFeatureFile = createFeatureFile(standardFeature, "failing_feature_file.feature")
+
+    implicit val stepImplementationClasses : List[Class[_]] = List(classOf[StepImpls2])
+
+    val implementation = new StepImpls2()
+    val setup = new InitClass()
+
+    implicit val classNames = Tuple2(setup.getClass.getName, implementation.getClass.getName)
+
+
+    implicit val methodExecutorToUse = new TestImplementationCache()
+    methodExecutorToUse.addImpl(implementation.getClass, implementation)
+    methodExecutorToUse.addImpl(setup.getClass, setup)
+
+
+    // TODO begin loop, start checking scenarios where it might fail - this might need to be higher to accommodate different folders
+
+    // how to set up the test scenarios, run test, assert accordingly
+
+    import org.json4s._
+    import org.json4s.native.JsonMethods._
+    implicit val formats = DefaultFormats
+
+
+    // all ok, no failures
+
+    if (true) {
+
+      Fail.failingParameter = "NONE"
+      Fail.failType = "scenario"
+      Fail.beforeFail = true
+      Fail.failCount = -1 // all, feature, scenario 1 setup, scenario 1 tear down, scenario 2
+
+
+      val dataDirPath1 = getBaseDir(new File("target")).getAbsolutePath
+      val reportOutDir1 = getBaseDir(new File("target"), "substeps-report_")
+
+      Fail.failType = "none"
+      runFailingTestScenario(
+        dataDirPath1, reportOutDir1, List(outlineFeatureFile, standardFeatureFile))
+      // tests should pass - no errors
+
+      val paths1 = checkNumberOfFiles(dataDirPath1, 12)
+      val results1 = Files.toString(paths1.find(p => p.endsWith("results.json")).get.toFile, Charset.defaultCharset())
+
+      val jval: JValue = parse(results1)
+
+      (jval \ "result").toOption match {
+        case None => fail("no result in the results.json")
+        case Some(x) => x.extract[String] should be("PASSED")
+      }
+    }
+
+    ///////////////////////////////////////////////////////////////
+    // every scenario setup fails
+
+    if (true) {
+      val dataDirPath2 = getBaseDir(new File("target")).getAbsolutePath
+      val reportOutDir2 = getBaseDir(new File("target"), "substeps-report_")
+      Fail.failType = "scenario"
+      runFailingTestScenario(
+        dataDirPath2, reportOutDir2, List(outlineFeatureFile, standardFeatureFile))
+      // TODO all scenarios and outline iterations should fail, marked as not run
+
+      val paths2 = checkNumberOfFiles(dataDirPath2, 12)
+
+      val resultsPaths2 = paths2.filter(p => p.toString.endsWith("results.json"))
+
+      resultsPaths2.size should be(8)
+
+      val allResults2 =
+        resultsPaths2.flatMap(p => {
+          val resultsContents = Files.toString(p.toFile, Charset.defaultCharset())
+
+          val resultsFields =
+            parse(resultsContents) filterField {
+              case JField("result", _) => true
+              case _ => false
+            }
+
+
+          resultsFields.map(rf => rf._2.extract[String])
+        })
+
+      allResults2.filter(r => r == "FAILED").size should be(11)
+      allResults2.filter(r => r == "NOT_RUN").size should be(5)
+      allResults2.filter(r => r == "CHILD_FAILED").size should be(4)
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    // second scenario outline setup fails
+
+    if (true) {
+
+      val dataDirPath3 = getBaseDir(new File("target")).getAbsolutePath
+      val reportOutDir3 = getBaseDir(new File("target"), "substeps-report_")
+      Fail.reset
+      Fail.failType = "scenario"
+      Fail.failingParameter = "none"
+      Fail.failCount = 5 // all, feature, scenario 1 setup, scenario1 tear down, scenario 2 BOOM
+      runFailingTestScenario(
+        dataDirPath3, reportOutDir3, List(outlineFeatureFile))
+      // scenario outline, fail the second iteration only, carries on running the others
+
+      val paths3 = checkNumberOfFiles(dataDirPath3, 8)
+
+      val resultsPaths3 = paths3.find(p => p.toString.endsWith("feature.results.json"))
+
+
+      val feaatureResultsContents3 = Files.toString(resultsPaths3.get.toFile, Charset.defaultCharset())
+
+      val jresults3 = parse(feaatureResultsContents3)
+
+      val resultsFields3 =
+        jresults3 filterField {
+          case JField("result", _) => true
+          case _ => false
+        }
+
+      val resultsValues3 = resultsFields3.map(rf => rf._2.extract[String])
+
+      resultsValues3 should be(List("CHILD_FAILED", "PASSED", "FAILED", "PASSED"))
+    }
+
+    //////////////////////////////////////////////////////
+    // first feature setup fails, second is ok
+
+    if (true) {
+
+      // TODO - no stack trace for the failed feature, scenarios not expanded to the steps underneath
+
+      val dataDirPath4 = getBaseDir(new File("target")).getAbsolutePath
+      val reportOutDir4 = getBaseDir(new File("target"), "substeps-report_")
+      Fail.reset
+      Fail.failCount = 2 // all, f1 setup (BOOM)..
+      Fail.failType = "feature"
+      Fail.failingParameter = "none"
+      runFailingTestScenario(
+        dataDirPath4, reportOutDir4, List(standardFeatureFile, outlineFeatureFile))
+
+      val paths4 = checkNumberOfFiles(dataDirPath4, 10)
+
+      val results4 = Files.toString(paths4.find(p => p.endsWith("results.json")).get.toFile, Charset.defaultCharset())
+
+      val jresults4: JValue = parse(results4)
+
+      val resultsFields4 =
+        jresults4 filterField {
+          case JField("result", _) => true
+          case _ => false
+        }
+
+      val resultsValues4 = resultsFields4.map(rf => rf._2.extract[String])
+
+      resultsValues4 should be(List("FAILED", "FAILED", "PASSED"))
+
+    }
+
+    ////////////////////////////////////////////////////////////
+    // suite set up fails
+    // TODO - there's some errors in this scenario
+
+    if (false) {
+      // suite setup failure
+      val dataDirPath5 = getBaseDir(new File("target")).getAbsolutePath
+      val reportOutDir5 = getBaseDir(new File("target"), "substeps-report_")
+      Fail.reset
+      Fail.failCount = 1 // all (BOOM)..
+      Fail.failType = "suite"
+      runFailingTestScenario(
+        dataDirPath5, reportOutDir5, List(standardFeatureFile, outlineFeatureFile))
+      // TODO - only one feature listed - no stack trace, not details
+
+      // TODO will fail
+      checkNumberOfFiles(dataDirPath5, 10)
+
+    }
+
+
+  }
+
+  type InitClassName = String
+  type StepImplClassName = String
+
+
+  private def runFailingTestScenario(dataDirPath: String,
+                                     reportOutDir: File, featureList: List[FeatureFile])(implicit stepImplementationClasses: List[Class[_]],
+                                                                                         classNames : (String, String),
+                                                                                         methodExecutorToUse: TestImplementationCache) = {
+    val initClassName = classNames._1
+    val stepImplClassName= classNames._2
+
+    val cfgFileContents =
+      s"""
+         | org {
+         | substeps {
+         | baseExecutionConfig {
+         |         featureFile="failing_feature_file.feature"
+         |         stepImplementationClassNames=[ "${stepImplClassName}"]
+         |  initialisationClasses=[
+         |    "${initClassName}"
+         |  ]
+         |
+         | }
+         |     executionConfigs=[
+         |         {
+         |         dataOutputDir=1
+         |         description="Parsing from source Test Features 1"
+         |         }
+         |        ]
+         |  config {
+         |     rootDataDir="${dataDirPath}"
+         |     description="Parsing from source test suite"
+         |     }
+         |  }
+         | }
+      """.stripMargin
+
+    println("CONFIG contents\n" + cfgFileContents)
+
+    val baseCfg = ConfigFactory.parseString(cfgFileContents)
+
+    println("BASE CFG: " + baseCfg.root().render())
+
+    val masterConfig =
+      baseCfg.withFallback(ConfigFactory.load(ConfigParseOptions.defaults(), ConfigResolveOptions.noSystem().setAllowUnresolved(true)))
+        .withValue("org.substeps.config.reportDir", ConfigValueFactory.fromAnyRef(reportOutDir.toString))
+
+    val configs = SubstepsConfigLoader.splitMasterConfig(masterConfig).asScala
+
+    val syntax: Syntax = SyntaxBuilder.buildSyntax(stepImplementationClasses.asJava, new PatternMap[ParentStep])
+
+    val parameters: TestParameters = new TestParameters(new TagManager(""), syntax, featureList.asJava)
+
+    val rootDataDir: File = NewSubstepsExecutionConfig.getRootDataDir(masterConfig)
+
+    // write out the master config to the root data dir, the report builder needs to pick it up
+    ExecutionResultsCollector.writeMasterConfig(masterConfig)
+
+
+    configs.foreach(cfg => {
+
+      NewSubstepsExecutionConfig.setThreadLocalConfig(cfg)
+
+      val executionCollector = new ExecutionResultsCollector
+
+      val dataDirForReportBuilder = NewSubstepsExecutionConfig.getDataOutputDirectory(cfg)
+
+      executionCollector.setDataDir(dataDirForReportBuilder)
+      executionCollector.setPretty(true)
+
+      val runner = new ExecutionNodeRunner()
+
+      runner.addNotifier(executionCollector)
+
+      val stepImplementationClasses = NewSubstepsExecutionConfig.getStepImplementationClasses(cfg)
+      val initialisationClasses = NewSubstepsExecutionConfig.getInitialisationClasses(cfg)
+
+      val initClassList: util.List[Class[_]] =
+
+        if (initialisationClasses != null) initialisationClasses.toList.asJava else null
+
+      val finalInitClasses = ExecutionNodeRunner.buildInitialisationClassList(stepImplementationClasses, initClassList)
+      val setupAndTearDown = new SetupAndTearDown(finalInitClasses, methodExecutorToUse)
+
+      val rootNode2 = runner.prepareExecutionConfig(cfg, syntax, parameters, setupAndTearDown, methodExecutorToUse, null)
+
+      executionCollector.initOutputDirectories(rootNode2)
+
+      log.debug("rootNode 2:\n" + rootNode2.toDebugString)
+
+      val finalRootNode = runner.run()
+
+      log.debug("finalRootNode:\n" + finalRootNode.toDebugString)
+    })
+
+    // TODO - ASSERTIONS !
+
+    // try all combinations
+
+    val localReportBuilder = NewSubstepsExecutionConfig.getReportBuilder(masterConfig)
+    val reportDir = NewSubstepsExecutionConfig.getReportDir(masterConfig)
+
+
+    localReportBuilder.buildFromDirectory(rootDataDir, reportDir, null)
+  }
 }
 
+class TestImplementationCache extends ImplementationCache{
+
+  def addImpl(key : Class[_], instance : Object) = {
+    instanceMap.put(key, instance)
+  }
+}
 

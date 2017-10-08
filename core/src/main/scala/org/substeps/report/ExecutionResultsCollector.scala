@@ -138,7 +138,11 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
         Files.write(generateJson(rootNode), summaryFile, UTF8)
       }
 
-      case _ => log.debug("other node failed")
+      case n => {
+
+        // outlinescenariorownode
+        log.warn("other node failed " + node.getClass  + " id: " + n.getId)
+      }
     }
 
   }
@@ -214,10 +218,10 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
 
       }
       case stepImplNode : StepImplementationNode => {
-        log.debug("stepImpl Node finished")
+        log.debug(s"stepImpl ${stepImplNode.getId} Node finished")
 
       }
-      case _ => log.debug("other node finished")
+      case n => log.debug(s"other node ${n.getId} finished")
     }
 
   }
@@ -307,6 +311,9 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
 
 
           basicScenarioNodes.map(outlineScenario => {
+
+            println("failing outlineScenario.getId: " + outlineScenario.getId)
+
             val (sNode, resultsFile) = scenarioSummaryMap.get(outlineScenario.getId).get
 
             ScenarioSummary(sNode.getId, resultsFile.getName, sNode.getResult.getResult.toString, sNode.getTags.toList)
@@ -314,7 +321,7 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
           })
         }
         case other => {
-          log.error("had another child type: " + other.getClass)
+          log.error("had another child type: " + other.getClass + " other id: " + other.getId)
           List()
         }
       }
@@ -444,7 +451,12 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
       featureNode.getId -> featureResultsDir
     }).toMap
   }
+
+
+
 }
+
+
 
 case class FeatureSummary(nodeType: String, filename: String, result : String, id : Long,
                           executionDurationMillis : Option[Long], description : String, scenarios: List[ScenarioSummary], tags : List[String])
@@ -456,6 +468,36 @@ case class FeatureSummaryForRootNode(nodeId : Long, resultsDir: String, result :
 
 case class RootNodeSummary(nodeType: String, description: String, result : String, id : Long,
                            executionDurationMillis : Option[Long], features : List[FeatureSummaryForRootNode], tags : Option[String], nonFatalTags : Option[String], timestamp : Long, environment : String)
+
+
+case class SubstepsNode(id : Long, nodeType: String, description: String, children : List[SubstepsNode])
+
+// TODO - build a new node up, look at the akkaruner2. build up a new hierarchy
+// utils class to build up new model - could use the same model for running with, convert the runner, listener and notifier... more big changes
+
+//object SubstepsNode {
+//
+//  def toSubstepNodeTree(rootNode: NodeWithChildren, nodeType = "RootNode") : SubstepsNode= {
+//
+//    val children = rootNode.getChildren
+//
+//    val substepNodeChildren =
+//      if (children == null) List() else {
+//
+//        val childList = children.asScala.toList
+//        childList.map(c => {
+//          toSubstepNodeTree(c)
+//        })
+//      }
+//    SubstepsNode(rootNode.getId, nodeType, rootNode.getDescription, substepNodeChildren)
+//  }
+//
+//  def toSubstepNodeTree(featureNode: FeatureNode) : SubstepsNode = {
+//    ???
+//  }
+//
+//}
+
 
 
 import scala.collection.JavaConverters._

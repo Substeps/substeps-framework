@@ -108,7 +108,13 @@ public class ExecutionNodeRunner implements SubstepsRunner {
 
     public static Class<?>[] buildInitialisationClassList(List<Class<?>> stepImplClassList, List<Class<?>> initialisationClassList){
 
-        List<Class<?>> finalInitialisationClassList = null;
+        List<Class<?>> finalInitialisationClassList = new ArrayList<>();
+
+        // add the explicitly set init class list at the front
+        if (initialisationClassList != null){
+            finalInitialisationClassList.addAll(initialisationClassList);
+        }
+
         if (stepImplClassList != null) {
 
             final InitialisationClassSorter orderer = new InitialisationClassSorter();
@@ -126,14 +132,10 @@ public class ExecutionNodeRunner implements SubstepsRunner {
                     }
                 }
             }
-
-            finalInitialisationClassList = orderer.getOrderedList();
-        }
-        if (finalInitialisationClassList == null && initialisationClassList != null) {
-            finalInitialisationClassList = initialisationClassList;
+            finalInitialisationClassList.addAll(orderer.getOrderedList());
         }
 
-        if (finalInitialisationClassList != null) {
+        if (!finalInitialisationClassList.isEmpty()) {
             return finalInitialisationClassList.toArray(new Class<?>[]{});
         }
         else {
@@ -325,12 +327,13 @@ public class ExecutionNodeRunner implements SubstepsRunner {
             log.trace("no uses already for node...");
             immediateParents = new ArrayList<ExecutionNodeUsage>();
             callerHierarchy.put(usage, immediateParents);
-        } else {
-            log.trace("got existing usages of node: ");
-            for (final ExecutionNodeUsage u : immediateParents) {
-                log.trace("already found: " + u.toString());
-            }
         }
+//        else {
+//            log.trace("got existing usages of node: ");
+//            for (final ExecutionNodeUsage u : immediateParents) {
+//                log.trace("already found: " + u.toString());
+//            }
+//        }
         log.trace("adding used by descr: " + node.getParent().getDescription() + " line: " + node.getParent().getLine());
 
         immediateParents.add(new ExecutionNodeUsage(node.getParent()));

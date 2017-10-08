@@ -106,6 +106,8 @@ public abstract class AbstractNodeRunner<NODE_TYPE extends IExecutionNode, VISIT
 
             log.warn("setup failed", t);
             context.addFailure(new SubstepExecutionFailure(t, node, true));
+            context.getNotificationDistributor().onNodeFailed(node, t);
+
             return false;
         }
     }

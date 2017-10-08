@@ -17,6 +17,15 @@ Requirements
 ------------
  * Java 8
 
+1.1.2
+-----
+* Initialisation classes added through config were being ignored. #67
+* Updated the annotated conf example
+* bug in the glossary builder, not excluded classnames in the config resulted in a null pointer. #66
+* failure in scenario setup methods results in missing results data and report building failure. #65
+
+
+
 1.1.1
 -----
 * Prevent duplicate step implementations being created in the glossary json file. Fixes #62
