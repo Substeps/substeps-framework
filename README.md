@@ -23,6 +23,8 @@ Requirements
 * Updated the annotated conf example
 * bug in the glossary builder, not excluded classnames in the config resulted in a null pointer. #66
 * failure in scenario setup methods results in missing results data and report building failure. #65
+* added config to the pom to run scala tests in all projects
+* guava upgrade
 
 
 
