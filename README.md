@@ -16,6 +16,12 @@ The new home for:
 Requirements
 ------------
  * Java 8
+ * Scala 2.12.3 (included)
+
+1.1.3
+-----
+* Changed the root report page to be index.html.  Added a redirect page in for the old.
+* Glossary changes - got rid of the noise when extracting substeps tag info. Enabled the migration to new qualified custom glossary tags 'org.substeps.step.example' and 'org.substeps.step.section'
 
 1.1.2
 -----

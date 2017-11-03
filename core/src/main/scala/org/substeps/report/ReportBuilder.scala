@@ -232,7 +232,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
     createTreeData2(resultsTreeJs,srcDataList, suiteDescription)
 
-    val reportFrameHTMLFile = createFile( "report_frame.html")
+    val reportFrameHTMLFile = createFile( "index.html")
 
 
     val stats : ExecutionStats = buildExecutionStats(srcDataList)

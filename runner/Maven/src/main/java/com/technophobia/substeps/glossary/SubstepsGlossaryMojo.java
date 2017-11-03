@@ -41,10 +41,7 @@ import org.slf4j.LoggerFactory;
 import org.substeps.config.SubstepsConfigLoader;
 import org.substeps.runner.NewSubstepsExecutionConfig;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -101,18 +98,27 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
             CustomDoclet.setExpressionList(classStepTagList);
 
             final String[] args = {"-doclet", "com.technophobia.substeps.glossary.CustomDoclet",
-                    // "-docletpath",
-                    // "/home/ian/projects/webdriverbdd-utils/target/classes",
-                    // // path to this jar ?
-                    "-sourcepath", sourceRoot, // "./src/main/java", // path to
-                    // the step impls / classpath ?
-                    path // javadocStr
-                    // //"/home/ian/projects/github/substeps-webdriver/src/main/java/com/technophobia/webdriver/substeps/impl/AssertionWebDriverSubStepImplementations.java"
-            }; // list of step impls to have a butcher sat
-            // "/home/ian/projects/github/substeps-webdriver/src/main/java/com/technophobia/webdriver/substeps/impl/AssertionWebDriverSubStepImplementations.java"
+                    "-sourcepath", sourceRoot,
+                    path
+            };
 
-            Main.execute(args);
+            //            Main.execute(args);
 
+            StringWriter esw = new StringWriter();
+            PrintWriter err = new PrintWriter(esw);
+
+            StringWriter wsw = new StringWriter();
+            PrintWriter warn = new PrintWriter(wsw);
+
+            StringWriter nsw = new StringWriter();
+            PrintWriter notice = new PrintWriter(nsw);
+
+            String warnings = esw.toString();
+            if (!warnings.isEmpty()) {
+                getLog().warn("Substeps CustomDoclet warnings:\n" + warnings);
+            }
+
+            Main.execute("SubstepsDoclet", err, warn, notice, "com.technophobia.substeps.glossary.CustomDoclet", args);
         }
 
         return classStepTagList;

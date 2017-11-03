@@ -50,6 +50,10 @@ public class CustomDoclet extends Doclet {
 
     public static boolean start(final RootDoc root) {
 
+        boolean exampleTagRenameWarned = false;
+        boolean sectionTagRenameWarned = false;
+
+
         final ClassDoc[] classes = root.classes();
 
         for (final ClassDoc cd : classes) {
@@ -84,8 +88,30 @@ public class CustomDoclet extends Doclet {
 
                             expression.setDescription(md.commentText().replaceAll("\n", " "));
 
-                            expression.setExample(getSingleJavadocTagValue(md, "example"));
-                            expression.setSection(getSingleJavadocTagValue(md, "section"));
+                            String eg = getSingleJavadocTagValue(md, "org.substeps.step.example");
+                            if (eg.isEmpty()){
+                                eg = getSingleJavadocTagValue(md, "example");
+
+                                if (!eg.isEmpty() && !exampleTagRenameWarned){
+
+                                    log.warn("REPLACE Substeps Custom Java doc tags 'example' -> 'org.substeps.step.example'");
+                                    exampleTagRenameWarned = true;
+                                }
+                            }
+
+                            expression.setExample(eg);
+
+                            String sec = getSingleJavadocTagValue(md, "org.substeps.step.section");
+                            if (sec.isEmpty()){
+                                sec = getSingleJavadocTagValue(md, "section");
+
+                                if (!sec.isEmpty() && !sectionTagRenameWarned){
+                                    log.warn("REPLACE Substeps Custom Java doc tags 'section' -> 'org.substeps.step.section'");
+                                    sectionTagRenameWarned = true;
+                                }
+                            }
+
+                            expression.setSection(getSingleJavadocTagValue(md, sec));
 
                             String line = annotation.value();
                             expression.setRegex(line);
