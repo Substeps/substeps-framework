@@ -22,6 +22,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.technophobia.substeps.model.exception.DuplicateStepImplementationException;
 import com.technophobia.substeps.model.exception.StepImplementationException;
+import com.technophobia.substeps.model.exception.SubstepsParsingException;
 import com.technophobia.substeps.model.exception.UnimplementedStepException;
 import com.technophobia.substeps.runner.syntax.DefaultSyntaxErrorReporter;
 import com.technophobia.substeps.runner.syntax.SyntaxErrorReporter;
@@ -63,7 +64,6 @@ public class Syntax {
     public Syntax(final SyntaxErrorReporter syntaxErrorReporter) {
         this.syntaxErrorReporter = syntaxErrorReporter;
     }
-
 
     public Map<String, PatternMap<StepImplementation>> getStepImplementationMap() {
         return this.stepImplementationMap;

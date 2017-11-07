@@ -23,6 +23,8 @@ import com.technophobia.substeps.model.ParentStep;
 import com.technophobia.substeps.model.PatternMap;
 import com.technophobia.substeps.model.Step;
 import com.technophobia.substeps.model.exception.DuplicatePatternException;
+import com.technophobia.substeps.model.exception.StepImplementationException;
+import com.technophobia.substeps.model.exception.SubstepsParsingException;
 import com.technophobia.substeps.parser.FileContents;
 import com.technophobia.substeps.runner.FeatureFileParser;
 import org.slf4j.Logger;
@@ -51,6 +53,8 @@ public class SubStepDefinitionParser {
 
     private final SyntaxErrorReporter syntaxErrorReporter;
 
+    private Directive currentDirective = null;
+
     public SubStepDefinitionParser(final SyntaxErrorReporter syntaxErrorReporter) {
         this(true, syntaxErrorReporter);
     }
@@ -59,6 +63,7 @@ public class SubStepDefinitionParser {
         this.failOnDuplicateSubsteps = failOnDuplicateSubsteps;
         this.syntaxErrorReporter = syntaxErrorReporter;
     }
+
 
     void parseSubStepFile(final File substepFile) {
 
@@ -226,8 +231,6 @@ public class SubStepDefinitionParser {
 
         private final String name;
     }
-
-    private Directive currentDirective = null;
 
     private Directive isDirective(final String word) {
 

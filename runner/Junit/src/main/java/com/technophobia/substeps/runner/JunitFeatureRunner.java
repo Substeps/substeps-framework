@@ -142,7 +142,7 @@ public class JunitFeatureRunner extends org.junit.runner.Runner {
 
         classContainingTheTests = reportedClass;
 
-        Config config = buildConfig(stepImplementationClasses, featureFile, tags, subStepsFileName, strict, nonStrictKeywordPrecedence, beforeAndAfterImplementations, classContainingTheTests.getSimpleName());//SubstepsConfigLoader.splitMasterConfig(masterConfig).get(0);
+        Config config = buildConfig(stepImplementationClasses, featureFile, tags, subStepsFileName, strict, nonStrictKeywordPrecedence, beforeAndAfterImplementations, classContainingTheTests.getSimpleName());
 
         NewSubstepsExecutionConfig.setThreadLocalConfig(config);
 

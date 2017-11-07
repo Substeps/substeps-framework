@@ -27,6 +27,7 @@ public abstract class FileBasedGlossaryPublisher implements GlossaryPublisher {
      */
     private File outputFile;
 
+    private Comparator<StepDescriptor> expressionComparator = (s1, s2) -> s1.getExpression().compareTo(s2.getExpression());
 
     @Override
     public void publish(final List<StepImplementationsDescriptor> stepimplementationDescriptors) {
@@ -42,8 +43,6 @@ public abstract class FileBasedGlossaryPublisher implements GlossaryPublisher {
 
     public abstract String getDefaultFileName();
 
-
-    private Comparator<StepDescriptor> expressionComparator = (s1, s2) -> s1.getExpression().compareTo(s2.getExpression());
 
     private String getSection(StepDescriptor stepTag) {
         boolean noTag = stepTag.getSection() == null || stepTag.getSection().isEmpty();

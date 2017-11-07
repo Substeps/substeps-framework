@@ -46,11 +46,12 @@ public final class ExecutionContext {
         ;
     };
 
+    private Map<Scope, Map<String, Object>> scopedData = null;
+
     private ExecutionContext() {
         scopedData = new EnumMap<>(Scope.class);
     }
 
-    private Map<Scope, Map<String, Object>> scopedData = null;
 
     public static void put(final Scope scope, final String key, final Object value) {
         executionContextThreadLocal.get().putInternal(scope, key, value);

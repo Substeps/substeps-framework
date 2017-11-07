@@ -321,13 +321,9 @@ public class SubstepNodeBuilder {
                 paramValueMap = parent.getParamValueMap().getParameters();
             }
 
-            final Object[] methodParameters = getStepMethodArguments(stepParameter, paramValueMap, execImpl.getValue(),
+            getStepMethodArguments(stepParameter, paramValueMap, execImpl.getValue(),
                     inlineTable, stepImplementationMethodParameterTypes, parameterConverters, stepNode);
 
-            if (methodParameters.length != stepImplementationMethodParameterTypes.length) {
-                throw new IllegalArgumentException(
-                        "Argument mismatch between what expected for step impl and what found in feature");
-            }
         }
     }
 
@@ -356,6 +352,11 @@ public class SubstepNodeBuilder {
         if (argsList != null) {
             arguments = new Object[argsList.size()];
             arguments = argsList.toArray(arguments);
+
+            if (arguments.length != parameterTypes.length) {
+                throw new IllegalArgumentException(
+                        "Argument mismatch between what expected for step impl and what found in feature");
+            }
         }
 
         stepNode.setMethodArgs(arguments);

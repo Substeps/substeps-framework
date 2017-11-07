@@ -34,6 +34,10 @@ public class HTMLSubstepsPublisher extends FileBasedGlossaryPublisher implements
 
     private static final Logger log = LoggerFactory.getLogger(HTMLSubstepsPublisher.class);
 
+    private static final String TABLE_ROW_SECTION_FORMAT = "<tr><td colspan=\"3\"><strong>%s</strong></td></tr>";
+
+    private static final String TABLE_ROW_FORMAT = "<tr><td>%s</td><td>%s</td><td>%s</td></tr>";
+
     @Override
     public String getDefaultFileName() {
         return "stepimplementations.html";
@@ -77,8 +81,5 @@ public class HTMLSubstepsPublisher extends FileBasedGlossaryPublisher implements
         }
     }
 
-    private static final String TABLE_ROW_SECTION_FORMAT = "<tr><td colspan=\"3\"><strong>%s</strong></td></tr>";
-
-    private static final String TABLE_ROW_FORMAT = "<tr><td>%s</td><td>%s</td><td>%s</td></tr>";
 
 }

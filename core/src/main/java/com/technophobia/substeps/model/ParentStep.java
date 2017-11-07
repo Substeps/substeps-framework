@@ -35,22 +35,19 @@ public class ParentStep {
 
     private static final Logger log = LoggerFactory.getLogger(ParentStep.class);
 
+    public static final ParentStepNameComparator PARENT_STEP_COMPARATOR = new ParentStepNameComparator();
+
     private final Step parent;
     private List<Step> substeps;
     private ExampleParameter paramValueMap;
-
-    public static final ParentStepNameComparator PARENT_STEP_COMPARATOR = new ParentStepNameComparator();
-
-
-    public int getSourceLineNumber() {
-        return this.parent.getSourceLineNumber();
-    }
-
 
     public ParentStep(final Step parent) {
         this.parent = parent;
     }
 
+    public int getSourceLineNumber() {
+        return this.parent.getSourceLineNumber();
+    }
 
     public void addStep(final Step step) {
         if (this.substeps == null) {

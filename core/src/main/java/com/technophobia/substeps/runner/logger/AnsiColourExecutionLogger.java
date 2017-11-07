@@ -27,6 +27,12 @@ public class AnsiColourExecutionLogger extends ExecutionLogger {
 
     private static final Logger log = LoggerFactory.getLogger(AnsiColourExecutionLogger.class);
 
+    public static final String PREFIX = "\033[";
+
+    public static final String SEPARATOR = ";";
+
+    public static final String POSTFIX = "m";
+
     @Override
     public void printFailed(final String msg) {
 
@@ -59,11 +65,6 @@ public class AnsiColourExecutionLogger extends ExecutionLogger {
         return PREFIX + attribute + SEPARATOR + colour + POSTFIX + s + PREFIX + "39;0;" + POSTFIX;
     }
 
-    public static final String PREFIX = "\033[";
-
-    public static final String SEPARATOR = ";";
-
-    public static final String POSTFIX = "m";
 
     public enum TextColour {
 

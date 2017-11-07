@@ -67,7 +67,7 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
      * @parameter
      */
     @Parameter
-    private final GlossaryPublisher glossaryPublisher = null;
+    private GlossaryPublisher glossaryPublisher = null;
 
     private List<StepImplementationsDescriptor> runJavaDoclet(final String classToDocument) {
 
@@ -102,7 +102,8 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
                     path
             };
 
-            //            Main.execute(args);
+            // the custom doclet generates quite a lot of noise around things missing from the classpath etc -
+            // not important in this context, so consume and discard apart from the errors..
 
             StringWriter esw = new StringWriter();
             PrintWriter err = new PrintWriter(esw);
@@ -360,8 +361,9 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
         if (artifacts != null) {
             for (final Artifact a : artifacts) {
                 // does this jar contain this class?
+                JarFile tempJarFile = null;
                 try {
-                    final JarFile tempJarFile = new JarFile(a.getFile());
+                    tempJarFile = new JarFile(a.getFile());
 
                     final JarEntry jarEntry = tempJarFile
                             .getJarEntry(convertClassNameToPath(className));
@@ -372,6 +374,15 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
                     }
                 } catch (final IOException e) {
                     log.error("IO Exception opening jar file", e);
+                }
+                finally {
+                    if (tempJarFile != null){
+                        try {
+                            tempJarFile.close();
+                        } catch (IOException e) {
+                            log.debug("ioexcception closing jar file", e);
+                        }
+                    }
                 }
             }
         }

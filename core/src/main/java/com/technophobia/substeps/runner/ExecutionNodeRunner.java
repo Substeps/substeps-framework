@@ -328,12 +328,6 @@ public class ExecutionNodeRunner implements SubstepsRunner {
             immediateParents = new ArrayList<ExecutionNodeUsage>();
             callerHierarchy.put(usage, immediateParents);
         }
-//        else {
-//            log.trace("got existing usages of node: ");
-//            for (final ExecutionNodeUsage u : immediateParents) {
-//                log.trace("already found: " + u.toString());
-//            }
-//        }
         log.trace("adding used by descr: " + node.getParent().getDescription() + " line: " + node.getParent().getLine());
 
         immediateParents.add(new ExecutionNodeUsage(node.getParent()));

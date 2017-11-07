@@ -40,9 +40,6 @@ public class JunitNotifier implements IJunitNotifier {
 
     private Map<Long, Description> descriptionMap;
 
-    /**
-     * {@inheritDoc}
-     */
     private void notifyTestStarted(final Description junitDescription) {
 
         if (junitRunNotifier != null && junitDescription != null) {
@@ -53,9 +50,6 @@ public class JunitNotifier implements IJunitNotifier {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
     private void notifyTestFinished(final Description junitDescription) {
         if (junitRunNotifier != null && junitDescription != null) {
             log.debug(junitDescription.getDisplayName() + " notifyTestFinished");
@@ -65,9 +59,6 @@ public class JunitNotifier implements IJunitNotifier {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
     private void notifyTestIgnored(final Description junitDescription) {
         if (junitRunNotifier != null && junitDescription != null) {
             junitRunNotifier.fireTestIgnored(junitDescription);
@@ -75,9 +66,6 @@ public class JunitNotifier implements IJunitNotifier {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
     private void notifyTestFailed(final Description junitDescription, final Throwable cause) {
         if (junitRunNotifier != null && junitDescription != null) {
             log.debug(junitDescription.getDisplayName() + " notify running TestFailed");
@@ -86,7 +74,6 @@ public class JunitNotifier implements IJunitNotifier {
             junitRunNotifier.fireTestFailure(new Failure(junitDescription, cause));
 
         }
-
     }
 
     /**

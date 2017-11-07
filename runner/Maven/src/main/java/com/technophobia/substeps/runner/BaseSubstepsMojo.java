@@ -39,6 +39,7 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
 
     /**
      * will be removed in a later release, use .conf files instead
+     * @deprecated use .config files for runtime configuration instead
      */
     @Deprecated
     @Parameter
@@ -86,6 +87,7 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
     /**
      * if true a jvm will be spawned to run substeps otherwise substeps will
      * execute within the same jvm as maven
+     * @deprecated use .config files for runtime configuration instead
      */
     @Deprecated
     @Parameter(property = "runTestsInForkedVM", defaultValue = "false")
@@ -95,6 +97,7 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
     /**
      * When running in forked mode, a port is required to communicate between
      * maven and substeps, to set explicitly use -DjmxPort=9999
+     * @deprecated use .config files for runtime configuration instead
      */
     @Parameter(defaultValue = "9999")
     @Deprecated
@@ -102,6 +105,7 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
 
     /**
      * A space delimited string of vm arguments to pass to the forked jvm
+     * @deprecated use .config files for runtime configuration instead
      */
     @Deprecated
     @Parameter
