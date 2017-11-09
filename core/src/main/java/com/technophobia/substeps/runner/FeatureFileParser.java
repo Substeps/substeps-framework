@@ -149,7 +149,7 @@ public class FeatureFileParser {
     /**
      * @param sc
      */
-    private void buildScenario(final Scenario sc, FileContents fileContents) {
+    private static void buildScenario(final Scenario sc, FileContents fileContents) {
 
         final String raw = sc.getRawText();
 
@@ -313,7 +313,7 @@ public class FeatureFileParser {
         }
     }
 
-    private int backgroundLineNumber(FileContents currentFileContents) {
+    private static int backgroundLineNumber(FileContents currentFileContents) {
         return Math.max(currentFileContents.getFirstLineNumberStartingWith("Background:"), 0);
     }
 
@@ -377,7 +377,7 @@ public class FeatureFileParser {
      * @param lines
      * @return
      */
-    private String stripCommentsAndBlankLines(final List<String> lines) {
+    private static String stripCommentsAndBlankLines(final List<String> lines) {
 
         final StringBuilder buf = new StringBuilder();
 

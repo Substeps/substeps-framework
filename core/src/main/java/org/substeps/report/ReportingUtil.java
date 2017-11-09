@@ -130,14 +130,15 @@ public class ReportingUtil {
     }
 
 
-    private void write(String json, File out){
+    private static void write(String json, File out){
 
-        if (out.exists()){
-            out.delete();
+        if (out.exists() && !out.delete()){
+            log.error("failed to delete file: " + out.getAbsolutePath());
         }
 
+
         try {
-            Files.write(json, out, Charset.forName("UTF-8"));
+            Files.asCharSink(out, Charset.forName("UTF-8")).write(json);
         } catch (IOException e) {
 
             log.error("IOException writing " + out.getName(), e);

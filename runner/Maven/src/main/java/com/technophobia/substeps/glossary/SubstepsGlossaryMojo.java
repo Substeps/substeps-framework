@@ -302,7 +302,9 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
         }
 
         try {
-            Files.write(xml, output, Charset.forName("UTF-8"));
+
+            Files.asCharSink(output, Charset.forName("UTF-8")).write(xml);
+
         } catch (final IOException e) {
             log.error("error writing file", e);
         }
@@ -349,7 +351,7 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
     }
 
 
-    private String convertClassNameToPath(final String className) {
+    private static String convertClassNameToPath(final String className) {
         return className.replace('.', '/') + ".class";
     }
 

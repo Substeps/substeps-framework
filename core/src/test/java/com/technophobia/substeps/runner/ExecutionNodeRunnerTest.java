@@ -732,6 +732,7 @@ public class ExecutionNodeRunnerTest {
 
         final String patternString = "Given a substep that takes one parameter \"([^\"]*)\"";
         final String[] keywordPrecedence = new String[]{"Given", "And"};
+
         String[] args1 = Arguments.getArgs(patternString, srcString1, keywordPrecedence, cfg);
 
 

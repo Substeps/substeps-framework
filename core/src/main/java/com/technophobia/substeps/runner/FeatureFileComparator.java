@@ -28,11 +28,11 @@ public class FeatureFileComparator implements Comparator<FeatureFile>, Serializa
 
     private static final long serialVersionUID = -8032832302837878628L;
 
-	/*
+  /*
      * (non-Javadoc)
-	 * 
-	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-	 */
+   * 
+   * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+   */
     @Override
     public int compare(final FeatureFile ff1, final FeatureFile ff2) {
         if (ff1 != null && ff2 != null) {

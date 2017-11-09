@@ -162,7 +162,7 @@ public class CustomDoclet extends Doclet {
         final Tag[] tags = md.tags(tagName);
         if (tags != null && tags.length > 0) {
             rtn = tags[0].text().replace("@" + tagName, "");
-            rtn.replaceAll("\n", " ");
+            rtn = rtn.replaceAll("\n", " ");
         }
 
         return rtn != null ? rtn : "";

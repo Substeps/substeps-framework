@@ -307,7 +307,8 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
 
                 File out = new File(resourcesDir, "migrated-application.conf");
 
-                Files.write(configSrc, out , Charset.defaultCharset());
+                Files.asCharSink(out, Charset.defaultCharset()).write(configSrc);
+
 
                 throw new MojoExecutionException(this, "Substeps execution config has changed and moved to a config file", "A new config file has been written to: " + out.getAbsolutePath() + ",\n this will need checking and renaming to application.conf");
 

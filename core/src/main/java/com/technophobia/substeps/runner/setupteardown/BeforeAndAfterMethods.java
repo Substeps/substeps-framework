@@ -142,7 +142,7 @@ public class BeforeAndAfterMethods {
     }
 
 
-    private void sortMethodList(final List<Method> methodsList,
+    private static void sortMethodList(final List<Method> methodsList,
                                 final Comparator<Method> methodComparator) {
         Collections.sort(methodsList, methodComparator);
     }
@@ -202,7 +202,7 @@ public class BeforeAndAfterMethods {
     }
 
 
-    private void appendMethodsIn(final Class<?> processorClass, final List<Method> methods) {
+    private static void appendMethodsIn(final Class<?> processorClass, final List<Method> methods) {
 
         Collections.addAll(methods, processorClass.getMethods());
     }

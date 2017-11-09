@@ -50,28 +50,8 @@ public class SubstepExecutionFailure implements Serializable {
         this.throwableInfo = new ThrowableInfo(cause);
     }
 
-    public static SubstepExecutionFailure criticalFailure(Throwable cause, IExecutionNode node, byte[] screenshotBytes) {
-        SubstepExecutionFailure sef = new SubstepExecutionFailure(cause, node, false, false, screenshotBytes);
-
-        node.getResult().setFailure(sef);
-
-        return sef;
-
-    }
-
-
-    public static SubstepExecutionFailure nonCriticalFailure(final Throwable cause, final IExecutionNode node, byte[] screenshotBytes) {
-
-        SubstepExecutionFailure sef = new SubstepExecutionFailure(cause, node, false, true, screenshotBytes);
-
-        node.getResult().setFailure(sef);
-
-        return sef;
-    }
-
 
     public SubstepExecutionFailure(final Throwable cause) {
-
         this.throwableInfo = new ThrowableInfo(cause);
     }
 
@@ -108,6 +88,25 @@ public class SubstepExecutionFailure implements Serializable {
     public SubstepExecutionFailure(final Throwable cause, final IExecutionNode node, final ExecutionResult result) {
         this(cause, node);
         node.getResult().setResult(result);
+    }
+
+    public static SubstepExecutionFailure criticalFailure(Throwable cause, IExecutionNode node, byte[] screenshotBytes) {
+        SubstepExecutionFailure sef = new SubstepExecutionFailure(cause, node, false, false, screenshotBytes);
+
+        node.getResult().setFailure(sef);
+
+        return sef;
+
+    }
+
+
+    public static SubstepExecutionFailure nonCriticalFailure(final Throwable cause, final IExecutionNode node, byte[] screenshotBytes) {
+
+        SubstepExecutionFailure sef = new SubstepExecutionFailure(cause, node, false, true, screenshotBytes);
+
+        node.getResult().setFailure(sef);
+
+        return sef;
     }
 
 

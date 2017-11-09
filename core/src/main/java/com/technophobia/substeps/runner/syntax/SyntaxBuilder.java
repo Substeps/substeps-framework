@@ -20,9 +20,7 @@ package com.technophobia.substeps.runner.syntax;
 
 import com.technophobia.substeps.model.ParentStep;
 import com.technophobia.substeps.model.PatternMap;
-import com.technophobia.substeps.model.SubSteps;
 import com.technophobia.substeps.model.Syntax;
-import com.technophobia.substeps.scanner.ClasspathScanner;
 
 import java.io.File;
 import java.util.Collections;

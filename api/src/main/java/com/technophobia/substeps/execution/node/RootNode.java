@@ -47,11 +47,6 @@ public class RootNode extends NodeWithChildren<FeatureNode> {
     }
 
     @Override
-    public ExecutionNodeResult getResult() {
-        return super.getResult();
-    }
-
-    @Override
     public <RETURN_TYPE> RETURN_TYPE dispatch(ExecutionNodeVisitor<RETURN_TYPE> executionNodeVisitor) {
 
         return executionNodeVisitor.visit(this);

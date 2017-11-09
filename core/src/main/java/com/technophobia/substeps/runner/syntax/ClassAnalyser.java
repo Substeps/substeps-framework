@@ -38,16 +38,11 @@ public class ClassAnalyser {
         }
 
         if (hasAdditionalStepsAnnotation(loadedClass)) {
-            analyseAdditionalStepImplementations(loadedClass, syntax, getAdditionalStepClasses(loadedClass));
+            analyseAdditionalStepImplementations(syntax, getAdditionalStepClasses(loadedClass));
         }
     }
 
 
-    /**
-     * @param loadedClass
-     * @param stepImplementationMap
-     * @param m
-     */
     private void analyseMethod(final Class<?> loadedClass, final Syntax syntax, final Method m) {
 
         // TODO - handle ignores ?
@@ -110,11 +105,8 @@ public class ClassAnalyser {
     /**
      * Analyses all deferred step implementation classes of the loading class
      *
-     * @param loadedClass
-     * @param syntax
-     * @param syntaxErrorReporter
      */
-    private void analyseAdditionalStepImplementations(final Class<?> loadedClass, final Syntax syntax,
+    private void analyseAdditionalStepImplementations(final Syntax syntax,
                                                       final Class<?>[] additionalStepImplementationClasses) {
         for (final Class<?> stepImplClass : additionalStepImplementationClasses) {
             analyseClass(stepImplClass, syntax);

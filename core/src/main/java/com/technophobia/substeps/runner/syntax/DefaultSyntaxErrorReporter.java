@@ -31,17 +31,9 @@ public class DefaultSyntaxErrorReporter implements SyntaxErrorReporter {
 
     @Override
     public void reportFeatureError(final File file, final String line, final int lineNumber, final int offset,
-                                   final String description) throws RuntimeException {
+                                   final String description) {
         LOG.error("Error on line " + lineNumber + " of feature file " + file.getAbsolutePath() + ": " + line
                 + " - reason: " + description);
-    }
-
-    @Override
-    public void reportFeatureError(final File file, final String line, final int lineNumber, final int offset,
-                                   final String description, final RuntimeException ex) throws RuntimeException {
-        LOG.error("Error on line " + lineNumber + " of feature file " + file.getAbsolutePath() + ": " + line
-                + " - reason: " + description);
-        throw ex;
     }
 
     @Override

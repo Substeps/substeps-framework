@@ -45,12 +45,6 @@ public class FakeSyntaxErrorReporter implements SyntaxErrorReporter {
     }
 
 
-    public void reportFeatureError(final File file, final String line, final int lineNumber, final int offset,
-                                   final String description, final RuntimeException ex) throws RuntimeException {
-        syntaxErrors.add(new SyntaxErrorData(true, file, line, lineNumber, description));
-    }
-
-
     public void reportSubstepsError(final SubstepsParsingException ex) {
         syntaxErrors.add(new SyntaxErrorData(false, ex.getFile(), ex.getLine(), ex.getLineNumber(), ex.getMessage()));
     }

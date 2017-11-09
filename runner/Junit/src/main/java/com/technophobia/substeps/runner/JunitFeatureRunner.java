@@ -257,7 +257,7 @@ public class JunitFeatureRunner extends org.junit.runner.Runner {
         runner.run();
     }
 
-    private String printDescription(final Description desc, final int depth) {
+    private static String printDescription(final Description desc, final int depth) {
         final StringBuilder buf = new StringBuilder();
 
         buf.append(Strings.repeat("\t", depth));

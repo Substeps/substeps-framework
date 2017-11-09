@@ -23,7 +23,7 @@ import com.technophobia.substeps.execution.node.IExecutionNode;
  */
 public abstract class ExecutionLogger implements IExecutionListener {
 
-    private final static String indentString = "  ";
+    private static final String indentString = "  ";
 
     // TODO - buf the message, check the next one, see if its the same, don't
     // dupe

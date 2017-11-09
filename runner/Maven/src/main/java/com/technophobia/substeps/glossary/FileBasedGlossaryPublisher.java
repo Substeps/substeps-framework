@@ -44,7 +44,7 @@ public abstract class FileBasedGlossaryPublisher implements GlossaryPublisher {
     public abstract String getDefaultFileName();
 
 
-    private String getSection(StepDescriptor stepTag) {
+    private static String getSection(StepDescriptor stepTag) {
         boolean noTag = stepTag.getSection() == null || stepTag.getSection().isEmpty();
         return noTag ? "Miscellaneous" : stepTag.getSection();
     }
@@ -64,7 +64,7 @@ public abstract class FileBasedGlossaryPublisher implements GlossaryPublisher {
     }
 
 
-    private void writeOutputFile(String content, File outputFile) {
+    private static void writeOutputFile(String content, File outputFile) {
         if (outputFile.exists() && !outputFile.delete()){
             throw new SubstepsRuntimeException("failed to delete output file: " + outputFile.getAbsolutePath());
         }
@@ -72,7 +72,7 @@ public abstract class FileBasedGlossaryPublisher implements GlossaryPublisher {
         // write out
         try {
             if (outputFile.createNewFile()) {
-                Files.write(content, outputFile, Charset.defaultCharset());
+                Files.asCharSink(outputFile, Charset.defaultCharset()).write(content);
             } else {
 
                 log.error("unable to create new file: " + outputFile.getAbsolutePath());

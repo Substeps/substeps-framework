@@ -40,7 +40,7 @@ public abstract class SubSteps {
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
-    public static @interface StepImplementations {
+    public @interface StepImplementations {
         // no op
         Class<?>[] requiredInitialisationClasses() default {};
     }
@@ -51,7 +51,7 @@ public abstract class SubSteps {
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
-    public static @interface AdditionalStepImplementations {
+    public @interface AdditionalStepImplementations {
         Class<?>[] value();
     }
 
@@ -60,13 +60,13 @@ public abstract class SubSteps {
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public static @interface Step {
+    public @interface Step {
         String value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.PARAMETER)
-    public static @interface StepParameter {
+    public @interface StepParameter {
         Class<? extends Converter<?>> converter();
     }
 }

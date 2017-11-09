@@ -45,7 +45,7 @@ public class AnsiColourExecutionLogger extends ExecutionLogger {
         print(format(msg, TextFormat.DARK, TextColour.GREEN));
     }
 
-    private void print(final String formatted) {
+    private static void print(final String formatted) {
 
         log.info(formatted);
     }

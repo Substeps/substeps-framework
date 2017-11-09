@@ -65,7 +65,7 @@ public class HTMLSubstepsPublisher extends FileBasedGlossaryPublisher implements
     }
 
 
-    private void buildStepTagRows(final StringBuilder buf, final Collection<StepDescriptor> infos) {
+    private static void buildStepTagRows(final StringBuilder buf, final Collection<StepDescriptor> infos) {
 
 
         for (final StepDescriptor info : infos) {

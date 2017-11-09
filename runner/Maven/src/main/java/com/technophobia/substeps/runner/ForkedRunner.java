@@ -434,7 +434,7 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
     }
 
 
-    private List<IExecutionNode> flattenTree(final IExecutionNode node) {
+    private static List<IExecutionNode> flattenTree(final IExecutionNode node) {
 
         return node.accept(new AbstractExecutionNodeVisitor<IExecutionNode>() {
 

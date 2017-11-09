@@ -746,7 +746,8 @@ Scenario: inline table
 
     implicit val formats = Serialization.formats(NoTypeHints)
 
-    val passingScenarioContent = read[NodeDetail](Files.toString(passingScenario.get, UTF8))
+
+    val passingScenarioContent = read[NodeDetail](Files.asCharSource( passingScenario.get, UTF8).read())
 
     passingScenarioContent.children.size should be (3)
 
@@ -763,7 +764,8 @@ Scenario: inline table
 
     failingScenario shouldBe defined
 
-    val failingScenarioContent = read[NodeDetail](Files.toString(failingScenario.get, UTF8))
+
+    val failingScenarioContent = read[NodeDetail](Files.asCharSource( failingScenario.get, UTF8).read())
 
     failingScenarioContent.children.size should be (4)
 
@@ -1172,7 +1174,9 @@ Scenario: another failing scenario
       // tests should pass - no errors
 
       val paths1 = checkNumberOfFiles(dataDirPath1, 12)
-      val results1 = Files.toString(paths1.find(p => p.endsWith("results.json")).get.toFile, Charset.defaultCharset())
+
+      val results1 =
+        Files.asCharSource( paths1.find(p => p.endsWith("results.json")).get.toFile, Charset.defaultCharset()).read()
 
       val jval: JValue = parse(results1)
 
@@ -1201,7 +1205,8 @@ Scenario: another failing scenario
 
       val allResults2 =
         resultsPaths2.flatMap(p => {
-          val resultsContents = Files.toString(p.toFile, Charset.defaultCharset())
+
+          val resultsContents = Files.asCharSource( p.toFile, Charset.defaultCharset()).read()
 
           val resultsFields =
             parse(resultsContents) filterField {
@@ -1238,7 +1243,7 @@ Scenario: another failing scenario
       val resultsPaths3 = paths3.find(p => p.toString.endsWith("feature.results.json"))
 
 
-      val feaatureResultsContents3 = Files.toString(resultsPaths3.get.toFile, Charset.defaultCharset())
+      val feaatureResultsContents3 = Files.asCharSource( resultsPaths3.get.toFile, Charset.defaultCharset()).read()
 
       val jresults3 = parse(feaatureResultsContents3)
 
@@ -1271,7 +1276,7 @@ Scenario: another failing scenario
 
       val paths4 = checkNumberOfFiles(dataDirPath4, 10)
 
-      val results4 = Files.toString(paths4.find(p => p.endsWith("results.json")).get.toFile, Charset.defaultCharset())
+      val results4 = Files.asCharSource( paths4.find(p => p.endsWith("results.json")).get.toFile, Charset.defaultCharset()).read()
 
       val jresults4: JValue = parse(results4)
 

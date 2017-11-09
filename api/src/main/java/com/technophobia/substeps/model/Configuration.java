@@ -19,12 +19,8 @@
 
 package com.technophobia.substeps.model;
 
-import com.typesafe.config.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.typesafe.config.Config;
 import org.substeps.runner.NewSubstepsExecutionConfig;
-
-import java.net.URL;
 
 /**
  * @author ian

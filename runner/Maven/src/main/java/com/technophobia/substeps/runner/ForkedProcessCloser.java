@@ -29,6 +29,13 @@ public class ForkedProcessCloser implements Runnable {
     private Thread thread;
     private Log log;
 
+    private ForkedProcessCloser(SubstepsJMXClient client, Process forkedJvm, Log log) {
+
+        this.client = client;
+        this.forkedJvm = forkedJvm;
+        this.log = log;
+        this.thread = new Thread(this);
+    }
 
     public static ForkedProcessCloser addHook(SubstepsJMXClient client, Process forkedJvm, Log log) {
 
@@ -37,14 +44,6 @@ public class ForkedProcessCloser implements Runnable {
         return hook;
     }
 
-
-    private ForkedProcessCloser(SubstepsJMXClient client, Process forkedJvm, Log log) {
-
-        this.client = client;
-        this.forkedJvm = forkedJvm;
-        this.log = log;
-        this.thread = new Thread(this);
-    }
 
     public void notifyShutdownSuccessful() {
 

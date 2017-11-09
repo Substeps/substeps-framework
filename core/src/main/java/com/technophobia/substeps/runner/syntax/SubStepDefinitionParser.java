@@ -23,8 +23,6 @@ import com.technophobia.substeps.model.ParentStep;
 import com.technophobia.substeps.model.PatternMap;
 import com.technophobia.substeps.model.Step;
 import com.technophobia.substeps.model.exception.DuplicatePatternException;
-import com.technophobia.substeps.model.exception.StepImplementationException;
-import com.technophobia.substeps.model.exception.SubstepsParsingException;
 import com.technophobia.substeps.parser.FileContents;
 import com.technophobia.substeps.runner.FeatureFileParser;
 import org.slf4j.Logger;
@@ -208,8 +206,7 @@ public class SubStepDefinitionParser {
         }
     }
 
-    private void storeForPatternOrThrowException(final String newPattern, final ParentStep parentStep)
-            throws DuplicatePatternException {
+    private void storeForPatternOrThrowException(final String newPattern, final ParentStep parentStep) {
 
         if (!this.parentMap.containsPattern(newPattern)) {
             this.parentMap.put(newPattern, parentStep);
@@ -219,7 +216,7 @@ public class SubStepDefinitionParser {
 
     }
 
-    private static enum Directive {
+    private enum Directive {
         // @formatter:off
         DEFINITION("Define");
 
@@ -232,7 +229,7 @@ public class SubStepDefinitionParser {
         private final String name;
     }
 
-    private Directive isDirective(final String word) {
+    private static Directive isDirective(final String word) {
 
         Directive rtn = null;
 

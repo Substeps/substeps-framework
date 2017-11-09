@@ -327,7 +327,7 @@ public class SubstepNodeBuilder {
         }
     }
 
-    private Object[] getStepMethodArguments(final String stepParameter, final Map<String, String> parentArguments,
+    private static Object[] getStepMethodArguments(final String stepParameter, final Map<String, String> parentArguments,
                                             final String stepImplementationPattern, final List<Map<String, String>> inlineTable,
                                             final Class<?>[] parameterTypes, final Class<? extends Converter<?>>[] converterTypes,
                                             final StepImplementationNode stepNode) {
@@ -338,7 +338,7 @@ public class SubstepNodeBuilder {
 
         stepNode.setLine(substitutedStepParam);
         List<Object> argsList = Arguments.getArgs(stepImplementationPattern, substitutedStepParam, parameterTypes,
-                converterTypes);
+                converterTypes, Configuration.INSTANCE.getConfig());
 
         if (inlineTable != null) {
             if (argsList == null) {
@@ -364,7 +364,7 @@ public class SubstepNodeBuilder {
         return arguments;
     }
 
-    private Class<? extends Converter<?>>[] getParameterConverters(final Method method) {
+    private static Class<? extends Converter<?>>[] getParameterConverters(final Method method) {
 
         final Annotation[][] annotations = method.getParameterAnnotations();
         final int size = annotations.length;

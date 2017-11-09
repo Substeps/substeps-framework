@@ -224,9 +224,10 @@ public class ExecutionNodeRunner implements SubstepsRunner {
     private void processUncalledAndUnused(final Syntax syntax, final File dataOutputDir) {
         final List<StepImplementation> uncalledStepImplementations = syntax.getUncalledStepImplementations();
 
-        if (!dataOutputDir.exists()){
-            dataOutputDir.mkdir();
+        if (!dataOutputDir.exists() && !dataOutputDir.mkdir()){
+            log.error("failed to create directory: " + dataOutputDir.getAbsolutePath());
         }
+
 
         reportingUtil.writeUncalledStepImpls(uncalledStepImplementations, dataOutputDir);
 

@@ -38,7 +38,7 @@ public class Background {
         this.steps = stepsFrom(lineNumber, rawText, sourceFile);
     }
 
-    private List<Step> stepsFrom(final int backgroundLineNumber, final String backgroundText, final File sourceFile) {
+    private static List<Step> stepsFrom(final int backgroundLineNumber, final String backgroundText, final File sourceFile) {
         final List<Step> backgroundSteps = new ArrayList<Step>();
         final String[] bLines = backgroundText.split("\n");
         for (int i = 1; i < bLines.length; i++) {
@@ -64,7 +64,7 @@ public class Background {
         return this.steps;
     }
 
-    private String descriptionFor(final String text) {
+    private static String descriptionFor(final String text) {
         final int startIndex = text.indexOf(":") + 1;
 
         final int endIndex = text.indexOf("\n");

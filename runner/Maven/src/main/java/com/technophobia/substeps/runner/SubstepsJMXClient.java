@@ -89,7 +89,7 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
 
             addNotificationListener(objectName);
 
-			}
+      }
 
         } catch (final IOException e) {
 
@@ -164,7 +164,7 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
             return this.mbean.prepareExecutionConfigAsBytes(theConfig);
         }
         catch (SubstepsConfigurationException ex){
-            log.error("Failed to init tests: " + ex.getMessage());
+            log.error("Failed to init tests", ex);
             return null;
         }
     }
@@ -186,7 +186,7 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
         return null;
     }
 
-	@Override
+  @Override
     public List<SubstepExecutionFailure> getFailures() {
 
         return this.mbean.getFailures();

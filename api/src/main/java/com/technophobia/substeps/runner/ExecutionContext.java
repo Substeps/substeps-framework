@@ -42,8 +42,6 @@ public final class ExecutionContext {
         protected ExecutionContext initialValue() {
             return new ExecutionContext();
         }
-
-        ;
     };
 
     private Map<Scope, Map<String, Object>> scopedData = null;
@@ -66,7 +64,7 @@ public final class ExecutionContext {
 
         Map<String, Object> map = scopedData.get(scope);
         if (map == null) {
-            map = new HashMap<String, Object>();
+            map = new HashMap<>();
             scopedData.put(scope, map);
         }
         map.put(key, value);
