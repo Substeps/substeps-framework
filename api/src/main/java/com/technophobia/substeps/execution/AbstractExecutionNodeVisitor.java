@@ -34,49 +34,64 @@ import com.technophobia.substeps.execution.node.*;
  * nodes which have tags, if not overridden these nodes will call
  * visit(NodeWithChildren) or visit(IExecutionNode) depending on type.
  *
+ * @param <RETURN_TYPE> the type of class this visitor returns
  * @author rbarefield
  */
 public abstract class AbstractExecutionNodeVisitor<RETURN_TYPE> implements ExecutionNodeVisitor<RETURN_TYPE> {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public RETURN_TYPE visit(RootNode rootNode) {
-
         return visit((NodeWithChildren<?>) rootNode);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public RETURN_TYPE visit(FeatureNode featureNode) {
-
         return visit((TaggedNode) featureNode);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public RETURN_TYPE visit(BasicScenarioNode basicScenarioNode) {
-
         return visit((TaggedNode) basicScenarioNode);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public RETURN_TYPE visit(OutlineScenarioNode outlineNode) {
-
         return visit((TaggedNode) outlineNode);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public RETURN_TYPE visit(OutlineScenarioRowNode outlineScenarioRowNode) {
-
         return visit((TaggedNode) outlineScenarioRowNode);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public RETURN_TYPE visit(SubstepNode substepNode) {
-
         return visit((TaggedNode) substepNode);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public RETURN_TYPE visit(StepImplementationNode stepImplementationNode) {
-
         return visit((TaggedNode) stepImplementationNode);
     }
 

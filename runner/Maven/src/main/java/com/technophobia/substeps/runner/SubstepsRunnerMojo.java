@@ -103,7 +103,7 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
 
 
     @Override
-    public void executeAfterAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException{
+    public void executeAfterAllConfigs(Config masterConfig) throws MojoFailureException{
         processBuildData();
     }
 

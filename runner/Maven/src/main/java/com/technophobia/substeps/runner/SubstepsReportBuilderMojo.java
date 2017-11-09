@@ -42,17 +42,17 @@ public class SubstepsReportBuilderMojo extends BaseSubstepsMojo {
 
 
     @Override
-    public void executeConfig(Config cfg) throws MojoExecutionException, MojoFailureException {
+    public void executeConfig(Config cfg)  {
         // no op
     }
 
     @Override
-    public void executeBeforeAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException{
+    public void executeBeforeAllConfigs(Config masterConfig) {
         // no op
     }
 
     @Override
-    public void executeAfterAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException{
+    public void executeAfterAllConfigs(Config masterConfig) throws MojoFailureException{
 
         setupBuildEnvironmentInfo();
 

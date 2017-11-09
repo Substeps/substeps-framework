@@ -255,11 +255,11 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
         }
     }
 
-    public abstract void executeConfig(Config cfg) throws MojoExecutionException, MojoFailureException;
+    public abstract void executeConfig(Config cfg) throws MojoExecutionException;
 
-    public abstract void executeBeforeAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException;
+    public abstract void executeBeforeAllConfigs(Config masterConfig) throws MojoExecutionException;
 
-    public abstract void executeAfterAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException;
+    public abstract void executeAfterAllConfigs(Config masterConfig) throws  MojoFailureException;
 
     private void ensureValidConfiguration() throws MojoExecutionException {
 
