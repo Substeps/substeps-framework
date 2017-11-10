@@ -25,12 +25,6 @@ import java.util.Map;
 
 public class Scenario extends RootFeature {
 
-    @Override
-    public String toString() {
-        return "Scenario: " + this.description;
-    }
-
-
     private String description;
     private Background background = null;
     private List<Step> steps;
@@ -44,6 +38,10 @@ public class Scenario extends RootFeature {
     private int sourceStartOffset = -1;
     private int sourceStartLineNumber = -1;
 
+    @Override
+    public String toString() {
+        return "Scenario: " + this.description;
+    }
 
     /**
      * @return the background

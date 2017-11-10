@@ -53,7 +53,7 @@ public class PatternMap<V> {
      * @param value   the value
      * @throws IllegalStateException - if the map already contains the specified patter.
      */
-    public void put(final String pattern, final V value) throws IllegalStateException {
+    public void put(final String pattern, final V value) {
 
         if (pattern != null) {
             if (keys.containsKey(pattern)) {

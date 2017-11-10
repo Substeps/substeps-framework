@@ -67,7 +67,7 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
      * @parameter
      */
     @Parameter
-    private final GlossaryPublisher glossaryPublisher = null;
+    private GlossaryPublisher glossaryPublisher = null;
 
     private List<StepImplementationsDescriptor> runJavaDoclet(final String classToDocument) {
 
@@ -102,7 +102,8 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
                     path
             };
 
-            //            Main.execute(args);
+            // the custom doclet generates quite a lot of noise around things missing from the classpath etc -
+            // not important in this context, so consume and discard apart from the errors..
 
             StringWriter esw = new StringWriter();
             PrintWriter err = new PrintWriter(esw);
@@ -149,17 +150,17 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
 
 
     @Override
-    public void executeConfig(Config cfg) throws MojoExecutionException, MojoFailureException {
+    public void executeConfig(Config cfg)  {
         // no op
     }
 
     @Override
-    public void executeBeforeAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException{
+    public void executeBeforeAllConfigs(Config masterConfig) {
         // no op
     }
 
     @Override
-    public void executeAfterAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException{
+    public void executeAfterAllConfigs(Config masterConfig) {
 
         setupBuildEnvironmentInfo();
 
@@ -301,7 +302,9 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
         }
 
         try {
-            Files.write(xml, output, Charset.forName("UTF-8"));
+
+            Files.asCharSink(output, Charset.forName("UTF-8")).write(xml);
+
         } catch (final IOException e) {
             log.error("error writing file", e);
         }
@@ -348,7 +351,7 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
     }
 
 
-    private String convertClassNameToPath(final String className) {
+    private static String convertClassNameToPath(final String className) {
         return className.replace('.', '/') + ".class";
     }
 
@@ -360,8 +363,9 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
         if (artifacts != null) {
             for (final Artifact a : artifacts) {
                 // does this jar contain this class?
+                JarFile tempJarFile = null;
                 try {
-                    final JarFile tempJarFile = new JarFile(a.getFile());
+                    tempJarFile = new JarFile(a.getFile());
 
                     final JarEntry jarEntry = tempJarFile
                             .getJarEntry(convertClassNameToPath(className));
@@ -372,6 +376,15 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
                     }
                 } catch (final IOException e) {
                     log.error("IO Exception opening jar file", e);
+                }
+                finally {
+                    if (tempJarFile != null){
+                        try {
+                            tempJarFile.close();
+                        } catch (IOException e) {
+                            log.debug("ioexcception closing jar file", e);
+                        }
+                    }
                 }
             }
         }

@@ -43,15 +43,6 @@ public class TagManager extends AbstractExecutionNodeVisitor<Boolean> {
     private Set<String> acceptedTags = null;
     private Set<String> excludedTags = null;
 
-    public static TagManager fromTags(final String tags){
-        if (tags != null){
-            return new TagManager(tags);
-        }
-        else {
-            return null;
-        }
-    }
-
     public TagManager(final String tagList) {
 
         acceptedTags = new HashSet<String>();
@@ -69,6 +60,16 @@ public class TagManager extends AbstractExecutionNodeVisitor<Boolean> {
         }
         insertCommandLineTags();
     }
+
+    public static TagManager fromTags(final String tags){
+        if (tags != null){
+            return new TagManager(tags);
+        }
+        else {
+            return null;
+        }
+    }
+
 
     public void insertTagOverlay(final String textValue) {
         log.debug("Inserting tag overlays " + textValue);
@@ -124,7 +125,7 @@ public class TagManager extends AbstractExecutionNodeVisitor<Boolean> {
 
         if (acceptAll || (acceptedTags.isEmpty() && excludedTags.isEmpty())) {
             return true;
-        } else if (acceptedTags.size() > 0 && (tags == null || tags.isEmpty())) {
+        } else if (!acceptedTags.isEmpty()  && (tags == null || tags.isEmpty())) {
             return false;
         } else if (containsAny(tags, excludedTags)) {
             return false;
@@ -133,7 +134,7 @@ public class TagManager extends AbstractExecutionNodeVisitor<Boolean> {
         }
     }
 
-    private <T> boolean containsAny(final Collection<T> col1, final Collection<T> col2) {
+    private static <T> boolean containsAny(final Collection<T> col1, final Collection<T> col2) {
         if (col1 != null && col2 != null) {
             if (col1.size() > col2.size()) {
                 for (final T item : col1) {
@@ -152,7 +153,7 @@ public class TagManager extends AbstractExecutionNodeVisitor<Boolean> {
         return false;
     }
 
-    private String[] toArray(final String annotationValue) {
+    private static String[] toArray(final String annotationValue) {
         final String[] split = annotationValue.split("[ \\s]");
         final String[] results = new String[split.length];
         for (int i = 0; i < split.length; i++) {
@@ -165,7 +166,7 @@ public class TagManager extends AbstractExecutionNodeVisitor<Boolean> {
         return acceptedTags;
     }
 
-    private String normaliseTag(final String tag) {
+    private static String normaliseTag(final String tag) {
         if (tag.startsWith(IGNORE_TAG_PREFIX)) {
             return tag.substring(2);
         }

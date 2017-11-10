@@ -39,6 +39,7 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
 
     /**
      * will be removed in a later release, use .conf files instead
+     * @deprecated use .config files for runtime configuration instead
      */
     @Deprecated
     @Parameter
@@ -86,6 +87,7 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
     /**
      * if true a jvm will be spawned to run substeps otherwise substeps will
      * execute within the same jvm as maven
+     * @deprecated use .config files for runtime configuration instead
      */
     @Deprecated
     @Parameter(property = "runTestsInForkedVM", defaultValue = "false")
@@ -95,6 +97,7 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
     /**
      * When running in forked mode, a port is required to communicate between
      * maven and substeps, to set explicitly use -DjmxPort=9999
+     * @deprecated use .config files for runtime configuration instead
      */
     @Parameter(defaultValue = "9999")
     @Deprecated
@@ -102,6 +105,7 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
 
     /**
      * A space delimited string of vm arguments to pass to the forked jvm
+     * @deprecated use .config files for runtime configuration instead
      */
     @Deprecated
     @Parameter
@@ -251,11 +255,11 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
         }
     }
 
-    public abstract void executeConfig(Config cfg) throws MojoExecutionException, MojoFailureException;
+    public abstract void executeConfig(Config cfg) throws MojoExecutionException;
 
-    public abstract void executeBeforeAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException;
+    public abstract void executeBeforeAllConfigs(Config masterConfig) throws MojoExecutionException;
 
-    public abstract void executeAfterAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException;
+    public abstract void executeAfterAllConfigs(Config masterConfig) throws  MojoFailureException;
 
     private void ensureValidConfiguration() throws MojoExecutionException {
 
@@ -303,7 +307,8 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
 
                 File out = new File(resourcesDir, "migrated-application.conf");
 
-                Files.write(configSrc, out , Charset.defaultCharset());
+                Files.asCharSink(out, Charset.defaultCharset()).write(configSrc);
+
 
                 throw new MojoExecutionException(this, "Substeps execution config has changed and moved to a config file", "A new config file has been written to: " + out.getAbsolutePath() + ",\n this will need checking and renaming to application.conf");
 

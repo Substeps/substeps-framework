@@ -224,9 +224,10 @@ public class ExecutionNodeRunner implements SubstepsRunner {
     private void processUncalledAndUnused(final Syntax syntax, final File dataOutputDir) {
         final List<StepImplementation> uncalledStepImplementations = syntax.getUncalledStepImplementations();
 
-        if (!dataOutputDir.exists()){
-            dataOutputDir.mkdir();
+        if (!dataOutputDir.exists() && !dataOutputDir.mkdir()){
+            log.error("failed to create directory: " + dataOutputDir.getAbsolutePath());
         }
+
 
         reportingUtil.writeUncalledStepImpls(uncalledStepImplementations, dataOutputDir);
 
@@ -328,12 +329,6 @@ public class ExecutionNodeRunner implements SubstepsRunner {
             immediateParents = new ArrayList<ExecutionNodeUsage>();
             callerHierarchy.put(usage, immediateParents);
         }
-//        else {
-//            log.trace("got existing usages of node: ");
-//            for (final ExecutionNodeUsage u : immediateParents) {
-//                log.trace("already found: " + u.toString());
-//            }
-//        }
         log.trace("adding used by descr: " + node.getParent().getDescription() + " line: " + node.getParent().getLine());
 
         immediateParents.add(new ExecutionNodeUsage(node.getParent()));

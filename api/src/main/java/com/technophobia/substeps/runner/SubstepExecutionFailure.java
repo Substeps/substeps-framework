@@ -32,15 +32,6 @@ import java.io.Serializable;
  */
 public class SubstepExecutionFailure implements Serializable {
 
-    public static final Function<SubstepExecutionFailure, Long> GET_NODE_ID = new Function<SubstepExecutionFailure, Long>() {
-
-        @Override
-        public Long apply(final SubstepExecutionFailure failure) {
-            return failure == null || failure.getExeccutionNode() == null ? null : failure.getExeccutionNode().getId();
-        }
-
-    };
-
     private static final long serialVersionUID = 4981517213059529046L;
 
     private IExecutionNode executionNode;
@@ -60,30 +51,7 @@ public class SubstepExecutionFailure implements Serializable {
     }
 
 
-
-
-    public static SubstepExecutionFailure criticalFailure(Throwable cause, IExecutionNode node, byte[] screenshotBytes) {
-        SubstepExecutionFailure sef = new SubstepExecutionFailure(cause, node, false, false, screenshotBytes);
-
-        node.getResult().setFailure(sef);
-
-        return sef;
-
-    }
-
-
-    public static SubstepExecutionFailure nonCriticalFailure(final Throwable cause, final IExecutionNode node, byte[] screenshotBytes) {
-
-        SubstepExecutionFailure sef = new SubstepExecutionFailure(cause, node, false, true, screenshotBytes);
-
-        node.getResult().setFailure(sef);
-
-        return sef;
-    }
-
-
     public SubstepExecutionFailure(final Throwable cause) {
-
         this.throwableInfo = new ThrowableInfo(cause);
     }
 
@@ -120,6 +88,25 @@ public class SubstepExecutionFailure implements Serializable {
     public SubstepExecutionFailure(final Throwable cause, final IExecutionNode node, final ExecutionResult result) {
         this(cause, node);
         node.getResult().setResult(result);
+    }
+
+    public static SubstepExecutionFailure criticalFailure(Throwable cause, IExecutionNode node, byte[] screenshotBytes) {
+        SubstepExecutionFailure sef = new SubstepExecutionFailure(cause, node, false, false, screenshotBytes);
+
+        node.getResult().setFailure(sef);
+
+        return sef;
+
+    }
+
+
+    public static SubstepExecutionFailure nonCriticalFailure(final Throwable cause, final IExecutionNode node, byte[] screenshotBytes) {
+
+        SubstepExecutionFailure sef = new SubstepExecutionFailure(cause, node, false, true, screenshotBytes);
+
+        node.getResult().setFailure(sef);
+
+        return sef;
     }
 
 
@@ -202,5 +189,14 @@ public class SubstepExecutionFailure implements Serializable {
     public void setScreenshot(final byte[] screenshot) {
         this.screenshot = screenshot;
     }
+
+    public static final Function<SubstepExecutionFailure, Long> GET_NODE_ID = new Function<SubstepExecutionFailure, Long>() {
+
+        @Override
+        public Long apply(final SubstepExecutionFailure failure) {
+            return failure == null || failure.getExeccutionNode() == null ? null : failure.getExeccutionNode().getId();
+        }
+
+    };
 
 }

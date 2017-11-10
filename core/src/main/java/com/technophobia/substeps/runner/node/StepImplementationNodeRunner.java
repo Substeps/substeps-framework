@@ -120,7 +120,7 @@ public class StepImplementationNodeRunner extends AbstractNodeRunner<StepImpleme
                 (Class<? extends ProvidesScreenshot>) node.getTargetClass()) : null;
     }
 
-    private <T extends ProvidesScreenshot> byte[] getScreenshot(RootNodeExecutionContext context,
+    private static <T extends ProvidesScreenshot> byte[] getScreenshot(RootNodeExecutionContext context,
                                                                 Class<T> screenshotClass) {
 
         T screenshotTakingInstance = context.getMethodExecutor().getImplementation(screenshotClass);

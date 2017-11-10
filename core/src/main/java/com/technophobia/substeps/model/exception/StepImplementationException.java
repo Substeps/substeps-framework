@@ -25,8 +25,8 @@ public class StepImplementationException extends SubstepsException {
     private static final long serialVersionUID = 2361658683635343317L;
 
     // class can't actually be serialized fully anyway
-    private transient final Class<?> implementingClass;
-    private transient final Method implementingMethod;
+    private final transient Class<?> implementingClass;
+    private final transient Method implementingMethod;
 
     public StepImplementationException(final Class<?> implementingClass, final Method implementingMethod,
                                        final String message) {

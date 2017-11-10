@@ -60,27 +60,6 @@ public class Step {
 
     private boolean isSubstep;
 
-    /**
-     * @return the sourceStartOffset
-     */
-    public int getSourceStartOffset() {
-        return this.sourceStartOffset;
-    }
-
-    /**
-     * @param sourceStartOffset the sourceStartOffset to set
-     */
-    public void setSourceStartOffset(final int sourceStartOffset) {
-        this.sourceStartOffset = sourceStartOffset;
-    }
-
-    /**
-     * @return the line
-     */
-    public String getLine() {
-        return this.line;
-    }
-
     // tests
     public Step(final String line) {
         this(line, false, null, -1, -1);
@@ -142,6 +121,27 @@ public class Step {
             setParamAndParamNames();
         }
         this.sourceLineNumber = -1;
+    }
+
+    /**
+     * @return the sourceStartOffset
+     */
+    public int getSourceStartOffset() {
+        return this.sourceStartOffset;
+    }
+
+    /**
+     * @param sourceStartOffset the sourceStartOffset to set
+     */
+    public void setSourceStartOffset(final int sourceStartOffset) {
+        this.sourceStartOffset = sourceStartOffset;
+    }
+
+    /**
+     * @return the line
+     */
+    public String getLine() {
+        return this.line;
     }
 
     private void setParamAndParamNames() {

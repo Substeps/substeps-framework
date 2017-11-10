@@ -22,12 +22,20 @@ import org.apache.maven.plugin.logging.Log;
 
 public class ForkedProcessCloser implements Runnable {
 
+    private static final long GRACEFULL_SHUTDOWN_TIMEOUT_MILLIS = 2 * 1000L;
+
     private SubstepsJMXClient client;
     private Process forkedJvm;
     private Thread thread;
     private Log log;
 
-    private static final long GRACEFULL_SHUTDOWN_TIMEOUT_MILLIS = 2 * 1000L;
+    private ForkedProcessCloser(SubstepsJMXClient client, Process forkedJvm, Log log) {
+
+        this.client = client;
+        this.forkedJvm = forkedJvm;
+        this.log = log;
+        this.thread = new Thread(this);
+    }
 
     public static ForkedProcessCloser addHook(SubstepsJMXClient client, Process forkedJvm, Log log) {
 
@@ -36,17 +44,10 @@ public class ForkedProcessCloser implements Runnable {
         return hook;
     }
 
+
     public void notifyShutdownSuccessful() {
 
         Runtime.getRuntime().removeShutdownHook(getThread());
-    }
-
-    private ForkedProcessCloser(SubstepsJMXClient client, Process forkedJvm, Log log) {
-
-        this.client = client;
-        this.forkedJvm = forkedJvm;
-        this.log = log;
-        this.thread = new Thread(this);
     }
 
     private Thread getThread() {

@@ -25,16 +25,9 @@ import java.io.File;
 
 public interface SyntaxErrorReporter {
 
-    void reportFeatureError(File file, String line, int lineNumber, int offset, String description)
-            throws RuntimeException;
-
-
-    void reportFeatureError(File file, String line, int lineNumber, int offset, String description, RuntimeException ex)
-            throws RuntimeException;
-
+    void reportFeatureError(File file, String line, int lineNumber, int offset, String description);
 
     void reportSubstepsError(SubstepsParsingException ex);
-
 
     void reportStepImplError(StepImplementationException ex);
 }

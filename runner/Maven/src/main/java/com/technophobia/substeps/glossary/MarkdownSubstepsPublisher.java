@@ -34,6 +34,14 @@ public class MarkdownSubstepsPublisher extends FileBasedGlossaryPublisher implem
 
     private static final Logger log = LoggerFactory.getLogger(MarkdownSubstepsPublisher.class);
 
+    private static final String TABLE_ROW_SECTION_FORMAT = "%s\n" +
+            "==========\n" +
+            "| **Keyword**  | **Example**  | **Description** |\n" +
+            "| :------------ |:---------------| :-----|";
+
+    private static final String TABLE_ROW_FORMAT = "| %s | %s | %s |";
+
+
     @Override
     public String getDefaultFileName() {
         return "stepimplementations.md";
@@ -60,7 +68,7 @@ public class MarkdownSubstepsPublisher extends FileBasedGlossaryPublisher implem
     }
 
 
-    private void buildStepTagRows(final StringBuilder buf, final Collection<StepDescriptor> infos) {
+    private static void buildStepTagRows(final StringBuilder buf, final Collection<StepDescriptor> infos) {
 
         for (final StepDescriptor info : infos) {
 
@@ -77,11 +85,5 @@ public class MarkdownSubstepsPublisher extends FileBasedGlossaryPublisher implem
         }
     }
 
-    private static final String TABLE_ROW_SECTION_FORMAT = "%s\n" +
-            "==========\n" +
-            "| **Keyword**  | **Example**  | **Description** |\n" +
-            "| :------------ |:---------------| :-----|";
-
-    private static final String TABLE_ROW_FORMAT = "| %s | %s | %s |";
 
 }

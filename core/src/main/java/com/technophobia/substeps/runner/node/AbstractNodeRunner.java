@@ -143,7 +143,7 @@ public abstract class AbstractNodeRunner<NODE_TYPE extends IExecutionNode, VISIT
                     }
                     else {
                         // it's a child node that's failed - no need to copy the details
-                        node.getResult().setChildFailure(lastFailure);
+                        node.getResult().setChildFailure();
                     }
                 }
                 else {

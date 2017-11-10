@@ -64,7 +64,6 @@ public class Syntax {
         this.syntaxErrorReporter = syntaxErrorReporter;
     }
 
-
     public Map<String, PatternMap<StepImplementation>> getStepImplementationMap() {
         return this.stepImplementationMap;
     }

@@ -21,6 +21,7 @@ package com.technophobia.substeps.runner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
+import com.technophobia.substeps.model.exception.SubstepsRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -221,7 +222,7 @@ class InitialisationClassNode {
             if (safetyCount > 100) {
                 String message = "Unable to resolve class initialisation order, please log this as a bug with substeps";
                 InitialisationClassSorter.log.error(message);
-                throw new RuntimeException(message);
+                throw new SubstepsRuntimeException(message);
             }
         }
 

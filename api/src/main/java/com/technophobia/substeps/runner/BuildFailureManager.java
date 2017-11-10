@@ -65,7 +65,7 @@ public class BuildFailureManager extends AbstractExecutionNodeVisitor<String> {
 
     }
 
-    private String getBuildInfoString(final String msg, final List<List<IExecutionNode>> failures) {
+    private static String getBuildInfoString(final String msg, final List<List<IExecutionNode>> failures) {
 
         final StringBuilder buf = new StringBuilder();
 

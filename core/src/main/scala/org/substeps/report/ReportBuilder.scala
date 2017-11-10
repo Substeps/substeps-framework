@@ -164,7 +164,8 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
       val dataFile = new File(dataDir, "uncalled.stepdefs.js")
 
       if (dataFile.exists()) {
-        val rawUncalledStepDefs = Files.toString(dataFile, Charset.forName("UTF-8"))
+
+        val rawUncalledStepDefs = Files.asCharSource(dataFile, Charset.forName("UTF-8")).read()
 
         parse(rawUncalledStepDefs).extract[List[UncalledStepDef]]
       }
@@ -179,7 +180,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
       val dataFile = new File(dataDir, "uncalled.stepimpls.js")
       if (dataFile.exists()) {
-        val rawUncalledStepImpls = Files.toString(dataFile, Charset.forName("UTF-8"))
+        val rawUncalledStepImpls = Files.asCharSource(dataFile, Charset.forName("UTF-8")).read()
 
         parse(rawUncalledStepImpls).extract[List[UncalledStepImpl]]
       }
@@ -205,7 +206,9 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     implicit val rDir : File = repDir
 
     val dataDir = new File(repDir, "data")
-    dataDir.mkdir()
+    if (!dataDir.mkdir()){
+      log.error("failed to create dir: " + dataDir.getAbsolutePath)
+    }
 
     FileUtils.copyDirectory(new File(sourceDataDir.getPath), dataDir)
 
@@ -671,7 +674,9 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
   def createFile(name : String)(implicit reportDir : File): File = {
     val f = new File(reportDir, name)
-    f.createNewFile()
+    if (!f.createNewFile()){
+      log.error("failed to create file: " + f.getAbsolutePath)
+    }
     f
   }
 
@@ -720,7 +725,8 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
       val files = srcDir.listFiles().toList
       files.find(f => f.getName == "results.json").map(resultsFile => {
-        read[RootNodeSummary](Files.toString(resultsFile, Charset.defaultCharset()))
+
+        read[RootNodeSummary](Files.asCharSource(resultsFile, Charset.defaultCharset()).read())
       })
     }
     val featureSummaries =
@@ -742,7 +748,8 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
                 val scenarioResultsFile = new File(featureFileResultsDir, scenarioSummary.filename)
 
-                read[NodeDetail](Files.toString(scenarioResultsFile, Charset.defaultCharset()))
+
+                read[NodeDetail](Files.asCharSource(scenarioResultsFile, Charset.defaultCharset()).read())
 
               })
 
@@ -768,7 +775,8 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     implicit val formats = Serialization.formats(NoTypeHints)
 
     srcDir.listFiles().toList.find(f => f.getName == srcDir.getName + ".json").map(featureResultsFile =>{
-      read[FeatureSummary](Files.toString(featureResultsFile, Charset.defaultCharset()))
+
+      read[FeatureSummary](Files.asCharSource(featureResultsFile, Charset.defaultCharset()).read())
     })
 
   }

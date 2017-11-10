@@ -20,20 +20,69 @@ package com.technophobia.substeps.execution;
 
 import com.technophobia.substeps.execution.node.*;
 
+/**
+ * Interface of visitor pattern for traversing the tree of ExecutionNodes, extend the AbstractExecutionNodeVisitor
+ * to then just implement the interesting nodes
+ *
+ * @param <RETURN_TYPE> the type returned by the visitor implementation
+ */
 public interface ExecutionNodeVisitor<RETURN_TYPE> {
 
+
+    /**
+     * Visit the root node
+     *
+     * @param rootNode the root node
+     * @return the return type
+     */
     RETURN_TYPE visit(RootNode rootNode);
 
+    /**
+     * Visit a feature node
+     *
+     * @param featureNode the feature node
+     * @return the return type
+     */
     RETURN_TYPE visit(FeatureNode featureNode);
 
+    /**
+     * Visit a basic scenario node
+     *
+     * @param basicScenarioNode the basic scenario node
+     * @return the return type
+     */
     RETURN_TYPE visit(BasicScenarioNode basicScenarioNode);
 
+    /**
+     * Visit an outline scenario node.
+     *
+     * @param outlineNode the outline node
+     * @return the return type
+     */
     RETURN_TYPE visit(OutlineScenarioNode outlineNode);
 
+    /**
+     * Visit an outline scenario row node
+     *
+     * @param outlineScenarioRowNode the outline scenario row node
+     * @return the return type
+     */
     RETURN_TYPE visit(OutlineScenarioRowNode outlineScenarioRowNode);
 
+    /**
+     * Visit a substep node
+     *
+     * @param substepNode the substep node
+     * @return the return type
+     */
     RETURN_TYPE visit(SubstepNode substepNode);
 
+    /**
+     * Visit a step implementation node
+     *
+     * @param stepImplementationNode the step implementation node
+     * @return the return type
+     */
     RETURN_TYPE visit(StepImplementationNode stepImplementationNode);
 
 }

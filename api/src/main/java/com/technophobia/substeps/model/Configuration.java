@@ -19,12 +19,8 @@
 
 package com.technophobia.substeps.model;
 
-import com.typesafe.config.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.typesafe.config.Config;
 import org.substeps.runner.NewSubstepsExecutionConfig;
-
-import java.net.URL;
 
 /**
  * @author ian
@@ -40,20 +36,6 @@ public enum Configuration {
     public Config getConfig(){
         return NewSubstepsExecutionConfig.threadLocalConfig();
     }
-
-
-    /**
-     * Implementors of substep libraries should call this with default
-     * properties for their library
-     *
-     * @param url  to a properties file containing default values
-     * @param name to name of the properties file that is being added
-     */
-    @Deprecated
-    public void addDefaultProperties(final URL url, final String name) {
-        throw new IllegalArgumentException("method no longer supported, rename default substep library properties to reference.conf and they will be loaded by Typesafe config");
-    }
-
 
     public String getString(final String key) {
         return getConfig().getString(key);

@@ -115,7 +115,7 @@ public class ExecutionNodeResult implements Serializable {
         this.screenshot = screenshot;
     }
 
-    public void setChildFailure(SubstepExecutionFailure substepExecutionFailure) {
+    public void setChildFailure() {
 
         recordComplete();
         // this is to prevent a failure from overwriting a parse or setup / tear down failure

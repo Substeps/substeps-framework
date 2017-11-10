@@ -86,7 +86,7 @@ public class RootNodeExecutionContext {
     /**
      * @param failure
      */
-    private void logFailure(final SubstepExecutionFailure failure) {
+    private static void logFailure(final SubstepExecutionFailure failure) {
 
         final Throwable here = new Throwable();
 

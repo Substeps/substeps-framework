@@ -52,11 +52,11 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
     private JMXConnector cntor = null;
     private MBeanServerConnection mbsc = null;
 
+    private ExecutionNodeResultNotificationHandler notificiationHandler = null;
+
     public void setNotificiationHandler(ExecutionNodeResultNotificationHandler notificiationHandler) {
         this.notificiationHandler = notificiationHandler;
     }
-
-    private ExecutionNodeResultNotificationHandler notificiationHandler = null;
 
     public byte[] runAsBytes() {
 
@@ -89,7 +89,7 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
 
             addNotificationListener(objectName);
 
-			}
+      }
 
         } catch (final IOException e) {
 
@@ -164,7 +164,7 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
             return this.mbean.prepareExecutionConfigAsBytes(theConfig);
         }
         catch (SubstepsConfigurationException ex){
-            log.error("Failed to init tests: " + ex.getMessage());
+            log.error("Failed to init tests", ex);
             return null;
         }
     }
@@ -186,7 +186,7 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
         return null;
     }
 
-	@Override
+  @Override
     public List<SubstepExecutionFailure> getFailures() {
 
         return this.mbean.getFailures();
@@ -233,7 +233,7 @@ public class SubstepsJMXClient implements SubstepsRunner, NotificationListener {
             ExecutionNodeResult result = getFromBytes(rawBytes);
 
             log.trace("received a JMX event msg: " + notification.getMessage() +
-                    " seq: " + notification.getSequenceNumber() + " exec result node id: " + result.getExecutionNodeId());
+                    " seq: " + notification.getSequenceNumber() + " exec result node id: " + (result != null ? result.getExecutionNodeId() : "no result"));
 
                     notificiationHandler.handleNotification(result);
         } else if (notification.getType().compareTo("ExecConfigComplete") == 0) {

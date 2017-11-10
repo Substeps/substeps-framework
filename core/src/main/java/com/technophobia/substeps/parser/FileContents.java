@@ -174,7 +174,7 @@ public class FileContents {
     // 0-based.
     // This method makes this clear, rather than using undocumented +1, -1
     // operations on lineNumber
-    private int normaliseLineNumber(final int lineNumber) {
+    private static int normaliseLineNumber(final int lineNumber) {
         return lineNumber - 1;
     }
 
@@ -203,7 +203,7 @@ public class FileContents {
     }
 
 
-    private int firstCharacterIndex(final String line) {
+    private static int firstCharacterIndex(final String line) {
         int offset = 0;
         if (!line.isEmpty()) {
             while (Character.isWhitespace(line.charAt(offset))) {

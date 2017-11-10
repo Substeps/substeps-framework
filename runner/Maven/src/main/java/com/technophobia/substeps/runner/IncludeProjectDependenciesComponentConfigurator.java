@@ -102,7 +102,7 @@ public class IncludeProjectDependenciesComponentConfigurator extends
     }
 
 
-    private URL[] buildURLs(final List<String> runtimeClasspathElements)
+    private static URL[] buildURLs(final List<String> runtimeClasspathElements)
             throws ComponentConfigurationException {
         // Add the projects classes and dependencies
         final List<URL> urls = new ArrayList<URL>(

@@ -25,7 +25,7 @@ public class SubStepsTask extends Task {
     private static final String REPORT_DIR_DEFAULT = ".";
 
     @Override
-    public void execute() throws BuildException {
+    public void execute() {
         final BuildFailureManager buildFailureManager = new BuildFailureManager();
 
         List<SubstepsExecutionConfig> substepConfigs = new ArrayList<SubstepsExecutionConfig>();
@@ -81,7 +81,7 @@ public class SubStepsTask extends Task {
 
     }
 
-    private RootNode runExecutionConfig(final SubstepsExecutionConfig theConfig,
+    private static RootNode runExecutionConfig(final SubstepsExecutionConfig theConfig,
                                         final List<SubstepExecutionFailure> failures) {
 
         final SubstepsRunner runner = ExecutionNodeRunnerFactory.createRunner();

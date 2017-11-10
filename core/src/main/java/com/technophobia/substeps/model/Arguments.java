@@ -81,7 +81,7 @@ public final class Arguments {
         }
     }
 
-    public static String substituteValues(String src) {
+    public static String substituteValues(String src, Config cfg) {
 
         ParameterSubstitution parameterSubstituionConfig = NewSubstepsExecutionConfig.getParameterSubstituionConfig();
 
@@ -92,8 +92,8 @@ public final class Arguments {
 
             String normalizedValue = src;
 
-            if (Configuration.INSTANCE.getConfig().hasPath(key)){
-                String substitute = Configuration.INSTANCE.getString(key);
+            if (cfg.hasPath(key)){
+                String substitute = cfg.getString(key);
 
                 if (substitute == null){
                     throw new SubstepsRuntimeException("Failed to resolve property " + src + " to be substituted ");
@@ -128,7 +128,7 @@ public final class Arguments {
 
         ArrayList<String> argsList = null;
 
-        String patternCopy = new String(patternString);
+        String patternCopy = patternString;
         if (keywordPrecedence != null && StringUtils.startsWithAny(patternString, keywordPrecedence)) {
             //
             for (String s : keywordPrecedence) {
@@ -150,7 +150,7 @@ public final class Arguments {
         if (matcher.find()) {
 
             for (int i = 1; i <= groupCount; i++) {
-                final String arg = substituteValues(matcher.group(i));
+                final String arg = substituteValues(matcher.group(i), cfg);
 
                 if (arg != null) {
                     if (argsList == null) {
@@ -184,7 +184,7 @@ public final class Arguments {
 
 
     public static List<Object> getArgs(final String patternString, final String sourceString,
-                                       final Class<?>[] parameterTypes, final Class<? extends Converter<?>>[] converterTypes) {
+                                       final Class<?>[] parameterTypes, final Class<? extends Converter<?>>[] converterTypes, Config cfg) {
 
         log.debug("Arguments getArgs List<Object> with pattern: " + patternString + " and sourceStr: "
                 + sourceString);
@@ -207,7 +207,7 @@ public final class Arguments {
                     if (argsList == null) {
                         argsList = new ArrayList<>();
                     }
-                    String substituted = substituteValues(arg);
+                    String substituted = substituteValues(arg, cfg);
 
                         argsList.add(getObjectArg(substituted, parameterTypes[argIdx], converterTypes[argIdx]));
                 }

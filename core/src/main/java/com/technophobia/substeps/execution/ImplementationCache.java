@@ -77,7 +77,7 @@ public class ImplementationCache implements MethodExecutor {
      * @throws InstantiationException
      * @throws InvocationTargetException
      */
-    private Object instantiateClass(final Class<?> clazz) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+    private static Object instantiateClass(final Class<?> clazz) throws IllegalAccessException, InstantiationException, InvocationTargetException {
 
         Class<?> enclosingClass = clazz.getEnclosingClass();
 

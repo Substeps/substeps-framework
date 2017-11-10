@@ -49,7 +49,7 @@ public class ScenarioNodeBuilder {
     }
 
     // TODO - to turn off - @SuppressWarnings("PMD.AvoidCatchingThrowable")
-    public ScenarioNode<?> build(final Scenario scenario, final Set<String> inheritedTags, int depth) {
+    public ScenarioNode<? extends IExecutionNode> build(final Scenario scenario, final Set<String> inheritedTags, int depth) {
 
         if (parameters.isRunnable(scenario)) {
 
@@ -62,7 +62,7 @@ public class ScenarioNodeBuilder {
         }
     }
 
-    private ScenarioNode<?> buildRunnableScenarioNode(final Scenario scenario, Set<String> inheritedTags, int depth) {
+    private ScenarioNode<? extends IExecutionNode> buildRunnableScenarioNode(final Scenario scenario, Set<String> inheritedTags, int depth) {
 
         ScenarioNode<?> scenarioNode = null;
 

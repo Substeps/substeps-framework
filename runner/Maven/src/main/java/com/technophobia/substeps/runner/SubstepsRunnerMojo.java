@@ -103,12 +103,12 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
 
 
     @Override
-    public void executeAfterAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException{
+    public void executeAfterAllConfigs(Config masterConfig) throws MojoFailureException{
         processBuildData();
     }
 
     @Override
-    public void executeBeforeAllConfigs(Config masterConfig) throws MojoExecutionException, MojoFailureException{
+    public void executeBeforeAllConfigs(Config masterConfig) throws MojoExecutionException{
 
         // write out the master config to the root data dir
         File rootDataDir = NewSubstepsExecutionConfig.getRootDataDir(masterConfig);
@@ -121,21 +121,17 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
             String renderedConfig = SubstepsConfigLoader.render(masterConfig);
             this.getLog().info("\n\n *** USING COMBINED CONFIG:\n\n" + renderedConfig + "\n\n");
 
-            Files.write(renderedConfig, outFile, Charset.forName("UTF-8"));
+            Files.asCharSink(outFile, Charset.forName("UTF-8")).write(renderedConfig);
         }
         catch (IOException e){
             throw new MojoExecutionException(e.getMessage(), e);
         }
     }
 
-    private void mkdirOrException(File dir)  {
-        if (!dir.exists()){
-
-            if (!dir.mkdirs()){
-                throw new SubstepsRuntimeException("Failed to create dir: " + dir.getAbsolutePath());
-            }
+    private static void mkdirOrException(File dir)  {
+        if (!dir.exists() && !dir.mkdirs()){
+            throw new SubstepsRuntimeException("Failed to create dir: " + dir.getAbsolutePath());
         }
-
     }
 
 

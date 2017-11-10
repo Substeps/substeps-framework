@@ -125,7 +125,7 @@ public class SetupAndTearDown {
     }
 
 
-    public void runSetup(final Scope currentScope, IExecutionNode node) throws Throwable {
+    public void runSetup(final Scope currentScope, IExecutionNode node){
         this.log.trace("running setup for scope: " + currentScope);
 
         ExecutionContext.put(currentScope, "SCOPE_DESCRIPTION", node.getDescription());

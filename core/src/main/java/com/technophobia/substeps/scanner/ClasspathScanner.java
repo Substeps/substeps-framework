@@ -124,13 +124,13 @@ public class ClasspathScanner {
         return getClassesWithAnnotation(desiredAnnotation, classLoader, cpElements);
     }
 
-    private String convertFileToClass(final File f, final File root) {
+    private static String convertFileToClass(final File f, final File root) {
         final String fqp = f.getAbsolutePath().substring(root.getAbsolutePath().length() + 1,
                 f.getAbsolutePath().length() - 6);
         return fqp.replace(File.separatorChar, '.');
     }
 
-    private List<File> getAllFiles(final File root, final String extension) {
+    private static List<File> getAllFiles(final File root, final String extension) {
         final FileFilter filter = f -> f.isDirectory() || (f.isFile() && f.getName().endsWith(extension));
 
         final List<File> files = new ArrayList<File>();

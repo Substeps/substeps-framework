@@ -82,10 +82,7 @@ public class SyntaxAwareStepValidator implements StepValidator {
         }
 
         final List<StepImplementation> stepImpls = this.stepImplMap.get(step.getLine());
-        if (stepImpls != null && !stepImpls.isEmpty()) {
-            return true;
-        }
-        return false;
+        return (stepImpls != null && !stepImpls.isEmpty());
     }
 
 
