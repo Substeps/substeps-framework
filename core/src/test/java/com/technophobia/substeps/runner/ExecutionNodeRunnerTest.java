@@ -34,14 +34,11 @@ import com.technophobia.substeps.runner.setupteardown.SetupAndTearDown;
 import com.technophobia.substeps.stepimplementations.MockStepImplementations;
 import com.technophobia.substeps.steps.TestStepImplementations;
 import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.substeps.config.SubstepsConfigLoader;
 import org.substeps.report.IExecutionResultsCollector;
 import org.substeps.runner.NewSubstepsExecutionConfig;
@@ -49,14 +46,15 @@ import org.substeps.runner.NewSubstepsExecutionConfig;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 
 import static org.hamcrest.CoreMatchers.is;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-
 import static org.mockito.Mockito.*;
 
 /**

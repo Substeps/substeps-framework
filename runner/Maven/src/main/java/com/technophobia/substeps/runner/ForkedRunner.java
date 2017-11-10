@@ -38,6 +38,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.*;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
+import org.substeps.config.SubstepsConfigLoader;
 import org.substeps.execution.ExecutionNodeResultNotificationHandler;
 
 import java.io.ByteArrayInputStream;
@@ -157,7 +158,7 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
 
         InputStreamConsumer localConsumer = null;
 
-        final List<String> command = buildSubstepsRunnerCommand();
+        final List<String> command = buildSubstepsRunnerCommand(this.log, createClasspathString(), this.jmxPort, this.vmArgs);
 
         final ProcessBuilder processBuilder = new ProcessBuilder(command);
 
@@ -186,14 +187,8 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
         return localConsumer;
     }
 
-    /**
-     * @return
-     * @throws MojoExecutionException
-     * @throws DependencyResolutionRequiredException
-     */
-    private List<String> buildSubstepsRunnerCommand() throws MojoExecutionException {
+    private static List<String> buildSubstepsRunnerCommand(Log log, final String classpath, int jmxPort, String vmArgs) throws MojoExecutionException {
 
-        final String classpath = createClasspathString();
 
         final List<String> command = Lists.newArrayList();
 
@@ -206,29 +201,42 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
         if (javaHome == null) {
             // not sure how we'd get here - maven running without JAVA_HOME
             // set..??
-            this.log.warn("unable to resolve JAVA_HOME variable, assuming java is on the path...");
+            log.warn("unable to resolve JAVA_HOME variable, assuming java is on the path...");
             command.add("java");
         } else {
             command.add(javaHome + File.separator + "bin" + File.separator + "java");
         }
 
         command.add("-Dfile.encoding=UTF-8");
-        command.add("-Dcom.sun.management.jmxremote.port=" + this.jmxPort);
+        command.add("-Dcom.sun.management.jmxremote.port=" + jmxPort);
         command.add("-Dcom.sun.management.jmxremote.authenticate=false");
         command.add("-Dcom.sun.management.jmxremote.ssl=false");
         command.add("-Djava.rmi.server.hostname=localhost");
 
-        if (this.vmArgs != null && !this.vmArgs.isEmpty()) {
-            final String[] args = this.vmArgs.split(" ");
+        String currentSpecifiedEnvironment = SubstepsConfigLoader.getEnvironmentName();
+
+        // if vmArgs doesn't specify and we've got an env var set, use it
+        if ( currentSpecifiedEnvironment != null && !currentSpecifiedEnvironment.isEmpty()){
+
+            if (vmArgs == null || (vmArgs != null && !vmArgs.toLowerCase().contains("-denvironment="))){
+                command.add("-Denvironment=" + currentSpecifiedEnvironment);
+            }
+        }
+
+        if (vmArgs != null && !vmArgs.isEmpty()) {
+            final String[] args = vmArgs.split(" ");
             for (final String arg : args) {
                 command.add(arg);
-                this.log.info("Adding jvm arg: " + arg);
+                log.info("Adding jvm arg: " + arg);
             }
         }
 
         command.add("-classpath");
         command.add(classpath);
         command.add("com.technophobia.substeps.jmx.SubstepsJMXServer");
+
+        // chain through any environment var that's set
+
         return command;
     }
 

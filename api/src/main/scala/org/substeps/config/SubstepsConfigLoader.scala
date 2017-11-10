@@ -94,6 +94,14 @@ object SubstepsConfigLoader {
     resolveConfig(masterCfg, mavenConfigSettings, envConfig)
   }
 
+  def getEnvironmentName() : String = {
+
+      Option(System.getProperty("ENVIRONMENT")) match {
+        case None => System.getProperty("environment")
+        case Some(env) => env
+      }
+  }
+
   def environmentConfigFile() = {
 
     val envConfigFile =
