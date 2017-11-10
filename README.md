@@ -22,6 +22,8 @@ Requirements
 -----
 * Changed the root report page to be index.html.  Added a redirect page in for the old.
 * Glossary changes - got rid of the noise when extracting substeps tag info. Enabled the migration to new qualified custom glossary tags 'org.substeps.step.example' and 'org.substeps.step.section'
+* some sonar suggested fixes
+* If a -Denvironment= variable is set, pass through to the forked VM process.  Can be overriden from the parent process using the vmArgs parameter in config if required.
 
 1.1.2
 -----
