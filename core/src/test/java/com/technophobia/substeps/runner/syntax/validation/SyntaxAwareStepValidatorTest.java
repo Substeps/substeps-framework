@@ -26,49 +26,49 @@ import com.technophobia.substeps.runner.FeatureFileParser;
 import com.technophobia.substeps.runner.syntax.ClassAnalyser;
 import com.technophobia.substeps.runner.syntax.SubStepDefinitionParser;
 import com.technophobia.substeps.runner.syntax.SyntaxBuilder;
-import com.technophobia.substeps.runner.syntax.validation.fake.FakeSyntaxErrorReporter;
-import com.technophobia.substeps.runner.syntax.validation.fake.FakeSyntaxErrorReporter.SyntaxErrorData;
+import com.technophobia.substeps.runner.syntax.SyntaxErrorReporter;
 import com.technophobia.substeps.stepimplementations.MockStepImplementations;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
+@RunWith(MockitoJUnitRunner.class)
 public class SyntaxAwareStepValidatorTest {
 
     private static final String FEATURE_PATH = "./target/test-classes/features/";
     private static final String SUBSTEPS_PATH = "./target/test-classes/substeps/";
 
-    private FakeSyntaxErrorReporter syntaxErrorReporter;
     private FeatureFileParser featureFileParser;
     private SubStepDefinitionParser substepsFileParser;
-
+    private SyntaxErrorReporter mock;
 
     @Before
     public void initialise() {
 
-        this.syntaxErrorReporter = new FakeSyntaxErrorReporter();
+        this.mock = Mockito.mock(SyntaxErrorReporter.class);
         this.featureFileParser = new FeatureFileParser();
-        this.substepsFileParser = new SubStepDefinitionParser(this.syntaxErrorReporter);
+        this.substepsFileParser = new SubStepDefinitionParser(mock);
     }
 
 
     @Test
     public void validatorReportsMissingStepsInScenario() {
-        final FeatureFile featureFile = this.featureFileParser.loadFeatureFile(createFeatureFile("error.feature"));
+        File ff = createFeatureFile("error.feature");
+        final FeatureFile featureFile = this.featureFileParser.loadFeatureFile(ff);
 
-        createStepValidatorWithSubsteps("simple.substeps").validateFeatureFile(featureFile, syntaxErrorReporter);
-        final List<SyntaxErrorData> errors = syntaxErrorReporter.syntaxErrors();
-        assertThat(Integer.valueOf(errors.size()), is(Integer.valueOf(2)));
+        createStepValidatorWithSubsteps("simple.substeps", mock).validateFeatureFile(featureFile, mock);
 
-        checkError(errors.get(0), 6, "Given step 1");
-        checkError(errors.get(1), 7, "Given step 2");
+        verify(mock).reportFeatureError(eq(ff), eq("Given step 1"), eq(6), anyInt(), any());
+        verify(mock).reportFeatureError(eq(ff), eq("Given step 2"), eq(7), anyInt(), any());
     }
 
 
@@ -76,27 +76,31 @@ public class SyntaxAwareStepValidatorTest {
     public void validatorReportsNoErrorsForFeatureWithValidSteps() {
         final FeatureFile featureFile = this.featureFileParser.loadFeatureFile(createFeatureFile("error.feature"));
 
-        createStepValidatorWithSubsteps("error.substeps").validateFeatureFile(featureFile, syntaxErrorReporter);
-        final List<SyntaxErrorData> errors = syntaxErrorReporter.syntaxErrors();
-        assertTrue(errors.isEmpty());
+        createStepValidatorWithSubsteps("error.substeps",mock).validateFeatureFile(featureFile, mock);
+
+        verify(mock, never()).reportFeatureError(any(),any(),anyInt(),anyInt(),any());
+
+        verify(mock, never()).reportSubstepsError(any());
+        verify(mock, never()).reportStepImplError(any());
     }
 
 
     @Test
     public void validatorReportsMissingSubstepsInDefinition() {
-        final PatternMap<ParentStep> substeps = substepsFileParser.loadSubSteps(createSubstepsFile("error.substeps"));
 
-        final StepValidator stepValidator = createStepValidatorWithSubsteps("simple.substeps");
+        File substepsFile = createSubstepsFile("error.substeps").getAbsoluteFile();
+
+        final PatternMap<ParentStep> substeps = substepsFileParser.loadSubSteps(substepsFile);
+
+        final StepValidator stepValidator = createStepValidatorWithSubsteps("simple.substeps", mock);
         for (final ParentStep substep : substeps.values()) {
-            stepValidator.validateSubstep(substep, syntaxErrorReporter);
+            stepValidator.validateSubstep(substep, mock);
         }
 
-        final List<SyntaxErrorData> errors = syntaxErrorReporter.syntaxErrors();
-        assertThat(Integer.valueOf(errors.size()), is(Integer.valueOf(3)));
+        verify(mock).reportFeatureError(eq(substepsFile), eq("SingleWord"), eq(5), eq(101), eq("Step \"SingleWord\" is not defined"));
+        verify(mock).reportFeatureError(eq(substepsFile), eq("Test_Then something else has happened"), eq(6), anyInt(), any());
+        verify(mock).reportFeatureError(eq(substepsFile), eq("Test_Then something has happened"), eq(9), anyInt(), any());
 
-        checkError(errors.get(0), 5, "SingleWord");
-        checkError(errors.get(1), 6, "Test_Then something else has happened");
-        checkError(errors.get(2), 9, "Test_Then something has happened");
     }
 
 
@@ -105,38 +109,30 @@ public class SyntaxAwareStepValidatorTest {
         final PatternMap<ParentStep> substeps = this.substepsFileParser
                 .loadSubSteps(createSubstepsFile("allFeatures.substeps"));
 
-        final StepValidator stepValidator = createStepValidatorWithSubsteps("simple.substeps",
+        final StepValidator stepValidator = createStepValidatorWithSubsteps("simple.substeps", mock,
                 MockStepImplementations.class);
         for (final ParentStep substep : substeps.values()) {
-            stepValidator.validateSubstep(substep, syntaxErrorReporter);
+            stepValidator.validateSubstep(substep, mock);
         }
-        final List<SyntaxErrorData> errors = syntaxErrorReporter.syntaxErrors();
-        assertTrue(errors.isEmpty());
+
+        verify(mock, never()).reportFeatureError(any(),any(),anyInt(),anyInt(),any());
+        verify(mock, never()).reportSubstepsError(any());
+        verify(mock, never()).reportStepImplError(any());
     }
-
-
-    private void checkError(final SyntaxErrorData error, final int lineNumber, final String line) {
-        assertThat(Integer.valueOf(error.getLineNumber()), is(Integer.valueOf(lineNumber)));
-        assertThat(error.getLine(), is(line));
-        assertThat(error.getDescription(), is("Step \"" + line + "\" is not defined"));
-    }
-
 
     private File createFeatureFile(final String name) {
         return new File(FEATURE_PATH, name);
     }
 
-
     private File createSubstepsFile(final String name) {
         return new File(SUBSTEPS_PATH, name);
     }
 
-
-    private StepValidator createStepValidatorWithSubsteps(final String substepsFilename,
+    private StepValidator createStepValidatorWithSubsteps(final String substepsFilename, SyntaxErrorReporter errorReporter,
                                                           final Class<?>... stepImplClasses) {
         final Syntax syntax = SyntaxBuilder.buildSyntax(Arrays.asList(stepImplClasses),
                 createSubstepsFile(substepsFilename), true, new String[0], new ClassAnalyser(), true,
-                this.syntaxErrorReporter);
+                errorReporter);
 
         return new SyntaxAwareStepValidator(syntax);
     }
