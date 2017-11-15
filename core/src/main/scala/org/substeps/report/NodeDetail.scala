@@ -25,6 +25,15 @@ case class NodeDetail(nodeType: String, filename: String, lineNumber : Int, resu
 
 
 case object NodeDetail {
+
+  def sequenceIds(nodeDetails: List[NodeDetail], toAdd: Long): scala.List[NodeDetail] = {
+
+    nodeDetails.map(n => {
+      n.copy(id = n.id + toAdd, children = sequenceIds(n.children, toAdd))
+    })
+  }
+
+
   def basicScenarioNodeInError(scenarioNode: BasicScenarioNode, children: List[NodeDetail], tags: Option[List[String]]) = {
 
     val stackTrace = scenarioNode.getResult.getFailure.getCause.getStackTrace.toList.map(elem => elem.toString)

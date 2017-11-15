@@ -1,0 +1,1 @@
+{"nodeType":"FeatureNode","filename":"test-finders-stepimpls.feature","result":"PASSED","id":247,"executionDurationMillis":24450,"description":"A feature to test finder step implementations description","scenarios":[{"nodeId":246,"filename":"Test_finder_step_implementations_0_results.json","result":"PASSED","tags":["@non-visual"]}],"tags":["@non-visual"]}

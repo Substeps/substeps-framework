@@ -17,6 +17,8 @@ import org.hamcrest.text.IsEqualIgnoringWhiteSpace.equalToIgnoringWhiteSpace
 import org.json4s.native.JsonMethods.parse
 import org.substeps.config.SubstepsConfigLoader
 
+import scala.collection.mutable
+
 /**
   * Created by ian on 30/06/16.
   */
@@ -155,4 +157,45 @@ class ReportBuilderTest extends FlatSpec with Matchers{
   }
 
 
+  "report builder " should "build a report when there are overlapping ids in the source data" in {
+
+    val now: LocalDateTime = LocalDateTime.now
+
+    val outputDir = getOutputDir
+
+    val reportBuilder = new ReportBuilder
+
+    val uri = this.getClass.getClassLoader.getResource("sample-results-data-dupe-ids")
+
+    reportBuilder.buildFromDirectory(new File(uri.getFile), outputDir)
+
+    outputDir.exists() should be (true)
+
+    val reportFiles = outputDir.listFiles().toList
+
+    val detail_data: Option[File] = reportFiles.find(f => f.getName == "detail_data.js")
+
+    detail_data shouldBe defined
+
+    val detailDataLines = Files.asCharSource(detail_data.get, Charset.defaultCharset()).readLines()
+
+    val ids =
+    detailDataLines.flatMap(line => {
+      if (line.contains("detail[")){
+        Some(Integer.parseInt(line.substring(7, line.indexOf("]", 7))))
+      }
+      else {
+        None
+      }
+    })
+
+
+    val grouped : List[(Int, Int)] = ids.groupBy(i => i).mapValues(_.size).toList
+
+    val dupes = grouped.filter(g => g._2 > 1)
+
+    dupes.foreach(d => println("dupe id: " + d))
+
+    dupes shouldBe empty
+  }
 }
