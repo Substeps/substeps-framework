@@ -1,0 +1,1 @@
+{"nodeType":"FeatureNode","filename":"test-window-stepimpls.feature","result":"PASSED","id":261,"executionDurationMillis":17120,"description":"A feature to test iframe and window related step impls","scenarios":[{"nodeId":260,"filename":"Test_iframe_and_window_step_implementations_0_results.json","result":"PASSED","tags":["@non-visual"]}],"tags":[]}

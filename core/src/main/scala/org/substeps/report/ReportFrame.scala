@@ -1,8 +1,5 @@
 package org.substeps.report
 
-import java.time.{Instant, LocalDateTime, ZoneId}
-import java.time.format.DateTimeFormatter
-
 import com.typesafe.config.Config
 
 /**
@@ -10,7 +7,7 @@ import com.typesafe.config.Config
   */
 
 
-trait ReportFrameTemplate {
+trait IndexPageTemplate {
 
 
   def buildStatsBlock(name: String, counters : Counters) = {
@@ -87,9 +84,6 @@ trait ReportFrameTemplate {
        |    <link href="css/substeps.css" rel="stylesheet"/>
        |
        |    <link rel="stylesheet" href="css/jstree/style.min.css" />
-       |    <script type="text/javascript" src="results-summary.js"></script>
-       |
-       |
        |
        |</head>
        |

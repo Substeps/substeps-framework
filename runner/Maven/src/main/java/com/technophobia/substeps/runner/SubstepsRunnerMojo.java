@@ -237,6 +237,8 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
 
         if (this.buildFailureManager.testSuiteFailed()) {
 
+            this.getLog().info("buildFailureManager.testSuiteFailed");
+
             MojoFailureException e = new MojoFailureException("Substep Execution failed:\n"
                     + this.buildFailureManager.getBuildFailureInfo());
 
@@ -251,12 +253,18 @@ public class SubstepsRunnerMojo extends BaseSubstepsMojo {
                 this.session.getResult().addException(e);
             }
             else {
+                this.getLog().info("throwing ex..");
                 throw e;
             }
 
         } else if (!this.buildFailureManager.testSuiteCompletelyPassed()) {
+            this.getLog().info("buildFailureManager.testSuiteCompletelyPassed");
+
             // print out the failure string (but won't include any failures)
             getLog().info(this.buildFailureManager.getBuildFailureInfo());
+        }
+        else {
+            this.getLog().info("other...");
         }
     }
 

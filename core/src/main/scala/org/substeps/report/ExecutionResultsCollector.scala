@@ -461,13 +461,44 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
 case class FeatureSummary(nodeType: String, filename: String, result : String, id : Long,
                           executionDurationMillis : Option[Long], description : String, scenarios: List[ScenarioSummary], tags : List[String])
 
+object FeatureSummary {
+  def sequenceIds(summary: FeatureSummary, toAdd: Long): FeatureSummary = {
+    summary.copy(id = summary.id + toAdd, scenarios = ScenarioSummary.sequenceIds(summary.scenarios, toAdd))
+  }
+}
+
 case class ScenarioSummary(nodeId : Long, filename : String, result: String, tags : List[String])
+
+object ScenarioSummary {
+  def sequenceIds(scenarios: List[ScenarioSummary], toAdd : Long): scala.List[ScenarioSummary] = {
+
+    scenarios.map(s => {
+      s.copy(nodeId = s.nodeId + toAdd)
+    })
+  }
+}
 
 
 case class FeatureSummaryForRootNode(nodeId : Long, resultsDir: String, result : String)
 
+object FeatureSummaryForRootNode {
+  def sequenceIds(features: List[FeatureSummaryForRootNode], toAdd: Long): scala.List[FeatureSummaryForRootNode] = {
+
+    features.map(f => {
+      f.copy(nodeId = f.nodeId + toAdd)
+    })
+  }
+}
+
 case class RootNodeSummary(nodeType: String, description: String, result : String, id : Long,
                            executionDurationMillis : Option[Long], features : List[FeatureSummaryForRootNode], tags : Option[String], nonFatalTags : Option[String], timestamp : Long, environment : String)
+
+object RootNodeSummary {
+  def sequenceIds(rootNodeSummary: RootNodeSummary, toAdd: Long): RootNodeSummary = {
+
+    rootNodeSummary.copy(id = rootNodeSummary.id + toAdd, features = FeatureSummaryForRootNode.sequenceIds(rootNodeSummary.features, toAdd))
+  }
+}
 
 
 case class SubstepsNode(id : Long, nodeType: String, description: String, children : List[SubstepsNode])

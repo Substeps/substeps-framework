@@ -87,9 +87,39 @@ object ReportBuilder {
 
 case class FeatureDetails(summary : FeatureSummary, nodeDetails :  List[NodeDetail])
 
+object FeatureDetails {
+  def sequenceIds(featuresList: List[FeatureDetails], toAdd: Long): scala.List[_root_.org.substeps.report.FeatureDetails] = {
+
+    featuresList.map(f => {
+      f.copy(summary = FeatureSummary.sequenceIds(f.summary, toAdd), nodeDetails = NodeDetail.sequenceIds(f.nodeDetails, toAdd))
+    })
+  }
+}
+
 case class SourceDataModel(rootNodeSummary : RootNodeSummary, featuresList : List[FeatureDetails], config : Config)
 
 case object SourceDataModel{
+
+  def sequenceIds(srcDataList: List[SourceDataModel]) : List[SourceDataModel]  = {
+
+
+
+    srcDataList match {
+      case sdm :: Nil => srcDataList
+      case head :: tail => {
+
+        var toAdd = head.rootNodeSummary.id
+        // renumber the tail list
+        val newTail =
+          tail.map(sd => {
+            val copied =  sd.copy(rootNodeSummary = RootNodeSummary.sequenceIds(sd.rootNodeSummary, toAdd) , featuresList = FeatureDetails.sequenceIds(sd.featuresList, toAdd))
+            toAdd = copied.rootNodeSummary.id
+            copied
+          })
+        head :: newTail
+      }
+    }
+  }
 
 
 }
@@ -101,7 +131,7 @@ case class UncalledStepImpl(value:String, implementedIn: String, keyword: String
 /**
   * Created by ian on 30/06/16.
   */
-class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTreeTemplate with GlossaryTemplate {
+class ReportBuilder extends IReportBuilder with IndexPageTemplate with UsageTreeTemplate with GlossaryTemplate {
 
   // TODO need to leave here as legacy to ensure maven is able to inject in parameter, mojo fails otherwise
   @BeanProperty
@@ -223,7 +253,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
     processUncalledAndUnusedDataFiles( dataDir, executionConfigs)
 
-    val srcDataList: List[SourceDataModel] = readModels(dataDir, executionConfigs)
+    val srcDataList: List[SourceDataModel] = SourceDataModel.sequenceIds(readModels(dataDir, executionConfigs))
 
     val detailData = createFile( "detail_data.js")
 
@@ -680,7 +710,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
     f
   }
 
-  def writeResultSummary(resultsFile: RootNodeSummary)(implicit reportDir : File): Unit = {
+  def writeResultSummaryX(resultsFile: RootNodeSummary)(implicit reportDir : File): Unit = {
 
     val file = createFile("results-summary.js")
 
@@ -734,7 +764,7 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
       resultsFileOption match {
       case Some(resultsFile) => {
 
-        writeResultSummary(resultsFile)
+        //writeResultSummary(resultsFile)
 
         resultsFile.features.flatMap(featureSummary => {
 
@@ -910,12 +940,11 @@ class ReportBuilder extends IReportBuilder with ReportFrameTemplate with UsageTr
 
         val featureSummaries = srcData.featuresList.map(f => f.summary) //srcData._2.map(_._1)
 
+        writeRootNode(writer, srcData.rootNodeSummary, featureSummaries, srcData.config)
+
         srcData.featuresList.foreach(feature =>{
 
-
           val nodeDetailList = feature.nodeDetails
-
-          writeRootNode(writer, srcData.rootNodeSummary, featureSummaries, srcData.config)
 
           val dataSubdir = NewSubstepsExecutionConfig.getDataSubdir(srcData.config)
 

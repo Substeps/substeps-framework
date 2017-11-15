@@ -24,6 +24,7 @@ Requirements
 * Glossary changes - got rid of the noise when extracting substeps tag info. Enabled the migration to new qualified custom glossary tags 'org.substeps.step.example' and 'org.substeps.step.section'
 * some sonar suggested fixes
 * If a -Denvironment= variable is set, pass through to the forked VM process.  Can be overriden from the parent process using the vmArgs parameter in config if required.
+* Multiple execution configs cause issues with the report when running in forked mode, only the second set of results are visible. #74
 
 1.1.2
 -----
