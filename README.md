@@ -18,6 +18,11 @@ Requirements
  * Java 8
  * Scala 2.12.3 (included)
 
+1.1.4
+-----
+* Fix for #77 Glossary Builder mojo unable to load step implementation meta information from jars
+
+
 1.1.3
 -----
 * Changed the root report page to be index.html.  Added a redirect page in for the old.
