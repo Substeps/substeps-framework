@@ -245,38 +245,50 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
 
             // where is this class ?
             final JarFile jarFileForClass = getJarFileForClass(classToDocument);
-            if (jarFileForClass != null) {
 
-                log.debug("loading info from jar");
+            try {
+                if (jarFileForClass != null) {
 
-                // look for the xml file in the jar, load up from
-                // there
-                loadStepTagsFromJar(jarFileForClass, classStepTags, loadedClasses);
-            } else {
-                log.debug("loading step info from paths");
-                // if it's in the project, run the javadoc and collect the
-                // details
+                    log.debug("loading info from jar");
 
-                // TODO - if this class is annotated with AdditionalStepImplementations, lookup those instead..
+                    // look for the xml file in the jar, load up from
+                    // there
+                    loadStepTagsFromJar(jarFileForClass, classStepTags, loadedClasses);
+                } else {
+                    log.debug("loading step info from paths");
+                    // if it's in the project, run the javadoc and collect the
+                    // details
 
-                try {
-                    Class<?> stepImplClass = classRealm.loadClass(classToDocument);
+                    // TODO - if this class is annotated with AdditionalStepImplementations, lookup those instead..
 
-                    SubSteps.AdditionalStepImplementations additionalStepImpls = stepImplClass.getDeclaredAnnotation(SubSteps.AdditionalStepImplementations.class);
+                    try {
+                        Class<?> stepImplClass = classRealm.loadClass(classToDocument);
 
-                    if (additionalStepImpls != null) {
-                        for (Class c : additionalStepImpls.value()) {
+                        SubSteps.AdditionalStepImplementations additionalStepImpls = stepImplClass.getDeclaredAnnotation(SubSteps.AdditionalStepImplementations.class);
 
-                            classStepTags.addAll(runJavaDoclet(c.getCanonicalName()));
+                        if (additionalStepImpls != null) {
+                            for (Class c : additionalStepImpls.value()) {
+
+                                classStepTags.addAll(runJavaDoclet(c.getCanonicalName()));
+                            }
                         }
+
+                    } catch (ClassNotFoundException e) {
+                        log.error("failed to load class: " + classToDocument, e);
+
                     }
 
-                } catch (ClassNotFoundException e) {
-                    log.error("failed to load class: " + classToDocument, e);
-
+                    classStepTags.addAll(runJavaDoclet(classToDocument));
                 }
-
-                classStepTags.addAll(runJavaDoclet(classToDocument));
+            }
+            finally {
+                if (jarFileForClass != null){
+                    try {
+                        jarFileForClass.close();
+                    } catch (IOException e) {
+                        log.debug("ioexcception closing jar file", e);
+                    }
+                }
             }
         }
         return classStepTags;
@@ -325,7 +337,6 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
                 .getEntry("stepimplementations.json");
 
         if (entry != null) {
-
 
             try {
                 final InputStream is = jarFileForClass.getInputStream(entry);
@@ -377,15 +388,15 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
                 } catch (final IOException e) {
                     log.error("IO Exception opening jar file", e);
                 }
-                finally {
-                    if (tempJarFile != null){
-                        try {
-                            tempJarFile.close();
-                        } catch (IOException e) {
-                            log.debug("ioexcception closing jar file", e);
-                        }
-                    }
-                }
+//                finally {
+//                    if (tempJarFile != null){
+//                        try {
+//                            tempJarFile.close();
+//                        } catch (IOException e) {
+//                            log.debug("ioexcception closing jar file", e);
+//                        }
+//                    }
+//                }
             }
         }
         return jarFile;
