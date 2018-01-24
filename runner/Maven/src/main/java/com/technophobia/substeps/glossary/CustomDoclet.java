@@ -111,7 +111,7 @@ public class CustomDoclet extends Doclet {
                                 }
                             }
 
-                            expression.setSection(getSingleJavadocTagValue(md, sec));
+                            expression.setSection(sec);
 
                             String line = annotation.value();
                             expression.setRegex(line);
