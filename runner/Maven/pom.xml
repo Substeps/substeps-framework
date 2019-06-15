@@ -14,8 +14,8 @@
     <description>A maven plugin for the substeps BDD framework</description>
 
     <properties>
-        <maven.lib.version>3.5.2</maven.lib.version>
-        <json4s.version>3.5.3</json4s.version>
+        <maven.lib.version>3.6.1</maven.lib.version>
+
 
     </properties>
 
@@ -36,13 +36,13 @@
 
         <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.12</artifactId>
+            <artifactId>scalatest_${scala.major.version}</artifactId>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.scalamock</groupId>
-            <artifactId>scalamock-scalatest-support_2.12</artifactId>
+            <artifactId>scalamock_${scala.major.version}</artifactId>
 
             <scope>test</scope>
         </dependency>
@@ -90,13 +90,13 @@
         </dependency>
         <dependency>
             <groupId>org.json4s</groupId>
-            <artifactId>json4s-core_2.12</artifactId>
+            <artifactId>json4s-core_2.13</artifactId>
             <version>${json4s.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.json4s</groupId>
-            <artifactId>json4s-native_2.12</artifactId>
+            <artifactId>json4s-native_2.13</artifactId>
             <version>${json4s.version}</version>
         </dependency>
 
@@ -178,7 +178,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.5</version>
+                <version>3.6.0</version>
                 <configuration />
                 <executions>
                     <execution>
@@ -244,7 +244,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.5</version>
+                <version>3.6.0</version>
                 <reportSets>
                     <reportSet>
                         <reports>
@@ -256,7 +256,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.9</version>
+                <version>3.0.0</version>
                 <reportSets>
                     <reportSet>
                         <reports>
