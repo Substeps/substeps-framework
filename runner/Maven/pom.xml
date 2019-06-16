@@ -90,13 +90,13 @@
         </dependency>
         <dependency>
             <groupId>org.json4s</groupId>
-            <artifactId>json4s-core_2.13</artifactId>
+            <artifactId>json4s-core_${scala.major.version}</artifactId>
             <version>${json4s.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.json4s</groupId>
-            <artifactId>json4s-native_2.13</artifactId>
+            <artifactId>json4s-native_${scala.major.version}</artifactId>
             <version>${json4s.version}</version>
         </dependency>
 
