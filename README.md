@@ -21,7 +21,7 @@ Requirements
  * Java 11+
  * Scala 2.12.10 (included)
 
-1.1.6
+1.1.7
 -----
 * Removed the direct dependency on the tools.jar for the custom doclet, replaced with new Custom doclet and javadoc tools
 * Java 11 compatibility
