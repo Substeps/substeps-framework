@@ -4,6 +4,7 @@ import com.google.common.io.Files;
 import com.technophobia.substeps.model.exception.SubstepsConfigurationException;
 import com.technophobia.substeps.report.ExecutionReportBuilder;
 import com.typesafe.config.Config;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
@@ -259,7 +260,7 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
 
     public abstract void executeBeforeAllConfigs(Config masterConfig) throws MojoExecutionException;
 
-    public abstract void executeAfterAllConfigs(Config masterConfig) throws  MojoFailureException;
+    public abstract void executeAfterAllConfigs(Config masterConfig) throws MojoFailureException;
 
     private void ensureValidConfiguration() throws MojoExecutionException {
 

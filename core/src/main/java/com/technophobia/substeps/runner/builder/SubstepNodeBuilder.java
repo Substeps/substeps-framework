@@ -228,7 +228,7 @@ public class SubstepNodeBuilder {
     public StepImplementationNode buildStepImplementationNode(final ParentStep parent, final Step step,
                                                               final boolean throwExceptionIfUnableToBuildMethodArgs, final Set<String> tags, final int depth) {
 
-        log.debug("looking for impl for step: " + step.toString());
+        log.trace("looking for impl for step: " + step.toString());
 
         if (parent != null && parent.getParamValueMap() != null) {
             step.setParameterLine(substitutePlaceholders(step.getLine(), parent.getParamValueMap().getParameters()));
@@ -332,7 +332,7 @@ public class SubstepNodeBuilder {
                                             final Class<?>[] parameterTypes, final Class<? extends Converter<?>>[] converterTypes,
                                             final StepImplementationNode stepNode) {
         // does the stepParameter contain any <> which require substitution ?
-        log.debug("getStepMethodArguments for: " + stepParameter);
+        log.trace("getStepMethodArguments for: " + stepParameter);
 
         final String substitutedStepParam = substitutePlaceholders(stepParameter, parentArguments);
 
@@ -406,10 +406,10 @@ public class SubstepNodeBuilder {
                 if (matcher.find()) {
                     final String key = matcher.group(1);
                     String val = parentArguments.get(key);
-                    log.debug("replacing: <" + key + "> with: " + val + " in string: [" + rtn + "]");
+                    log.trace("replacing: <" + key + "> with: " + val + " in string: [" + rtn + "]");
 
                     if ("value".equals(key)) {
-                        log.debug("break");
+                        log.trace("break");
                     }
 
                     if (val == null) {

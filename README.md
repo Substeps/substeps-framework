@@ -18,8 +18,14 @@ The new home for:
 
 Requirements
 ------------
- * Java 8
- * Scala 2.12.3 (included)
+ * Java 11+
+ * Scala 2.12.10 (included)
+
+1.1.6
+-----
+* Removed the direct dependency on the tools.jar for the custom doclet, replaced with new Custom doclet and javadoc tools
+* Java 11 compatibility
+* Improved the forked process shutdown
 
 1.1.5
 -----
@@ -127,7 +133,7 @@ com.technophobia.substeps releases
 
 Useful Links
 ------------
- * [New Substeps docs !](http://substeps.github.io/)
+ * [Substeps docs !](http://substeps.github.io/)
  * [Original Substeps documentation](http://substeps.g2g3.digital) - http://substeps.g2g3.digital
  * [Substeps Google group](https://groups.google.com/forum/?hl=en-GB#!forum/substeps) - https://groups.google.com/forum/?hl=en-GB#!forum/substeps
  
