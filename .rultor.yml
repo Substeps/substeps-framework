@@ -1,5 +1,5 @@
 docker:
-  image: "maven:3.6.2-jdk-11"
+  image: "maven:3.6-jdk-11-slim"
 #install:
 #  - "sudo apt-get install -y maven"
 decrypt:
