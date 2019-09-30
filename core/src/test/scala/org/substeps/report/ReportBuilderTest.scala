@@ -5,19 +5,13 @@ import java.nio.charset.Charset
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-import com.google.common.base.Strings
 import com.google.common.io.Files
-import com.technophobia.substeps.glossary.StepImplementationsDescriptor
 import com.typesafe.config.ConfigFactory
+import org.scalatest._
+import org.substeps.config.SubstepsConfigLoader
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
-import org.scalatest._
-import org.hamcrest.text.IsEqualIgnoringWhiteSpace.equalToIgnoringWhiteSpace
-import org.json4s.native.JsonMethods.parse
-import org.substeps.config.SubstepsConfigLoader
-
-import scala.collection.mutable
 
 /**
   * Created by ian on 30/06/16.

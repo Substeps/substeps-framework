@@ -130,6 +130,11 @@ public class ForkedRunner implements MojoRunner, ExecutionNodeResultNotification
             try {
                 this.log.info("waiting for forked process to return");
 
+                if (this.forkedJVMProcess.supportsNormalTermination()){
+                    this.forkedJVMProcess.destroy();
+                }
+
+                // maybe change this for waitFor secs and timeunit - returns a boolean
                 final int waitFor = this.forkedJVMProcess.waitFor();
 
                 this.log.info("wait for forked VM returned with exit code: " + waitFor);

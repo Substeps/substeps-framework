@@ -14,14 +14,9 @@
     <description>A maven plugin for the substeps BDD framework</description>
 
     <properties>
-        <maven.lib.version>3.6.1</maven.lib.version>
-
-
+        <maven.lib.version>3.6.2</maven.lib.version>
     </properties>
 
-    <prerequisites>
-        <maven>3.0</maven>
-    </prerequisites>
 
     <dependencies>
         <dependency>
@@ -64,7 +59,7 @@
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>3.5</version>
+            <version>3.6.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -124,13 +119,23 @@
         </dependency>
 
         <!-- JavaDoc Dependency -->
-        <dependency>
-            <groupId>sun.jdk</groupId>
-            <artifactId>tools</artifactId>
-            <version>${java.version}</version>
-            <scope>system</scope>
-            <systemPath>${java.home}/../lib/tools.jar</systemPath>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>sun.jdk</groupId>-->
+<!--            <artifactId>tools</artifactId>-->
+<!--            <version>${java.version}</version>-->
+<!--            <scope>system</scope>-->
+<!--            <systemPath>${java.home}/../lib/tools.jar</systemPath>-->
+<!--        </dependency>-->
+
+<!--                <dependency>-->
+<!--                    <groupId>jdk.compiler</groupId>-->
+<!--                    <artifactId>xx</artifactId>-->
+<!--                    <version>${java.version}</version>-->
+<!--                    <scope>system</scope>-->
+<!--                    <systemPath>${java.home}/../lib/tools.jar</systemPath>-->
+<!--                </dependency>-->
+
+<!--        /usr/lib/jvm/java-11-openjdk-amd64!/java.compiler-->
 
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -173,6 +178,7 @@
             <plugin>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-component-metadata</artifactId>
+                <version>2.0.0</version>
             </plugin>
 
             <plugin>

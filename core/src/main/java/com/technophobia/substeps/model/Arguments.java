@@ -121,7 +121,7 @@ public final class Arguments {
     // - could they be combined ??
     public static String[] getArgs(final String patternString, final String sourceString, final String[] keywordPrecedence, Config cfg) {
 
-        log.debug("Arguments getArgs String[] with pattern: " + patternString + " and sourceStr: "
+        log.trace("Arguments getArgs String[] with pattern: " + patternString + " and sourceStr: "
                 + sourceString);
 
         String[] rtn = null;
@@ -174,7 +174,7 @@ public final class Arguments {
                     buf.append("[").append(s).append("] ");
                 }
 
-                log.debug(buf.toString());
+                log.trace(buf.toString());
             }
 
         }
@@ -186,7 +186,7 @@ public final class Arguments {
     public static List<Object> getArgs(final String patternString, final String sourceString,
                                        final Class<?>[] parameterTypes, final Class<? extends Converter<?>>[] converterTypes, Config cfg) {
 
-        log.debug("Arguments getArgs List<Object> with pattern: " + patternString + " and sourceStr: "
+        log.trace("Arguments getArgs List<Object> with pattern: " + patternString + " and sourceStr: "
                 + sourceString);
 
         List<Object> argsList = null;

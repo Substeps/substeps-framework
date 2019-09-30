@@ -85,7 +85,7 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
 
   def onNodeFailed(node: IExecutionNode, cause: Throwable): Unit = {
 
-    log.debug("ExecutionResultsCollector nodeFailed: " + node.getId)
+    log.trace("nodeFailed: " + node.getId)
 
 
 
@@ -150,12 +150,12 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
   def onNodeStarted(node: IExecutionNode): Unit = {
 
     // do we care about nodes starting ?
-    log.debug("ExecutionResultsCollector nodeStarted: " + node.getId)
+    log.trace("nodeStarted: " + node.getId)
   }
 
   def getFeatureFromNode(node: IExecutionNode) : FeatureNode = {
 
-    log.debug("getFeatureFromNode: " + node.getClass)
+    log.trace("getFeatureFromNode: " + node.getClass)
 
     node.getParent match {
       case f : FeatureNode => f
@@ -166,12 +166,12 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
 
   def onNodeFinished(node: IExecutionNode): Unit = {
 
-    log.debug("ExecutionResultsCollector nodeFinished: " + node.getId)
+    log.trace("nodeFinished: " + node.getId)
 
 
     node match {
       case scenarioNode :  BasicScenarioNode => {
-        log.debug(s"basic scenario id ${scenarioNode.getId} finished")
+        log.trace(s"basic scenario id ${scenarioNode.getId} finished")
         val feature = getFeatureFromNode(scenarioNode)
 
         featureToResultsDirMap.get(feature.getId) match {
@@ -195,7 +195,7 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
         }
       }
       case featureNode: FeatureNode => {
-        log.debug("feature node finished")
+        log.trace("feature node finished")
 
         // write a summary file for the feature
         featureToResultsDirMap.get(featureNode.getId) match {
@@ -211,17 +211,17 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
         }
       }
       case rootNode : RootNode => {
-        log.debug("root node finished")
+        log.trace("root node finished")
         val summaryFile = new File(dataDir, "results.json")
 
         Files.write(generateJson(rootNode), summaryFile, UTF8)
 
       }
       case stepImplNode : StepImplementationNode => {
-        log.debug(s"stepImpl ${stepImplNode.getId} Node finished")
+        log.trace(s"stepImpl ${stepImplNode.getId} Node finished")
 
       }
-      case n => log.debug(s"other node ${n.getId} finished")
+      case n => log.trace(s"other node ${n.getId} finished")
     }
 
   }
@@ -239,13 +239,13 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
 
   def onNodeIgnored(node: IExecutionNode): Unit = {
 
-    log.debug("ExecutionResultsCollector nodeIgnored: " + node.getId)
+    log.trace("nodeIgnored: " + node.getId)
 
     node match {
       case scenarioNode :  BasicScenarioNode => {
 
       }
-      case _ => log.debug("other node ignored")
+      case _ => log.trace("other node ignored")
     }
 
 
@@ -409,7 +409,7 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
 
     val featureNodes = rootNode.getChildren.asScala
 
-    log.debug("init dirs for " + featureNodes.size + " features")
+    log.trace("init dirs for " + featureNodes.size + " features")
 
     val featureNames =
       featureNodes.map(featureNode => featureNode.getFilename)
@@ -446,7 +446,7 @@ class ExecutionResultsCollector extends  IExecutionResultsCollector {
 
       featureResultsDir.mkdir()
 
-      log.debug("mapping feature node id " + featureNode.getId + " to dir: "  + featureResultsDir.getAbsolutePath)
+      log.trace("mapping feature node id " + featureNode.getId + " to dir: "  + featureResultsDir.getAbsolutePath)
 
       featureNode.getId -> featureResultsDir
     }).toMap

@@ -22,14 +22,12 @@ import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.sun.tools.javadoc.Main;
 import com.technophobia.substeps.model.SubSteps;
 import com.technophobia.substeps.runner.BaseSubstepsMojo;
 import com.technophobia.substeps.runner.ExecutionConfig;
 import com.typesafe.config.Config;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -39,15 +37,21 @@ import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.substeps.config.SubstepsConfigLoader;
+import org.substeps.glossary.DocletWrapper;
 import org.substeps.runner.NewSubstepsExecutionConfig;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+
+
 
 /**
  * A Maven plugin to generate a json representation of the step implementations in this library.  That json is then used in verious plugins and IDE's etc.
@@ -93,36 +97,23 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
 
             log.error("unabled to locate source file");
             // TODO exception ?
+            return Collections.emptyList();
         } else {
 
-            CustomDoclet.setExpressionList(classStepTagList);
-
-            final String[] args = {"-doclet", "com.technophobia.substeps.glossary.CustomDoclet",
-                    "-sourcepath", sourceRoot,
-                    path
+            final String[] args = {"-doclet", //"com.technophobia.substeps.glossary.CustomDoclet",
+                    "-sourcepath", sourceRoot
+                    //,path
             };
 
-            // the custom doclet generates quite a lot of noise around things missing from the classpath etc -
-            // not important in this context, so consume and discard apart from the errors..
+            try {
+                List<String>  testClasspathElements = this.project.getTestClasspathElements();
+                return DocletWrapper.invoke(sourceRoot, path, testClasspathElements);
 
-            StringWriter esw = new StringWriter();
-            PrintWriter err = new PrintWriter(esw);
-
-            StringWriter wsw = new StringWriter();
-            PrintWriter warn = new PrintWriter(wsw);
-
-            StringWriter nsw = new StringWriter();
-            PrintWriter notice = new PrintWriter(nsw);
-
-            String warnings = esw.toString();
-            if (!warnings.isEmpty()) {
-                getLog().warn("Substeps CustomDoclet warnings:\n" + warnings);
+            } catch (DependencyResolutionRequiredException e) {
+                getLog().error("DependencyResolutionRequiredException", e);
+                return null;
             }
-
-            Main.execute("SubstepsDoclet", err, warn, notice, "com.technophobia.substeps.glossary.CustomDoclet", args);
         }
-
-        return classStepTagList;
     }
 
 
@@ -388,15 +379,6 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
                 } catch (final IOException e) {
                     log.error("IO Exception opening jar file", e);
                 }
-//                finally {
-//                    if (tempJarFile != null){
-//                        try {
-//                            tempJarFile.close();
-//                        } catch (IOException e) {
-//                            log.debug("ioexcception closing jar file", e);
-//                        }
-//                    }
-//                }
             }
         }
         return jarFile;
