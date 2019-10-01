@@ -3,8 +3,8 @@ docker:
 env:
   JAVA_HOME: "/opt/java/openjdk"
 #  PATH: "/opt/java/openjdk/bin:$PATH"
-#install:
-#  - "sudo apt-get install -y maven"
+install: |-
+   export PATH=$PATH:/opt/java/openjdk/bin
 decrypt:
   settings.xml: "repo/settings.xml.asc"
   pubring.gpg: "repo/pubring.gpg.asc"
