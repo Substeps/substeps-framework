@@ -13,7 +13,7 @@ release:
   script: |-
         export newSnapshotVersion=`echo ${tag}-SNAPSHOT | perl -pe 's/^((\d+\.)*)(\d+)(.*)$/$1.($3+1).$4/e'`
         ls -alrt
-        mvn clean verify
+        mvn -X clean verify
         git checkout master
         mvn versions:set "-DnewVersion=${newSnapshotVersion}"
         git commit -am "prepare next version"
