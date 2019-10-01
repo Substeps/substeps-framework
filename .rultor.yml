@@ -1,5 +1,5 @@
 docker:
-  image: "maven:3.6.2-jdk-11"
+  image: "maven-openjdk11:latest"
 env:
   JAVA_HOME: "/usr/local/openjdk-11"
 #  PATH: "/usr/local/openjdk-11/bin"
