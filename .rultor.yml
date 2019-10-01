@@ -1,6 +1,6 @@
 docker:
   image: "adoptopenjdk/maven-openjdk11:latest"
- env:
+env:
   JAVA_HOME: "/opt/java/openjdk"
   PATH: "/opt/java/openjdk/bin:$PATH"
 #install:
