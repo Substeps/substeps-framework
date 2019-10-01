@@ -1,8 +1,8 @@
 docker:
   image: "adoptopenjdk/maven-openjdk11:latest"
-# env:
-#  JAVA_HOME: "/usr/local/openjdk-11"
-#  PATH: "/usr/local/openjdk-11/bin"
+ env:
+  JAVA_HOME: "/opt/java/openjdk"
+  PATH: "/opt/java/openjdk/bin:$PATH"
 #install:
 #  - "sudo apt-get install -y maven"
 decrypt:
