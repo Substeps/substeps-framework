@@ -1,8 +1,8 @@
 docker:
   image: "iantmoore/mvngitjdk11:latest"
-#env:
-#  JAVA_HOME: "/opt/java/openjdk"
-#  PATH: "/opt/java/openjdk/bin:$PATH"
+env:
+  JAVA_HOME: "/opt/java/openjdk"
+  PATH: "/opt/java/openjdk/bin:$PATH"
 #install: |-
 #  export PATH=$PATH:/opt/java/openjdk/bin
 #  apt-get update
