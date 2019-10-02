@@ -5,8 +5,8 @@ env:
 #  PATH: "/opt/java/openjdk/bin:$PATH"
 install: |-
   export PATH=$PATH:/opt/java/openjdk/bin
-  sudo apt-get update
-  sudo apt-get -y install git
+  apt-get update
+  apt-get -y install git
 decrypt:
   settings.xml: "repo/settings.xml.asc"
   pubring.gpg: "repo/pubring.gpg.asc"
