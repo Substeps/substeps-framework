@@ -3,15 +3,17 @@ docker:
 env:
   JAVA_HOME: "/opt/java/openjdk"
 #  PATH: "/opt/java/openjdk/bin:$PATH"
-install:
-  - "export PATH=$PATH:/opt/java/openjdk/bin && sudo apt-get update && sudo apt-get -y install git"
+install: |-
+  export PATH=$PATH:/opt/java/openjdk/bin
+  sudo apt-get update
+  sudo apt-get -y install git
 decrypt:
   settings.xml: "repo/settings.xml.asc"
   pubring.gpg: "repo/pubring.gpg.asc"
   secring.gpg: "repo/secring.gpg.asc"
 release:
   script: |-
-        export newSnapshotVersion=`echo ${tag}-SNAPSHOT | perl -pe 's/^((\d+\.)*)(\d+)(.*)$/$1.($3+1).$4/e'``
+        export newSnapshotVersion=`echo ${tag}-SNAPSHOT | perl -pe 's/^((\d+\.)*)(\d+)(.*)$/$1.($3+1).$4/e'`
         git -version
         mvn clean verify
         git checkout master
