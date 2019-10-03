@@ -1,11 +1,18 @@
 docker:
-  image: "adoptopenjdk/maven-openjdk11:latest"
+  image: "iantmoore/mvngitjdk11:latest"
 env:
   JAVA_HOME: "/opt/java/openjdk"
-#  PATH: "/opt/java/openjdk/bin:$PATH"
 install: |-
-   export PATH=:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/java/openjdk/bin
-   apt-get update && apt-get install -y git
+  export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/java/openjdk/bin"
+
+#docker:
+#  image: "adoptopenjdk/maven-openjdk11:latest"
+#env:
+#  JAVA_HOME: "/opt/java/openjdk"
+##  PATH: "/opt/java/openjdk/bin:$PATH"
+#install: |-
+#   export PATH=:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/java/openjdk/bin
+#   apt-get update && apt-get install -y git
    
 #  image: "maven:3.6.2-jdk-11"
 #env:
