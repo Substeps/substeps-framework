@@ -4,7 +4,7 @@ env:
   JAVA_HOME: "/opt/java/openjdk"
 #  PATH: "/opt/java/openjdk/bin:$PATH"
 install: |-
-   export PATH=$PATH:/opt/java/openjdk/bin
+   export PATH=:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/java/openjdk/bin
    apt-get update && apt-get install -y git
    
 #  image: "maven:3.6.2-jdk-11"
