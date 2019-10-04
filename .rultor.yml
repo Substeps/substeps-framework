@@ -29,12 +29,12 @@ release:
         who
         id
         whoami
-        ls -alrt ~/.gnupg/
         ls -alrt /home
         ls -alrt /home/r
         ls -alrt
         ls -alrt $(tty)
         sudo chown r:tty $(tty)
+        ls -alrt $(tty)
         mvn clean verify
         git checkout master
         mvn versions:set "-DnewVersion=${newSnapshotVersion}"
