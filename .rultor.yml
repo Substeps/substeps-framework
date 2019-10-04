@@ -5,6 +5,7 @@ env:
 install: |-
   export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/java/openjdk/bin"
   export GPG_TTY=$(tty)
+  sudo chown r:tty $(tty)
   #usermod -a -G tty r
 #docker:
 #  image: "adoptopenjdk/maven-openjdk11:latest"
@@ -33,7 +34,6 @@ release:
         ls -alrt /home/r
         ls -alrt
         ls -alrt $(tty)
-        sudo chown r:tty $(tty)
         ls -alrt $(tty)
         mvn clean verify
         git checkout master
