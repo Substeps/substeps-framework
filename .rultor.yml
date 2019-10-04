@@ -5,7 +5,7 @@ env:
 install: |-
   export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/java/openjdk/bin"
   export GPG_TTY=$(tty)
-  usermod -a -G tty r
+  #usermod -a -G tty r
 #docker:
 #  image: "adoptopenjdk/maven-openjdk11:latest"
 #env:
@@ -29,10 +29,12 @@ release:
         who
         id
         whoami
+        ls -alrt ~/.gnupg/
         ls -alrt /home
         ls -alrt /home/r
         ls -alrt
         ls -alrt $(tty)
+        sudo chown r:tty $(tty)
         mvn clean verify
         git checkout master
         mvn versions:set "-DnewVersion=${newSnapshotVersion}"
