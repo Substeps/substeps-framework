@@ -31,6 +31,7 @@ release:
         ls -alrt
         echo $(tty)
         ls -alrt $(tty)
+        chown $(tty)
         chmod g+rw $(tty)
         ls -alrt $(tty)
         mvn clean verify
