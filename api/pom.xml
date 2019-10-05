@@ -69,6 +69,33 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+
+                    <!-- this is necessary so that the javadoc process doesn't grumble about the scala classes ref'd in the java classes -->
+                    <additionalDependencies>
+                        <additionalDependency>
+                            <groupId>org.substeps</groupId>
+                            <artifactId>substeps-core-api</artifactId>
+                            <version>${project.version}</version>
+                            <systemPath>${project.build.outputDirectory}/substeps-core-api.jar</systemPath>
+                        </additionalDependency>
+                    </additionalDependencies>
+
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
                 <executions>
