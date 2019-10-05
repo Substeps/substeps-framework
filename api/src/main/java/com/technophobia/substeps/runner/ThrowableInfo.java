@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * Created by ian on 04/09/15.
- * <p/>
+ * <br>
  * A class to contain the info from an exception, but not the actual exception itself.
  * This is to facilitate running via JMX when the client is unable to load the exception classes via RMI, ie an IntelliJ plugin.
  */

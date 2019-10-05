@@ -26,9 +26,9 @@ import com.technophobia.substeps.model.Scope;
  * allowing the T being supplied to be replaced with another T, typically in
  * setup or tear down scenarios and a T that holds state across test scenarios
  * such as a database connection, results etc
- * <p/>
+ * <br>
  * Typical usage:
- * <p/>
+ * <br>
  * <pre>
  * private static final MutableSupplier&lt;MyContext&gt; myContextSupplier = new ExecutionContextSupplier&lt;MyContext&gt;(
  *             Scope.SCENARIO, "my_context_key");

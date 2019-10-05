@@ -23,13 +23,13 @@ import com.technophobia.substeps.execution.node.*;
 /**
  * Allows a concrete visitor to override only methods which it is interested in,
  * also provides
- * <p/>
+ * <br>
  * visit(ExecutionNode) which can be overridden for default behaviour affecting
  * any node
- * <p/>
+ * <br>
  * visit(NodeWithChildren) which can be overridden for default behaviour for
  * nodes which have child nodes.
- * <p/>
+ * <br>
  * visit(TaggedNode) which can be overridden for default behaviour affecting
  * nodes which have tags, if not overridden these nodes will call
  * visit(NodeWithChildren) or visit(IExecutionNode) depending on type.
