@@ -82,7 +82,7 @@
                             <systemPath>${project.build.outputDirectory}/substeps-core-api.jar</systemPath>
                         </additionalDependency>
                     </additionalDependencies>
-
+                    <source>11</source>
                 </configuration>
                 <executions>
                     <execution>
