@@ -60,8 +60,7 @@ public abstract class BaseSubstepsMojo extends AbstractMojo {
     protected IExecutionResultsCollector executionResultsCollector;
 
     /**
-     * List of classes containing step implementations e.g.
-     * <param>com.technophobia.substeps.StepImplmentations<param>
+     * List of classes containing step implementations, necessary when running in forked mode
      */
     // TODO - this appears to be only necessary for running in forked mode - in addition to the test classpath
     @Parameter

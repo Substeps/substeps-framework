@@ -49,7 +49,7 @@ public class MarkdownSubstepsPublisher extends FileBasedGlossaryPublisher implem
 
 
     /**
-     * @param sectionSorted
+     * @param sectionSorted step descriptors for the section
      */
     @Override
     public String buildFileContents(final Map<String, Collection<StepDescriptor>> sectionSorted) {

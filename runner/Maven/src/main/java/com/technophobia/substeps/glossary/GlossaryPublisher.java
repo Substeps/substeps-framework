@@ -26,7 +26,7 @@ import java.util.List;
 public interface GlossaryPublisher {
 
     /**
-     * @param classStepTags
+     * @param classStepTags the list of step implementation descriptors
      */
     void publish(List<StepImplementationsDescriptor> classStepTags);
 
