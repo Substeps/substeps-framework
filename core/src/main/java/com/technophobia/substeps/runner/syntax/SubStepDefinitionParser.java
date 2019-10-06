@@ -33,7 +33,7 @@ import java.util.Collection;
 
 /**
  * @author ian
- *         <p/>
+ *         <br>
  *         TODO: failOnDuplicateSubsteps is used inconsistently between
  *         processDirective and parseSubStepFile. It's also being interpreted as
  *         'fail-fast' when it was intended to mean

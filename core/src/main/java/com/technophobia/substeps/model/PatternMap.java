@@ -44,7 +44,7 @@ public class PatternMap<V> {
 
     /**
      * Adds a new pattern to the map.
-     * <p/>
+     * <br>
      * Users of this class <em>must</em> check if the pattern has already been added
      * by using {@link containsPattern} to avoid IllegalStateException in the event that
      * the pattern has already been added to the map.
@@ -57,7 +57,7 @@ public class PatternMap<V> {
 
         if (pattern != null) {
             if (keys.containsKey(pattern)) {
-                throw new IllegalStateException("");
+                throw new IllegalStateException("Pattern map already contains pattern: " + pattern);
             }
             keys.put(pattern, value);
 

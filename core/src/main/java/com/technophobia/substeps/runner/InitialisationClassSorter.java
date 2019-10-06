@@ -31,12 +31,12 @@ import java.util.Set;
 
 /**
  * Responsible for determining the running order of initialisation classes.
- * <p/>
+ * <br>
  * To do this this class builds a dependency tree of initialisation classes, as
  * it adds a new initialisation class to the tree it ensures it is not at the
  * same time a parent and child of another node. Such a condition is equivalent
  * to a class which must be executed both before and after another.
- * <p/>
+ * <br>
  * Once this graph is fully built it is converted into a list by traversing the
  * graph only adding nodes whose parents have already been added, it keeps doing
  * this until all nodes have been added.

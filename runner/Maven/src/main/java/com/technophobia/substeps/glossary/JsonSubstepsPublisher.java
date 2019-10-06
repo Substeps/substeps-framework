@@ -8,9 +8,9 @@ import java.util.Map;
 
 /**
  * Contributed to substeps by Andrew Lee
- * <p/>
+ * <br>
  * A publisher which produces a json representation of the glossary.
- * <p/>
+ * <br>
  * The resultant json can be used by <a
  * href="https://github.com/plasma147/api-viewer/">Api Viewer</a>
  *
