@@ -40,11 +40,9 @@ import org.substeps.config.SubstepsConfigLoader;
 import org.substeps.glossary.DocletWrapper;
 import org.substeps.runner.NewSubstepsExecutionConfig;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.jar.JarEntry;
@@ -164,11 +162,13 @@ public class SubstepsGlossaryMojo extends BaseSubstepsMojo {
         final File classes = new File(project.getBuild().getOutputDirectory());
         try
         {
+
             classRealm.addURL(classes.toURI().toURL());
+            classRealm.addURL(new File(project.getBuild().getTestOutputDirectory()).toURI().toURL());
         }
         catch (MalformedURLException e)
         {
-            log.error("MalformedURLException adding outputdir", e);
+            log.error("MalformedURLException adding outputdirs", e);
         }
 
         if (masterConfig != null){
