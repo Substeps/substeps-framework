@@ -135,7 +135,7 @@
         <hamcrest.version>2.1</hamcrest.version>
         <mockito.version>3.0.0</mockito.version>
         <guava.version>28.1-jre</guava.version>
-        <gson.version>2.8.2</gson.version>
+        <gson.version>2.8.9</gson.version>
         <typesafe.config.version>1.3.4</typesafe.config.version>
 
 <!--        <jacoco.version>0.7.6.201602180812</jacoco.version>-->
